@@ -90,7 +90,7 @@ MEDIUM_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf", 20)
 LARGE_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf",28)
 
 SMALL_FONT = ImageFont.truetype("assets/Arial Black.ttf", 10)
-MEDIUM_FONT = ImageFont.truetype("assets/andale.ttf", 20)
+MEDIUM_FONT = ImageFont.truetype("assets/andalemono.ttf", 20)
 LARGE_FONT = ImageFont.truetype("assets/Arial Black.ttf",28)
 
 PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+BORDER_SIZE*2, LOGO_SIZE+BORDER_SIZE*2)))
