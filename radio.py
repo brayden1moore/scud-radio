@@ -471,10 +471,10 @@ def display_one(name):
 
     # other info
     y_offset = 0
-    if stream[name]['nowPlayingArtist']:
-        draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), i, font=MEDIUM_FONT, fill=YELLOW)
+    if streams[name]['nowPlayingArtist']:
+        draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), streams[name]['nowPlayingArtist'], font=MEDIUM_FONT, fill=YELLOW)
         y_offset = 20
-    draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), i, font=MEDIUM_FONT, fill=YELLOW)
+    draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), streams[name]['nowPlayingAdditionalInfo'], font=MEDIUM_FONT, fill=YELLOW)
 
     safe_display(image)
 
