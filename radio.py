@@ -464,13 +464,14 @@ def display_one(name):
     info = streams[name]['oneLiner'].split(' - ')
     print(info)
     title_lines = calculate_text(info[0], font=LARGE_FONT, max_width=290, lines=2)
+    print(title_lines)
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=LARGE_FONT, fill=TEXT_COLOR)
         y_offset += 20
 
     # other info
     y_offset = 0
-    info_lines = calculate_text(info[1:], font=MEDIUM_FONT, max_width=290, lines=2)
+    info_lines = calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=2)
 
     if info_lines:
         for i in info_lines:
