@@ -94,19 +94,19 @@ PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18
 ONE_NAME_X = 77
-ONE_NAME_Y = 15
+ONE_NAME_Y = 13
 ONE_LOC_X = ONE_NAME_X
 ONE_LOC_Y = ONE_NAME_Y + 25
-TOP_DIVIDER_X = 12
+TOP_DIVIDER_X = 11
 TOP_DIVIDER_Y = 90
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 175
 SHOW_ROW_1_X = TOP_DIVIDER_X
-SHOW_ROW_1_Y = 105
+SHOW_ROW_1_Y = 103
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 175
 SHOW_INFO_X = TOP_DIVIDER_X
-SHOW_INFO_ROW_1_Y = 190
+SHOW_INFO_ROW_1_Y = 187
 
 def safe_display(image):
     global current_image
@@ -470,7 +470,8 @@ def display_one(name):
     # now playing
     y_offset = 0
     num_title_lines = 2
-    info = list(set(streams[name]['oneLiner'].split(' - ')))
+    info = streams[name]['oneLiner'].split(' - ')
+    info = [i for i in info if i in list(set(info))]
 
     if len(info) == 1:
         num_title_lines = 4
