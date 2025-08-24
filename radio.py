@@ -465,16 +465,15 @@ def display_one(name):
         y_offset += 32
 
     # other info
-    y_offset = 0
     info_lines = calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=2)
 
     if len(info) > 1:
-        image.paste(divider, (BOTTOM_DIVIDER_X, BOTTOM_DIVIDER_Y))    
+        image.paste(divider, (BOTTOM_DIVIDER_X, y_offset + 5))    
 
     if info_lines:
         print(info_lines)
         for i in info_lines:
-            draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
+            draw.text((SHOW_INFO_X, y_offset + 5), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
             y_offset = 20
         
 
