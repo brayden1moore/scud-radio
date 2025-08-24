@@ -317,8 +317,9 @@ def calculate_text(text, font, max_width, lines):
         line_list = []
         current_line = 1
         dots_width = width('...', font)
-
-        for idx, i in enumerate(text):
+        words = text.split(' ')
+        for idx, i in enumerate(words):
+            i = i + ' '
             if current_line == lines:
                 if width(characters + i, font) >= max_width-dots_width: # if width exceeds max - dots, return
                     characters += '...'
