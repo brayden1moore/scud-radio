@@ -89,17 +89,17 @@ PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18
 ONE_NAME_X = 77
-ONE_NAME_Y = 25
+ONE_NAME_Y = 22
 ONE_LOC_X = ONE_NAME_X
-ONE_LOC_Y = ONE_NAME_Y + 20
+ONE_LOC_Y = ONE_NAME_Y + 25
 TOP_DIVIDER_X = 12
 TOP_DIVIDER_Y = 90
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 175
 SHOW_ROW_1_X = TOP_DIVIDER_X
-SHOW_ROW_1_Y = 112
+SHOW_ROW_1_Y = 108
 SHOW_ROW_2_X = TOP_DIVIDER_X
-SHOW_ROW_2_Y = 137
+SHOW_ROW_2_Y = 134
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 175
 
@@ -447,11 +447,7 @@ def display_one(name):
     # logo
     logo = streams[name]['logo_smallest']
     border = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*4, SMALLEST_LOGO_SIZE+BORDER_SIZE*4), color=BORDER_COLOR)
-    border2 = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*2, SMALLEST_LOGO_SIZE+BORDER_SIZE*2), color=BACKGROUND_COLOR)
-    border3 = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE, SMALLEST_LOGO_SIZE+BORDER_SIZE), color=BORDER_COLOR)
     image.paste(border, (ONE_LOGO_X-BORDER_SIZE*2, ONE_LOGO_Y-BORDER_SIZE*2))
-    image.paste(border2, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE))
-    image.paste(border3, (ONE_LOGO_X, ONE_LOGO_Y))
     image.paste(logo, (ONE_LOGO_X+BORDER_SIZE, ONE_LOGO_Y+BORDER_SIZE))
 
     # name
@@ -608,8 +604,9 @@ def periodic_update():
     global screen_on, last_input_time, streams, stream_list
 
     if screen_on and (time.time() - last_input_time > 60):
-        screen_on = False
-        backlight_off()
+        #screen_on = False
+        #backlight_off()
+        pass
     else:
         try:
             info = requests.get('https://internetradioprotocol.org/info').json()
