@@ -435,6 +435,9 @@ def calculate_text(text, font, max_width, lines):
                 else:
                     characters += i
                     current_width = width(characters, font)
+        if characters:  # if there are remaining characters
+            line_list.append(characters)
+        return line_list
 
     
 def display_one(name):
