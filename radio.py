@@ -92,15 +92,16 @@ LARGE_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf",28)
 SMALL_FONT = ImageFont.truetype("assets/Arial Black.ttf", 10)
 MEDIUM_FONT = ImageFont.truetype("assets/andalemono.ttf", 20)
 LARGE_FONT = ImageFont.truetype("assets/Arial Black.ttf",28)
+BIGGEST_FONT = ImageFont.truetype("assets/Arial Black.ttf",32)
 
 PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+BORDER_SIZE*2, LOGO_SIZE+BORDER_SIZE*2)))
 
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18
 ONE_NAME_X = 77
-ONE_NAME_Y = 13
+ONE_NAME_Y = 12
 ONE_LOC_X = ONE_NAME_X
-ONE_LOC_Y = ONE_NAME_Y + 30
+ONE_LOC_Y = ONE_NAME_Y + 31
 TOP_DIVIDER_X = 11
 TOP_DIVIDER_Y = 90
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
@@ -457,9 +458,9 @@ def display_one(name):
     if len(info) == 1:
         num_title_lines = 4
 
-    title_lines = calculate_text(info[0], font=LARGE_FONT, max_width=290, lines=num_title_lines)
+    title_lines = calculate_text(info[0], font=BIGGEST_FONT, max_width=290, lines=num_title_lines)
     for i in title_lines:
-        draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=LARGE_FONT, fill=TEXT_COLOR)
+        draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
         y_offset += 24
 
     # other info
