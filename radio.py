@@ -559,17 +559,16 @@ def show_volume_overlay(volume):
         img = current_image.copy()
         draw = ImageDraw.Draw(img)
         
-        bar_width = BORDER_SIZE * 2
-        bar_height = 320
-        bar_x = 320
-        bar_y = 0 
-        
-        this_border_size = round(BORDER_SIZE)
-        draw.rectangle([bar_x-bar_width, bar_y, bar_x+bar_width+this_border_size, bar_y+bar_height+this_border_size], fill=SLIDER_COLOR) # inner 
-        draw.rectangle([bar_x, bar_y, bar_x+bar_width, bar_y+bar_height], fill=SLIDER_BG) # outer
-        
-        volume_width = int((volume / 125) * bar_height)
-        draw.rectangle([bar_x, bar_y, bar_x+bar_height, bar_y+volume_width], fill=SLIDER_COLOR)
+        volume_bar_end = int((volume / 125) * SCREEN_HEIGHT - 4)
+
+        draw.rectangle([
+            SCREEN_WIDTH-9, 0, 
+            SCREEN_WIDTH, SCREEN_HEIGHT
+                        ], fill=BLACK)
+        draw.rectangle([
+            SCREEN_WIDTH-7, SCREEN_HEIGHT-2, 
+            SCREEN_WIDTH-2, volume_bar_end
+                        ], fill=WHITE)
         
         safe_display(img)
 
