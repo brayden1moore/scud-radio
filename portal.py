@@ -77,7 +77,7 @@ def connect():
         response = jsonify({'message': 'success', 'info': 'Device will switch networks in 3 seconds'})
         
         print("Starting radio")
-        subprocess.run(['/usr/bin/python3', '/home/scud/scud-radio/radio.py'],
+        subprocess.run(['python', 'radio.py'],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
         return response
@@ -95,5 +95,5 @@ if __name__ == '__main__':
     else:
         print("Internet connection already available. No configuration needed.")
         print("Starting radio")
-        subprocess.run(['/usr/bin/python3', '/home/scud/scud-radio/radio.py'])
+        subprocess.run(['python', 'radio.py'])
         sys.exit(0)
