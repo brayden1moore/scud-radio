@@ -404,8 +404,10 @@ def display_everything(name, update=False, readied=False):
 
 
 def calculate_text(text, font, max_width, lines):
+    text = text.strip()
 
     if width(text, font) <= max_width:
+        print("returning just the text")
         return [text]
     
     else:
@@ -415,7 +417,7 @@ def calculate_text(text, font, max_width, lines):
         current_line = 1
         dots_width = width('...', font)
 
-        for i in text:
+        for idx, i in enumerate(text):
             if current_line == lines:
                 if width(characters + i, font) >= max_width-dots_width: # if width exceeds max - dots, return
                     characters += '...'
