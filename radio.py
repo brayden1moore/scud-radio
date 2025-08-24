@@ -118,7 +118,7 @@ def safe_display(image):
 def display_scud():
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
     rotations = 0
-    max_rotations = 3
+    max_rotations = 2
     while rotations <max_rotations:
         for i in [2,3,4,5,6,7,1]:
              
@@ -462,12 +462,13 @@ def display_one(name):
     # now playing
     y_offset = 0
     info_lines = calculate_text(streams[name]['nowPlaying'], font=LARGE_FONT, max_width=290, lines=2)
-    for i in info_lines:
-        draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=LARGE_FONT, fill=TEXT_COLOR)
-        y_offset += 20
+    if info_lines:
+        for i in info_lines:
+            draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=LARGE_FONT, fill=TEXT_COLOR)
+            y_offset += 20
 
-    # botton divider
-    image.paste(divider, (BOTTOM_DIVIDER_X, BOTTOM_DIVIDER_Y))    
+        # botton divider
+        image.paste(divider, (BOTTOM_DIVIDER_X, BOTTOM_DIVIDER_Y))    
 
     # other info
     y_offset = 0
