@@ -49,14 +49,18 @@ SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
 FONT_SIZE = 6
 
-BORDER_COLOR = (255,255,255)
-TEXT_COLOR = (255,255,255)
-TEXT_COLOR_2 = (255,255,255)
+WHITE = (255,255,255)
+BLACK = (0,0,0)
 YELLOW = (255,255,0)
+GREY = (100,100,100)
+
+BORDER_COLOR = BLACK
+TEXT_COLOR = BLACK
+TEXT_COLOR_2 = GREY
 BACKGROUND_COLORS = []
-BACKGROUND_COLOR = (0,0,0)
-SLIDER_BG = (0,0,0)
-SLIDER_COLOR = (255,255,255)
+BACKGROUND_COLOR = WHITE
+SLIDER_BG = WHITE
+SLIDER_COLOR = BLACK
 BORDER_SIZE = 2
 
 LOGO_SIZE = 120
@@ -86,7 +90,7 @@ MEDIUM_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf", 20)
 LARGE_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf",28)
 
 SMALL_FONT = ImageFont.truetype("assets/Arial Black.ttf", 10)
-MEDIUM_FONT = ImageFont.truetype("assets/Arial Black.ttf", 20)
+MEDIUM_FONT = ImageFont.truetype("assets/andale.ttf", 20)
 LARGE_FONT = ImageFont.truetype("assets/Arial Black.ttf",28)
 
 PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+BORDER_SIZE*2, LOGO_SIZE+BORDER_SIZE*2)))
@@ -434,7 +438,7 @@ def calculate_text(text, font, max_width, lines):
                     else:
                         current_line += 1
                         line_list.append(characters)
-                        if i not in [' ','-','/']:
+                        if i not in [' ','-','/',':']:
                             characters = i
                         else:
                             characters = ''
@@ -461,7 +465,7 @@ def display_one(name):
     draw.text((ONE_NAME_X, ONE_NAME_Y), calculate_text(name, font=LARGE_FONT, max_width=223, lines=1)[0], font=LARGE_FONT, fill=TEXT_COLOR)
 
     # location
-    draw.text((ONE_LOC_X, ONE_LOC_Y), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=YELLOW)    
+    draw.text((ONE_LOC_X, ONE_LOC_Y), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=TEXT_COLOR_2)    
 
     # top divider
     divider = Image.new('RGB', (290,BORDER_SIZE), color=BORDER_COLOR)
@@ -488,7 +492,7 @@ def display_one(name):
     if info_lines:
         print(info_lines)
         for i in info_lines:
-            draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), i, font=MEDIUM_FONT, fill=YELLOW)
+            draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), i, font=MEDIUM_FONT, fill=GREY)
             y_offset = 20
         
         image.paste(divider, (BOTTOM_DIVIDER_X, BOTTOM_DIVIDER_Y))    
