@@ -461,21 +461,22 @@ def display_one(name):
 
     # now playing
     y_offset = 0
-    info_lines = calculate_text(streams[name]['nowPlaying'], font=LARGE_FONT, max_width=290, lines=2)
-    if info_lines:
-        for i in info_lines:
-            draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=LARGE_FONT, fill=TEXT_COLOR)
-            y_offset += 20
-
-        # botton divider
-        image.paste(divider, (BOTTOM_DIVIDER_X, BOTTOM_DIVIDER_Y))    
+    info = streams[name]['oneLiner'].split(' - ')
+    title_lines = calculate_text(info[0], font=LARGE_FONT, max_width=290, lines=2)
+    for i in title_lines:
+        draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=LARGE_FONT, fill=TEXT_COLOR)
+        y_offset += 20
 
     # other info
     y_offset = 0
-    if streams[name]['nowPlayingArtist']:
-        draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), streams[name]['nowPlayingArtist'], font=MEDIUM_FONT, fill=YELLOW)
-        y_offset = 20
-    draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), streams[name]['nowPlayingAdditionalInfo'], font=MEDIUM_FONT, fill=YELLOW)
+    info_lines = calculate_text(info[1:], font=MEDIUM_FONT, max_width=290, lines=2)
+
+    if info_lines:
+        for i in info_lines:
+            draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), i, font=MEDIUM_FONT, fill=YELLOW)
+            y_offset = 20
+        
+        image.paste(divider, (BOTTOM_DIVIDER_X, BOTTOM_DIVIDER_Y))    
 
     safe_display(image)
 
