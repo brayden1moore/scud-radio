@@ -78,8 +78,7 @@ def connect():
         
         print("Starting radio")
         subprocess.run(['/usr/bin/python3', '/home/scud/scud-radio/radio.py'],
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                        text=True, check=True)
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
         return response
         
