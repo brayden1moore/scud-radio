@@ -466,8 +466,13 @@ def display_one(name):
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
         y_offset += 32
 
+    if len(title_lines) == 3:
+        num_info_lines = 1
+    else: 
+        num_info_lines = 2
+
     # other info
-    info_lines = calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=2)
+    info_lines = calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines)
 
     if len(info) > 1:
         image.paste(divider, (BOTTOM_DIVIDER_X, SHOW_ROW_1_Y + y_offset + 25))    
