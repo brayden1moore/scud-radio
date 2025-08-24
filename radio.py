@@ -89,7 +89,7 @@ PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18
 ONE_NAME_X = 77
-ONE_NAME_Y = 18
+ONE_NAME_Y = 15
 ONE_LOC_X = ONE_NAME_X
 ONE_LOC_Y = ONE_NAME_Y + 25
 TOP_DIVIDER_X = 12
@@ -464,7 +464,12 @@ def display_one(name):
 
     # now playing
     y_offset = 0
+    num_title_lines = 2
     info = list(set(streams[name]['oneLiner'].split(' - ')))
+
+    if len(info) == 1:
+        num_title_lines = 4
+
     title_lines = calculate_text(info[0], font=LARGE_FONT, max_width=290, lines=2)
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=LARGE_FONT, fill=TEXT_COLOR)
