@@ -13,12 +13,8 @@ import platform
 import math
 import os
 
-current_directory = os.getcwd()
-print(f"Current working directory before change: {current_directory}")
-
-import driver as LCD_2inch
+from .drivers import driver as LCD_2inch
 import spidev as SPI
-
 
 ## scud
 
