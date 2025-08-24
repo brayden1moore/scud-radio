@@ -428,7 +428,10 @@ def calculate_text(text, font, max_width, lines):
                 if width(characters + i, font) >= max_width:
                     current_line += 1
                     line_list.append(characters)
-                    characters = ''
+                    if i not in [' ','-','/']:
+                        characters = i
+                    else:
+                        characters = ''
                     current_width = 0
                 else:
                     characters += i
@@ -446,7 +449,7 @@ def display_one(name):
     logo = streams[name]['logo_smallest']
     border = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*2, SMALLEST_LOGO_SIZE+BORDER_SIZE*2), color=BORDER_COLOR)
     image.paste(border, (ONE_LOGO_X-BORDER_SIZE*2, ONE_LOGO_Y-BORDER_SIZE*2))
-    image.paste(logo, (ONE_LOGO_X, ONE_LOGO_Y))
+    image.paste(logo, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE))
 
     # name
     draw.text((ONE_NAME_X, ONE_NAME_Y), calculate_text(name, font=LARGE_FONT, max_width=223, lines=1)[0], font=LARGE_FONT, fill=TEXT_COLOR)
