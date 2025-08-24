@@ -602,8 +602,8 @@ def periodic_update():
     global screen_on, last_input_time, streams, stream_list
 
     if screen_on and (time.time() - last_input_time > 60):
-        #screen_on = False
-        #backlight_off()
+        screen_on = False
+        backlight_off()
         pass
     else:
         try:
