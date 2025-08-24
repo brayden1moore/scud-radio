@@ -325,7 +325,7 @@ def calculate_text(text, font, max_width, lines):
 
             if lines > 1:
                 i = i + ' '
-                
+
             if current_line == lines:
                 if width(characters + i, font) >= max_width-dots_width: # if width exceeds max - dots, return
                     characters += '...'
@@ -474,7 +474,9 @@ def display_one(name):
 
     if len(title_lines) == 3:
         num_info_lines = 1
-    else: 
+    elif len(title_lines) == 1: 
+        num_info_lines = 4
+    else:
         num_info_lines = 2
 
     # other info
