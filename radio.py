@@ -12,7 +12,11 @@ import random
 import platform
 import math
 import os
-import .driver as LCD_2inch
+
+current_directory = os.getcwd()
+print(f"Current working directory before change: {current_directory}")
+
+import driver as LCD_2inch
 import spidev as SPI
 
 
