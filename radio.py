@@ -84,6 +84,11 @@ STATUS_LOCATION = (LOGO_X+round(LOGO_SIZE/2)-round(STATUS_SIZE/2), LOGO_Y+round(
 SMALL_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf", 10)
 MEDIUM_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf", 20)
 LARGE_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf",28)
+
+SMALL_FONT = ImageFont.truetype("assets/Arial Black.ttf", 10)
+MEDIUM_FONT = ImageFont.truetype("assets/Arial Black.ttf", 20)
+LARGE_FONT = ImageFont.truetype("assets/Arial Black.ttf",28)
+
 PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+BORDER_SIZE*2, LOGO_SIZE+BORDER_SIZE*2)))
 
 ONE_LOGO_X = 15
@@ -470,7 +475,7 @@ def display_one(name):
     if len(info) == 1:
         num_title_lines = 4
 
-    title_lines = calculate_text(info[0], font=LARGE_FONT, max_width=290, lines=2)
+    title_lines = calculate_text(info[0], font=LARGE_FONT, max_width=290, lines=num_title_lines)
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=LARGE_FONT, fill=TEXT_COLOR)
         y_offset += 22
