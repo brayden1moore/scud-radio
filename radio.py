@@ -100,7 +100,7 @@ ONE_LOGO_Y = 18
 ONE_NAME_X = 77
 ONE_NAME_Y = 13
 ONE_LOC_X = ONE_NAME_X
-ONE_LOC_Y = ONE_NAME_Y + 27 
+ONE_LOC_Y = ONE_NAME_Y + 28
 TOP_DIVIDER_X = 11
 TOP_DIVIDER_Y = 90
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
@@ -460,7 +460,7 @@ def display_one(name):
     title_lines = calculate_text(info[0], font=LARGE_FONT, max_width=290, lines=num_title_lines)
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=LARGE_FONT, fill=TEXT_COLOR)
-        y_offset += 22
+        y_offset += 24
 
     # other info
     y_offset = 0
@@ -472,6 +472,7 @@ def display_one(name):
             draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
             y_offset = 20
         
+    if len(info) > 1:
         image.paste(divider, (BOTTOM_DIVIDER_X, BOTTOM_DIVIDER_Y))    
 
     safe_display(image)
