@@ -12,7 +12,7 @@ import random
 import platform
 import math
 import os
-import driver as LCD_2inch
+import .driver as LCD_2inch
 import spidev as SPI
 
 
