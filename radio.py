@@ -486,9 +486,8 @@ def display_one(name):
         image.paste(divider, (BOTTOM_DIVIDER_X, SHOW_ROW_1_Y + y_offset + 20))    
 
     if info_lines:
-        print(info_lines)
         for i in info_lines:
-            draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 25), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
+            draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 30), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
             y_offset += 20
         
 
