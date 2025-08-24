@@ -89,7 +89,7 @@ PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18
 ONE_NAME_X = 77
-ONE_NAME_Y = 20
+ONE_NAME_Y = 18
 ONE_LOC_X = ONE_NAME_X
 ONE_LOC_Y = ONE_NAME_Y + 25
 TOP_DIVIDER_X = 12
@@ -97,13 +97,11 @@ TOP_DIVIDER_Y = 90
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 175
 SHOW_ROW_1_X = TOP_DIVIDER_X
-SHOW_ROW_1_Y = 108
+SHOW_ROW_1_Y = 105
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 175
-
 SHOW_INFO_X = TOP_DIVIDER_X
-SHOW_INFO_ROW_1_Y = 193
-SHOW_INFO_ROW_2_Y = 210
+SHOW_INFO_ROW_1_Y = 190
 
 def safe_display(image):
     global current_image
@@ -425,14 +423,17 @@ def calculate_text(text, font, max_width, lines):
                     characters += i
                     current_width = width(characters, font)
             else:
-                if width(characters + i, font) >= max_width:
-                    current_line += 1
-                    line_list.append(characters)
-                    if i not in [' ','-','/']:
-                        characters = i
+                if width(characters + i, font) >= max_width: # if current line exceeds max width and is not last line
+                    if i in [')']:
+                        characters += i
                     else:
-                        characters = ''
-                    current_width = 0
+                        current_line += 1
+                        line_list.append(characters)
+                        if i not in [' ','-','/']:
+                            characters = i
+                        else:
+                            characters = ''
+                        current_width = 0
                 else:
                     characters += i
                     current_width = width(characters, font)
@@ -474,6 +475,7 @@ def display_one(name):
     info_lines = calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=2)
 
     if info_lines:
+        print(info_lines)
         for i in info_lines:
             draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), i, font=MEDIUM_FONT, fill=YELLOW)
             y_offset = 20
