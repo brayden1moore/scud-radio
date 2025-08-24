@@ -89,7 +89,7 @@ PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18
 ONE_NAME_X = 77
-ONE_NAME_Y = 43
+ONE_NAME_Y = 25
 ONE_LOC_X = ONE_NAME_X
 ONE_LOC_Y = ONE_NAME_Y + 20
 TOP_DIVIDER_X = 12
@@ -97,15 +97,15 @@ TOP_DIVIDER_Y = 90
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 175
 SHOW_ROW_1_X = TOP_DIVIDER_X
-SHOW_ROW_1_Y = 130
+SHOW_ROW_1_Y = 112
 SHOW_ROW_2_X = TOP_DIVIDER_X
-SHOW_ROW_2_Y = 155
+SHOW_ROW_2_Y = 137
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 175
 
 SHOW_INFO_X = TOP_DIVIDER_X
-SHOW_INFO_ROW_1_Y = 205
-SHOW_INFO_ROW_2_Y = 223
+SHOW_INFO_ROW_1_Y = 193
+SHOW_INFO_ROW_2_Y = 210
 
 def safe_display(image):
     global current_image
@@ -453,7 +453,7 @@ def display_one(name):
     draw.text((ONE_NAME_X, ONE_NAME_Y), calculate_text(name, font=LARGE_FONT, max_width=223, lines=1)[0], font=LARGE_FONT, fill=TEXT_COLOR)
 
     # location
-    draw.text((ONE_LOC_X, ONE_LOC_Y), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=LARGE_FONT, fill=YELLOW)    
+    draw.text((ONE_LOC_X, ONE_LOC_Y), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=YELLOW)    
 
     # top divider
     divider = Image.new('RGB', (290,BORDER_SIZE), color=BORDER_COLOR)
