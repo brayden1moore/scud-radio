@@ -451,34 +451,31 @@ def display_one(name):
     image.paste(divider, (TOP_DIVIDER_X, TOP_DIVIDER_Y))
 
     # now playing
-    title_y_offset = 0
-    info_y_offset = 0
+    y_offset = 0
     num_title_lines = 2
     info = streams[name]['oneLiner'].split(' - ')
     info = [i for i in info if i in list(set(info))]
 
     if len(info) == 1:
         num_title_lines = 4
-    elif len(info) == 2:
-        num_title_lines = 3
-        info_y_offset = -20
 
     title_lines = calculate_text(info[0], font=BIGGEST_FONT, max_width=290, lines=num_title_lines)
     for i in title_lines:
-        draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + title_y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
-        title_y_offset += 32
+        draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
+        y_offset += 32
 
     # other info
+    y_offset = 0
     info_lines = calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=2)
 
     if len(info) > 1:
-        image.paste(divider, (BOTTOM_DIVIDER_X, BOTTOM_DIVIDER_Y + info_y_offset))    
+        image.paste(divider, (BOTTOM_DIVIDER_X, BOTTOM_DIVIDER_Y))    
 
     if info_lines:
         print(info_lines)
         for i in info_lines:
-            draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + info_y_offset), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
-            info_y_offset = 20
+            draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
+            y_offset = 20
         
 
     safe_display(image)
