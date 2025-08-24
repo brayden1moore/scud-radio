@@ -56,7 +56,7 @@ GREY = (100,100,100)
 
 BORDER_COLOR = BLACK
 TEXT_COLOR = BLACK
-TEXT_COLOR_2 = GREY
+TEXT_COLOR_2 = BLACK
 BACKGROUND_COLORS = []
 BACKGROUND_COLOR = WHITE
 SLIDER_BG = WHITE
@@ -100,13 +100,13 @@ ONE_LOGO_Y = 18
 ONE_NAME_X = 77
 ONE_NAME_Y = 13
 ONE_LOC_X = ONE_NAME_X
-ONE_LOC_Y = ONE_NAME_Y + 25
+ONE_LOC_Y = ONE_NAME_Y + 27 
 TOP_DIVIDER_X = 11
 TOP_DIVIDER_Y = 90
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 175
 SHOW_ROW_1_X = TOP_DIVIDER_X
-SHOW_ROW_1_Y = 103
+SHOW_ROW_1_Y = 100
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 175
 SHOW_INFO_X = TOP_DIVIDER_X
@@ -303,6 +303,48 @@ def play(name, toggled=False):
 
     write_to_tmp_os_path(name)
 
+def calculate_text(text, font, max_width, lines):
+    text = text.strip()
+
+    if width(text, font) <= max_width:
+        print("returning just the text")
+        return [text]
+    
+    else:
+        current_width = 0
+        characters = ''
+        line_list = []
+        current_line = 1
+        dots_width = width('...', font)
+
+        for idx, i in enumerate(text):
+            if current_line == lines:
+                if width(characters + i, font) >= max_width-dots_width: # if width exceeds max - dots, return
+                    characters += '...'
+                    line_list.append(characters)
+                    return line_list
+                else:
+                    characters += i
+                    current_width = width(characters, font)
+            else:
+                if width(characters + i, font) >= max_width: # if current line exceeds max width and is not last line
+                    if i in [')']:
+                        characters += i
+                    else:
+                        current_line += 1
+                        line_list.append(characters)
+                        if i not in [' ','-','/',':']:
+                            characters = i
+                        else:
+                            characters = ''
+                        current_width = 0
+                else:
+                    characters += i
+                    current_width = width(characters, font)
+        if characters:  # if there are remaining characters
+            line_list.append(characters)
+        return line_list
+    
 
 def display_everything(name, update=False, readied=False):
     global streams, play_status, first_display
@@ -362,33 +404,11 @@ def display_everything(name, update=False, readied=False):
             streams[name]['nowPlayingAdditionalInfo'],
         ]
 
-        title = streams[name]['nowPlaying']
-
-        full_info = " - ".join(p for p in parts if p)
-        info_width = width(full_info, MEDIUM_FONT)
-        if info_width > SCREEN_WIDTH-10: 
-            line_width = 0
-            line_words = ''
-            lines = 0
-            subtitle_offset = 0
-            info_words = full_info.split(' ')
-            line_word_idx = 0
-            for i in info_words:
-                if width(line_words + ' ' + i, MEDIUM_FONT) <= SCREEN_WIDTH-10:
-                    line_words += f' {i}'
-                else:
-                    if lines == 1 and line_word_idx<len(info_words)-1:
-                        line_words += '...'
-                    draw.text((x(line_words, MEDIUM_FONT), SUBTITLE_Y + subtitle_offset), line_words, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
-                    line_words = ''
-                    lines += 1
-                    subtitle_offset = 25
-                line_word_idx += 1
-
+        title = calculate_text(streams[name]['oneLiner'], LARGE_FONT, 290, 1)[0]
         location = streams[name]['location']
 
         draw.text((x(title, LARGE_FONT), TITLE_Y), title, font=LARGE_FONT, fill=TEXT_COLOR)
-        draw.text((x(f'{name} - {location}', MEDIUM_FONT), LOCATION_Y), f'{name}-{location}', font=MEDIUM_FONT, fill=TEXT_COLOR_2)
+        draw.text((x(f'{name} - {location}', MEDIUM_FONT), LOCATION_Y), f'{name} - {location}', font=MEDIUM_FONT, fill=TEXT_COLOR_2)
 
         '''
         show_logo_url = streams[name]['showLogo']
@@ -406,49 +426,6 @@ def display_everything(name, update=False, readied=False):
     
     else:
         display_one(name)
-
-
-def calculate_text(text, font, max_width, lines):
-    text = text.strip()
-
-    if width(text, font) <= max_width:
-        print("returning just the text")
-        return [text]
-    
-    else:
-        current_width = 0
-        characters = ''
-        line_list = []
-        current_line = 1
-        dots_width = width('...', font)
-
-        for idx, i in enumerate(text):
-            if current_line == lines:
-                if width(characters + i, font) >= max_width-dots_width: # if width exceeds max - dots, return
-                    characters += '...'
-                    line_list.append(characters)
-                    return line_list
-                else:
-                    characters += i
-                    current_width = width(characters, font)
-            else:
-                if width(characters + i, font) >= max_width: # if current line exceeds max width and is not last line
-                    if i in [')']:
-                        characters += i
-                    else:
-                        current_line += 1
-                        line_list.append(characters)
-                        if i not in [' ','-','/',':']:
-                            characters = i
-                        else:
-                            characters = ''
-                        current_width = 0
-                else:
-                    characters += i
-                    current_width = width(characters, font)
-        if characters:  # if there are remaining characters
-            line_list.append(characters)
-        return line_list
 
     
 def display_one(name):
@@ -492,7 +469,7 @@ def display_one(name):
     if info_lines:
         print(info_lines)
         for i in info_lines:
-            draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), i, font=MEDIUM_FONT, fill=GREY)
+            draw.text((SHOW_INFO_X, SHOW_INFO_ROW_1_Y + y_offset), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
             y_offset = 20
         
         image.paste(divider, (BOTTOM_DIVIDER_X, BOTTOM_DIVIDER_Y))    
