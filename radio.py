@@ -89,7 +89,7 @@ PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18
 ONE_NAME_X = 77
-ONE_NAME_Y = 22
+ONE_NAME_Y = 20
 ONE_LOC_X = ONE_NAME_X
 ONE_LOC_Y = ONE_NAME_Y + 25
 TOP_DIVIDER_X = 12
@@ -98,8 +98,6 @@ BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 175
 SHOW_ROW_1_X = TOP_DIVIDER_X
 SHOW_ROW_1_Y = 108
-SHOW_ROW_2_X = TOP_DIVIDER_X
-SHOW_ROW_2_Y = 134
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 175
 
@@ -446,9 +444,9 @@ def display_one(name):
 
     # logo
     logo = streams[name]['logo_smallest']
-    border = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*4, SMALLEST_LOGO_SIZE+BORDER_SIZE*4), color=BORDER_COLOR)
+    border = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*2, SMALLEST_LOGO_SIZE+BORDER_SIZE*2), color=BORDER_COLOR)
     image.paste(border, (ONE_LOGO_X-BORDER_SIZE*2, ONE_LOGO_Y-BORDER_SIZE*2))
-    image.paste(logo, (ONE_LOGO_X+BORDER_SIZE, ONE_LOGO_Y+BORDER_SIZE))
+    image.paste(logo, (ONE_LOGO_X, ONE_LOGO_Y))
 
     # name
     draw.text((ONE_NAME_X, ONE_NAME_Y), calculate_text(name, font=LARGE_FONT, max_width=223, lines=1)[0], font=LARGE_FONT, fill=TEXT_COLOR)
@@ -462,13 +460,11 @@ def display_one(name):
 
     # now playing
     y_offset = 0
-    info = streams[name]['oneLiner'].split(' - ')
-    print(info)
+    info = list(set(streams[name]['oneLiner'].split(' - ')))
     title_lines = calculate_text(info[0], font=LARGE_FONT, max_width=290, lines=2)
-    print(title_lines)
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=LARGE_FONT, fill=TEXT_COLOR)
-        y_offset += 20
+        y_offset += 22
 
     # other info
     y_offset = 0
