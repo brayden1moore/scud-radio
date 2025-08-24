@@ -461,7 +461,7 @@ def display_one(name):
     title_lines = calculate_text(info[0], font=BIGGEST_FONT, max_width=290, lines=num_title_lines)
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
-        y_offset += 24
+        y_offset += 28
 
     # other info
     y_offset = 0
