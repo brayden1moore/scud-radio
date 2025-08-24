@@ -458,6 +458,8 @@ def display_one(name):
 
     if len(info) == 1:
         num_title_lines = 4
+    elif len(info) == 2:
+        num_title_lines = 3
 
     title_lines = calculate_text(info[0], font=BIGGEST_FONT, max_width=290, lines=num_title_lines)
     for i in title_lines:
