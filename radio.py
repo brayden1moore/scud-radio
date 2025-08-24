@@ -456,7 +456,7 @@ def display_one(name):
     draw.text((ONE_LOC_X, ONE_LOC_Y), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=LARGE_FONT, fill=YELLOW)    
 
     # top divider
-    divider = Image.new('RGB', (BORDER_SIZE, 290), color=BORDER_COLOR)
+    divider = Image.new('RGB', (290,BORDER_SIZE), color=BORDER_COLOR)
     image.paste(divider, (TOP_DIVIDER_X, TOP_DIVIDER_Y))
 
     # now playing
