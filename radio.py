@@ -383,7 +383,7 @@ def display_everything(name, update=False, readied=False):
         location = streams[name]['location']
 
         draw.text((x(title, LARGE_FONT), TITLE_Y), title, font=LARGE_FONT, fill=TEXT_COLOR)
-        draw.text((x(f'{name}-{location}', MEDIUM_FONT), LOCATION_Y), f'{name}-{location}', font=MEDIUM_FONT, fill=TEXT_COLOR_2)
+        draw.text((x(f'{name} - {location}', MEDIUM_FONT), LOCATION_Y), f'{name}-{location}', font=MEDIUM_FONT, fill=TEXT_COLOR_2)
 
         '''
         show_logo_url = streams[name]['showLogo']
@@ -462,6 +462,7 @@ def display_one(name):
     # now playing
     y_offset = 0
     info = streams[name]['oneLiner'].split(' - ')
+    print(info)
     title_lines = calculate_text(info[0], font=LARGE_FONT, max_width=290, lines=2)
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=LARGE_FONT, fill=TEXT_COLOR)
