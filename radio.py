@@ -559,17 +559,17 @@ def show_volume_overlay(volume):
         img = current_image.copy()
         draw = ImageDraw.Draw(img)
         
-        bar_width = 320
-        bar_height = BORDER_SIZE
-        bar_x = 0
+        bar_width = BORDER_SIZE * 2
+        bar_height = 240
+        bar_x = 240
         bar_y = 0 
         
-        this_border_size = round(BORDER_SIZE/2)
-        draw.rectangle([bar_x-this_border_size, bar_y-this_border_size, bar_x+bar_width+this_border_size, bar_y+bar_height+this_border_size], fill=SLIDER_COLOR)
-        draw.rectangle([bar_x, bar_y, bar_x+bar_width, bar_y+bar_height], fill=SLIDER_BG)
+        this_border_size = round(BORDER_SIZE)
+        draw.rectangle([bar_x-bar_width, bar_y, bar_x+bar_width+this_border_size, bar_y+bar_height+this_border_size], fill=SLIDER_COLOR) # inner 
+        draw.rectangle([bar_x, bar_y, bar_x+bar_width, bar_y+bar_height], fill=SLIDER_BG) # outer
         
         volume_width = int((volume / 125) * bar_width)
-        draw.rectangle([bar_x, bar_y, bar_x+volume_width, bar_y+bar_height], fill=SLIDER_COLOR)
+        draw.rectangle([bar_x, bar_y, bar_x+bar_height, bar_y+volume_width], fill=SLIDER_COLOR)
         
         safe_display(img)
 
@@ -613,7 +613,7 @@ def shutdown():
 def periodic_update():
     global screen_on, last_input_time, streams, stream_list
 
-    if screen_on and (time.time() - last_input_time > 60):
+    if screen_on and (time.time() - last_input_time > 120):
         screen_on = False
         backlight_off()
         pass
