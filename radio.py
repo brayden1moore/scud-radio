@@ -397,14 +397,14 @@ def display_everything(name, update=False, readied=False):
         border3 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*2, SMALL_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
 
         # double prev
-        image.paste(border3, (DOUBLE_PREV_LOGO_X, SMALL_LOGO_Y))
+        image.paste(border3, (DOUBLE_PREV_LOGO_X, SMALLEST_LOGO_Y))
 
         # double next
-        image.paste(border3, (DOUBLE_NEXT_LOGO_X, SMALL_LOGO_Y))
+        image.paste(border3, (DOUBLE_NEXT_LOGO_X, SMALLEST_LOGO_Y))
 
         # paste
-        image.paste(double_prev, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE))
-        image.paste(double_next, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE))
+        image.paste(double_prev, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE))
+        image.paste(double_next, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE))
 
         # prev and next borders
         border3 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*2, SMALL_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
