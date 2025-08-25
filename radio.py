@@ -64,7 +64,7 @@ SLIDER_COLOR = BLACK
 BORDER_SIZE = 2
 
 LOGO_SIZE = 120
-LOGO_Y = 10
+LOGO_Y = 5
 LOGO_X = round(SCREEN_WIDTH/2) - round(LOGO_SIZE/2)
 
 READIED_LOGO_SIZE = 90
@@ -378,8 +378,8 @@ def display_everything(name, update=False, readied=False):
 
         image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
         draw = ImageDraw.Draw(image)
-        draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2+25], fill=WHITE)
-        draw.rectangle([0, SCREEN_HEIGHT/2+25, SCREEN_WIDTH, SCREEN_HEIGHT/2+26], fill=BLACK)
+        draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2+20], fill=WHITE)
+        draw.rectangle([0, SCREEN_HEIGHT/2+20, SCREEN_WIDTH, SCREEN_HEIGHT/2+21], fill=BLACK)
 
         logo = streams[name]['logo_full']
         readied_logo = streams[name]['logo_readied']
