@@ -83,7 +83,7 @@ DOUBLE_NEXT_LOGO_X = NEXT_LOGO_X + SMALL_LOGO_SIZE - 15 + BORDER_SIZE
 
 TITLE_Y = LOGO_SIZE + LOGO_Y
 LOCATION_Y = TITLE_Y + 31
-SUBTITLE_Y = LOCATION_Y + 30
+SUBTITLE_Y = LOCATION_Y + 35
 
 STATUS_SIZE = 25
 STATUS_LOCATION = (LOGO_X+round(LOGO_SIZE/2)-round(STATUS_SIZE/2), LOGO_Y+round(LOGO_SIZE/2)-round(STATUS_SIZE/2))
@@ -380,7 +380,10 @@ def display_everything(name, update=False, readied=False):
         draw = ImageDraw.Draw(image)
 
         yellow_band_height = 57
+
+        draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2], fill=BLACK)
         draw.rectangle([0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height], fill=YELLOW)
+
         draw.rectangle([0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT/2 + 1], fill=BLACK)
         draw.rectangle([0, SCREEN_HEIGHT/2 + yellow_band_height, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height + 1], fill=BLACK)
 
