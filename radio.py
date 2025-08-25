@@ -254,6 +254,7 @@ def get_streams():
 
 streams = get_streams()
 stream_list = list(streams.keys())
+stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites]
 
 # hat
 '''
@@ -684,6 +685,7 @@ def periodic_update():
                 if name in streams:
                     streams[name].update(v)
             stream_list = list(streams.keys())
+            stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites]
 
             if play_status != 'pause' and not readied_stream:
                 display_everything(stream, update=True)
