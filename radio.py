@@ -390,8 +390,8 @@ def display_everything(name, update=False, readied=False):
         readied_logo = streams[name]['logo_readied']
         prev = streams[prev_stream]['logo_small']
         next = streams[next_stream]['logo_small']
-        double_prev = streams[double_prev_stream]['logo_small']
-        double_next = streams[double_next_stream]['logo_small']
+        double_prev = streams[double_prev_stream]['logo_smallest']
+        double_next = streams[double_next_stream]['logo_smallest']
 
         # double prev and next borders
         border3 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*2, SMALL_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
