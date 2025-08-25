@@ -475,7 +475,10 @@ def display_one(name):
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BACKGROUND_COLOR)
     draw = ImageDraw.Draw(image)
 
-    yellow = Image.new('RGB', (SCREEN_WIDTH, TOP_DIVIDER_Y), color=YELLOW)
+    draw.rectangle([
+            0, 0, 
+            SCREEN_WIDTH, TOP_DIVIDER_Y
+                        ], fill=YELLOW)
 
     # logo
     logo = streams[name]['logo_smallest']
