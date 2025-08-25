@@ -379,7 +379,7 @@ def display_everything(name, update=False, readied=False):
         image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
         draw = ImageDraw.Draw(image)
 
-        yellow_band_height = 40
+        yellow_band_height = 47
 
         draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2], fill=BLACK)
         draw.rectangle([0, SCREEN_HEIGHT/2-30, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height], fill=YELLOW)
@@ -420,13 +420,13 @@ def display_everything(name, update=False, readied=False):
         image.paste(next, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE))
 
         if readied:
-            border2 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*4, READIED_LOGO_SIZE+BORDER_SIZE*4), color=YELLOW)
+            border2 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*6, READIED_LOGO_SIZE+BORDER_SIZE*6), color=YELLOW)
             border3 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*2, READIED_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
             image.paste(border2, (READIED_LOGO_X-BORDER_SIZE, READIED_LOGO_Y-BORDER_SIZE))
             image.paste(border3, (READIED_LOGO_X, READIED_LOGO_Y))
             image.paste(readied_logo, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE))
         else:
-            border3 = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*2, LOGO_SIZE+BORDER_SIZE*2), color=BORDER_COLOR)
+            border3 = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*3, LOGO_SIZE+BORDER_SIZE*3), color=BORDER_COLOR)
             image.paste(border3, (LOGO_X, LOGO_Y))
             image.paste(logo, (LOGO_X+BORDER_SIZE, LOGO_Y+BORDER_SIZE))
 
