@@ -83,7 +83,7 @@ DOUBLE_NEXT_LOGO_X = NEXT_LOGO_X + SMALL_LOGO_SIZE - 15 + BORDER_SIZE
 
 TITLE_Y = LOGO_SIZE + LOGO_Y + 10
 LOCATION_Y = TITLE_Y + 28
-SUBTITLE_Y = LOCATION_Y + 18
+SUBTITLE_Y = LOCATION_Y + 20
 
 STATUS_SIZE = 25
 STATUS_LOCATION = (LOGO_X+round(LOGO_SIZE/2)-round(STATUS_SIZE/2), LOGO_Y+round(LOGO_SIZE/2)-round(STATUS_SIZE/2))
@@ -378,8 +378,8 @@ def display_everything(name, update=False, readied=False):
 
         image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
         draw = ImageDraw.Draw(image)
-        draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2], fill=WHITE)
-        draw.rectangle([0, SCREEN_HEIGHT/2-1, SCREEN_WIDTH, SCREEN_HEIGHT/2+1], fill=BLACK)
+        #draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2+30], fill=WHITE)
+        draw.rectangle([0, SCREEN_HEIGHT/2+30, SCREEN_WIDTH, SCREEN_HEIGHT/2+31], fill=BLACK)
 
         logo = streams[name]['logo_full']
         readied_logo = streams[name]['logo_readied']
@@ -445,14 +445,14 @@ def display_everything(name, update=False, readied=False):
 
         location = streams[name]['location']
 
-        draw.text((x(name, LARGE_FONT), TITLE_Y), name, font=LARGE_FONT, fill=BLACK)
-        draw.text((x(location, MEDIUM_FONT), LOCATION_Y), location, font=MEDIUM_FONT, fill=BLACK)
+        draw.text((SHOW_INFO_X, TITLE_Y), name, font=LARGE_FONT, fill=BLACK)
+        draw.text((SHOW_INFO_X, LOCATION_Y), location, font=MEDIUM_FONT, fill=BLACK)
 
         y_offset = 0
         title_lines = calculate_text(streams[name]['oneLiner'], LARGE_FONT, 300, 3)
         for i in title_lines:
-            draw.text((x(i, MEDIUM_FONT), SUBTITLE_Y + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
-            y_offset += 22
+            draw.text((SHOW_INFO_X, SUBTITLE_Y + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
+            y_offset += 20
 
         '''
         show_logo_url = streams[name]['showLogo']
