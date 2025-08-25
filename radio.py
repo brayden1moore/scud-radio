@@ -1,22 +1,21 @@
-from PIL import Image, ImageDraw, ImageFont, ImageSequence
-from subprocess import Popen, run
-import subprocess
-import requests
-from datetime import date, datetime, timezone, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import time
-import signal
+from PIL import Image, ImageDraw, ImageFont, ImageSequence
+from datetime import date, datetime, timezone, timedelta
+from subprocess import Popen, run
+import driver as LCD_2inch
+from pathlib import Path
 from io import BytesIO
+import spidev as SPI
 import threading
-import random
+import requests
 import platform
+import random
+import signal
+import time
 import math
 import os
 
-import driver as LCD_2inch
-import spidev as SPI
-
-## scud
+## constants and variables
 
 # 2 inch
 RST = 27
@@ -52,6 +51,7 @@ FONT_SIZE = 6
 WHITE = (255,255,255)
 BLACK = (0,0,0)
 YELLOW = (255,255,0)
+BLUE = (0,187,255)
 GREY = (100,100,100)
 
 BORDER_COLOR = BLACK
@@ -116,6 +116,21 @@ BOTTOM_DIVIDER_Y = 170
 SHOW_INFO_X = TOP_DIVIDER_X
 SHOW_INFO_ROW_1_Y = 187
 
+def get_favorites():
+    path = Path("/var/lib/scud-radio")
+    path.mkdir(parents=True, exist_ok=True)
+    with open(path / 'favorites.txt', 'r') as f:
+        favorites = f.readlines()
+    return favorites
+
+def set_favorites(favorites):
+    path = Path("/var/lib/scud-radio")
+    path.mkdir(parents=True, exist_ok=True)
+    with open(path / 'favorites.txt', 'w') as f:
+        f.write('\n'.join(favorites))
+
+favorites = get_favorites()
+    
 def safe_display(image):
     global current_image
     if screen_on & (image != current_image):
@@ -360,6 +375,8 @@ def calculate_text(text, font, max_width, lines):
 def display_everything(name, update=False, readied=False):
     global streams, play_status, first_display
 
+    highlight_color = BLUE if name in favorites else YELLOW
+
     if readied:
         first_display = False
 
@@ -382,7 +399,7 @@ def display_everything(name, update=False, readied=False):
         yellow_band_height = 55
 
         draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2], fill=BLACK)
-        draw.rectangle([0, SCREEN_HEIGHT/2-21, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height], fill=YELLOW)
+        draw.rectangle([0, SCREEN_HEIGHT/2-21, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height], fill=highlight_color)
 
         draw.rectangle([0, SCREEN_HEIGHT/2 + yellow_band_height, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height + 1], fill=BLACK)
 
@@ -421,13 +438,13 @@ def display_everything(name, update=False, readied=False):
 
         if readied:
             border1 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*6, READIED_LOGO_SIZE+BORDER_SIZE*6), color=BLACK)
-            border2 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*4, READIED_LOGO_SIZE+BORDER_SIZE*4), color=YELLOW)
+            border2 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*4, READIED_LOGO_SIZE+BORDER_SIZE*4), color=highlight_color)
             border3 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*2, READIED_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
             image.paste(border1, (READIED_LOGO_X-BORDER_SIZE*2, READIED_LOGO_Y-BORDER_SIZE*2))
             image.paste(border2, (READIED_LOGO_X-BORDER_SIZE, READIED_LOGO_Y-BORDER_SIZE))
             image.paste(border3, (READIED_LOGO_X, READIED_LOGO_Y))
 
-            draw.rectangle([0, SCREEN_HEIGHT/2-21, SCREEN_WIDTH, SCREEN_HEIGHT/2-21+10], fill=YELLOW)
+            draw.rectangle([0, SCREEN_HEIGHT/2-21, SCREEN_WIDTH, SCREEN_HEIGHT/2-21+10], fill=highlight_color)
             image.paste(readied_logo, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE))
         else:
             border3 = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*3, LOGO_SIZE+BORDER_SIZE*3), color=BORDER_COLOR)
@@ -465,13 +482,15 @@ def display_everything(name, update=False, readied=False):
 
     
 def display_one(name):
+    highlight_color = BLUE if name in favorites else YELLOW
+
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BACKGROUND_COLOR)
     draw = ImageDraw.Draw(image)
 
     draw.rectangle([
             0, 0, 
             SCREEN_WIDTH, TOP_DIVIDER_Y
-                        ], fill=YELLOW)
+                        ], fill=highlight_color)
 
     # logo
     logo = streams[name]['logo_smallest']
@@ -609,6 +628,16 @@ def on_button_released():
         if not wake_screen() and readied_stream:
             confirm_seek()
 
+def toggle_favorite():
+    global favorites
+    if stream in favorites:
+        favorites = [i for i in favorites if i != stream]
+    else:
+        favorites.append(stream)
+        favorites = list(set(favorites))
+        set_favorites(favorites)
+
+    display_one(stream)
 
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation
@@ -690,7 +719,9 @@ def restart():
 from gpiozero import RotaryEncoder, Button
 
 click_button = Button(26)
+click_button.hold_time = 3
 click_button.when_pressed = on_button_pressed
+click_button.when_held = toggle_favorite
 
 CLK_PIN = 5 
 DT_PIN = 6   
