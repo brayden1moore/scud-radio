@@ -81,7 +81,7 @@ SMALLEST_LOGO_Y = LOGO_Y + round(LOGO_SIZE/2) - round(SMALLEST_LOGO_SIZE/2)
 DOUBLE_PREV_LOGO_X = PREV_LOGO_X - round(SMALLEST_LOGO_SIZE) + 15 - BORDER_SIZE
 DOUBLE_NEXT_LOGO_X = NEXT_LOGO_X + SMALL_LOGO_SIZE - 15 + BORDER_SIZE
 
-TITLE_Y = LOGO_SIZE + LOGO_Y + 10
+TITLE_Y = LOGO_SIZE + LOGO_Y
 LOCATION_Y = TITLE_Y + 30
 SUBTITLE_Y = LOCATION_Y + 20
 
@@ -376,10 +376,11 @@ def display_everything(name, update=False, readied=False):
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
-        image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
+        image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
         draw = ImageDraw.Draw(image)
-        draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2], fill=WHITE)
-        draw.rectangle([0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT/2+1], fill=BLACK)
+        draw.rectangle([0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT/2 + 62], fill=YELLOW)
+        draw.rectangle([0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT/2 + 1], fill=BLACK)
+        draw.rectangle([0, SCREEN_HEIGHT/2 + 62, SCREEN_WIDTH, SCREEN_HEIGHT/2 + 62 + 1], fill=BLACK)
 
         logo = streams[name]['logo_full']
         readied_logo = streams[name]['logo_readied']
@@ -424,17 +425,11 @@ def display_everything(name, update=False, readied=False):
             image.paste(logo, (LOGO_X+BORDER_SIZE, LOGO_Y+BORDER_SIZE))
 
         location = streams[name]['location']
+        title_line = calculate_text(streams[name]['oneLiner'], MEDIUM_FONT, 300, 1)
 
-        draw.text((SHOW_INFO_X, TITLE_Y), name, font=LARGE_FONT, fill=BLACK)
+        draw.text((SHOW_INFO_X, TITLE_Y), calculate_text(name, LARGE_FONT, 300, 1), font=LARGE_FONT, fill=BLACK)
         draw.text((SHOW_INFO_X, LOCATION_Y), location, font=MEDIUM_FONT, fill=BLACK)
-
-        info_items = streams[name]['oneLiner'].split(' - ')
-        title_line = calculate_text(info_items[0], MEDIUM_FONT, 300, 1)
-        if title_line:
-            draw.text((SHOW_INFO_X, SUBTITLE_Y), title_line[0], font=MEDIUM_FONT, fill=BLACK)
-        info_line = calculate_text(' - '.join(info_items[1:]), MEDIUM_FONT, 300, 1)
-        if info_line:
-            draw.text((SHOW_INFO_X, SUBTITLE_Y + 20), info_line[0], font=MEDIUM_FONT, fill=BLACK)
+        draw.text((SHOW_INFO_X, SUBTITLE_Y), title_line[0], font=MEDIUM_FONT, fill=BLACK)
 
         '''
         show_logo_url = streams[name]['showLogo']
