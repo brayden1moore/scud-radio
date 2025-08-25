@@ -209,7 +209,7 @@ def get_streams():
     global streams
 
     info = requests.get('https://internetradioprotocol.org/info').json()
-    active = {n: v for n, v in info.items() if v['status']=="Online"}
+    active = {n: v for n, v in info.items() if v['status']=="Online" and v['hidden']!=True}
     
     with ThreadPoolExecutor(max_workers=8) as exe:
         futures = [
