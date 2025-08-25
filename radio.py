@@ -645,15 +645,17 @@ def on_button_released():
 
 def toggle_favorite():
     global favorites, stream_list
-    if stream in favorites:
-        favorites = [i for i in favorites if i != stream]
-    else:
-        favorites.append(stream)
-        favorites = list(set(favorites))
-        set_favorites(favorites)
+    now = time.time()
+    if now - last_rotation > 2:
+        if stream in favorites:
+            favorites = [i for i in favorites if i != stream]
+        else:
+            favorites.append(stream)
+            favorites = list(set(favorites))
+            set_favorites(favorites)
 
-    stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites]
-    display_one(stream)
+        stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites]
+        display_one(stream)
 
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation
