@@ -646,7 +646,7 @@ def on_button_released():
 def toggle_favorite():
     global favorites, stream_list
     now = time.time()
-    if now - last_rotation > 2:
+    if now - last_rotation > 3:
         if stream in favorites:
             favorites = [i for i in favorites if i != stream]
         else:
@@ -738,7 +738,7 @@ def restart():
 from gpiozero import RotaryEncoder, Button
 
 click_button = Button(26)
-click_button.hold_time = 3
+click_button.hold_time = 4
 click_button.when_pressed = on_button_pressed
 click_button.when_held = toggle_favorite
 
