@@ -119,13 +119,13 @@ SHOW_INFO_ROW_1_Y = 187
 FAV_PATH = "/var/lib/scud-radio"
 
 def get_favorites():
-    Path.mkdir(FAV_PATH, parents=True, exist_ok=True)
+    os.makedirs(FAV_PATH, exist_ok=True)
     with open(FAV_PATH + '/favorites.txt', 'r') as f:
         favorites = f.readlines()
     return favorites
 
 def set_favorites(favorites):
-    Path.mkdir(FAV_PATH, parents=True, exist_ok=True)
+    os.makedirs(FAV_PATH, exist_ok=True)
     with open(FAV_PATH + '/favorites.txt', 'w') as f:
         f.write('\n'.join(favorites))
 
