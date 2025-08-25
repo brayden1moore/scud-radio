@@ -475,6 +475,8 @@ def display_one(name):
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BACKGROUND_COLOR)
     draw = ImageDraw.Draw(image)
 
+    yellow = Image.new('RGB', (SCREEN_WIDTH, TOP_DIVIDER_Y), color=YELLOW)
+
     # logo
     logo = streams[name]['logo_smallest']
     border = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*2, SMALLEST_LOGO_SIZE+BORDER_SIZE*2), color=BORDER_COLOR)
@@ -488,8 +490,8 @@ def display_one(name):
     draw.text((ONE_LOC_X, ONE_LOC_Y), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=TEXT_COLOR_2)    
 
     # top divider
-    divider = Image.new('RGB', (290,BORDER_SIZE), color=BORDER_COLOR)
-    image.paste(divider, (TOP_DIVIDER_X, TOP_DIVIDER_Y))
+    divider = Image.new('RGB', (SCREEN_WIDTH,BORDER_SIZE), color=BORDER_COLOR)
+    image.paste(divider, (0, TOP_DIVIDER_Y))
 
     # now playing
     y_offset = 0
@@ -518,7 +520,7 @@ def display_one(name):
     info_lines = calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines)
 
     if len(info) > 1:
-        image.paste(divider, (BOTTOM_DIVIDER_X, SHOW_ROW_1_Y + y_offset + 20))    
+        image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 20))    
 
     if info_lines:
         for i in info_lines:
