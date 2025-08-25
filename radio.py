@@ -530,9 +530,14 @@ def display_one(name):
         num_title_lines = 3
 
     title_lines = calculate_text(info[0], font=BIGGEST_FONT, max_width=290, lines=num_title_lines)
-    for i in title_lines:
-        draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
-        y_offset += 32
+    if len(info) == 1 and len(title_lines) == 2: # if two title lines and no other info
+        draw.text((SHOW_INFO_X, SCREEN_HEIGHT/2), title_lines[0], font=BIGGEST_FONT, fill=TEXT_COLOR)
+    elif len(info) == 1 and len(title_lines) == 1: # if one title line and no other info
+        draw.text((SHOW_INFO_X, SCREEN_HEIGHT/2 + 32), title_lines[0], font=BIGGEST_FONT, fill=TEXT_COLOR)
+    else:
+        for i in title_lines:
+            draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
+            y_offset += 32
 
     if len(title_lines) == 3:
         num_info_lines = 1
