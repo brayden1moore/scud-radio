@@ -82,7 +82,7 @@ DOUBLE_PREV_LOGO_X = PREV_LOGO_X - round(SMALLEST_LOGO_SIZE) + 15 - BORDER_SIZE
 DOUBLE_NEXT_LOGO_X = NEXT_LOGO_X + SMALL_LOGO_SIZE - 15 + BORDER_SIZE
 
 TITLE_Y = LOGO_SIZE + LOGO_Y + 10
-LOCATION_Y = TITLE_Y + 28
+LOCATION_Y = TITLE_Y + 30
 SUBTITLE_Y = LOCATION_Y + 20
 
 STATUS_SIZE = 25
@@ -448,11 +448,13 @@ def display_everything(name, update=False, readied=False):
         draw.text((SHOW_INFO_X, TITLE_Y), name, font=LARGE_FONT, fill=BLACK)
         draw.text((SHOW_INFO_X, LOCATION_Y), location, font=MEDIUM_FONT, fill=BLACK)
 
-        y_offset = 0
-        title_lines = calculate_text(streams[name]['oneLiner'], MEDIUM_FONT, 300, 3)
-        for i in title_lines:
-            draw.text((SHOW_INFO_X, SUBTITLE_Y + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
-            y_offset += 20
+        info_items = streams[name]['oneLiner'].split(' - ')
+        title_line = calculate_text(info_items[0], MEDIUM_FONT, 300, 1)
+        if title_line:
+            draw.text((SHOW_INFO_X, SUBTITLE_Y), title_line, font=MEDIUM_FONT, fill=BLACK)
+        info_line = calculate_text(' - '.join(info_items[1:]), MEDIUM_FONT, 300, 1)
+        if info_line:
+            draw.text((SHOW_INFO_X, SUBTITLE_Y + 20), info_line, font=MEDIUM_FONT, fill=BLACK)
 
         '''
         show_logo_url = streams[name]['showLogo']
