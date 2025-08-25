@@ -82,8 +82,8 @@ DOUBLE_PREV_LOGO_X = PREV_LOGO_X - round(SMALLEST_LOGO_SIZE) + 15 - BORDER_SIZE
 DOUBLE_NEXT_LOGO_X = NEXT_LOGO_X + SMALL_LOGO_SIZE - 15 + BORDER_SIZE
 
 TITLE_Y = LOGO_SIZE + LOGO_Y + 10
-SUBTITLE_Y = TITLE_Y + 25
-LOCATION_Y = SUBTITLE_Y + 15
+LOCATION_Y = TITLE_Y + 28
+SUBTITLE_Y = LOCATION_Y + 18
 
 STATUS_SIZE = 25
 STATUS_LOCATION = (LOGO_X+round(LOGO_SIZE/2)-round(STATUS_SIZE/2), LOGO_Y+round(LOGO_SIZE/2)-round(STATUS_SIZE/2))
@@ -377,6 +377,8 @@ def display_everything(name, update=False, readied=False):
                 double_next_stream = stream_list[1]
 
         image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
+        draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2], fill=WHITE)
+        draw.rectangle([0, SCREEN_HEIGHT/2-1, SCREEN_WIDTH, SCREEN_HEIGHT/2+1], fill=BLACK)
         draw = ImageDraw.Draw(image)
 
         logo = streams[name]['logo_full']
@@ -387,18 +389,18 @@ def display_everything(name, update=False, readied=False):
         double_next = streams[double_next_stream]['logo_smallest']
 
         # double prev and next borders
-        border = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*6, SMALLEST_LOGO_SIZE+BORDER_SIZE*6), color=BORDER_COLOR)
-        border2 = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*4, SMALLEST_LOGO_SIZE+BORDER_SIZE*4), color=BACKGROUND_COLOR)
+        #border = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*6, SMALLEST_LOGO_SIZE+BORDER_SIZE*6), color=BORDER_COLOR)
+        #border2 = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*4, SMALLEST_LOGO_SIZE+BORDER_SIZE*4), color=BACKGROUND_COLOR)
         border3 = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*2, SMALLEST_LOGO_SIZE+BORDER_SIZE*2), color=BORDER_COLOR)
 
         # double prev
-        image.paste(border, (DOUBLE_PREV_LOGO_X-BORDER_SIZE*2, SMALLEST_LOGO_Y-BORDER_SIZE*2))
-        image.paste(border2, (DOUBLE_PREV_LOGO_X-BORDER_SIZE, SMALLEST_LOGO_Y-BORDER_SIZE))
+        #image.paste(border, (DOUBLE_PREV_LOGO_X-BORDER_SIZE*2, SMALLEST_LOGO_Y-BORDER_SIZE*2))
+        #image.paste(border2, (DOUBLE_PREV_LOGO_X-BORDER_SIZE, SMALLEST_LOGO_Y-BORDER_SIZE))
         image.paste(border3, (DOUBLE_PREV_LOGO_X, SMALLEST_LOGO_Y))
 
         # double next
-        image.paste(border, (DOUBLE_NEXT_LOGO_X-BORDER_SIZE*2, SMALLEST_LOGO_Y-BORDER_SIZE*2))
-        image.paste(border2, (DOUBLE_NEXT_LOGO_X-BORDER_SIZE, SMALLEST_LOGO_Y-BORDER_SIZE))
+        #image.paste(border, (DOUBLE_NEXT_LOGO_X-BORDER_SIZE*2, SMALLEST_LOGO_Y-BORDER_SIZE*2))
+        #image.paste(border2, (DOUBLE_NEXT_LOGO_X-BORDER_SIZE, SMALLEST_LOGO_Y-BORDER_SIZE))
         image.paste(border3, (DOUBLE_NEXT_LOGO_X, SMALLEST_LOGO_Y))
 
         # paste
@@ -406,18 +408,18 @@ def display_everything(name, update=False, readied=False):
         image.paste(double_next, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE))
 
         # prev and next borders
-        border = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*6, SMALL_LOGO_SIZE+BORDER_SIZE*6), color=BORDER_COLOR)
-        border2 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*4, SMALL_LOGO_SIZE+BORDER_SIZE*4), color=BACKGROUND_COLOR)
+        #border = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*6, SMALL_LOGO_SIZE+BORDER_SIZE*6), color=BORDER_COLOR)
+        #border2 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*4, SMALL_LOGO_SIZE+BORDER_SIZE*4), color=BACKGROUND_COLOR)
         border3 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*2, SMALL_LOGO_SIZE+BORDER_SIZE*2), color=BORDER_COLOR)
 
         # prev
-        image.paste(border, (PREV_LOGO_X-BORDER_SIZE*2, SMALL_LOGO_Y-BORDER_SIZE*2))
-        image.paste(border2, (PREV_LOGO_X-BORDER_SIZE, SMALL_LOGO_Y-BORDER_SIZE))
+        #image.paste(border, (PREV_LOGO_X-BORDER_SIZE*2, SMALL_LOGO_Y-BORDER_SIZE*2))
+        #image.paste(border2, (PREV_LOGO_X-BORDER_SIZE, SMALL_LOGO_Y-BORDER_SIZE))
         image.paste(border3, (PREV_LOGO_X, SMALL_LOGO_Y))
 
         # next
-        image.paste(border, (NEXT_LOGO_X-BORDER_SIZE*2, SMALL_LOGO_Y-BORDER_SIZE*2))    
-        image.paste(border2, (NEXT_LOGO_X-BORDER_SIZE, SMALL_LOGO_Y-BORDER_SIZE))
+        #image.paste(border, (NEXT_LOGO_X-BORDER_SIZE*2, SMALL_LOGO_Y-BORDER_SIZE*2))    
+        #image.paste(border2, (NEXT_LOGO_X-BORDER_SIZE, SMALL_LOGO_Y-BORDER_SIZE))
         image.paste(border3, (NEXT_LOGO_X, SMALL_LOGO_Y))
 
         # paste
@@ -425,28 +427,32 @@ def display_everything(name, update=False, readied=False):
         image.paste(next, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE))
 
         if readied:
-            border = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*6, READIED_LOGO_SIZE+BORDER_SIZE*6), color=BORDER_COLOR)
-            border2 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*4, READIED_LOGO_SIZE+BORDER_SIZE*4), color=BACKGROUND_COLOR)
+            #border = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*6, READIED_LOGO_SIZE+BORDER_SIZE*6), color=BORDER_COLOR)
+            #border2 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*4, READIED_LOGO_SIZE+BORDER_SIZE*4), color=BACKGROUND_COLOR)
             border3 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*2, READIED_LOGO_SIZE+BORDER_SIZE*2), color=BORDER_COLOR)
-            image.paste(border, (READIED_LOGO_X-BORDER_SIZE*2, READIED_LOGO_Y-BORDER_SIZE*2))
-            image.paste(border2, (READIED_LOGO_X-BORDER_SIZE, READIED_LOGO_Y-BORDER_SIZE))
+            #image.paste(border, (READIED_LOGO_X-BORDER_SIZE*2, READIED_LOGO_Y-BORDER_SIZE*2))
+            #image.paste(border2, (READIED_LOGO_X-BORDER_SIZE, READIED_LOGO_Y-BORDER_SIZE))
             image.paste(border3, (READIED_LOGO_X, READIED_LOGO_Y))
             image.paste(readied_logo, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE))
         else:
-            border = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*6, LOGO_SIZE+BORDER_SIZE*6), color=BORDER_COLOR)
-            border2 = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*4, LOGO_SIZE+BORDER_SIZE*4), color=BACKGROUND_COLOR)
+            #border = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*6, LOGO_SIZE+BORDER_SIZE*6), color=BORDER_COLOR)
+            #border2 = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*4, LOGO_SIZE+BORDER_SIZE*4), color=BACKGROUND_COLOR)
             border3 = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*2, LOGO_SIZE+BORDER_SIZE*2), color=BORDER_COLOR)
-            image.paste(border, (LOGO_X-BORDER_SIZE*2, LOGO_Y-BORDER_SIZE*2))
-            image.paste(border2, (LOGO_X-BORDER_SIZE, LOGO_Y-BORDER_SIZE))
+            #image.paste(border, (LOGO_X-BORDER_SIZE*2, LOGO_Y-BORDER_SIZE*2))
+            #image.paste(border2, (LOGO_X-BORDER_SIZE, LOGO_Y-BORDER_SIZE))
             image.paste(border3, (LOGO_X, LOGO_Y))
             image.paste(logo, (LOGO_X+BORDER_SIZE, LOGO_Y+BORDER_SIZE))
 
-        title = calculate_text(streams[name]['oneLiner'], LARGE_FONT, 290, 1)[0]
         location = streams[name]['location']
 
         draw.text((x(name, LARGE_FONT), TITLE_Y), name, font=LARGE_FONT, fill=BLACK)
-        draw.text((x(title, MEDIUM_FONT), SUBTITLE_Y), title, font=MEDIUM_FONT, fill=BLACK)
         draw.text((x(location, MEDIUM_FONT), LOCATION_Y), location, font=MEDIUM_FONT, fill=BLACK)
+
+        y_offset = 0
+        title_lines = calculate_text(streams[name]['oneLiner'], LARGE_FONT, 300, 3)
+        for i in title_lines:
+            draw.text((x(i, MEDIUM_FONT), SUBTITLE_Y + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
+            y_offset += 22
 
         '''
         show_logo_url = streams[name]['showLogo']
@@ -660,7 +666,7 @@ def periodic_update():
                     streams[name].update(v)
             stream_list = list(streams.keys())
 
-            if play_status != 'pause':
+            if play_status != 'pause' and not readied_stream:
                 display_everything(stream, update=True)
                 
         except Exception as e:
