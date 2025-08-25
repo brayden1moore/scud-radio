@@ -378,8 +378,8 @@ def display_everything(name, update=False, readied=False):
 
         image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
         draw = ImageDraw.Draw(image)
-        draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2+20], fill=WHITE)
-        draw.rectangle([0, SCREEN_HEIGHT/2+20, SCREEN_WIDTH, SCREEN_HEIGHT/2+21], fill=BLACK)
+        draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2], fill=WHITE)
+        draw.rectangle([0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT/2+1], fill=BLACK)
 
         logo = streams[name]['logo_full']
         readied_logo = streams[name]['logo_readied']
