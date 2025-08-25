@@ -602,7 +602,7 @@ def confirm_seek():
     global readied_stream, stream
     if readied_stream:
         if stream != readied_stream:
-            pause()
+            #pause()
             stream = readied_stream
             play(stream)
         display_everything(stream)
@@ -738,7 +738,7 @@ def restart():
 from gpiozero import RotaryEncoder, Button
 
 click_button = Button(26)
-click_button.hold_time = 4
+click_button.hold_time = 3
 click_button.when_pressed = on_button_pressed
 click_button.when_held = toggle_favorite
 
