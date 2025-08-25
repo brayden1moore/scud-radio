@@ -644,7 +644,7 @@ def on_button_released():
             confirm_seek()
 
 def toggle_favorite():
-    global favorites
+    global favorites, stream_list
     if stream in favorites:
         favorites = [i for i in favorites if i != stream]
     else:
@@ -652,6 +652,7 @@ def toggle_favorite():
         favorites = list(set(favorites))
         set_favorites(favorites)
 
+    stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites]
     display_one(stream)
 
 def handle_rotation(direction):
