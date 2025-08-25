@@ -646,7 +646,7 @@ def on_button_released():
 def toggle_favorite():
     global favorites, stream_list
     now = time.time()
-    if now - last_rotation > 3:
+    if not rotated:
         if stream in favorites:
             favorites = [i for i in favorites if i != stream]
         else:
