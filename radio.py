@@ -64,7 +64,7 @@ SLIDER_COLOR = BLACK
 BORDER_SIZE = 2
 
 LOGO_SIZE = 120
-LOGO_Y = 25
+LOGO_Y = 15
 LOGO_X = round(SCREEN_WIDTH/2) - round(LOGO_SIZE/2)
 
 READIED_LOGO_SIZE = 90
@@ -441,17 +441,12 @@ def display_everything(name, update=False, readied=False):
             image.paste(border3, (LOGO_X, LOGO_Y))
             image.paste(logo, (LOGO_X+BORDER_SIZE, LOGO_Y+BORDER_SIZE))
 
-        parts = [
-            streams[name]['nowPlayingArtist'],
-            streams[name]['nowPlayingSubtitle'],
-            streams[name]['nowPlayingAdditionalInfo'],
-        ]
-
         title = calculate_text(streams[name]['oneLiner'], LARGE_FONT, 290, 1)[0]
         location = streams[name]['location']
 
-        draw.text((x(title, LARGE_FONT), TITLE_Y), title, font=LARGE_FONT, fill=TEXT_COLOR)
-        draw.text((x(f'{name} - {location}', MEDIUM_FONT), LOCATION_Y), f'{name} - {location}', font=MEDIUM_FONT, fill=TEXT_COLOR_2)
+        draw.text((x(name, LARGE_FONT), TITLE_Y), name, font=LARGE_FONT, fill=BLACK)
+        draw.text((x(title, MEDIUM_FONT), SUBTITLE_Y), title, font=MEDIUM_FONT, fill=BLACK)
+        draw.text((x(location, MEDIUM_FONT), LOCATION_Y), location, font=MEDIUM_FONT, fill=BLACK)
 
         '''
         show_logo_url = streams[name]['showLogo']
