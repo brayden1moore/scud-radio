@@ -379,10 +379,10 @@ def display_everything(name, update=False, readied=False):
         image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
         draw = ImageDraw.Draw(image)
 
-        yellow_band_height = 57
+        yellow_band_height = 77
 
         draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2], fill=BLACK)
-        draw.rectangle([0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height], fill=YELLOW)
+        draw.rectangle([0, SCREEN_HEIGHT/2-20, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height], fill=YELLOW)
 
         draw.rectangle([0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT/2 + 1], fill=BLACK)
         draw.rectangle([0, SCREEN_HEIGHT/2 + yellow_band_height, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height + 1], fill=BLACK)
