@@ -83,7 +83,7 @@ DOUBLE_NEXT_LOGO_X = NEXT_LOGO_X + SMALL_LOGO_SIZE - 15 + BORDER_SIZE
 
 TITLE_Y = LOGO_SIZE + LOGO_Y
 LOCATION_Y = TITLE_Y + 31
-SUBTITLE_Y = LOCATION_Y + 20
+SUBTITLE_Y = LOCATION_Y + 30
 
 STATUS_SIZE = 25
 STATUS_LOCATION = (LOGO_X+round(LOGO_SIZE/2)-round(STATUS_SIZE/2), LOGO_Y+round(LOGO_SIZE/2)-round(STATUS_SIZE/2))
@@ -428,7 +428,7 @@ def display_everything(name, update=False, readied=False):
 
         location = streams[name]['location']
         name_line = calculate_text(name, LARGE_FONT, 300, 1)
-        title_lines = calculate_text(streams[name]['oneLiner'], MEDIUM_FONT, 300, 3)
+        title_lines = calculate_text(streams[name]['oneLiner'], MEDIUM_FONT, 300, 2)
 
         draw.text((SHOW_INFO_X, TITLE_Y), name_line[0], font=LARGE_FONT, fill=BLACK)
         draw.text((SHOW_INFO_X, LOCATION_Y), location, font=MEDIUM_FONT, fill=BLACK)
