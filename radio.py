@@ -533,7 +533,7 @@ def display_one(name):
     if len(info) == 1 and len(title_lines) == 2: # if two title lines and no other info
         y_offset = 32
     elif len(info) == 1 and len(title_lines) == 1: # if one title line and no other info
-        y_offset = 64
+        y_offset = 50
 
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
