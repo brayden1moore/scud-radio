@@ -77,7 +77,7 @@ PREV_LOGO_X = LOGO_X - round(SMALL_LOGO_SIZE) + 15 - BORDER_SIZE
 NEXT_LOGO_X = LOGO_X + LOGO_SIZE - 15 + BORDER_SIZE
 
 SMALLEST_LOGO_SIZE = 50
-SMALLEST_LOGO_Y = LOGO_Y + round(LOGO_SIZE/2) - round(SMALLEST_LOGO_SIZE/2)
+SMALLEST_LOGO_Y = LOGO_Y + round(LOGO_SIZE/2) - round(SMALLEST_LOGO_SIZE/2) + 10
 DOUBLE_PREV_LOGO_X = PREV_LOGO_X - round(SMALLEST_LOGO_SIZE) + 15 - BORDER_SIZE
 DOUBLE_NEXT_LOGO_X = NEXT_LOGO_X + SMALL_LOGO_SIZE - 15 + BORDER_SIZE
 
@@ -394,7 +394,7 @@ def display_everything(name, update=False, readied=False):
         double_next = streams[double_next_stream]['logo_smallest']
 
         # double prev and next borders
-        border3 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*2, SMALL_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
+        border3 = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*2, SMALLEST_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
 
         # double prev
         image.paste(border3, (DOUBLE_PREV_LOGO_X, SMALLEST_LOGO_Y))
