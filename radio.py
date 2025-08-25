@@ -451,10 +451,10 @@ def display_everything(name, update=False, readied=False):
         info_items = streams[name]['oneLiner'].split(' - ')
         title_line = calculate_text(info_items[0], MEDIUM_FONT, 300, 1)
         if title_line:
-            draw.text((SHOW_INFO_X, SUBTITLE_Y), title_line, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((SHOW_INFO_X, SUBTITLE_Y), title_line[0], font=MEDIUM_FONT, fill=BLACK)
         info_line = calculate_text(' - '.join(info_items[1:]), MEDIUM_FONT, 300, 1)
         if info_line:
-            draw.text((SHOW_INFO_X, SUBTITLE_Y + 20), info_line, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((SHOW_INFO_X, SUBTITLE_Y + 20), info_line[0], font=MEDIUM_FONT, fill=BLACK)
 
         '''
         show_logo_url = streams[name]['showLogo']
