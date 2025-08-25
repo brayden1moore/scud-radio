@@ -81,7 +81,7 @@ SMALLEST_LOGO_Y = LOGO_Y + round(LOGO_SIZE/2) - round(SMALLEST_LOGO_SIZE/2)
 DOUBLE_PREV_LOGO_X = PREV_LOGO_X - round(SMALLEST_LOGO_SIZE) + 15 - BORDER_SIZE
 DOUBLE_NEXT_LOGO_X = NEXT_LOGO_X + SMALL_LOGO_SIZE - 15 + BORDER_SIZE
 
-TITLE_Y = LOGO_SIZE + LOGO_Y
+TITLE_Y = LOGO_SIZE + LOGO_Y - 10
 LOCATION_Y = TITLE_Y + 31
 SUBTITLE_Y = LOCATION_Y + 35
 
@@ -382,7 +382,7 @@ def display_everything(name, update=False, readied=False):
         yellow_band_height = 67
 
         draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2], fill=BLACK)
-        draw.rectangle([0, SCREEN_HEIGHT/2-20, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height], fill=YELLOW)
+        draw.rectangle([0, SCREEN_HEIGHT/2-30, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height], fill=YELLOW)
 
         draw.rectangle([0, SCREEN_HEIGHT/2 + yellow_band_height, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height + 1], fill=BLACK)
 
