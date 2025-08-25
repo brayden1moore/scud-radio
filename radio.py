@@ -376,7 +376,7 @@ def display_everything(name, update=False, readied=False):
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
-        image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BACKGROUND_COLOR)
+        image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
         draw = ImageDraw.Draw(image)
 
         logo = streams[name]['logo_full']
@@ -523,11 +523,11 @@ def display_one(name):
     info_lines = calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines)
 
     if len(info) > 1:
-        image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 20))    
+        image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 22))    
 
     if info_lines:
         for i in info_lines:
-            draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 30), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
+            draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 32), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
             y_offset += 20
         
 
