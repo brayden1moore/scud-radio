@@ -83,7 +83,7 @@ DOUBLE_NEXT_LOGO_X = NEXT_LOGO_X + SMALL_LOGO_SIZE - 15 + BORDER_SIZE
 
 TITLE_Y = LOGO_SIZE + LOGO_Y - 13
 LOCATION_Y = TITLE_Y + 31
-SUBTITLE_Y = LOCATION_Y + 40
+SUBTITLE_Y = LOCATION_Y + 45
 
 STATUS_SIZE = 25
 STATUS_LOCATION = (LOGO_X+round(LOGO_SIZE/2)-round(STATUS_SIZE/2), LOGO_Y+round(LOGO_SIZE/2)-round(STATUS_SIZE/2))
@@ -394,17 +394,17 @@ def display_everything(name, update=False, readied=False):
         double_next = streams[double_next_stream]['logo_smallest']
 
         # double prev and next borders
-        border3 = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*2, SMALLEST_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
+        border3 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*2, SMALL_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
 
         # double prev
-        image.paste(border3, (DOUBLE_PREV_LOGO_X, SMALLEST_LOGO_Y))
+        image.paste(border3, (DOUBLE_PREV_LOGO_X, SMALL_LOGO_Y))
 
         # double next
-        image.paste(border3, (DOUBLE_NEXT_LOGO_X, SMALLEST_LOGO_Y))
+        image.paste(border3, (DOUBLE_NEXT_LOGO_X, SMALL_LOGO_Y))
 
         # paste
-        image.paste(double_prev, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE))
-        image.paste(double_next, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE))
+        image.paste(double_prev, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE))
+        image.paste(double_next, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE))
 
         # prev and next borders
         border3 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*2, SMALL_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
