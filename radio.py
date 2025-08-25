@@ -427,7 +427,7 @@ def display_everything(name, update=False, readied=False):
         location = streams[name]['location']
         title_line = calculate_text(streams[name]['oneLiner'], MEDIUM_FONT, 300, 1)
 
-        draw.text((SHOW_INFO_X, TITLE_Y), calculate_text(name, LARGE_FONT, 300, 1), font=LARGE_FONT, fill=BLACK)
+        draw.text((SHOW_INFO_X, TITLE_Y), calculate_text(name, LARGE_FONT, 300, 1)[0], font=LARGE_FONT, fill=BLACK)
         draw.text((SHOW_INFO_X, LOCATION_Y), location, font=MEDIUM_FONT, fill=BLACK)
         draw.text((SHOW_INFO_X, SUBTITLE_Y), title_line[0], font=MEDIUM_FONT, fill=BLACK)
 
@@ -508,7 +508,6 @@ def display_one(name):
             draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 32), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
             y_offset += 20
         
-
     safe_display(image)
 
 
