@@ -395,7 +395,7 @@ def display_everything(name, update=False, readied=False):
         double_next = streams[double_next_stream]['logo_smallest']
 
         # double prev and next borders
-        border3 = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*2, SMALLEST_LOGO_SIZE+BORDER_SIZE*2), color=WHITE)
+        border3 = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*2, SMALLEST_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
 
         # double prev
         image.paste(border3, (DOUBLE_PREV_LOGO_X, SMALLEST_LOGO_Y))
@@ -408,7 +408,7 @@ def display_everything(name, update=False, readied=False):
         image.paste(double_next, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE))
 
         # prev and next borders
-        border3 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*2, SMALL_LOGO_SIZE+BORDER_SIZE*2), color=WHITE)
+        border3 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*2, SMALL_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
 
         # prev
         image.paste(border3, (PREV_LOGO_X, SMALL_LOGO_Y))
