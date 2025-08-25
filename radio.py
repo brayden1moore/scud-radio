@@ -64,7 +64,7 @@ SLIDER_COLOR = BLACK
 BORDER_SIZE = 2
 
 LOGO_SIZE = 120
-LOGO_Y = 15
+LOGO_Y = 10
 LOGO_X = round(SCREEN_WIDTH/2) - round(LOGO_SIZE/2)
 
 READIED_LOGO_SIZE = 90
@@ -378,8 +378,8 @@ def display_everything(name, update=False, readied=False):
 
         image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
         draw = ImageDraw.Draw(image)
-        #draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2+30], fill=WHITE)
-        draw.rectangle([0, SCREEN_HEIGHT/2+30, SCREEN_WIDTH, SCREEN_HEIGHT/2+31], fill=BLACK)
+        draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2+25], fill=WHITE)
+        draw.rectangle([0, SCREEN_HEIGHT/2+25, SCREEN_WIDTH, SCREEN_HEIGHT/2+26], fill=BLACK)
 
         logo = streams[name]['logo_full']
         readied_logo = streams[name]['logo_readied']
@@ -449,7 +449,7 @@ def display_everything(name, update=False, readied=False):
         draw.text((SHOW_INFO_X, LOCATION_Y), location, font=MEDIUM_FONT, fill=BLACK)
 
         y_offset = 0
-        title_lines = calculate_text(streams[name]['oneLiner'], LARGE_FONT, 300, 3)
+        title_lines = calculate_text(streams[name]['oneLiner'], MEDIUM_FONT, 300, 3)
         for i in title_lines:
             draw.text((SHOW_INFO_X, SUBTITLE_Y + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
             y_offset += 20
