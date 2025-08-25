@@ -381,7 +381,7 @@ def display_everything(name, update=False, readied=False):
 
         yellow_band_height = 55
 
-        draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2], fill=BLACK)
+        draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2], fill=WHITE)
         draw.rectangle([0, SCREEN_HEIGHT/2-21, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height], fill=YELLOW)
 
         draw.rectangle([0, SCREEN_HEIGHT/2 + yellow_band_height, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height + 1], fill=BLACK)
