@@ -421,7 +421,7 @@ def display_everything(name, update=False, readied=False):
         image.paste(next, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE))
 
         if readied:
-            border3 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*2, READIED_LOGO_SIZE+BORDER_SIZE*2), color=BORDER_COLOR)
+            border3 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*2, READIED_LOGO_SIZE+BORDER_SIZE*2), color=YELLOW)
             image.paste(border3, (READIED_LOGO_X, READIED_LOGO_Y))
             image.paste(readied_logo, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE))
         else:
@@ -519,7 +519,6 @@ def display_one(name):
             y_offset += 20
         
     safe_display(image)
-
 
 
 def toggle_stream(name):
