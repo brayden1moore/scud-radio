@@ -426,6 +426,8 @@ def display_everything(name, update=False, readied=False):
             image.paste(border1, (READIED_LOGO_X-BORDER_SIZE*2, READIED_LOGO_Y-BORDER_SIZE*2))
             image.paste(border2, (READIED_LOGO_X-BORDER_SIZE, READIED_LOGO_Y-BORDER_SIZE))
             image.paste(border3, (READIED_LOGO_X, READIED_LOGO_Y))
+
+            draw.rectangle([0, SCREEN_HEIGHT/2-20, SCREEN_WIDTH, SCREEN_HEIGHT/2-20+10], fill=YELLOW)
             image.paste(readied_logo, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE))
         else:
             border3 = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*3, LOGO_SIZE+BORDER_SIZE*3), color=BORDER_COLOR)
