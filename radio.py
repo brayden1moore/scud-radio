@@ -652,6 +652,7 @@ def safe_restart():
     image.paste(bg, (0, 0))
     safe_display(image)  
     backlight_off()
+    run(['cd','/home/scud/scud-radio'])
     run(['git','pull'])
     time.sleep(5)
     run(['sudo','systemctl', 'restart','radio'])
