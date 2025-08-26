@@ -326,7 +326,7 @@ def read_last_played():
 def pause(show_icon=False):
     global play_status, saved_image_while_paused, current_image
     #send_mpv_command({"command": ["stop"]})
-    send_mpv_command({"command": ["set_property", "volume", 0]})
+    #send_mpv_command({"command": ["set_property", "volume", 0]})
 
     if show_icon and current_image:
         saved_image_while_paused = current_image.copy()
