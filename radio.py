@@ -649,8 +649,9 @@ def safe_restart():
     bg = Image.open(f'assets/restart.png') 
     image.paste(bg, (0, 0))
     safe_display(image)  
-    time.sleep(3)
     backlight_off()
+    run(['git','pull'])
+    time.sleep(5)
     run(['sudo','systemctl', 'restart','radio'])
 
 def on_button_pressed():
