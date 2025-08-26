@@ -112,6 +112,13 @@ BIGGEST_FONT = ImageFont.truetype("assets/Arial Black.ttf",36)
 
 PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+BORDER_SIZE*2, LOGO_SIZE+BORDER_SIZE*2)))
 
+unfavorite = Image.open('assets/unfavorited.png').convert('RGBA')
+favorite1 = Image.open('assets/favorited1.png').convert('RGBA')
+favorite2 = Image.open('assets/favorited2.png').convert('RGBA')
+favorite3 = Image.open('assets/favorited3.png').convert('RGBA')
+favorite4 = Image.open('assets/favorited4.png').convert('RGBA')
+favorite_images = [favorite1, favorite2, favorite3, favorite4]
+
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18
 ONE_NAME_X = 77
@@ -671,13 +678,9 @@ def toggle_favorite():
     now = time.time()
     if not rotated:
         img = current_image.convert('RGBA')
-        unfavorite = Image.open('assets/unfavorited.png').convert('RGBA')
-        favorite = Image.open('assets/favorited.png').convert('RGBA')
         
         if stream in favorites:
             favorites = [i for i in favorites if i != stream]
-            img.paste(favorite, (0, 0), favorite)
-            disp.ShowImage(img)
             img.paste(unfavorite, (0, 0), unfavorite)
             disp.ShowImage(img)
         else:
@@ -686,11 +689,12 @@ def toggle_favorite():
             set_favorites(favorites)
             img.paste(unfavorite, (0, 0), unfavorite)
             disp.ShowImage(img) 
-            img.paste(favorite, (0, 0), favorite)
-            disp.ShowImage(img)           
+            for i in favorite_images:
+                img.paste(i, (0, 0), i)
+                disp.ShowImage(img)           
 
         stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites]
-        time.sleep(0.2)
+        time.sleep(0.3)
         display_one(stream)
 
 
