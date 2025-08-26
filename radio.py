@@ -6,6 +6,7 @@ import driver as LCD_2inch
 from pathlib import Path
 from io import BytesIO
 import spidev as SPI
+import subprocess
 import threading
 import requests
 import platform
@@ -170,7 +171,6 @@ def display_scud():
     image.paste(bg, (0, 0))
     safe_display(image)  
 
-
 def backlight_on():
     if disp:
         if current_image:
@@ -186,6 +186,7 @@ def backlight_off():
         disp.bl_DutyCycle(0)
     #GPIO.output(BACKLIGHT_PIN, GPIO.LOW)
 
+display_scud()
 
 mpv_process = Popen([
     "mpv",
@@ -196,7 +197,10 @@ mpv_process = Popen([
     f"--volume={current_volume}",
     "--volume-max=150",
     "--input-ipc-server=/tmp/mpvsocket"
-])
+], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+while not os.path.exists("/tmp/mpvsocket"):
+    time.sleep(0.1)
 
 #import st7789
 from gpiozero import Button
