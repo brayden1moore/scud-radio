@@ -671,8 +671,8 @@ def toggle_favorite():
     now = time.time()
     if not rotated:
         img = current_image.convert('RGBA')
-        unfavorite = Image.open('assets/unfavorite.png').convert('RGBA')
-        favorite = Image.open('assets/favorite.png').convert('RGBA')
+        unfavorite = Image.open('assets/unfavorited.png').convert('RGBA')
+        favorite = Image.open('assets/favorited.png').convert('RGBA')
         
         if stream in favorites:
             favorites = [i for i in favorites if i != stream]
