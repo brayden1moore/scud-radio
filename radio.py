@@ -10,11 +10,22 @@ import subprocess
 import threading
 import requests
 import platform
+import logging
 import random
 import signal
 import time
 import math
+import sys
 import os
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),  # This will go to journalctl
+        logging.FileHandler('/var/log/scud-radio.log')  # Optional: also log to file
+    ]
+)
 
 ## constants and variables
 
@@ -635,10 +646,11 @@ def on_button_pressed():
 
 button_press_times = []
 def on_button_released():
+     
     global button_press_times, rotated
 
-    print(button_press_times)
-    print('Release registered')
+    logging.info(f"Button press times: {button_press_times}")
+    logging.info("Release registered")
     
     current_time = time.time()
     if not readied_stream and False:
