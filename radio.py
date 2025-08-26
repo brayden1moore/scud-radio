@@ -215,6 +215,7 @@ mpv_process = Popen([
     "--audio-device=alsa",
     f"--volume={current_volume}",
     "--volume-max=150",
+    "--stream-buffer-size=512k", 
     "--input-ipc-server=/tmp/mpvsocket"
 ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -227,9 +228,13 @@ import socket
 import json
 
 def send_mpv_command(cmd):
-    with socket.socket(socket.AF_UNIX) as s:
-        s.connect("/tmp/mpvsocket")
-        s.sendall((json.dumps(cmd) + '\n').encode())
+    try:
+        with socket.socket(socket.AF_UNIX) as s:
+            s.connect("/tmp/mpvsocket")
+            s.sendall((json.dumps(cmd) + '\n').encode())
+            logging.info(f"Sent MPV command: {cmd}")
+    except Exception as e:
+        logging.error(f"MPV command failed: {e}")
 
 def fetch_logo(name, url):
     resp = requests.get(url, timeout=5)
@@ -740,7 +745,7 @@ def periodic_update():
                 display_everything(stream, update=True)
                 
         except Exception as e:
-            print(e)
+            logging.debug(e)
             pass
     
     threading.Timer(10, periodic_update).start()
