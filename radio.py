@@ -635,7 +635,7 @@ def on_button_pressed():
 
 button_press_times = []
 def on_button_released():
-    global button_press_time, rotated
+    global button_press_times, rotated
     
     current_time = time.time()
     if not readied_stream:
