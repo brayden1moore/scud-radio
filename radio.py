@@ -752,7 +752,7 @@ def restart():
 
 from gpiozero import RotaryEncoder, Button
 
-click_button = Button(26, bounce_time=0.1)
+click_button = Button(26, bounce_time=0.05)
 click_button.hold_time = 3
 click_button.when_pressed = on_button_pressed
 click_button.when_held = toggle_favorite
