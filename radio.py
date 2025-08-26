@@ -650,10 +650,10 @@ def safe_restart():
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg = Image.open(f'assets/restart.png') 
     image.paste(bg, (0, 0))
-    safe_display(image)  
-    backlight_off()
+    safe_display(image)
     run(['sudo', '-u','scud','git', 'pull'], cwd='/home/scud/scud-radio')
-    time.sleep(5)
+    time.sleep(5)  
+    backlight_off()
     run(['sudo','systemctl', 'restart','radio'])
 
 def on_button_pressed():
