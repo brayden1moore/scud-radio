@@ -693,7 +693,7 @@ def toggle_favorite():
             img.paste(unfavorite, (0, 0), unfavorite)
 
         stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites]
-        time.sleep(0.5)
+        time.sleep(0.2)
         display_one(stream)
 
 
