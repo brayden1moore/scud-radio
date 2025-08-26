@@ -169,21 +169,7 @@ def display_scud():
     bg = Image.open(f'assets/gif/1.png') 
     image.paste(bg, (0, 0))
     safe_display(image)  
-            
 
-    '''
-    bg = Image.open(f'assets/scudgif/background.png') 
-    image.paste(bg, (0, 0))
-    draw = ImageDraw.Draw(image)
-    safe_display(image)
-
-    img = Image.open(f'assets/scudgif/dancergifgif.gif')
-
-    for frame in ImageSequence.Iterator(img):
-        image.paste(img.resize((180,180)), (140, 0))
-        draw = ImageDraw.Draw(image)
-        safe_display(image)
-    '''
 
 def backlight_on():
     if disp:
@@ -199,8 +185,6 @@ def backlight_off():
         #display_scud()
         disp.bl_DutyCycle(0)
     #GPIO.output(BACKLIGHT_PIN, GPIO.LOW)
-
-display_scud()
 
 
 mpv_process = Popen([
@@ -630,6 +614,12 @@ def show_volume_overlay(volume):
         safe_display(img)
 
 def safe_shutdown():
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    bg = Image.open(f'assets/shutdown.png') 
+    image.paste(bg, (0, 0))
+    safe_display(image)  
+    time.sleep(3)
+    backlight_off()
     run(['sudo','halt'])
 
 button_press_times = []
