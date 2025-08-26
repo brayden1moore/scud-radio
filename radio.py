@@ -684,6 +684,7 @@ def toggle_favorite():
             for i in list(reversed(favorite_images)):
                 img.paste(i, (0, 0), i)
                 disp.ShowImage(img)  
+                img = current_image.convert('RGBA')
             img.paste(unfavorite, (0, 0), unfavorite)
             disp.ShowImage(img)
         else:
