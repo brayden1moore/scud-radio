@@ -113,11 +113,11 @@ BIGGEST_FONT = ImageFont.truetype("assets/Arial Black.ttf",36)
 PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+BORDER_SIZE*2, LOGO_SIZE+BORDER_SIZE*2)))
 
 unfavorite = Image.open('assets/unfavorited.png').convert('RGBA')
-favorite1 = Image.open('assets/favorited1.png').convert('RGBA')
-favorite2 = Image.open('assets/favorited2.png').convert('RGBA')
-favorite3 = Image.open('assets/favorited3.png').convert('RGBA')
-favorite4 = Image.open('assets/favorited4.png').convert('RGBA')
-favorite_images = [favorite1, favorite2, favorite3, favorite4]
+favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'), 
+                   Image.open('assets/favorited2.png').convert('RGBA'), 
+                   Image.open('assets/favorited3.png').convert('RGBA'), 
+                   Image.open('assets/favorited4.png').convert('RGBA'),
+                   Image.open('assets/favorited5.png').convert('RGBA')]
 
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18
