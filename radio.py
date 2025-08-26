@@ -622,31 +622,30 @@ def safe_shutdown():
     backlight_off()
     run(['sudo','halt'])
 
-button_press_times = []
 def on_button_pressed():
     global button_press_time, rotated, button_press_times
-    
-    current_time = time.time()
+    button_press_time = time.time()
     if readied_stream:
         confirm_seek()
-    else:
-        button_press_times.append(current_time)
-        button_press_times = [t for t in button_press_times if current_time - t <= 5.0]
-        
-        if len(button_press_times) >= 5:
-            safe_shutdown()
-            button_press_times = [] 
-            return
-        
-    button_press_time = time.time()
     rotated = False
 
+button_press_times = []
 def on_button_released():
     global button_press_time, rotated
     
     if (time.time() - button_press_time < 0.2) and not rotated:
         if not wake_screen() and readied_stream:
             confirm_seek()
+    
+    current_time = time.time()
+    if not readied_stream:
+        button_press_times.append(current_time)
+        button_press_times = [t for t in button_press_times if current_time - t <= 5.0]
+        
+        if len(button_press_times) >= 5:
+            button_press_times = [] 
+            safe_shutdown()
+            return    
 
 def toggle_favorite():
     global favorites, stream_list
