@@ -335,7 +335,6 @@ def calculate_text(text, font, max_width, lines):
     text = text.strip()
 
     if width(text, font) <= max_width:
-        print("returning just the text")
         return [text]
     
     else:
@@ -753,7 +752,7 @@ def restart():
 
 from gpiozero import RotaryEncoder, Button
 
-click_button = Button(26)
+click_button = Button(26, bounce_time=0.2)
 click_button.hold_time = 3
 click_button.when_pressed = on_button_pressed
 click_button.when_held = toggle_favorite
