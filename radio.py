@@ -64,6 +64,7 @@ WHITE = (255,255,255)
 BLACK = (0,0,0)
 YELLOW = (255,255,0)
 BLUE = (0,187,255)
+GREEN = (0,231,192)
 GREY = (100,100,100)
 
 BORDER_COLOR = BLACK
@@ -251,9 +252,16 @@ def get_streams():
 
     return active
 
+reruns = []
+def get_stream_list(streams):
+    global reruns 
+    stream_list = list(streams.keys())
+    reruns = [i for i in stream_list if any(j in streams[i]['oneLiner'].lower() for j in ['(r)','re-run','re-wav','restream','playlist'])]
+    stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites and i not in reruns] + [i for i in stream_list if i not in favorites and i in reruns]
+    return stream_list
+
 streams = get_streams()
-stream_list = list(streams.keys())
-stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites]
+stream_list = get_stream_list(streams)
 
 # hat
 '''
@@ -383,7 +391,7 @@ def calculate_text(text, font, max_width, lines):
 def display_everything(name, update=False, readied=False):
     global streams, play_status, first_display
 
-    highlight_color = YELLOW if name in favorites else BLUE
+    highlight_color = YELLOW if name in favorites else GREEN if name not in reruns else BLUE
 
     if readied:
         first_display = False
@@ -704,8 +712,7 @@ def periodic_update():
             for name, v in info.items():
                 if name in streams:
                     streams[name].update(v)
-            stream_list = list(streams.keys())
-            stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites]
+            stream_list = get_stream_list(streams)
 
             if play_status != 'pause' and not readied_stream:
                 display_everything(stream, update=True)
