@@ -617,14 +617,14 @@ def show_volume_overlay(volume):
         
         safe_display(img)
 
-def safe_shutdown():
+def safe_restart():
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    bg = Image.open(f'assets/shutdown.png') 
+    bg = Image.open(f'assets/restart.png') 
     image.paste(bg, (0, 0))
     safe_display(image)  
     time.sleep(3)
     backlight_off()
-    run(['sudo','halt'])
+    run(['sudo','systemctl', 'restart','radio'])
 
 def on_button_pressed():
     global button_press_time, rotated, button_press_times
@@ -637,10 +637,6 @@ button_press_times = []
 def on_button_released():
     global button_press_time, rotated
     
-    if (time.time() - button_press_time < 0.2) and not rotated:
-        if not wake_screen() and readied_stream:
-            confirm_seek()
-    
     current_time = time.time()
     if not readied_stream:
         button_press_times.append(current_time)
@@ -648,7 +644,7 @@ def on_button_released():
         
         if len(button_press_times) >= 5:
             button_press_times = [] 
-            safe_shutdown()
+            safe_restart()
             return    
 
 def toggle_favorite():
@@ -683,9 +679,6 @@ def handle_rotation(direction):
         if (time.time() - button_press_time > 1):
             last_rotation = time.time()
             seek_stream(direction)
-
-def shutdown():
-    run(['sudo', 'shutdown', 'now'])
 
 def periodic_update():
     global screen_on, last_input_time, streams, stream_list
@@ -749,6 +742,7 @@ click_button = Button(26)
 click_button.hold_time = 3
 click_button.when_pressed = on_button_pressed
 click_button.when_held = toggle_favorite
+click_button.when_released = on_button_released
 
 CLK_PIN = 5 
 DT_PIN = 6   
