@@ -212,9 +212,11 @@ mpv_process = Popen([
     "--idle=yes",
     "--no-video",
     f"--volume={current_volume}",
-    "--volume-max=150", 
-    "--input-ipc-server=/tmp/mpvsocket"
-], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    "--volume-max=150",
+    "--input-ipc-server=/tmp/mpvsocket",
+    "--msg-level=all=info",  # Add logging
+    "--log-file=/tmp/mpv_debug.log"  # Log to file
+], stdout=None, stderr=None)
 
 while not os.path.exists("/tmp/mpvsocket"):
     time.sleep(0.1)
