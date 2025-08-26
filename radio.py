@@ -681,14 +681,15 @@ def toggle_favorite():
         
         if stream in favorites:
             favorites = [i for i in favorites if i != stream]
+            for i in list(reversed(favorite_images)):
+                img.paste(i, (0, 0), i)
+                disp.ShowImage(img)  
             img.paste(unfavorite, (0, 0), unfavorite)
             disp.ShowImage(img)
         else:
             favorites.append(stream)
             favorites = list(set(favorites))
             set_favorites(favorites)
-            img.paste(unfavorite, (0, 0), unfavorite)
-            disp.ShowImage(img) 
             for i in favorite_images:
                 img.paste(i, (0, 0), i)
                 disp.ShowImage(img)           
