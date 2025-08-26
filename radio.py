@@ -648,11 +648,8 @@ def on_button_released():
      
     global button_press_times, rotated
 
-    logging.info(f"Button press times: {button_press_times}")
-    logging.info("Release registered")
-    
     current_time = time.time()
-    if not readied_stream and False:
+    if not readied_stream:
         button_press_times.append(current_time)
         button_press_times = [t for t in button_press_times if current_time - t <= 5.0]
         
