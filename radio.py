@@ -213,6 +213,7 @@ mpv_process = Popen([
     "--no-video",
     "--ao=alsa",
     "--audio-device=alsa",
+    "--audio-buffer=0.2",
     f"--volume={current_volume}",
     "--volume-max=150",
     "--stream-buffer-size=512k", 
