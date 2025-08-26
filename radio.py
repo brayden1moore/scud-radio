@@ -391,7 +391,7 @@ def calculate_text(text, font, max_width, lines):
 def display_everything(name, update=False, readied=False):
     global streams, play_status, first_display
 
-    highlight_color = YELLOW if name in favorites else GREEN if name not in reruns else BLUE
+    highlight_color = YELLOW if name in favorites else BLUE if name not in reruns else GREEN
 
     if readied:
         first_display = False
@@ -498,7 +498,7 @@ def display_everything(name, update=False, readied=False):
 
     
 def display_one(name):
-    highlight_color = YELLOW if name in favorites else BLUE
+    highlight_color = YELLOW if name in favorites else BLUE if name not in reruns else GREEN
 
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BACKGROUND_COLOR)
     draw = ImageDraw.Draw(image)
