@@ -10,6 +10,7 @@ import threading
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
 screen_on = True
+current_image = None
 
 # 2 inch
 RST = 27
@@ -26,11 +27,9 @@ disp.bl_DutyCycle(MAX_BL)
 def safe_display(image):
     global current_image
     if screen_on & (image != current_image):
-        #disp.display(image)
         disp.ShowImage(image) # for 2 inch
     current_image = image.copy()
     
-
 def display_scud():
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
     rotations = 0
