@@ -629,10 +629,27 @@ def show_volume_overlay(volume):
         
         safe_display(img)
 
+def safe_shutdown():
+    run(['sudo','halt'])
+
+button_press_times = []
 def on_button_pressed():
-    global button_press_time, rotated
+    global button_press_time, rotated, button_press_times
+    
+    current_time = time.time()
     if readied_stream:
         confirm_seek()
+    else:
+        button_press_times.append(current_time)
+        button_press_times = [t for t in button_press_times if current_time - t <= 5.0]
+        
+        if len(button_press_times) >= 5:
+            safe_shutdown()
+            button_press_times = [] 
+            return
+        
+        presses_in_last_5 += 1
+        
     button_press_time = time.time()
     rotated = False
 
