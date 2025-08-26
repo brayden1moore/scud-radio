@@ -120,7 +120,6 @@ if __name__ == '__main__':
         start_hotspot()
         app.run(debug=True, host='0.0.0.0', port=8888)
     else:
-        Device.pin_factory.reset()
         print("Internet connection already available. No configuration needed.")
         print("Starting radio")
         subprocess.run(['python', 'radio.py'])
