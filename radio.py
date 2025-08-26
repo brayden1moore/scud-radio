@@ -678,19 +678,16 @@ def toggle_favorite():
             favorites = [i for i in favorites if i != stream]
             img.paste(favorite, (0, 0), favorite)
             disp.ShowImage(img)
-            img.paste(current_image, (0, 0))
-            disp.ShowImage(img)
             img.paste(unfavorite, (0, 0), unfavorite)
             disp.ShowImage(img)
         else:
             favorites.append(stream)
             favorites = list(set(favorites))
             set_favorites(favorites)
-            img.paste(favorite, (0, 0), favorite)
-            disp.ShowImage(img)
-            img.paste(current_image, (0, 0))
-            disp.ShowImage(img)
             img.paste(unfavorite, (0, 0), unfavorite)
+            disp.ShowImage(img) 
+            img.paste(favorite, (0, 0), favorite)
+            disp.ShowImage(img)           
 
         stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites]
         time.sleep(0.2)
@@ -774,7 +771,7 @@ def restart():
 from gpiozero import RotaryEncoder, Button
 
 click_button = Button(26, bounce_time=0.05)
-click_button.hold_time = 3
+click_button.hold_time = 2
 click_button.when_pressed = on_button_pressed
 click_button.when_held = toggle_favorite
 click_button.when_released = on_button_released
