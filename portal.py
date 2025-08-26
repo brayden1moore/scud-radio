@@ -1,5 +1,6 @@
 from flask import Flask,request, render_template, session, redirect, url_for, jsonify
 from PIL import Image, ImageDraw, ImageFont, ImageSequence
+from gpiozero import Device
 import driver as LCD_2inch
 import subprocess
 import socket
@@ -19,46 +20,16 @@ BL = 23
 bus = 0 
 device = 0 
 MAX_BL = 100
-disp = LCD_2inch.LCD_2inch()
-disp.Init()
-disp.clear()
-disp.bl_DutyCycle(MAX_BL)
-
-def safe_display(image):
-    global current_image
-    if screen_on & (image != current_image):
-        disp.ShowImage(image) # for 2 inch
-    current_image = image.copy()
-    
-def display_scud():
-    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    rotations = 0
-    max_rotations = 2
-    while rotations <max_rotations:
-        for i in [2,3,4,5,6,7,1]:
-             
-            bg = Image.open(f'assets/gif/{i}.png') 
-            image.paste(bg, (0, 0))
-            safe_display(image)  
-
-            if i==1 and rotations==max_rotations-1:
-                time.sleep(0)
-            else:
-                time.sleep(0.01)
-
-        rotations += 1
-
-    bg = Image.open(f'assets/gif/1.png') 
-    image.paste(bg, (0, 0))
-    safe_display(image)  
 
 def display_setup():
+    disp = LCD_2inch.LCD_2inch()
+    disp.Init()
+    disp.clear()
+    disp.bl_DutyCycle(MAX_BL)
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg = Image.open(f'assets/setup.png') 
     image.paste(bg, (0, 0))
-    safe_display(image)  
-
-display_scud()
+    disp.ShowImage(image)
 
 app = Flask(__name__,
             static_folder='assets',
@@ -131,6 +102,7 @@ def connect():
         response = jsonify({'message': 'success', 'info': 'Device will switch networks in 3 seconds'})
         
         print("Starting radio")
+        Device.pin_factory.reset()
         subprocess.run(['python', 'radio.py'],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
@@ -148,6 +120,7 @@ if __name__ == '__main__':
         start_hotspot()
         app.run(debug=True, host='0.0.0.0', port=8888)
     else:
+        Device.pin_factory.reset()
         print("Internet connection already available. No configuration needed.")
         print("Starting radio")
         subprocess.run(['python', 'radio.py'])
