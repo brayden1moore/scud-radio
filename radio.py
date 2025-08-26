@@ -648,8 +648,6 @@ def on_button_pressed():
             button_press_times = [] 
             return
         
-        presses_in_last_5 += 1
-        
     button_press_time = time.time()
     rotated = False
 
