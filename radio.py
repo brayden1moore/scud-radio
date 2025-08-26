@@ -211,12 +211,8 @@ mpv_process = Popen([
     "mpv",
     "--idle=yes",
     "--no-video",
-    "--ao=alsa",
-    "--audio-device=alsa",
-    "--audio-buffer=0.2",
     f"--volume={current_volume}",
-    "--volume-max=150",
-    "--stream-buffer-size=512k", 
+    "--volume-max=150", 
     "--input-ipc-server=/tmp/mpvsocket"
 ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
