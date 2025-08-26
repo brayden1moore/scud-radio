@@ -671,9 +671,9 @@ def on_button_released():
     current_time = time.time()
     if not readied_stream:
         button_press_times.append(current_time)
-        button_press_times = [t for t in button_press_times if current_time - t <= 5.0]
+        button_press_times = [t for t in button_press_times if current_time - t <= 3.0]
         
-        if len(button_press_times) >= 5:
+        if len(button_press_times) >= 3:
             button_press_times = [] 
             safe_restart()
             return    
