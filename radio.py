@@ -647,11 +647,11 @@ def show_volume_overlay(volume):
         safe_display(img)
 
 def safe_restart():
+    run(['sudo', '-u','scud','git', 'pull'], cwd='/home/scud/scud-radio')
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg = Image.open(f'assets/restart.png') 
     image.paste(bg, (0, 0))
     safe_display(image)
-    run(['sudo', '-u','scud','git', 'pull'], cwd='/home/scud/scud-radio')
     time.sleep(5)  
     backlight_off()
     run(['sudo','systemctl', 'restart','radio'])

@@ -10,8 +10,6 @@ import threading
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
-screen_on = True
-current_image = None
 
 # 2 inch
 RST = 27
@@ -20,14 +18,22 @@ BL = 23
 bus = 0 
 device = 0 
 MAX_BL = 100
+disp = None
 
 def display_setup():
+    global disp
     disp = LCD_2inch.LCD_2inch()
     disp.Init()
     disp.clear()
     disp.bl_DutyCycle(MAX_BL)
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    bg = Image.open(f'assets/setup.png') 
+    bg = Image.open(f'assets/hello.png') 
+    image.paste(bg, (0, 0))
+    disp.ShowImage(image)
+
+def display_result(type):
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    bg = Image.open(f'assets/{"success" if type=="success" else "failure"}.png') 
     image.paste(bg, (0, 0))
     disp.ShowImage(image)
 
@@ -78,39 +84,22 @@ def submit():
         ssid = request.form['ssid']
         password = request.form['password']
 
-        session['ssid'] = ssid
-        session['password'] = password
-        
-        return redirect(url_for('success'))
-    
+        try:
+            result = subprocess.run(['nmcli', 'dev', 'wifi', 'connect', session['ssid'], 'password', session['password']],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                text=True, check=True)
+            
+            assert internet()
+            display_result('success')
+            Device.pin_factory.reset() 
+            subprocess.run(['python', 'radio.py'],
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            
+        except:
+            return redirect(url_for('index', wifi_networks=scan_wifi(), message="That didn't work. Try again!"))
+            
     else:
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
-    
-@app.route('/success', methods=['GET'])
-def success():
-    return render_template('success.html')
-
-@app.route('/connect', methods=['POST'])
-def connect():
-    try:
-        result = subprocess.run(['nmcli', 'dev', 'wifi', 'connect', session['ssid'], 'password', session['password']],
-                               stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                               text=True, check=True)
-        
-        assert internet()
-        start_hotspot()
-        response = jsonify({'message': 'success', 'info': 'Device will switch networks in 3 seconds'})
-        
-        print("Starting radio")
-        Device.pin_factory.reset()
-        subprocess.run(['python', 'radio.py'],
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
-        return response
-        
-    except:
-        print(f"WiFi connection failed")
-        return jsonify({'message': 'error', 'error': 'Connection failed'}), 400
 
 if __name__ == '__main__':
     connected = internet()
