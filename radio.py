@@ -754,6 +754,7 @@ def handle_rotation(direction):
             seek_stream(direction)
 
 def periodic_update():
+    global screen_on
     
     get_battery()
 
