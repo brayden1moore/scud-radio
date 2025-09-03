@@ -16,14 +16,15 @@ import signal
 import time
 import math
 import sys
+import re
 import os
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.StreamHandler(sys.stdout),  # This will go to journalctl
-        logging.FileHandler('/var/log/scud-radio.log')  # Optional: also log to file
+        logging.StreamHandler(sys.stdout),  
+        logging.FileHandler('/var/log/scud-radio.log')  
     ]
 )
 
@@ -55,6 +56,7 @@ current_volume = 65
 volume_step = 5  
 button_press_time = 0
 rotated = False
+battery = None
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -573,9 +575,34 @@ def display_one(name):
         for i in info_lines:
             draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 32), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
             y_offset += 20
-        
+
+    # battery
+    if battery:
+        outer_sq = draw.rectangle([269, 11, 309, 29], fill=BLACK)
+        nipple = draw.rectangle([309, 17, 311, 22], fill=BLACK)
+        inner_sq = draw.rectangle([271, 13, 271 + round(36*battery/100), 27], fill=highlight_color) # 36 is width of inner sq
+            
     safe_display(image)
 
+
+def get_battery():
+    global battery
+    try:
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        sock.connect('/tmp/pisugar-server.sock')
+        sock.send(b'get battery\n')
+        response = sock.recv(1024).decode().strip()
+        sock.close()
+        
+        match = re.search(r'battery:\s*(\d+)', response)
+        if match:
+            battery = int(match.group(1))
+        
+        return battery
+            
+    except:
+        return battery
+    
 
 def toggle_stream(name):
     global play_status
@@ -727,7 +754,8 @@ def handle_rotation(direction):
             seek_stream(direction)
 
 def periodic_update():
-    global screen_on, last_input_time, streams, stream_list
+    
+    get_battery()
 
     if screen_on and (time.time() - last_input_time > 120):
         screen_on = False
