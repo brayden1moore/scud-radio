@@ -1,6 +1,8 @@
+from flask import Flask,request, render_template, session, redirect, url_for, jsonify
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from PIL import Image, ImageDraw, ImageFont, ImageSequence
 from datetime import date, datetime, timezone, timedelta
+from gpiozero import Button, Device
 from subprocess import Popen, run
 import driver as LCD_2inch
 from pathlib import Path
@@ -12,12 +14,15 @@ import requests
 import platform
 import logging
 import random
+import socket
 import signal
+import json
 import time
 import math
 import sys
 import re
 import os
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -56,6 +61,7 @@ volume_step = 5
 button_press_time = 0
 rotated = False
 battery = None
+connected = False
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -136,6 +142,91 @@ BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 170
 SHOW_INFO_X = TOP_DIVIDER_X
 SHOW_INFO_ROW_1_Y = 187
+
+## wifi setup
+
+def display_setup():
+    global disp
+    disp = LCD_2inch.LCD_2inch()
+    disp.Init()
+    disp.clear()
+    disp.bl_DutyCycle(MAX_BL)
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    bg = Image.open(f'assets/hello.png') 
+    image.paste(bg, (0, 0))
+    disp.ShowImage(image)
+
+def display_result(type):
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    bg = Image.open(f'assets/{"success" if type=="success" else "failure"}.png') 
+    image.paste(bg, (0, 0))
+    disp.ShowImage(image)
+
+def start_hotspot():
+    subprocess.run(['sudo', 'nmcli','device', 'wifi', 'hotspot', 'ssid', 'Scud Radio', 'password', 'scudhouse'])
+
+def internet(host="8.8.8.8", port=53, timeout=3):
+    """
+    Host: 8.8.8.8 (google-public-dns-a.google.com)
+    OpenPort: 53/tcp
+    Service: domain (DNS/TCP)
+    """
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except socket.error as ex:
+        print(ex)
+        return False
+
+def scan_wifi():
+    options = []
+    result = subprocess.run(["nmcli", "--fields", "SSID", "device", "wifi", "list"],
+                                    stdout=subprocess.PIPE,
+                                    text=True, check=True)
+    scanoutput = result.stdout.strip()
+    for line in scanoutput.split('\n')[1:]:
+        ssid = line.strip()
+        if ssid != '--':
+            options.append(ssid)
+    return options
+
+app = Flask(__name__,
+            static_folder='assets',
+            template_folder='templates'
+            )
+app.secret_key = 'sticky-lemon'
+
+@app.route('/')
+def index():
+    wifi_networks = scan_wifi()
+    return render_template('index.html', wifi_networks=wifi_networks, message="")
+
+@app.route('/submit', methods=['POST','GET'])
+def submit():
+    if request.method == 'POST':
+        print(*list(request.form.keys()), sep=", ")
+        ssid = request.form['ssid']
+        password = request.form['password']
+
+        try:
+            result = subprocess.run(['nmcli', 'dev', 'wifi', 'connect', session['ssid'], 'password', session['password']],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                text=True, check=True)
+            
+            assert internet()
+            display_result('success')
+            Device.pin_factory.reset() 
+            subprocess.run(['python', 'radio.py'],
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            
+        except:
+            return redirect(url_for('index', wifi_networks=scan_wifi(), message="That didn't work. Try again!"))
+            
+    else:
+        return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
+
+## radio
 
 FAV_PATH = "/var/lib/scud-radio"
 
@@ -221,11 +312,6 @@ mpv_process = Popen([
 
 while not os.path.exists("/tmp/mpvsocket"):
     time.sleep(0.1)
-
-#import st7789
-from gpiozero import Button
-import socket
-import json
 
 def send_mpv_command(cmd):
     try:
@@ -753,28 +839,34 @@ def handle_rotation(direction):
             seek_stream(direction)
 
 def periodic_update():
-    global screen_on
+    global screen_on, connected
 
     get_battery()
+    connected = internet()
 
-    if screen_on and (time.time() - last_input_time > 120):
-        screen_on = False
-        backlight_off()
-        pass
+    if not connected:
+        display_setup()
+        start_hotspot()
+        app.run(debug=True, host='0.0.0.0', port=8888)
     else:
-        try:
-            info = requests.get('https://internetradioprotocol.org/info').json()
-            for name, v in info.items():
-                if name in streams:
-                    streams[name].update(v)
-            stream_list = get_stream_list(streams)
-
-            if play_status != 'pause' and not readied_stream:
-                display_everything(stream, update=True)
-                
-        except Exception as e:
-            logging.debug(e)
+        if screen_on and (time.time() - last_input_time > 120):
+            screen_on = False
+            backlight_off()
             pass
+        else:
+            try:
+                info = requests.get('https://internetradioprotocol.org/info').json()
+                for name, v in info.items():
+                    if name in streams:
+                        streams[name].update(v)
+                stream_list = get_stream_list(streams)
+
+                if play_status != 'pause' and not readied_stream:
+                    display_everything(stream, update=True)
+                    
+            except Exception as e:
+                logging.debug(e)
+                pass
     
     threading.Timer(10, periodic_update).start()
 
