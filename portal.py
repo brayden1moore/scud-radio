@@ -22,12 +22,15 @@ disp = None
 
 def display_setup():
     global disp
+    if disp is not None:
+        return 
+    
     disp = LCD_2inch.LCD_2inch()
     disp.Init()
     disp.clear()
     disp.bl_DutyCycle(MAX_BL)
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    bg = Image.open(f'assets/hello.png') 
+    bg = Image.open(f'assets/hello.png')
     image.paste(bg, (0, 0))
     disp.ShowImage(image)
 
