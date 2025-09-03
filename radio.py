@@ -1,8 +1,6 @@
-from flask import Flask,request, render_template, session, redirect, url_for, jsonify
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from PIL import Image, ImageDraw, ImageFont, ImageSequence
 from datetime import date, datetime, timezone, timedelta
-from gpiozero import Button, Device
 from subprocess import Popen, run
 import driver as LCD_2inch
 from pathlib import Path
@@ -14,15 +12,12 @@ import requests
 import platform
 import logging
 import random
-import socket
 import signal
-import json
 import time
 import math
 import sys
 import re
 import os
-
 
 logging.basicConfig(
     level=logging.INFO,
@@ -142,93 +137,6 @@ BOTTOM_DIVIDER_Y = 170
 SHOW_INFO_X = TOP_DIVIDER_X
 SHOW_INFO_ROW_1_Y = 187
 
-## wifi setup
-
-def safe_display(image):
-    global current_image
-    if screen_on & (image != current_image):
-        disp.ShowImage(image)
-    current_image = image.copy()
-
-def display_setup():
-
-    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    bg = Image.open(f'assets/hello.png') 
-    image.paste(bg, (0, 0))
-    safe_display(image)
-
-def display_result(type):
-    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    bg = Image.open(f'assets/{"success" if type=="success" else "failure"}.png') 
-    image.paste(bg, (0, 0))
-    safe_display(image)
-
-def start_hotspot():
-    subprocess.run(['sudo', 'nmcli','device', 'wifi', 'hotspot', 'ssid', 'Scud Radio', 'password', 'scudhouse'])
-
-def internet(host="8.8.8.8", port=53, timeout=3):
-    """
-    Host: 8.8.8.8 (google-public-dns-a.google.com)
-    OpenPort: 53/tcp
-    Service: domain (DNS/TCP)
-    """
-    try:
-        socket.setdefaulttimeout(timeout)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        return True
-    except socket.error as ex:
-        print(ex)
-        return False
-
-def scan_wifi():
-    options = []
-    result = subprocess.run(["nmcli", "--fields", "SSID", "device", "wifi", "list"],
-                                    stdout=subprocess.PIPE,
-                                    text=True, check=True)
-    scanoutput = result.stdout.strip()
-    for line in scanoutput.split('\n')[1:]:
-        ssid = line.strip()
-        if ssid != '--':
-            options.append(ssid)
-    return options
-
-app = Flask(__name__,
-            static_folder='assets',
-            template_folder='templates'
-            )
-app.secret_key = 'sticky-lemon'
-
-@app.route('/')
-def index():
-    wifi_networks = scan_wifi()
-    return render_template('index.html', wifi_networks=wifi_networks, message="")
-
-@app.route('/submit', methods=['POST','GET'])
-def submit():
-    if request.method == 'POST':
-        print(*list(request.form.keys()), sep=", ")
-        ssid = request.form['ssid']
-        password = request.form['password']
-
-        try:
-            result = subprocess.run(['nmcli', 'dev', 'wifi', 'connect', session['ssid'], 'password', session['password']],
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                text=True, check=True)
-            
-            assert internet()
-            display_result('success')
-            Device.pin_factory.reset() 
-            subprocess.run(['python', 'radio.py'],
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            
-        except:
-            return redirect(url_for('index', wifi_networks=scan_wifi(), message="That didn't work. Try again!"))
-            
-    else:
-        return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
-
-## radio
-
 FAV_PATH = "/var/lib/scud-radio"
 
 def get_favorites():
@@ -252,6 +160,14 @@ def set_favorites(favorites):
         f.write('\n'.join(favorites))
 
 favorites = get_favorites()
+    
+def safe_display(image):
+    global current_image
+    if screen_on & (image != current_image):
+        #disp.display(image)
+        disp.ShowImage(image) # for 2 inch
+    current_image = image.copy()
+    
 
 def display_scud():
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -306,6 +222,11 @@ mpv_process = Popen([
 while not os.path.exists("/tmp/mpvsocket"):
     time.sleep(0.1)
 
+#import st7789
+from gpiozero import Button
+import socket
+import json
+
 def send_mpv_command(cmd):
     try:
         with socket.socket(socket.AF_UNIX) as s:
@@ -351,6 +272,8 @@ def get_stream_list(streams):
     stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites and i not in reruns] + [i for i in stream_list if i not in favorites and i in reruns]
     return stream_list
 
+streams = get_streams()
+stream_list = get_stream_list(streams)
 
 # hat
 '''
@@ -830,34 +753,28 @@ def handle_rotation(direction):
             seek_stream(direction)
 
 def periodic_update():
-    global screen_on, connected
+    global screen_on
 
     get_battery()
-    connected = internet()
 
-    if not connected:
-        display_setup()
-        start_hotspot()
-        app.run(debug=True, host='0.0.0.0', port=8888)
+    if screen_on and (time.time() - last_input_time > 120):
+        screen_on = False
+        backlight_off()
+        pass
     else:
-        if screen_on and (time.time() - last_input_time > 120):
-            screen_on = False
-            backlight_off()
-            pass
-        else:
-            try:
-                info = requests.get('https://internetradioprotocol.org/info').json()
-                for name, v in info.items():
-                    if name in streams:
-                        streams[name].update(v)
-                stream_list = get_stream_list(streams)
+        try:
+            info = requests.get('https://internetradioprotocol.org/info').json()
+            for name, v in info.items():
+                if name in streams:
+                    streams[name].update(v)
+            stream_list = get_stream_list(streams)
 
-                if play_status != 'pause' and not readied_stream:
-                    display_everything(stream, update=True)
-                    
-            except Exception as e:
-                logging.debug(e)
-                pass
+            if play_status != 'pause' and not readied_stream:
+                display_everything(stream, update=True)
+                
+        except Exception as e:
+            logging.debug(e)
+            pass
     
     threading.Timer(10, periodic_update).start()
 
@@ -906,16 +823,11 @@ rotor = RotaryEncoder(CLK_PIN, DT_PIN)
 rotor.when_rotated_counter_clockwise = wrapped_action(lambda: handle_rotation(-1))
 rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1))
 
-
 last_played = read_last_played()
-connected = internet()
-if connected:
-    streams = get_streams()
-    stream_list = get_stream_list(streams)
-    if last_played:
-        play(last_played)
-    else:
-        play_random()
+if last_played:
+    play(last_played)
+else:
+    play_random()
 
 periodic_update()
 

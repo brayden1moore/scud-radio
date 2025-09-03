@@ -79,6 +79,7 @@ def index():
 
 @app.route('/submit', methods=['POST','GET'])
 def submit():
+    global disp
     if request.method == 'POST':
         print(*list(request.form.keys()), sep=", ")
         ssid = request.form['ssid']
@@ -91,8 +92,10 @@ def submit():
             
             assert internet()
             display_result('success')
-            Device.pin_factory.reset() 
-            subprocess.run(['python', 'radio.py'],
+            time.sleep(3)
+            disp = None
+            Device.close()
+            subprocess.run(['sudo','python', 'radio.py'],
                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             
         except:
@@ -111,5 +114,5 @@ if __name__ == '__main__':
     else:
         print("Internet connection already available. No configuration needed.")
         print("Starting radio")
-        subprocess.run(['python', 'radio.py'])
+        subprocess.run(['sudo','python', 'radio.py'])
         sys.exit(0)
