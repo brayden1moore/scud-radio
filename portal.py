@@ -98,8 +98,7 @@ def submit():
             time.sleep(3)
             disp = None
             Device.close()
-            subprocess.run(['sudo','systemctl', 'restart', 'radio'],
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.run(['sudo','python', 'radio.py'])
             sys.exit(0)
             
         except:
