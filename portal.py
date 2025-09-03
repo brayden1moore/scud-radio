@@ -113,7 +113,7 @@ if __name__ == '__main__':
     if not connected:
         display_setup()
         start_hotspot()
-        app.run(debug=True, host='0.0.0.0', port=8888)
+        app.run(host='0.0.0.0', port=8888, use_reloader=False)
     else:
         print("Internet connection already available. No configuration needed.")
         print("Starting radio")
