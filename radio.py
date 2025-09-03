@@ -23,8 +23,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.StreamHandler(sys.stdout),  
-        logging.FileHandler('/var/log/scud-radio.log')  
+        logging.StreamHandler(sys.stdout)
     ]
 )
 
@@ -755,7 +754,7 @@ def handle_rotation(direction):
 
 def periodic_update():
     global screen_on
-    
+
     get_battery()
 
     if screen_on and (time.time() - last_input_time > 120):
