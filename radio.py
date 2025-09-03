@@ -177,8 +177,6 @@ def internet(host="8.8.8.8", port=53, timeout=3):
     except socket.error as ex:
         print(ex)
         return False
-    
-connected = internet()
 
 def scan_wifi():
     options = []
@@ -914,8 +912,12 @@ rotor = RotaryEncoder(CLK_PIN, DT_PIN)
 rotor.when_rotated_counter_clockwise = wrapped_action(lambda: handle_rotation(-1))
 rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1))
 
+
 last_played = read_last_played()
-if connected():
+connected = internet()
+if connected:
+    streams = get_streams()
+    stream_list = get_stream_list(streams)
     if last_played:
         play(last_played)
     else:
