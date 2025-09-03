@@ -61,7 +61,6 @@ volume_step = 5
 button_press_time = 0
 rotated = False
 battery = None
-connected = False
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -178,6 +177,8 @@ def internet(host="8.8.8.8", port=53, timeout=3):
     except socket.error as ex:
         print(ex)
         return False
+    
+connected = internet()
 
 def scan_wifi():
     options = []
@@ -914,10 +915,11 @@ rotor.when_rotated_counter_clockwise = wrapped_action(lambda: handle_rotation(-1
 rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1))
 
 last_played = read_last_played()
-if last_played:
-    play(last_played)
-else:
-    play_random()
+if connected():
+    if last_played:
+        play(last_played)
+    else:
+        play_random()
 
 periodic_update()
 
