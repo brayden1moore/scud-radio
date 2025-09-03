@@ -144,22 +144,24 @@ SHOW_INFO_ROW_1_Y = 187
 
 ## wifi setup
 
+def safe_display(image):
+    global current_image
+    if screen_on & (image != current_image):
+        disp.ShowImage(image)
+    current_image = image.copy()
+
 def display_setup():
-    global disp
-    disp = LCD_2inch.LCD_2inch()
-    disp.Init()
-    disp.clear()
-    disp.bl_DutyCycle(MAX_BL)
+
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg = Image.open(f'assets/hello.png') 
     image.paste(bg, (0, 0))
-    disp.ShowImage(image)
+    safe_display(image)
 
 def display_result(type):
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg = Image.open(f'assets/{"success" if type=="success" else "failure"}.png') 
     image.paste(bg, (0, 0))
-    disp.ShowImage(image)
+    safe_display(image)
 
 def start_hotspot():
     subprocess.run(['sudo', 'nmcli','device', 'wifi', 'hotspot', 'ssid', 'Scud Radio', 'password', 'scudhouse'])
@@ -250,14 +252,6 @@ def set_favorites(favorites):
         f.write('\n'.join(favorites))
 
 favorites = get_favorites()
-    
-def safe_display(image):
-    global current_image
-    if screen_on & (image != current_image):
-        #disp.display(image)
-        disp.ShowImage(image) # for 2 inch
-    current_image = image.copy()
-    
 
 def display_scud():
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
