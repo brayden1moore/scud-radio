@@ -358,8 +358,6 @@ def get_stream_list(streams):
     stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites and i not in reruns] + [i for i in stream_list if i not in favorites and i in reruns]
     return stream_list
 
-streams = get_streams()
-stream_list = get_stream_list(streams)
 
 # hat
 '''
