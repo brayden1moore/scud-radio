@@ -89,7 +89,7 @@ def submit():
         password = request.form['password']
 
         try:
-            result = subprocess.run(['nmcli', 'dev', 'wifi', 'connect', session['ssid'], 'password', session['password']],
+            result = subprocess.run(['nmcli', 'dev', 'wifi', 'connect', ssid, 'password', password],
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                 text=True, check=True)
             
