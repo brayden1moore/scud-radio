@@ -819,7 +819,7 @@ def periodic_update():
                 sys.exit(0)
             pass
     
-    threading.Timer(1, periodic_update).start()
+    threading.Timer(5, periodic_update).start()
 
 
 def wake_screen():
@@ -877,7 +877,7 @@ periodic_update()
 try:
     while True:
         get_battery()
-        if screen_on and stream and readied_stream == False:
+        if screen_on and stream and readied_stream == None:
             display_everything(stream)
 
         if readied_stream and last_rotation and (time.time() - last_rotation > 5):
