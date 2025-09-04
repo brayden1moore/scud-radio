@@ -715,7 +715,8 @@ def get_battery():
         
         battery_line = lines[2].strip().split(': ')[1] 
         battery = int(float(battery_line))
-    except:
+    except Exception as e:
+        logging.info(e)
         return battery, charging
 
     return battery, charging
