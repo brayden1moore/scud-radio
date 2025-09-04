@@ -819,7 +819,7 @@ def periodic_update():
                 sys.exit(0)
             pass
     
-    threading.Timer(3, periodic_update).start()
+    threading.Timer(1, periodic_update).start()
 
 
 def wake_screen():
