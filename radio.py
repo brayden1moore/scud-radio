@@ -966,7 +966,7 @@ try:
             if screen_on and stream:
                 display_everything(stream)
 
-        time.sleep(1)
+        time.sleep(10)
 
 except KeyboardInterrupt:
     if mpv_process:
