@@ -378,6 +378,7 @@ def play(name, toggled=False):
         safe_display(saved_image_while_paused)
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
     else:
+        logging.info('attempting to play', name)
         stream_url = streams[name]['streamLink']
         send_mpv_command({"command": ["loadfile", stream_url, "replace"]})
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
