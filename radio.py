@@ -479,7 +479,8 @@ def display_everything(name, update=False, readied=False):
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
-        image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
+        bg_color = BLUE if name in favorites else WHITE 
+        image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=bg_color)
         draw = ImageDraw.Draw(image)
 
         yellow_band_height = 55
