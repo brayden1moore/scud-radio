@@ -843,6 +843,7 @@ try:
             readied_stream = None
             if screen_on and stream:
                 display_everything(stream)
+        get_battery()
         time.sleep(0.5)
 except KeyboardInterrupt:
     if mpv_process:
