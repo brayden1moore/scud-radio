@@ -819,7 +819,7 @@ def periodic_update():
                 sys.exit(0)
             pass
     
-    threading.Timer(10, periodic_update).start()
+    threading.Timer(3, periodic_update).start()
 
 
 def wake_screen():
@@ -885,7 +885,7 @@ try:
             if screen_on and stream:
                 display_everything(stream)
 
-        #time.sleep(0.5)
+        time.sleep(0.5)
 
 except KeyboardInterrupt:
     if mpv_process:
