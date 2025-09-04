@@ -112,6 +112,7 @@ def submit():
         time.sleep(3)
         disp.clear()
         disp.reset()
+        disp.close()
         backlight_off()
         logging.info('Killing self')
         result = subprocess.run(['sudo','netstat','-tulnp','|','grep','8888'],stdout=subprocess.PIPE,
