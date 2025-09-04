@@ -874,7 +874,7 @@ periodic_update()
 try:
     while True:
         get_battery()
-        if screen_on and stream and readied_stream == None:
+        if screen_on and stream:
             display_everything(stream)
 
         if readied_stream and last_rotation and (time.time() - last_rotation > 5):
