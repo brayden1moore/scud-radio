@@ -712,10 +712,10 @@ def get_battery():
 
         logging.info(lines)
         
-        charging_line = lines[1].strip().split(': ')[1] 
+        charging_line = lines[0].strip().split(': ')[1] 
         charging = charging_line == 'true'
         
-        battery_line = lines[2].strip().split(': ')[1] 
+        battery_line = lines[1].strip().split(': ')[1] 
         battery = int(float(battery_line))
     except Exception as e:
         logging.info(e)
