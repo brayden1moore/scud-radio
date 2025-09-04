@@ -844,13 +844,21 @@ else:
 
 periodic_update()
 
+time_since_last_battery_check = 0
 try:
     while True:
+        if time_since_last_battery_check == 2:
+            get_battery()
+            time_since_last_battery_check = 0
+            
         if readied_stream and last_rotation and (time.time() - last_rotation > 5):
             readied_stream = None
             if screen_on and stream:
                 display_everything(stream)
+
         time.sleep(0.5)
+        time_since_last_battery_check += 0.5
+
 except KeyboardInterrupt:
     if mpv_process:
         mpv_process.terminate()
