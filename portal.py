@@ -7,6 +7,7 @@ import socket
 import sys
 import time
 import threading
+import os
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -96,10 +97,12 @@ def submit():
             assert internet()
             display_result('success')
             time.sleep(3)
+            if disp is not None:
+                disp.clear()
             disp = None
             Device.close()
-            subprocess.run(['sudo','python', 'radio.py'])
-            sys.exit(0)
+            time.sleep(1)
+            os.execv('/usr/bin/sudo', ['sudo', 'python', 'radio.py'])
             
         except:
             return redirect(url_for('index', wifi_networks=scan_wifi(), message="That didn't work. Try again!"))
