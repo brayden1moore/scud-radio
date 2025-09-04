@@ -102,8 +102,8 @@ def submit():
             disp = None
             Device.close()
             time.sleep(1)
-            os.execv('/usr/bin/sudo', ['sudo', 'python', 'radio.py'])
-            
+            subprocess.run(['sudo','systemctl', 'restart','radio'])
+               
         except:
             return redirect(url_for('index', wifi_networks=scan_wifi(), message="That didn't work. Try again!"))
             
