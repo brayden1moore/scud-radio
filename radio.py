@@ -215,6 +215,7 @@ mpv_process = Popen([
     "--volume-max=150",
     "--input-ipc-server=/tmp/mpvsocket",
     "--msg-level=all=info", 
+    "--msg-level=ipc=no",
     "--log-file=/tmp/mpv_debug.log" 
 ], stdout=None, stderr=None)
 
