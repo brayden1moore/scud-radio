@@ -589,10 +589,12 @@ def display_one(name):
             y_offset += 20
 
     # battery
+    if not battery:
+        get_battery()
     if battery:
         outer_sq = draw.rectangle([278, 11, 306, 24], fill=BLACK)
         nipple = draw.rectangle([306, 15, 307, 20], fill=BLACK)
-        battery_color = GREEN if charging else highlight_color
+        battery_color = GREEN if charging else YELLOW
         inner_sq = draw.rectangle([280, 13, 280 + round(24*battery/100), 22], fill=battery_color) 
             
     safe_display(image)
