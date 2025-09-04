@@ -626,8 +626,6 @@ def display_one(name):
     safe_display(image)
 
 def display_battery(draw):
-    if not battery:
-        get_battery()
     if battery:
         outer_sq = draw.rectangle([278, 11, 306, 24], fill=BLACK)
         nipple = draw.rectangle([306, 15, 307, 20], fill=BLACK)
