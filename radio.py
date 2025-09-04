@@ -180,7 +180,7 @@ def get_last_volume():
         volume_file.touch() 
         return 65
     
-    with open(vol_path, 'r') as f:
+    with open(volume_file, 'r') as f:
         vol = int(f.read())
     return vol
 
