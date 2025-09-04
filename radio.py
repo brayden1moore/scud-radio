@@ -857,7 +857,7 @@ def handle_rotation(direction):
             current_volume = max(0, current_volume - volume_step)
 
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
-        set_last_volume(current_volume)
+        set_last_volume(str(current_volume))
         show_volume_overlay(current_volume)
 
     else:
