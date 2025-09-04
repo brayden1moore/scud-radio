@@ -790,8 +790,6 @@ failed_fetches = 0
 def periodic_update():
     global screen_on, failed_fetches
 
-    get_battery()
-
     if screen_on and (time.time() - last_input_time > 120):
         screen_on = False
         backlight_off()
