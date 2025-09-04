@@ -12,6 +12,7 @@ import requests
 import platform
 import logging
 import random
+import pickle
 import signal
 import time
 import math
@@ -138,10 +139,10 @@ BOTTOM_DIVIDER_Y = 170
 SHOW_INFO_X = TOP_DIVIDER_X
 SHOW_INFO_ROW_1_Y = 187
 
-FAV_PATH = "/var/lib/scud-radio"
+LIB_PATH = "/var/lib/scud-radio"
 
 def get_favorites():
-    fav_path = Path(FAV_PATH)
+    fav_path = Path(LIB_PATH)
     fav_path.mkdir(parents=True, exist_ok=True)
     
     favorites_file = fav_path / 'favorites.txt'
@@ -154,7 +155,7 @@ def get_favorites():
     return [fav.strip() for fav in favorites]
 
 def set_favorites(favorites):
-    fav_path = Path(FAV_PATH)
+    fav_path = Path(LIB_PATH)
     fav_path.mkdir(parents=True, exist_ok=True)
     
     with open(fav_path / 'favorites.txt', 'w') as f:
@@ -248,20 +249,48 @@ def get_streams():
     info = requests.get('https://internetradioprotocol.org/info').json()
     active = {n: v for n, v in info.items() if v['status']=="Online" and v['hidden']!=True}
     
+    # see if cached image exists. if so, read into dict. if not, add to queue.
+    need_imgs = []
+    for name, _ in active.items():
+        full_img_path = Path(LIB_PATH) / f'{name}_logo_full.pkl'
+        if not need_imgs.exists():
+            need_imgs.append(name)
+        else:
+            for i in ['full','readied','small','smallest']:
+                with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
+                    active[name][f'logo_{i}'] = pickle.load(f)
+
     with ThreadPoolExecutor(max_workers=8) as exe:
         futures = [
             exe.submit(fetch_logo, name, v['logo'])
-            for name, v in active.items()
+            for name, v in active.items() if name in need_imgs
         ]
         for f in as_completed(futures):
             name, buf = f.result()
             active[name]['logoBytes'] = buf
 
             img = Image.open(buf).convert('RGB')
-            active[name]['logo_full']  = img.resize((LOGO_SIZE,  LOGO_SIZE))
-            active[name]['logo_readied']  = img.resize((READIED_LOGO_SIZE,  READIED_LOGO_SIZE))
-            active[name]['logo_small'] = img.resize((SMALL_LOGO_SIZE, SMALL_LOGO_SIZE))
-            active[name]['logo_smallest'] = img.resize((SMALLEST_LOGO_SIZE, SMALLEST_LOGO_SIZE))
+
+            # crop images
+            full_img = img.resize((LOGO_SIZE,  LOGO_SIZE))
+            readied_img = img.resize((READIED_LOGO_SIZE,  READIED_LOGO_SIZE))
+            small_img = img.resize((SMALL_LOGO_SIZE, SMALL_LOGO_SIZE))
+            smallest_img = img.resize((SMALLEST_LOGO_SIZE, SMALLEST_LOGO_SIZE))
+    
+            # save images to dict
+            active[name]['logo_full'] = full_img
+            active[name]['logo_readied']  = readied_img
+            active[name]['logo_small'] = small_img
+            active[name]['logo_smallest'] = smallest_img
+
+            # save images to lib
+            for i in ['full','readied','small','smallest']:
+                entire_path = Path(LIB_PATH) / f'{name}_logo_{i}.pkl'
+                if not entire_path.exists():
+                    entire_path.touch() 
+
+                with open(entire_path, 'wb') as f:
+                    pickle.dump(active[name][f'logo_{i}'], f)
 
     return active
 
@@ -615,7 +644,7 @@ def get_battery():
 
     battery_status = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
                               input='get battery\n', stdout=subprocess.PIPE, text=True)
-    battery = int(battery_status.stdout.strip().split(': ')[1])
+    battery = int(float(battery_status.stdout.strip().split(': ')[1]))
 
     return battery, charging
     
@@ -850,12 +879,13 @@ try:
         if time_since_last_battery_check == 1.5:
             get_battery()
             time_since_last_battery_check = 0
+            if screen_on and stream and readied_stream == None:
+                display_everything(stream)
 
         if readied_stream and last_rotation and (time.time() - last_rotation > 5):
             readied_stream = None
-
-        if screen_on and stream and not readied_stream:
-            display_everything(stream)
+            if screen_on and stream:
+                display_everything(stream)
 
         time.sleep(0.5)
         time_since_last_battery_check += 0.5
