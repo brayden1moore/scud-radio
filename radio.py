@@ -847,13 +847,13 @@ periodic_update()
 time_since_last_battery_check = 0
 try:
     while True:
-        if time_since_last_battery_check == 2:
+        if time_since_last_battery_check == 1.5:
             get_battery()
             time_since_last_battery_check = 0
 
         if readied_stream and last_rotation and (time.time() - last_rotation > 5):
             readied_stream = None
-            
+
         if screen_on and stream:
             display_everything(stream)
 
