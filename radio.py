@@ -637,17 +637,20 @@ def display_battery(draw):
 def get_battery():
     global battery, charging
 
-    result = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
-                            input='get battery_charging\nget battery\n', 
-                            stdout=subprocess.PIPE, text=True, timeout=2)
-    
-    lines = result.stdout.strip().split('\n')
-    
-    charging_line = lines[1].strip().split(': ')[1] 
-    charging = charging_line == 'true'
-    
-    battery_line = lines[2].strip().split(': ')[1] 
-    battery = int(float(battery_line))
+    try:
+        result = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
+                                input='get battery_charging\nget battery\n', 
+                                stdout=subprocess.PIPE, text=True, timeout=2)
+        
+        lines = result.stdout.strip().split('\n')
+        
+        charging_line = lines[1].strip().split(': ')[1] 
+        charging = charging_line == 'true'
+        
+        battery_line = lines[2].strip().split(': ')[1] 
+        battery = int(float(battery_line))
+    except:
+        return battery, charging
 
     return battery, charging
     
