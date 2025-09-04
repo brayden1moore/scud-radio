@@ -71,6 +71,7 @@ BLUE = (0,187,255)
 GREEN = (0,231,192)
 GREY = (100,100,100)
 ORANGE = (255,128,0)
+PURPLE = (134,97,245)
 
 BORDER_COLOR = BLACK
 TEXT_COLOR = BLACK
@@ -729,7 +730,7 @@ def show_volume_overlay(volume):
         draw.rectangle([
             SCREEN_WIDTH-7, SCREEN_HEIGHT-2, 
             SCREEN_WIDTH-2, volume_bar_end
-                        ], fill=ORANGE)
+                        ], fill=PURPLE)
         
         safe_display(img)
 
