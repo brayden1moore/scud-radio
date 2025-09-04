@@ -865,7 +865,7 @@ def toggle_favorite():
                 img.paste(i, (0, 0), i)
                 disp.ShowImage(img)           
 
-        stream_list = get_stream_list()
+        stream_list = stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
         time.sleep(0.3)
         display_one(stream)
 
