@@ -97,9 +97,8 @@ def submit():
             assert internet()
             display_result('success')
             time.sleep(3)
-            if disp is not None:
-                disp.clear()
-            disp = None
+            disp.clear()
+            disp.reset()
             Device.close()
             time.sleep(1)
             subprocess.run(['sudo','systemctl', 'restart','radio'])
