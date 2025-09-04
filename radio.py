@@ -637,6 +637,10 @@ def display_battery(draw):
         nipple = draw.rectangle([306, 15, 307, 20], fill=BLACK)
         battery_color = GREEN if charging else YELLOW
         inner_sq = draw.rectangle([280, 13, 280 + round(24*battery/100), 22], fill=battery_color) 
+        if battery == 100:
+            draw.text((283, 21), battery, font=SMALL_FONT, fill=BLACK)
+        else:
+            draw.text((286, 21), battery, font=SMALL_FONT, fill=BLACK)
 
 def get_battery():
     global battery, charging
