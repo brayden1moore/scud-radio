@@ -639,12 +639,12 @@ def get_battery():
 
     charge_status = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
                               input='get battery_charging\n', stdout=subprocess.PIPE, text=True)
-    result = charge_status.stdout.strip().split(': ')[1] 
+    result = charge_status.stdout.strip().split(': ')[1].str.replace('\nlong','')
     charging = result == 'true'
 
     battery_status = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
                               input='get battery\n', stdout=subprocess.PIPE, text=True)
-    battery = int(float(battery_status.stdout.strip().split(': ')[1]))
+    battery = int(float(battery_status.stdout.strip().split(': ')[1].str.replace('\nlong','')))
 
     return battery, charging
     
