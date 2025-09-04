@@ -101,7 +101,10 @@ def submit():
             disp.reset()
             Device.close()
             time.sleep(1)
-            subprocess.run(['python', 'radio.py'])
+            result = subprocess.Popen(['python', 'radio.py'],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                text=True, check=True)
+            print(result)
             time.sleep(1)
             sys.exit(0)
                
