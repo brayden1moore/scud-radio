@@ -775,12 +775,12 @@ def show_volume_overlay(volume):
                         ], fill=BLACK)
         
         draw.rectangle([
-            SCREEN_WIDTH-7, SCREEN_HEIGHT-2, 
+            SCREEN_WIDTH-7, SCREEN_HEIGHT, 
             SCREEN_WIDTH, TOP_DIVIDER_Y+2
                         ], fill=PURPLE)
         
         draw.rectangle([
-            SCREEN_WIDTH-7, SCREEN_HEIGHT-2, 
+            SCREEN_WIDTH-7, SCREEN_HEIGHT, 
             SCREEN_WIDTH, volume_bar_end
                         ], fill=ORANGE)
         
@@ -814,7 +814,7 @@ def on_button_released():
     current_time = time.time()
     if not readied_stream:
         set_last_volume(str(current_volume))
-        
+
         button_press_times.append(current_time)
         button_press_times = [t for t in button_press_times if current_time - t <= 3.0]
         
