@@ -449,8 +449,8 @@ def display_everything(name, update=False, readied=False):
     global streams, play_status, first_display
 
     highlight_color = YELLOW if name in favorites else BLUE if name not in reruns else GREEN
-
-    if readied:
+    
+    if readied and not restarting:
         first_display = False
 
         prev_stream = stream_list[stream_list.index(name)-1]
@@ -554,7 +554,8 @@ def display_everything(name, update=False, readied=False):
         safe_display(image) # display 
     
     else:
-        display_one(name)
+        if not restarting:
+            display_one(name)
 
     
 def display_one(name):
