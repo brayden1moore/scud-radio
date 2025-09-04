@@ -597,6 +597,10 @@ def display_one(name):
     safe_display(image)
 
 def display_battery(draw):
+    if not draw:
+        if current_image:
+            img = current_image.copy()
+            draw = ImageDraw.Draw(img)
     if not battery:
         get_battery()
     if battery:
@@ -604,6 +608,8 @@ def display_battery(draw):
         nipple = draw.rectangle([306, 15, 307, 20], fill=BLACK)
         battery_color = GREEN if charging else YELLOW
         inner_sq = draw.rectangle([280, 13, 280 + round(24*battery/100), 22], fill=battery_color) 
+    if img:
+        safe_display(img)
 
 def get_battery():
     global battery, charging
@@ -849,6 +855,7 @@ try:
     while True:
         if time_since_last_battery_check == 2:
             get_battery()
+            display_battery()
             time_since_last_battery_check = 0
 
         if readied_stream and last_rotation and (time.time() - last_rotation > 5):
