@@ -109,7 +109,7 @@ SMALL_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf", 10)
 MEDIUM_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf", 20)
 LARGE_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf",28)
 
-SMALL_FONT = ImageFont.truetype("assets/Arial Black.ttf", 10)
+SMALL_FONT = ImageFont.truetype("assets/andalemono.ttf", 10)
 MEDIUM_FONT = ImageFont.truetype("assets/andalemono.ttf", 20)
 LARGE_FONT = ImageFont.truetype("assets/Arial Black.ttf",28)
 BIGGEST_FONT = ImageFont.truetype("assets/Arial Black.ttf",36)
