@@ -253,7 +253,7 @@ def get_streams():
     need_imgs = []
     for name, _ in active.items():
         full_img_path = Path(LIB_PATH) / f'{name}_logo_full.pkl'
-        if not need_imgs.exists():
+        if not full_img_path.exists():
             need_imgs.append(name)
         else:
             for i in ['full','readied','small','smallest']:
