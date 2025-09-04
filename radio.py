@@ -125,6 +125,10 @@ favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'),
                    Image.open('assets/favorited4.png').convert('RGBA'),
                    Image.open('assets/favorited5.png').convert('RGBA')]
 
+star_smallest = Image.open('assets/star_smallest.png').convert('RGBA')
+star_small = Image.open('assets/star_small.png').convert('RGBA')
+star_readied = Image.open('assets/star_readied.png').convert('RGBA')
+
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18
 ONE_NAME_X = 77
@@ -509,6 +513,10 @@ def display_everything(name, update=False, readied=False):
         # paste
         image.paste(double_prev, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE))
         image.paste(double_next, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE))
+        if double_prev in favorites:
+            img.paste(star_smallest, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), star_smallest)
+        if double_next in favorites:
+            img.paste(star_smallest, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), star_smallest)
 
         # prev and next borders
         border3 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*2, SMALL_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
@@ -522,6 +530,10 @@ def display_everything(name, update=False, readied=False):
         # paste
         image.paste(prev, (PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE))
         image.paste(next, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE))
+        if prev in favorites:
+            img.paste(star_small, (PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), star_small)
+        if double_next in favorites:
+            img.paste(star_small, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), star_small)
 
         if readied:
             border1 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*6, READIED_LOGO_SIZE+BORDER_SIZE*6), color=BLACK)
@@ -533,6 +545,8 @@ def display_everything(name, update=False, readied=False):
 
             draw.rectangle([0, SCREEN_HEIGHT/2-21, SCREEN_WIDTH, SCREEN_HEIGHT/2-21+10], fill=highlight_color)
             image.paste(readied_logo, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE))
+            if prev in favorites:
+                image.paste(star_readied, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE), star_readied)
         else:
             border3 = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*3, LOGO_SIZE+BORDER_SIZE*3), color=BORDER_COLOR)
             image.paste(border3, (LOGO_X, LOGO_Y))
@@ -575,7 +589,7 @@ def display_everything(name, update=False, readied=False):
 def display_one(name):
     highlight_color = YELLOW if name in favorites else BLUE if name not in reruns else GREEN
 
-    bg_color = BLUE if name in favorites else WHITE 
+    bg_color = WHITE #BLUE if name in favorites else WHITE 
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=bg_color)
     draw = ImageDraw.Draw(image)
 
@@ -589,6 +603,8 @@ def display_one(name):
     border = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*2, SMALLEST_LOGO_SIZE+BORDER_SIZE*2), color=BORDER_COLOR)
     image.paste(border, (ONE_LOGO_X-BORDER_SIZE*2, ONE_LOGO_Y-BORDER_SIZE*2))
     image.paste(logo, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE))
+    if name in favorites:
+        image.paste(star_smallest, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE), star_smallest)
 
     # name
     draw.text((ONE_NAME_X, ONE_NAME_Y), calculate_text(name, font=LARGE_FONT, max_width=223, lines=1)[0], font=LARGE_FONT, fill=TEXT_COLOR)
