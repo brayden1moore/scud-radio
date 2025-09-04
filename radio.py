@@ -614,11 +614,11 @@ def get_battery():
         sock.close()
         match = re.search(r'battery_charging:\s*(\d+)', response)
         if match:
-            charging = int(match.group(1))
+            charging = bool(match.group(1))
         return battery, charging
             
     except:
-        return battery
+        return battery, charging
     
 
 def toggle_stream(name):
