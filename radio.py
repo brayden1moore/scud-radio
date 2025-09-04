@@ -709,6 +709,8 @@ def get_battery():
                                 stdout=subprocess.PIPE, text=True, timeout=2)
         
         lines = result.stdout.strip().split('\n')
+
+        logging.info(lines)
         
         charging_line = lines[1].strip().split(': ')[1] 
         charging = charging_line == 'true'
