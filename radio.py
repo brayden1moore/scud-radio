@@ -673,12 +673,12 @@ def show_volume_overlay(volume):
         safe_display(img)
 
 def safe_restart():
-    run(['sudo', '-u','scud','git', 'pull'], cwd='/home/scud/scud-radio')
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg = Image.open(f'assets/restart.png') 
     image.paste(bg, (0, 0))
     safe_display(image)
-    time.sleep(5)  
+    run(['sudo', '-u','scud','git', 'pull'], cwd='/home/scud/scud-radio')
+    time.sleep(4)  
     backlight_off()
     run(['sudo','systemctl', 'restart','radio'])
 
@@ -752,6 +752,7 @@ def handle_rotation(direction):
             last_rotation = time.time()
             seek_stream(direction)
 
+failed_fetches = 0
 def periodic_update():
     global screen_on
 
@@ -768,12 +769,19 @@ def periodic_update():
                 if name in streams:
                     streams[name].update(v)
             stream_list = get_stream_list(streams)
+            failed_fetches = 0
 
             if play_status != 'pause' and not readied_stream:
                 display_everything(stream, update=True)
                 
         except Exception as e:
-            logging.debug(e)
+            failed_fetches += 1
+            if failed_fetches == 3:
+                disp.clear()
+                disp.reset()
+                disp.close()
+                subprocess.run(['sudo','systemctl','restart','radio'])
+                sys.exit(0)
             pass
     
     threading.Timer(10, periodic_update).start()
