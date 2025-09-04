@@ -7,7 +7,16 @@ import socket
 import sys
 import time
 import threading
+import logging
 import os
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -20,6 +29,11 @@ bus = 0
 device = 0 
 MAX_BL = 100
 disp = None
+
+def backlight_off():
+    if disp:
+        #display_scud()
+        disp.bl_DutyCycle(0)
 
 def display_setup():
     global disp
@@ -99,12 +113,11 @@ def submit():
             time.sleep(3)
             disp.clear()
             disp.reset()
+            backlight_off()
             Device.close()
             time.sleep(1)
-            result = subprocess.Popen(['python', 'radio.py'],
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                text=True, check=True)
-            print(result)
+            #result = subprocess.Popen(['python', 'radio.py'],stdout=subprocess.PIPE, stderr=subprocess.PIPE,text=True, check=True)
+            #print(result)
             time.sleep(1)
             sys.exit(0)
                
