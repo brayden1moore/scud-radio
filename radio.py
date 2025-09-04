@@ -516,6 +516,9 @@ def display_everything(name, update=False, readied=False):
                 pass
         '''
 
+        # battery
+        display_battery(draw)
+
         safe_display(image) # display 
     
     else:
@@ -589,6 +592,11 @@ def display_one(name):
             y_offset += 20
 
     # battery
+    display_battery(draw)
+            
+    safe_display(image)
+
+def display_battery(draw):
     if not battery:
         get_battery()
     if battery:
@@ -596,9 +604,6 @@ def display_one(name):
         nipple = draw.rectangle([306, 15, 307, 20], fill=BLACK)
         battery_color = GREEN if charging else YELLOW
         inner_sq = draw.rectangle([280, 13, 280 + round(24*battery/100), 22], fill=battery_color) 
-            
-    safe_display(image)
-
 
 def get_battery():
     global battery, charging
