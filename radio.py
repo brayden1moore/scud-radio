@@ -614,7 +614,7 @@ def get_battery():
         sock.close()
         match = re.search(r'battery_charging:\s*(\d+)', response)
         if match:
-            charging = bool(match.group(1))
+            charging = bool(match.group(1).title())
         return battery, charging
             
     except:
