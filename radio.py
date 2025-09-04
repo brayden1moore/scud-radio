@@ -517,7 +517,7 @@ def display_everything(name, update=False, readied=False):
         '''
 
         # battery
-        display_battery(draw)
+        #display_battery(draw)
 
         safe_display(image) # display 
     
@@ -759,7 +759,7 @@ def handle_rotation(direction):
 
 failed_fetches = 0
 def periodic_update():
-    global screen_on
+    global screen_on, failed_fetches
 
     get_battery()
 
