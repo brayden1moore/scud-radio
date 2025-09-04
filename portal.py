@@ -120,5 +120,6 @@ if __name__ == '__main__':
     else:
         print("Internet connection already available. No configuration needed.")
         print("Starting radio")
-        subprocess.run(['sudo','python', 'radio.py'])
+        subprocess.run(['python', 'radio.py'])
+        time.sleep(1)
         sys.exit(0)
