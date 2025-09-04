@@ -214,8 +214,8 @@ mpv_process = Popen([
     f"--volume={current_volume}",
     "--volume-max=150",
     "--input-ipc-server=/tmp/mpvsocket",
-    "--msg-level=all=info",  # Add logging
-    "--log-file=/tmp/mpv_debug.log"  # Log to file
+    "--msg-level=all=info", 
+    "--log-file=/tmp/mpv_debug.log" 
 ], stdout=None, stderr=None)
 
 while not os.path.exists("/tmp/mpvsocket"):
@@ -225,14 +225,23 @@ from gpiozero import Button
 import socket
 import json
 
-def send_mpv_command(cmd):
-    try:
-        with socket.socket(socket.AF_UNIX) as s:
-            s.connect("/tmp/mpvsocket")
-            s.sendall((json.dumps(cmd) + '\n').encode())
-            logging.info(f"Sent MPV command: {cmd}")
-    except Exception as e:
-        logging.error(f"MPV command failed: {e}")
+def send_mpv_command(cmd, max_retries=5, retry_delay=0.5):
+    for attempt in range(max_retries):
+        try:
+            with socket.socket(socket.AF_UNIX) as s:
+                s.settimeout(2)
+                s.connect("/tmp/mpvsocket")
+                s.sendall((json.dumps(cmd) + '\n').encode())
+                logging.info(f"Sent MPV command: {cmd}")
+                return True
+        except (ConnectionRefusedError, FileNotFoundError, socket.timeout) as e:
+            if attempt < max_retries - 1:
+                logging.warning(f"MPV command failed (attempt {attempt + 1}/{max_retries}): {e}")
+                time.sleep(retry_delay)
+            else:
+                logging.error(f"MPV command failed after {max_retries} attempts: {e}")
+                return False
+    return False
 
 def fetch_logo(name, url):
     resp = requests.get(url, timeout=5)
