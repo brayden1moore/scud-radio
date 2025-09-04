@@ -589,7 +589,7 @@ def display_one(name):
 
     # battery
     if battery:
-        outer_sq = draw.rectangle([278, 11, 206, 24], fill=BLACK)
+        outer_sq = draw.rectangle([278, 11, 306, 24], fill=BLACK)
         nipple = draw.rectangle([306, 15, 307, 20], fill=BLACK)
         inner_sq = draw.rectangle([279, 12, 305 + round(26*battery/100), 23], fill=highlight_color) # 36 is width of inner sq
             
