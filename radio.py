@@ -56,6 +56,7 @@ volume_step = 5
 button_press_time = 0
 rotated = False
 battery = None
+charging = False
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -591,25 +592,30 @@ def display_one(name):
     if battery:
         outer_sq = draw.rectangle([278, 11, 306, 24], fill=BLACK)
         nipple = draw.rectangle([306, 15, 307, 20], fill=BLACK)
-        inner_sq = draw.rectangle([280, 13, 280 + round(24*battery/100), 22], fill=highlight_color) # 36 is width of inner sq
+        battery_color = GREEN if charging else highlight_color
+        inner_sq = draw.rectangle([280, 13, 280 + round(24*battery/100), 22], fill=battery_color) 
             
     safe_display(image)
 
 
 def get_battery():
-    global battery
+    global battery, charging
     try:
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         sock.connect('/tmp/pisugar-server.sock')
         sock.send(b'get battery\n')
-        response = sock.recv(1024).decode().strip()
-        sock.close()
-        
+        response = sock.recv(1024).decode().strip()        
         match = re.search(r'battery:\s*(\d+)', response)
         if match:
             battery = int(match.group(1))
         
-        return battery
+        sock.send(b'get battery_charging\n')
+        response = sock.recv(1024).decode().strip()
+        sock.close()
+        match = re.search(r'battery_charging:\s*(\d+)', response)
+        if match:
+            charging = int(match.group(1))
+        return battery, charging
             
     except:
         return battery
