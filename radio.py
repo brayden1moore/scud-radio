@@ -130,6 +130,10 @@ star_smallest = Image.open('assets/star_smallest.png').convert('RGBA')
 star_small = Image.open('assets/star_small.png').convert('RGBA')
 star_readied = Image.open('assets/star_readied.png').convert('RGBA')
 
+rerun_smallest = Image.open('assets/rerun_smallest.png').convert('RGBA')
+rerun_small = Image.open('assets/rerun_small.png').convert('RGBA')
+rerun_readied = Image.open('assets/rerun_readied.png').convert('RGBA')
+
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18
 ONE_NAME_X = 77
@@ -344,7 +348,7 @@ def get_stream_list(streams):
     global reruns 
     stream_list = list(streams.keys())
     reruns = [i for i in stream_list if any(j in streams[i]['oneLiner'].lower() for j in ['(r)','re-run','re-wav','restream','playlist'])]
-    stream_list = [i for i in stream_list if i in favorites] + [i for i in stream_list if i not in favorites and i not in reruns] + [i for i in stream_list if i not in favorites and i in reruns]
+    stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
     return stream_list
 
 streams = get_streams()
@@ -491,7 +495,7 @@ def calculate_text(text, font, max_width, lines):
 def display_everything(name, update=False, readied=False):
     global streams, play_status, first_display
 
-    highlight_color = BLUE if name in favorites else BLUE if name not in reruns else GREEN
+    highlight_color = BLUE #if name in favorites else BLUE if name not in reruns else GREEN
     
     if readied and not restarting:
         first_display = False
@@ -543,6 +547,11 @@ def display_everything(name, update=False, readied=False):
             image.paste(star_smallest, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), star_smallest)
         if double_next_stream in favorites:
             image.paste(star_smallest, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), star_smallest)
+        if double_prev_stream in reruns:
+            image.paste(rerun_smallest, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), rerun_smallest)
+        if double_next_stream in reruns:
+            image.paste(rerun_smallest, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), rerun_smallest)
+
 
         # prev and next borders
         border3 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*2, SMALL_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
@@ -558,8 +567,12 @@ def display_everything(name, update=False, readied=False):
         image.paste(next, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE))
         if prev_stream in favorites:
             image.paste(star_small, (PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), star_small)
-        if double_next_stream in favorites:
+        if next_stream in favorites:
             image.paste(star_small, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), star_small)
+        if prev_stream in favorites:
+            image.paste(rerun_small, (PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), rerun_small)
+        if next_stream in favorites:
+            image.paste(rerun_small, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), rerun_small)
 
         if readied:
             border1 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*6, READIED_LOGO_SIZE+BORDER_SIZE*6), color=BLACK)
@@ -573,6 +586,8 @@ def display_everything(name, update=False, readied=False):
             image.paste(readied_logo, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE))
             if name in favorites:
                 image.paste(star_readied, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE), star_readied)
+            if name in reruns:
+                image.paste(rerun_readied, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE), rerun_readied)                
         else:
             border3 = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*3, LOGO_SIZE+BORDER_SIZE*3), color=BORDER_COLOR)
             image.paste(border3, (LOGO_X, LOGO_Y))
@@ -848,7 +863,7 @@ def toggle_favorite():
                 img.paste(i, (0, 0), i)
                 disp.ShowImage(img)           
 
-        stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
+        stream_list = get_stream_list()
         time.sleep(0.3)
         display_one(stream)
 
@@ -889,7 +904,7 @@ def periodic_update():
             stream_list = get_stream_list(streams)
             failed_fetches = 0
 
-            if play_status != 'pause' and not readied_stream:
+            if not held and not readied_stream:
                 display_everything(stream, update=True)
                 
         except Exception as e:
