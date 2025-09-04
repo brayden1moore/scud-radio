@@ -569,9 +569,9 @@ def display_everything(name, update=False, readied=False):
             image.paste(star_small, (PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), star_small)
         if next_stream in favorites:
             image.paste(star_small, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), star_small)
-        if prev_stream in favorites:
+        if prev_stream in reruns:
             image.paste(rerun_small, (PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), rerun_small)
-        if next_stream in favorites:
+        if next_stream in reruns:
             image.paste(rerun_small, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), rerun_small)
 
         if readied:
@@ -646,6 +646,8 @@ def display_one(name):
     image.paste(logo, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE))
     if name in favorites:
         image.paste(star_smallest, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE), star_smallest)
+    if name in reruns:
+        image.paste(rerun_smallest, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE), rerun_smallest)
 
     # name
     draw.text((ONE_NAME_X, ONE_NAME_Y), calculate_text(name, font=LARGE_FONT, max_width=223, lines=1)[0], font=LARGE_FONT, fill=TEXT_COLOR)
