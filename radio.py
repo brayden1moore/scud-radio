@@ -637,14 +637,17 @@ def display_battery(draw):
 def get_battery():
     global battery, charging
 
-    charge_status = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
-                              input='get battery_charging\n', stdout=subprocess.PIPE, text=True)
-    result = charge_status.stdout.strip().split(': ')[1].replace('\nlong','')
-    charging = result == 'true'
-
-    battery_status = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
-                              input='get battery\n', stdout=subprocess.PIPE, text=True)
-    battery = int(float(battery_status.stdout.strip().split(': ')[1].replace('\nlong','')))
+    result = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
+                            input='get battery_charging\nget battery\n', 
+                            stdout=subprocess.PIPE, text=True, timeout=2)
+    
+    lines = result.stdout.strip().split('\n')
+    
+    charging_line = lines[1].strip().split(': ')[1] 
+    charging = charging_line == 'true'
+    
+    battery_line = lines[2].strip().split(': ')[1] 
+    battery = int(float(battery_line))
 
     return battery, charging
     
@@ -874,7 +877,7 @@ periodic_update()
 try:
     while True:
         get_battery()
-        if screen_on and stream:
+        if screen_on and stream and readied_stream == False:
             display_everything(stream)
 
         if readied_stream and last_rotation and (time.time() - last_rotation > 5):
