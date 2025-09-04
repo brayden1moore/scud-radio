@@ -116,7 +116,7 @@ def submit():
         logging.info('Killing self')
         result = subprocess.run(['sudo','netstat','-tulnp','|','grep','8888'],stdout=subprocess.PIPE,
                                 text=True, check=True)
-        id = result.stdout.strip().split('\t')[-1].replace('/python3').strip()
+        id = result.stdout.strip().split('\t')[-1].replace('/python3','').strip()
         subprocess.run(['sudo','kill',id])
         subprocess.run(['sudo','python','radio.py'])
         sys.exit(0)
