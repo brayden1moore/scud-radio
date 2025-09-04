@@ -956,18 +956,24 @@ else:
 
 periodic_update()
 
+time_since_battery_check = 0
 try:
     while True:
-        get_battery()
+        if time_since_battery_check == 5:
+            get_battery()
+            time_since_battery_check = 0
+
         if screen_on and stream and readied_stream == None and restarting == False and rotated == False and held == False:
-             display_everything(stream)
+            #display_everything(stream)
+            pass
 
         if readied_stream and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
             readied_stream = None
             if screen_on and stream:
                 display_everything(stream)
-
+        
         time.sleep(1)
+        time_since_battery_check += 1
 
 except KeyboardInterrupt:
     if mpv_process:
