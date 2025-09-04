@@ -763,6 +763,7 @@ def toggle_favorite():
                 img = current_image.convert('RGBA')
             img.paste(unfavorite, (0, 0), unfavorite)
             disp.ShowImage(img)
+            set_favorites(favorites)
         else:
             favorites.append(stream)
             favorites = list(set(favorites))
