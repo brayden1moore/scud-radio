@@ -813,6 +813,8 @@ def on_button_released():
     held = False
     current_time = time.time()
     if not readied_stream:
+        set_last_volume(str(current_volume))
+        
         button_press_times.append(current_time)
         button_press_times = [t for t in button_press_times if current_time - t <= 3.0]
         
@@ -863,7 +865,6 @@ def handle_rotation(direction):
             current_volume = max(0, current_volume - volume_step)
 
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
-        set_last_volume(str(current_volume))
         show_volume_overlay(current_volume)
 
     else:
@@ -959,7 +960,7 @@ periodic_update()
 time_since_battery_check = 0
 try:
     while True:
-        if time_since_battery_check == 5:
+        if time_since_battery_check == 10:
             get_battery()
             time_since_battery_check = 0
 
