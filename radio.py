@@ -36,11 +36,13 @@ DC = 25
 BL = 23
 bus = 0 
 device = 0 
-MAX_BL = 99
+MAX_BL = 100
 disp = LCD_2inch.LCD_2inch()
 disp.Init()
 disp.clear()
-disp.bl_DutyCycle(MAX_BL)
+for i in range(0, MAX_BL, 10):
+    disp.bl_DutyCycle(i)
+    time.sleep(0.01)
 
 mpv_process = None
 stream = None
