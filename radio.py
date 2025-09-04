@@ -764,7 +764,7 @@ def show_volume_overlay(volume):
         img = current_image.copy()
         draw = ImageDraw.Draw(img)
         
-        volume_bar_end = SCREEN_HEIGHT - int((volume / 125) * SCREEN_HEIGHT)
+        volume_bar_end = SCREEN_HEIGHT - int((volume / 150) * SCREEN_HEIGHT)
 
         draw.rectangle([
             SCREEN_WIDTH-9, TOP_DIVIDER_Y+2, 
@@ -855,7 +855,7 @@ def handle_rotation(direction):
     if click_button.is_pressed:
 
         if direction == 1: 
-            current_volume = min(125, current_volume + volume_step)
+            current_volume = min(150, current_volume + volume_step)
         else: 
             current_volume = max(0, current_volume - volume_step)
 
@@ -898,7 +898,7 @@ def periodic_update():
                 sys.exit(0)
             pass
     
-    threading.Timer(5, periodic_update).start()
+    threading.Timer(10, periodic_update).start()
 
 
 def wake_screen():
