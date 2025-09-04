@@ -602,12 +602,12 @@ def get_battery():
     global battery, charging
 
     charge_status = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
-                              input='get battery_charging\n', text=True)
+                              input='get battery_charging\n', stdout=subprocess.PIPE, text=True)
     result = charge_status.stdout.strip().split(': ')[1] 
     charging = result == 'true'
 
     battery_status = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
-                              input='get battery\n', text=True)
+                              input='get battery\n', stdout=subprocess.PIPE, text=True)
     battery = int(battery_status.stdout.strip().split(': ')[1])
 
     return battery, charging
