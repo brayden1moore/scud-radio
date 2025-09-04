@@ -592,7 +592,7 @@ def display_one(name):
     if battery:
         outer_sq = draw.rectangle([278, 11, 306, 24], fill=BLACK)
         nipple = draw.rectangle([306, 15, 307, 20], fill=BLACK)
-        battery_color = GREEN if charging else highlight_color
+        battery_color = GREEN if charging == 'true' else highlight_color
         inner_sq = draw.rectangle([280, 13, 280 + round(24*battery/100), 22], fill=battery_color) 
             
     safe_display(image)
@@ -600,7 +600,7 @@ def display_one(name):
 
 def get_battery():
     global battery, charging
-    
+
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.connect('/tmp/pisugar-server.sock')
     sock.send(b'get battery\n')
@@ -614,7 +614,7 @@ def get_battery():
     sock.close()
     match = re.search(r'battery_charging:\s*(\d+)', response)
     if match:
-        charging = bool(match.group(1).title())
+        charging = match.group(1).strip()
     logging.info(f'charging: {charging}')
     return battery, charging
     
@@ -841,7 +841,6 @@ try:
             readied_stream = None
             if screen_on and stream:
                 display_everything(stream)
-        get_battery()
         time.sleep(0.5)
 except KeyboardInterrupt:
     if mpv_process:
