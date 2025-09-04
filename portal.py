@@ -99,29 +99,31 @@ def index():
 def submit():
     global disp
     if request.method == 'POST':
-        print(*list(request.form.keys()), sep=", ")
-        ssid = request.form['ssid']
-        password = request.form['password']
-        
-        result = subprocess.run(['nmcli', 'dev', 'wifi', 'connect', ssid, 'password', password],
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                            text=True, check=True)
-        
-        assert internet()
-        display_result('success')
-        time.sleep(3)
-        disp.clear()
-        disp.reset()
-        disp.close()
-        logging.info('Killing self')
-        result = subprocess.run(['sudo','netstat','-tulnp','|','grep','8888'],stdout=subprocess.PIPE,
+        try:
+            ssid = request.form['ssid']
+            password = request.form['password']
+            
+            result = subprocess.run(['nmcli', 'dev', 'wifi', 'connect', ssid, 'password', password],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                 text=True, check=True)
-        id = result.stdout.strip().split('\t')[-1].replace('/python3','').strip()
-        logging.info(id)
-        subprocess.run(['sudo','kill',id])
-        subprocess.run(['sudo','systemctl','restart','radio'])
-        sys.exit(0)
-       
+            
+            assert internet()
+            display_result('success')
+            time.sleep(3)
+            disp.clear()
+            disp.reset()
+            disp.close()
+            logging.info('Killing self')
+            result = subprocess.run(['sudo','netstat','-tulnp','|','grep','8888'],stdout=subprocess.PIPE,
+                                    text=True, check=True)
+            id = result.stdout.strip().split('\t')[-1].replace('/python3','').strip()
+            logging.info(id)
+            subprocess.run(['sudo','kill',id])
+            subprocess.run(['sudo','systemctl','restart','radio'])
+            sys.exit(0)
+        except:
+            return redirect(url_for('index', wifi_networks=scan_wifi(), message="That didn't work. Try again?"))
+
     else:
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
 
