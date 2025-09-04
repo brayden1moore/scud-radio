@@ -592,7 +592,7 @@ def display_one(name):
     if battery:
         outer_sq = draw.rectangle([278, 11, 306, 24], fill=BLACK)
         nipple = draw.rectangle([306, 15, 307, 20], fill=BLACK)
-        battery_color = GREEN if charging == 'true' else highlight_color
+        battery_color = GREEN if charging else highlight_color
         inner_sq = draw.rectangle([280, 13, 280 + round(24*battery/100), 22], fill=battery_color) 
             
     safe_display(image)
@@ -600,7 +600,7 @@ def display_one(name):
 
 def get_battery():
     global battery, charging
-    
+
     charge_status = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
                               input='get battery_charging\n', text=True)
     result = charge_status.stdout.strip().split(': ')[1] 
