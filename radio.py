@@ -351,6 +351,18 @@ def play(name, toggled=False):
 
     write_to_tmp_os_path(name)
 
+
+def play_random():
+    global stream, play_status
+    pause()
+    available_streams = [i for i in stream_list if i != stream]
+    chosen = random.choice(available_streams)
+    display_everything(chosen)
+    play(chosen)
+    stream = chosen
+    play_status = 'play'
+
+
 def calculate_text(text, font, max_width, lines):
     text = text.strip()
 
@@ -611,18 +623,6 @@ def toggle_stream(name):
         else:
             play(name, toggled=True)
 
-    
-def play_random():
-    global stream, play_status
-    pause()
-    available_streams = [i for i in stream_list if i != stream]
-    chosen = random.choice(available_streams)
-    display_everything(chosen)
-    play(chosen)
-    stream = chosen
-    play_status = 'play'
-
-
 def seek_stream(direction):
     global readied_stream 
 
@@ -824,7 +824,7 @@ rotor.when_rotated_counter_clockwise = wrapped_action(lambda: handle_rotation(-1
 rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1))
 
 last_played = read_last_played()
-if last_played:
+if last_played in stream_list:
     play(last_played)
 else:
     play_random()
