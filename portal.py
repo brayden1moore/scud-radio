@@ -117,8 +117,9 @@ def submit():
         result = subprocess.run(['sudo','netstat','-tulnp','|','grep','8888'],stdout=subprocess.PIPE,
                                 text=True, check=True)
         id = result.stdout.strip().split('\t')[-1].replace('/python3','').strip()
+        logging.info(id)
         subprocess.run(['sudo','kill',id])
-        subprocess.run(['sudo','python','radio.py'])
+        subprocess.run(['sudo','systemctl','restart','radio'])
         sys.exit(0)
        
     else:
