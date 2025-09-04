@@ -58,6 +58,7 @@ button_press_time = 0
 rotated = False
 battery = None
 charging = False
+restarting = False
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -713,6 +714,8 @@ def show_volume_overlay(volume):
         safe_display(img)
 
 def safe_restart():
+    global restarting
+    restarting = True
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg = Image.open(f'assets/restart.png') 
     image.paste(bg, (0, 0))
@@ -880,10 +883,10 @@ periodic_update()
 try:
     while True:
         get_battery()
-        if screen_on and stream and readied_stream == None:
+        if screen_on and stream and readied_stream == None and restarting == False:
             display_everything(stream)
 
-        if readied_stream and last_rotation and (time.time() - last_rotation > 5):
+        if readied_stream and last_rotation and (time.time() - last_rotation > 5) and restarting == False:
             readied_stream = None
             if screen_on and stream:
                 display_everything(stream)
