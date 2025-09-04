@@ -167,8 +167,7 @@ favorites = get_favorites()
 def safe_display(image):
     global current_image
     if screen_on & (image != current_image):
-        #disp.display(image)
-        disp.ShowImage(image) # for 2 inch
+        disp.ShowImage(image)
     current_image = image.copy()
     
 
@@ -201,13 +200,10 @@ def backlight_on():
         else:
             display_scud()
         disp.bl_DutyCycle(MAX_BL)
-    #GPIO.output(BACKLIGHT_PIN, GPIO.HIGH)
 
 def backlight_off():
     if disp:
-        #display_scud()
         disp.bl_DutyCycle(0)
-    #GPIO.output(BACKLIGHT_PIN, GPIO.LOW)
 
 display_scud()
 
@@ -225,7 +221,6 @@ mpv_process = Popen([
 while not os.path.exists("/tmp/mpvsocket"):
     time.sleep(0.1)
 
-#import st7789
 from gpiozero import Button
 import socket
 import json
@@ -257,9 +252,16 @@ def get_streams():
         if not full_img_path.exists():
             need_imgs.append(name)
         else:
-            for i in ['full','readied','small','smallest']:
-                with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
-                    active[name][f'logo_{i}'] = pickle.load(f)
+            file_stat = full_img_path.stat()
+            file_age_seconds = time.time() - file_stat.st_mtime
+            file_age_days = file_age_seconds / (24 * 3600) 
+
+            if file_age_days > 7:  # refresh if older than 7 days
+                need_imgs.append(name)
+            else:
+                for i in ['full','readied','small','smallest']:
+                    with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
+                        active[name][f'logo_{i}'] = pickle.load(f)
 
     with ThreadPoolExecutor(max_workers=8) as exe:
         futures = [
