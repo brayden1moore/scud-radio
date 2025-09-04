@@ -876,7 +876,7 @@ periodic_update()
 time_since_last_battery_check = 0
 try:
     while True:
-        if time_since_last_battery_check == 1.5:
+        if time_since_last_battery_check == 1:
             get_battery()
             time_since_last_battery_check = 0
             if screen_on and stream and readied_stream == None:
