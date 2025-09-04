@@ -180,9 +180,12 @@ def get_last_volume():
         volume_file.touch() 
         return 65
     
-    with open(volume_file, 'r') as f:
-        vol = int(f.read())
-    return vol
+    try:
+        with open(volume_file, 'r') as f:
+            vol = int(f.read())
+        return vol
+    except:
+        return 65
 
 def set_last_volume(vol):
     vol_path = Path(LIB_PATH)
