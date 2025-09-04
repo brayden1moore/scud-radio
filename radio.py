@@ -59,6 +59,7 @@ rotated = False
 battery = None
 charging = False
 restarting = False
+held = False
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -770,17 +771,18 @@ def safe_restart():
     run(['sudo','systemctl', 'restart','radio'])
 
 def on_button_pressed():
-    global button_press_time, rotated, button_press_times
+    global button_press_time, rotated, button_press_times, held
     button_press_time = time.time()
     if readied_stream:
         confirm_seek()
+    held = True
     rotated = False
 
 button_press_times = []
 def on_button_released():
      
-    global button_press_times, rotated
-
+    global button_press_times, rotated, held
+    held = False
     current_time = time.time()
     if not readied_stream:
         button_press_times.append(current_time)
@@ -928,10 +930,10 @@ periodic_update()
 try:
     while True:
         get_battery()
-        if screen_on and stream and readied_stream == None and restarting == False and rotated == False:
+        if screen_on and stream and readied_stream == None and restarting == False and rotated == False and held == False:
             display_everything(stream)
 
-        if readied_stream and last_rotation and (time.time() - last_rotation > 5) and restarting == False:
+        if readied_stream and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
             readied_stream = None
             if screen_on and stream:
                 display_everything(stream)
