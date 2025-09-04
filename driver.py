@@ -177,4 +177,4 @@ class LCD_2inch(lcdconfig.RaspberryPi):
             self.spi_writebyte(_buffer[i:i+4096])	
 
     def close(self):
-        self.module_exit(self)
+        self.module_exit()
