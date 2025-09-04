@@ -113,7 +113,6 @@ def submit():
         disp.clear()
         disp.reset()
         disp.close()
-        backlight_off()
         logging.info('Killing self')
         result = subprocess.run(['sudo','netstat','-tulnp','|','grep','8888'],stdout=subprocess.PIPE,
                                 text=True, check=True)
@@ -121,8 +120,7 @@ def submit():
         subprocess.run(['sudo','kill',id])
         subprocess.run(['sudo','python','radio.py'])
         sys.exit(0)
-
-            
+       
     else:
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
 
