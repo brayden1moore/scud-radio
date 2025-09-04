@@ -854,7 +854,7 @@ try:
         if readied_stream and last_rotation and (time.time() - last_rotation > 5):
             readied_stream = None
 
-        if screen_on and stream:
+        if screen_on and stream and not readied_stream:
             display_everything(stream)
 
         time.sleep(0.5)
