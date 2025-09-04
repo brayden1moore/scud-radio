@@ -628,7 +628,7 @@ def display_everything(name, update=False, readied=False):
 
     
 def display_one(name):
-    highlight_color = BLUE if name in favorites else BLUE if name not in reruns else GREEN
+    highlight_color = BLUE #if name in favorites else BLUE if name not in reruns else GREEN
 
     bg_color = WHITE #BLUE if name in favorites else WHITE 
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=bg_color)
