@@ -600,25 +600,23 @@ def display_one(name):
 
 def get_battery():
     global battery, charging
-    try:
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        sock.connect('/tmp/pisugar-server.sock')
-        sock.send(b'get battery\n')
-        response = sock.recv(1024).decode().strip()        
-        match = re.search(r'battery:\s*(\d+)', response)
-        if match:
-            battery = int(match.group(1))
-        
-        sock.send(b'get battery_charging\n')
-        response = sock.recv(1024).decode().strip()
-        sock.close()
-        match = re.search(r'battery_charging:\s*(\d+)', response)
-        if match:
-            charging = bool(match.group(1).title())
-        return battery, charging
-            
-    except:
-        return battery, charging
+    
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    sock.connect('/tmp/pisugar-server.sock')
+    sock.send(b'get battery\n')
+    response = sock.recv(1024).decode().strip()        
+    match = re.search(r'battery:\s*(\d+)', response)
+    if match:
+        battery = int(match.group(1))
+    
+    sock.send(b'get battery_charging\n')
+    response = sock.recv(1024).decode().strip()
+    sock.close()
+    match = re.search(r'battery_charging:\s*(\d+)', response)
+    if match:
+        charging = bool(match.group(1).title())
+    logging.info(f'charging: {charging}')
+    return battery, charging
     
 
 def toggle_stream(name):
