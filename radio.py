@@ -40,9 +40,7 @@ MAX_BL = 100
 disp = LCD_2inch.LCD_2inch()
 disp.Init()
 disp.clear()
-for i in range(0, MAX_BL, 10):
-    disp.bl_DutyCycle(i)
-    time.sleep(0.01)
+disp.bl_DutyCycle(MAX_BL)
 
 mpv_process = None
 stream = None
