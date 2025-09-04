@@ -102,30 +102,27 @@ def submit():
         print(*list(request.form.keys()), sep=", ")
         ssid = request.form['ssid']
         password = request.form['password']
-
-        try:
-            result = subprocess.run(['nmcli', 'dev', 'wifi', 'connect', ssid, 'password', password],
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        
+        result = subprocess.run(['nmcli', 'dev', 'wifi', 'connect', ssid, 'password', password],
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                            text=True, check=True)
+        
+        assert internet()
+        display_result('success')
+        time.sleep(3)
+        disp.clear()
+        disp.reset()
+        backlight_off()
+        Device.close()
+        time.sleep(1)
+        subprocess.Popen(['python', 'radio.py'])
+        logging.info('Killing self')
+        result = subprocess.run(['sudo','netstat','-tulnp','|','grep','8888'],stdout=subprocess.PIPE,
                                 text=True, check=True)
-            
-            assert internet()
-            display_result('success')
-            time.sleep(3)
-            disp.clear()
-            disp.reset()
-            backlight_off()
-            Device.close()
-            time.sleep(1)
-            subprocess.Popen(['python', 'radio.py'])
-            logging.info('Killing self')
-            result = subprocess.run(['sudo','netstat','-tulnp','|','grep','8888'],stdout=subprocess.PIPE,
-                                    text=True, check=True)
-            id = result.stdout.strip().split('\t')[-1].replace('/python3').strip()
-            subprocess.run(['sudo','kill',id])
-            sys.exit(0)
-               
-        except:
-            return redirect(url_for('index', wifi_networks=scan_wifi(), message="That didn't work. Try again!"))
+        id = result.stdout.strip().split('\t')[-1].replace('/python3').strip()
+        subprocess.run(['sudo','kill',id])
+        sys.exit(0)
+
             
     else:
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
