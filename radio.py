@@ -170,7 +170,29 @@ def set_favorites(favorites):
         f.write('\n'.join(favorites))
 
 favorites = get_favorites()
+
+def get_last_volume():
+    vol_path = Path(LIB_PATH)
+    vol_path.mkdir(parents=True, exist_ok=True)
     
+    volume_file = vol_path / 'volume.txt'
+    if not volume_file.exists():
+        volume_file.touch() 
+        return 65
+    
+    with open(vol_path, 'r') as f:
+        vol = int(f.read())
+    return vol
+
+def set_last_volume(vol):
+    vol_path = Path(LIB_PATH)
+    vol_path.mkdir(parents=True, exist_ok=True)
+
+    with open(vol_path / 'volume.txt', 'w') as f:
+        f.write(vol)
+
+current_volume = get_last_volume()
+
 def safe_display(image):
     global current_image
     if screen_on & (image != current_image):
@@ -835,6 +857,7 @@ def handle_rotation(direction):
             current_volume = max(0, current_volume - volume_step)
 
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
+        set_last_volume(current_volume)
         show_volume_overlay(current_volume)
 
     else:
