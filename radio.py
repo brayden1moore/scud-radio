@@ -479,7 +479,7 @@ def display_everything(name, update=False, readied=False):
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
-        bg_color = BLUE if name in favorites else WHITE 
+        bg_color = WHITE #BLUE if name in favorites else WHITE 
         image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=bg_color)
         draw = ImageDraw.Draw(image)
 
@@ -575,7 +575,8 @@ def display_everything(name, update=False, readied=False):
 def display_one(name):
     highlight_color = YELLOW if name in favorites else BLUE if name not in reruns else GREEN
 
-    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BACKGROUND_COLOR)
+    bg_color = BLUE if name in favorites else WHITE 
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=bg_color)
     draw = ImageDraw.Draw(image)
 
     draw.rectangle([
