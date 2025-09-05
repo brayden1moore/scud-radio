@@ -692,7 +692,7 @@ def display_one(name):
 
     # set y_offset based on num lines
     #logging.info(f'len title lines: {title_lines}, len info lines: {info_lines}')
-    if len(info_lines) == 1 and len(title_lines) == 2:
+    if len(info_lines) == 1 and len(title_lines) == 2 and name not in reruns:
         y_offset += 10
     elif len(info_lines) == 2 and len(title_lines) == 2 and name not in reruns:
         y_offset += 1
@@ -703,7 +703,7 @@ def display_one(name):
     elif len(info_lines) == 2 and len(title_lines) == 2: 
         y_offset += 10
     elif len(info_lines) == 1 and len(title_lines) == 2: 
-        y_offset += 10
+        y_offset += 15
 
 
     for i in title_lines:
