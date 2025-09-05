@@ -697,7 +697,7 @@ def display_one(name):
     elif len(info_lines) == 2 and len(title_lines) == 2 and name not in reruns:
         y_offset += 1
     elif len(info_lines) == 2 and len(title_lines) == 1 and name not in reruns:
-        y_offset += 0
+        y_offset += 10
     elif len(info_lines) == 1 and len(title_lines) == 1 and name not in reruns:
         y_offset += 15
 
