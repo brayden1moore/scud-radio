@@ -739,7 +739,7 @@ def display_battery(draw):
     if battery:
         outer_sq = draw.rectangle([278, 11, 306, 24], fill=BLACK)
         nipple = draw.rectangle([306, 15, 307, 20], fill=BLACK)
-        battery_color = GREEN if charging else YELLOW
+        battery_color = YELLOW if charging else WHITE
         inner_sq_bg = draw.rectangle([280, 13, 280 + 24, 22], fill=BLUE) 
         inner_sq = draw.rectangle([280, 13, 280 + round(24*battery/100), 22], fill=battery_color) 
         if battery == 100:
