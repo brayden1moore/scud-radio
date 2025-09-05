@@ -663,7 +663,7 @@ def display_one(name):
     # now playing
     y_offset = 0
     num_title_lines = 2
-    info = streams[name]['oneLiner'].split(' - ')
+    info = streams[name]['oneLiner'].replace('&amp;','&').split(' - ')
     info = [i for i in info if i in list(set(info))]
 
     if len(info) == 1:
