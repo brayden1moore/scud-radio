@@ -675,10 +675,7 @@ def display_one(name):
     if len(info) == 1 and len(title_lines) == 2: # if two title lines and no other info
         y_offset = 37
     elif len(info) == 1 and len(title_lines) == 1: # if one title line and no other info
-        if name not in reruns:
-            y_offset = 55 - 16
-        else:
-            y_offset = 55
+        y_offset = 55
     
     if name not in reruns and len(title_lines) < 3: # adjust for live banner
         y_offset = y_offset - 10
