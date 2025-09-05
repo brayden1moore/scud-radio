@@ -694,14 +694,14 @@ def display_one(name):
     if len(info) > 1 and len(title_lines) < 3:
         image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 22))    
     elif len(info) > 1 and len(title_lines) == 3:
-        image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 16))   
+        image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 18))   
 
     if info_lines and len(title_lines) < 3:
         for i in info_lines:
             draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 32), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
             y_offset += 20
     elif info_lines:
-        draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 25), info_lines[0], font=MEDIUM_FONT, fill=TEXT_COLOR_2)
+        draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 22), info_lines[0], font=MEDIUM_FONT, fill=TEXT_COLOR_2)
 
     # battery
     display_battery(draw)
