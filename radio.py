@@ -353,7 +353,7 @@ reruns = []
 def get_stream_list(streams):
     global reruns 
     stream_list = list(streams.keys())
-    reruns = [i for i in stream_list if any(j in streams[i]['oneLiner'].lower() for j in ['(r)','re-run','re-wav','restream','playlist']) or i=='Monotonic Radio']
+    reruns = [i for i in stream_list if any(j in streams[i]['oneLiner'].lower() for j in ['(r)','re-run','re-wav','restream','playlist','auto dj',' archive ','night moves']) or i=='Monotonic Radio']
     stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
     return stream_list
 
