@@ -699,7 +699,7 @@ def display_one(name):
     elif len(info) > 1 and len(title_lines) == 3:
         image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 18))   
 
-    if info_lines and len(title_lines) == 2 and name in reruns: # if not live and 2 line title
+    if info_lines and len(title_lines) == 2: # if not live and 2 line title
         for i in info_lines:
             draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 32), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
             y_offset += 20
