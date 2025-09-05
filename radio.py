@@ -841,7 +841,7 @@ def on_button_released():
         button_press_times.append(current_time)
         button_press_times = [t for t in button_press_times if current_time - t <= 3.0]
         
-        if len(button_press_times) >= 3:
+        if len(button_press_times) >= 5:
             button_press_times = [] 
             safe_restart()
             return    
