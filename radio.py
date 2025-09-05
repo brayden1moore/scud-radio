@@ -133,6 +133,7 @@ star_readied = Image.open('assets/star_readied.png').convert('RGBA')
 live_smallest = Image.open('assets/live_smallest.png').convert('RGBA')
 live_small = Image.open('assets/live_small.png').convert('RGBA')
 live_readied = Image.open('assets/live_readied.png').convert('RGBA')
+live_banner = Image.open('assets/live_banner.png').convert('RGBA')
 
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18
@@ -647,7 +648,7 @@ def display_one(name):
     if name in favorites:
         image.paste(star_smallest, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE), star_smallest)
     if name not in reruns:
-        image.paste(live_readied, (SCREEN_WIDTH-READIED_LOGO_SIZE, SCREEN_HEIGHT-READIED_LOGO_SIZE), live_readied)
+        image.paste(live_banner, (0,0), live_banner)
 
     # name
     draw.text((ONE_NAME_X, ONE_NAME_Y), calculate_text(name, font=LARGE_FONT, max_width=223, lines=1)[0], font=LARGE_FONT, fill=TEXT_COLOR)
@@ -786,7 +787,7 @@ def show_volume_overlay(volume):
         img = current_image.copy()
         draw = ImageDraw.Draw(img)
         
-        volume_bar_end = TOP_DIVIDER_Y - int((volume / 150) * TOP_DIVIDER_Y)
+        volume_bar_end = SCREEN_HEIGHT - int((volume / 150) * SCREEN_HEIGHT)
 
         draw.rectangle([
             SCREEN_WIDTH-9, TOP_DIVIDER_Y+2, 
