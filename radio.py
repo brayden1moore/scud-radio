@@ -678,7 +678,7 @@ def display_one(name):
         y_offset = 55
     
     if name not in reruns and len(title_lines) < 3: # adjust for live banner
-        y_offset = y_offset - 10
+        y_offset = y_offset - 5
 
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
