@@ -292,6 +292,10 @@ def get_streams():
     info = requests.get('https://internetradioprotocol.org/info').json()
     active = {n: v for n, v in info.items() if v['status']=="Online" and v['hidden']!=True}
     
+    # clean text
+    for name, value in active.items():
+        value['oneLiner'] = value['oneLiner'].replace('&amp;','&')
+    
     # see if cached image exists. if so, read into dict. if not, add to queue.
     need_imgs = []
     for name, _ in active.items():
@@ -663,7 +667,7 @@ def display_one(name):
     # now playing
     y_offset = 0
     num_title_lines = 2
-    info = streams[name]['oneLiner'].replace('&amp;','&').split(' - ')
+    info = streams[name]['oneLiner'].split(' - ')
     info = [i for i in info if i in list(set(info))]
 
     if len(info) == 1:
