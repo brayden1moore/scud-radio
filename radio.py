@@ -601,7 +601,7 @@ def display_everything(name, update=False, readied=False):
 
         location = streams[name]['location']
         name_line = calculate_text(name, LARGE_FONT, 300, 1)
-        title_lines = calculate_text(streams[name]['oneLiner'], MEDIUM_FONT, 300, 2)
+        title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 300, 2)
 
         draw.text((SHOW_INFO_X, TITLE_Y), name_line[0], font=LARGE_FONT, fill=BLACK)
         draw.text((SHOW_INFO_X, LOCATION_Y), location, font=MEDIUM_FONT, fill=BLACK)
@@ -668,7 +668,7 @@ def display_one(name):
     # now playing
     y_offset = 0
     num_title_lines = 2
-    info = streams[name]['oneLiner'].split(' - ')
+    info = streams[name]['oneLiner'].replace('&amp;','&').split(' - ')
     info = [i for i in info if i in list(set(info))]
 
     if len(info) == 1:
