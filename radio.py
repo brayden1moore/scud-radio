@@ -671,7 +671,7 @@ def display_one(name):
     elif len(info) == 2:
         num_title_lines = 3
 
-    title_lines = calculate_text(info[0], font=BIGGEST_FONT, max_width=290, lines=num_title_lines)
+    title_lines = [i for i in calculate_text(info[0], font=BIGGEST_FONT, max_width=290, lines=num_title_lines) if i != '']
 
     if len(title_lines) == 3:
         num_info_lines = 1
@@ -680,7 +680,7 @@ def display_one(name):
     else:
         num_info_lines = 2
     
-    info_lines = calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines)
+    info_lines = [i for i in calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines) if i != '']
 
     if len(info) == 1 and len(title_lines) == 2: # if two title lines and no other info
         y_offset = 37
