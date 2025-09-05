@@ -678,7 +678,7 @@ def display_one(name):
         if name not in reruns:
             y_offset = 55
         else:
-            y_offset = 55 - 16
+            y_offset = 55 - 26
 
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
