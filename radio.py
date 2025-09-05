@@ -787,8 +787,8 @@ def show_volume_overlay(volume):
         img = current_image.copy()
         draw = ImageDraw.Draw(img)
         
-        volume_bar_end = SCREEN_HEIGHT - int((volume / 150) * TOP_DIVIDER_Y)
-        volume_bar_end = max(volume_bar_end, TOP_DIVIDER_Y+2)
+        total_bar_height = SCREEN_HEIGHT - TOP_DIVIDER_Y + 2
+        volume_bar_end = TOP_DIVIDER_Y + 2 + (total_bar_height * -1 * int((volume / 150) * total_bar_height))
 
         draw.rectangle([
             SCREEN_WIDTH-9, TOP_DIVIDER_Y+2, 
@@ -796,8 +796,8 @@ def show_volume_overlay(volume):
                         ], fill=BLACK)
         
         draw.rectangle([
-            SCREEN_WIDTH-7, SCREEN_HEIGHT, 
-            SCREEN_WIDTH, TOP_DIVIDER_Y+2
+            SCREEN_WIDTH-7, TOP_DIVIDER_Y+2, 
+            SCREEN_WIDTH, SCREEN_HEIGHT
                         ], fill=PURPLE)
         
         draw.rectangle([
