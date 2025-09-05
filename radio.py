@@ -680,7 +680,7 @@ def display_one(name):
         else:
             y_offset = 55
     
-    if name not in reruns:
+    if name not in reruns and len(title_lines) < 3: # adjust for live banner
         y_offset = y_offset - 10
 
     for i in title_lines:
