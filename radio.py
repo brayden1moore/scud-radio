@@ -703,10 +703,12 @@ def display_one(name):
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
         y_offset += 32
 
-    if len(info) > 1 and len(title_lines) < 3:
+
+    if len(title_lines) == 3 and len(info_lines) == 1 and name not in reruns: # 3 line title one line info + live
+        y_offset -= 4
+
+    if len(info) > 1:
         image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 22))    
-    elif len(info) > 1 and len(title_lines) == 3:
-        image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 18))   
 
     if info_lines:
         for i in info_lines:
