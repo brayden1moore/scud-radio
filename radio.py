@@ -703,11 +703,6 @@ def display_one(name):
         for i in info_lines:
             draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 32), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
             y_offset += 20
-    elif info_lines and len(title_lines) == 2 and name not in reruns: # if live and 2 line title
-        y_offset = y_offset - 4
-        for i in info_lines:
-            draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 32), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
-            y_offset += 20
     elif info_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 22), info_lines[0], font=MEDIUM_FONT, fill=TEXT_COLOR_2)
 
