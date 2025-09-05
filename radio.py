@@ -788,7 +788,7 @@ def show_volume_overlay(volume):
         draw = ImageDraw.Draw(img)
         
         total_bar_height = SCREEN_HEIGHT - TOP_DIVIDER_Y + 2
-        volume_bar_end = int(TOP_DIVIDER_Y + 2 + (total_bar_height * -1 * ((volume / 150) * total_bar_height)))
+        volume_bar_end = SCREEN_HEIGHT - total_bar_height * ((150-volume)/150)
 
         logging.info(f'from {SCREEN_HEIGHT} to {volume_bar_end}')
 
