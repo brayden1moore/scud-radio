@@ -270,7 +270,7 @@ def send_mpv_command(cmd, max_retries=5, retry_delay=0.5):
                 s.settimeout(2)
                 s.connect("/tmp/mpvsocket")
                 s.sendall((json.dumps(cmd) + '\n').encode())
-                logging.info(f"Sent MPV command: {cmd}")
+                #logging.info(f"Sent MPV command: {cmd}")
                 return True
         except (ConnectionRefusedError, FileNotFoundError, socket.timeout) as e:
             if attempt < max_retries - 1:
@@ -425,7 +425,7 @@ def play(name, toggled=False):
         safe_display(saved_image_while_paused)
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
     else:
-        logging.info(f'attempting to play {name}')
+        #logging.info(f'attempting to play {name}')
         stream_url = streams[name]['streamLink']
         send_mpv_command({"command": ["loadfile", stream_url, "replace"]})
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
@@ -691,7 +691,7 @@ def display_one(name):
             y_offset = 55
 
     # set y_offset based on num lines
-    logging.info(f'len title lines: {title_lines}, len info lines: {info_lines}')
+    #logging.info(f'len title lines: {title_lines}, len info lines: {info_lines}')
     if len(info_lines) == 1 and len(title_lines) == 2:
         y_offset += 10
     elif len(info_lines) == 2 and len(title_lines) == 2 and name not in reruns:
@@ -705,11 +705,14 @@ def display_one(name):
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
         y_offset += 32
 
-    if len(title_lines) == 3 and len(info_lines) == 1 and name not in reruns: # 3 line title one line info + live
-        y_offset -= 8
+    if len(title_lines) == 3 and len(info_lines) == 1 and name not in reruns: # 3 line title one line info + live (divider offset)
+        y_offset -= 4
 
     if len(info) > 1:
         image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 22))    
+
+    if len(title_lines) == 3 and len(info_lines) == 1 and name not in reruns: # 3 line title one line info + live (info offset)
+        y_offset -= 4
 
     if info_lines:
         for i in info_lines:
@@ -747,7 +750,7 @@ def get_battery():
         if 'battery' not in lines[0]:
             lines = lines[1:]
 
-        logging.info(lines)
+        #logging.info(lines)
         
         charging_line = lines[0].strip().split(': ')[1] 
         charging = charging_line == 'true'
@@ -755,7 +758,7 @@ def get_battery():
         battery_line = lines[1].strip().split(': ')[1] 
         battery = int(float(battery_line))
     except Exception as e:
-        logging.info(e)
+        #logging.info(e)
         return battery, charging
 
     return battery, charging
@@ -807,7 +810,7 @@ def show_volume_overlay(volume):
         total_bar_height = SCREEN_HEIGHT - TOP_DIVIDER_Y - 2
         volume_bar_end = TOP_DIVIDER_Y + 2 + total_bar_height * ((150-volume)/150)
 
-        logging.info(f'from {SCREEN_HEIGHT} to {volume_bar_end}')
+        #logging.info(f'from {SCREEN_HEIGHT} to {volume_bar_end}')
 
         draw.rectangle([
             SCREEN_WIDTH-9, TOP_DIVIDER_Y+2, 
@@ -904,7 +907,7 @@ def handle_rotation(direction):
             current_volume = max(0, current_volume - volume_step)
 
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
-        logging.info(f'volume: {current_volume}')
+        #logging.info(f'volume: {current_volume}')
         show_volume_overlay(current_volume)
 
     else:
