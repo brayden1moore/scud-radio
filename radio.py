@@ -293,8 +293,8 @@ def get_streams():
     active = {n: v for n, v in info.items() if v['status']=="Online" and v['hidden']!=True}
     
     # clean text
-    for name, value in active.items():
-        value['oneLiner'] = value['oneLiner'].replace('&amp;','&')
+    for name, _ in active.items():
+        active[name]['oneLiner'] = active[name]['oneLiner'].replace('&amp;','&')
     
     # see if cached image exists. if so, read into dict. if not, add to queue.
     need_imgs = []
