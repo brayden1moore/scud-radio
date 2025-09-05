@@ -690,10 +690,13 @@ def display_one(name):
         else:
             y_offset = 55
 
+    # set y_offset based on num lines
     if len(info_lines) == 1 and len(title_lines) == 2:
         y_offset += 10
     elif len(info_lines) == 2 and len(title_lines) == 2:
         y_offset -= 4
+    elif len(info_lines) == 2 and len(title_lines) == 1:
+        y_offset -= 10
 
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
