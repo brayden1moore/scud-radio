@@ -672,6 +672,14 @@ def display_one(name):
         num_title_lines = 3
 
     title_lines = calculate_text(info[0], font=BIGGEST_FONT, max_width=290, lines=num_title_lines)
+
+    if len(title_lines) == 3:
+        num_info_lines = 1
+    elif len(title_lines) == 1: 
+        num_info_lines = 4
+    else:
+        num_info_lines = 2
+    
     info_lines = calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines)
 
     if len(info) == 1 and len(title_lines) == 2: # if two title lines and no other info
@@ -690,13 +698,6 @@ def display_one(name):
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
         y_offset += 32
-
-    if len(title_lines) == 3:
-        num_info_lines = 1
-    elif len(title_lines) == 1: 
-        num_info_lines = 4
-    else:
-        num_info_lines = 2
 
     if len(info) > 1 and len(title_lines) < 3:
         image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 22))    
