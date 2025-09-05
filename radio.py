@@ -726,6 +726,8 @@ def get_battery():
                                 stdout=subprocess.PIPE, text=True, timeout=2)
         
         lines = result.stdout.strip().split('\n')
+        if lines[0] == 'long':
+            lines = lines[1:]
 
         logging.info(lines)
         
