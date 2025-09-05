@@ -789,7 +789,7 @@ def show_volume_overlay(volume):
         
         volume_bar_end = SCREEN_HEIGHT - int((volume / 150) * SCREEN_HEIGHT)
         volume_bar_end = max(volume_bar_end, TOP_DIVIDER_Y+2)
-        
+
         draw.rectangle([
             SCREEN_WIDTH-9, TOP_DIVIDER_Y+2, 
             SCREEN_WIDTH, SCREEN_HEIGHT
@@ -879,13 +879,13 @@ def handle_rotation(direction):
     rotated = True
 
     if click_button.is_pressed:
-
         if direction == 1: 
             current_volume = min(150, current_volume + volume_step)
         else: 
             current_volume = max(0, current_volume - volume_step)
 
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
+        logging.info(f'volume: {current_volume}')
         show_volume_overlay(current_volume)
 
     else:
