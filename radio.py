@@ -694,23 +694,21 @@ def display_one(name):
     # other info
     info_lines = calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines)
 
+    if len(info_lines) == 1 and len(title_lines) == 2:
+        y_offset += 10
+    elif len(info_lines) == 2 and len(title_lines) == 2:
+        y_offset -= 4
+
     if len(info) > 1 and len(title_lines) < 3:
         image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 22))    
     elif len(info) > 1 and len(title_lines) == 3:
         image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 18))   
 
-    if info_lines and len(title_lines) == 2 and name in reruns: # if not live and 2 line title
+    if info_lines:
         for i in info_lines:
             draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 32), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
             y_offset += 20
-    elif info_lines and len(title_lines) == 2 and name not in reruns: # if live and 2 line title
-        y_offset = y_offset - 4
-        for i in info_lines:
-            draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 32), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
-            y_offset += 20
-    elif info_lines:
-        draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 22), info_lines[0], font=MEDIUM_FONT, fill=TEXT_COLOR_2)
-
+            
     # battery
     display_battery(draw)
             
