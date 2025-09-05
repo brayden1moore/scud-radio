@@ -705,9 +705,8 @@ def display_one(name):
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
         y_offset += 32
 
-
     if len(title_lines) == 3 and len(info_lines) == 1 and name not in reruns: # 3 line title one line info + live
-        y_offset -= 4
+        y_offset -= 8
 
     if len(info) > 1:
         image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 22))    
