@@ -686,7 +686,7 @@ def display_one(name):
         y_offset = 37
     elif len(info) == 1 and len(title_lines) == 1: # if one title line and no other info
         if name not in reruns:
-            y_offset = 55 - 16
+            y_offset = 55 - 10
         else:
             y_offset = 55
 
