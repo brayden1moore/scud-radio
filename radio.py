@@ -715,6 +715,8 @@ def display_one(name):
         y_offset += 18
     elif len(info_lines) == 0 and len(title_lines) == 3:
         y_offset += 23
+    elif len(info_lines) == 1 and len(title_lines) == 1:
+        y_offset += 16
 
 
     for i in title_lines:
