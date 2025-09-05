@@ -800,12 +800,12 @@ def show_volume_overlay(volume):
         draw.rectangle([
             SCREEN_WIDTH-7, TOP_DIVIDER_Y+2, 
             SCREEN_WIDTH, SCREEN_HEIGHT
-                        ], fill=PURPLE)
+                        ], fill=BLACK)
         
         draw.rectangle([
             SCREEN_WIDTH-7, volume_bar_end, 
             SCREEN_WIDTH, SCREEN_HEIGHT
-                        ], fill=ORANGE)
+                        ], fill=YELLOW)
         
         safe_display(img)
 
