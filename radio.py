@@ -698,6 +698,8 @@ def display_one(name):
         y_offset -= 10
     elif len(info_lines) == 2 and len(title_lines) == 1 and name not in reruns:
         y_offset -= 16
+    elif len(info_lines) == 1 and len(title_lines) == 1 and name not in reruns:
+        y_offset += 15
 
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
