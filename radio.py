@@ -130,9 +130,9 @@ star_smallest = Image.open('assets/star_smallest.png').convert('RGBA')
 star_small = Image.open('assets/star_small.png').convert('RGBA')
 star_readied = Image.open('assets/star_readied.png').convert('RGBA')
 
-rerun_smallest = Image.open('assets/rerun_smallest.png').convert('RGBA')
-rerun_small = Image.open('assets/rerun_small.png').convert('RGBA')
-rerun_readied = Image.open('assets/rerun_readied.png').convert('RGBA')
+live_smallest = Image.open('assets/live_smallest.png').convert('RGBA')
+live_small = Image.open('assets/live_small.png').convert('RGBA')
+live_readied = Image.open('assets/live_readied.png').convert('RGBA')
 
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18
@@ -547,10 +547,10 @@ def display_everything(name, update=False, readied=False):
             image.paste(star_smallest, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), star_smallest)
         if double_next_stream in favorites:
             image.paste(star_smallest, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), star_smallest)
-        if double_prev_stream in reruns:
-            image.paste(rerun_smallest, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), rerun_smallest)
-        if double_next_stream in reruns:
-            image.paste(rerun_smallest, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), rerun_smallest)
+        if double_prev_stream not in reruns:
+            image.paste(live_smallest, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), live_smallest)
+        if double_next_stream not in reruns:
+            image.paste(live_smallest, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), live_smallest)
 
 
         # prev and next borders
@@ -569,10 +569,10 @@ def display_everything(name, update=False, readied=False):
             image.paste(star_small, (PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), star_small)
         if next_stream in favorites:
             image.paste(star_small, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), star_small)
-        if prev_stream in reruns:
-            image.paste(rerun_small, (PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), rerun_small)
-        if next_stream in reruns:
-            image.paste(rerun_small, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), rerun_small)
+        if prev_stream not in reruns:
+            image.paste(live_small, (PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), live_small)
+        if next_stream not in reruns:
+            image.paste(live_small, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), live_small)
 
         if readied:
             border1 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*6, READIED_LOGO_SIZE+BORDER_SIZE*6), color=BLACK)
@@ -586,8 +586,8 @@ def display_everything(name, update=False, readied=False):
             image.paste(readied_logo, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE))
             if name in favorites:
                 image.paste(star_readied, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE), star_readied)
-            if name in reruns:
-                image.paste(rerun_readied, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE), rerun_readied)                
+            if name not in reruns:
+                image.paste(live_readied, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE), live_readied)                
         else:
             border3 = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*3, LOGO_SIZE+BORDER_SIZE*3), color=BORDER_COLOR)
             image.paste(border3, (LOGO_X, LOGO_Y))
@@ -646,8 +646,8 @@ def display_one(name):
     image.paste(logo, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE))
     if name in favorites:
         image.paste(star_smallest, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE), star_smallest)
-    if name in reruns:
-        image.paste(rerun_smallest, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE), rerun_smallest)
+    if name not in reruns:
+        image.paste(live_smallest, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE), live_smallest)
 
     # name
     draw.text((ONE_NAME_X, ONE_NAME_Y), calculate_text(name, font=LARGE_FONT, max_width=223, lines=1)[0], font=LARGE_FONT, fill=TEXT_COLOR)
