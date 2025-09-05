@@ -673,12 +673,12 @@ def display_one(name):
 
     title_lines = calculate_text(info[0], font=BIGGEST_FONT, max_width=290, lines=num_title_lines)
     if len(info) == 1 and len(title_lines) == 2: # if two title lines and no other info
-        y_offset = 42
+        y_offset = 37
     elif len(info) == 1 and len(title_lines) == 1: # if one title line and no other info
-        y_offset = 55
-    
-    #if name not in reruns and len(title_lines) < 3: # adjust for live banner
-    #    y_offset = y_offset - 5
+        if name not in reruns:
+            y_offset = 55 - 16
+        else:
+            y_offset = 55
 
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
@@ -699,10 +699,17 @@ def display_one(name):
     elif len(info) > 1 and len(title_lines) == 3:
         image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 18))   
 
-    if info_lines and len(title_lines) == 2: # if not live and 2 line title
+    if info_lines and len(title_lines) == 2 and name in reruns: # if not live and 2 line title
         for i in info_lines:
             draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 32), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
             y_offset += 20
+    elif info_lines and len(title_lines) == 2 and name not in reruns: # if live and 2 line title
+        y_offset = y_offset - 4
+        for i in info_lines:
+            draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 32), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
+            y_offset += 20
+    elif info_lines:
+        draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 22), info_lines[0], font=MEDIUM_FONT, fill=TEXT_COLOR_2)
 
     # battery
     display_battery(draw)
