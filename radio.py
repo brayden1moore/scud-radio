@@ -16,6 +16,7 @@ import pickle
 import signal
 import time
 import math
+import html
 import sys
 import re
 import os
@@ -294,7 +295,7 @@ def get_streams():
     
     # clean text
     for name, _ in active.items():
-        active[name]['oneLiner'] = active[name]['oneLiner'].replace('&amp;','&')
+        active[name]['oneLiner'] = html.unescape(active[name]['oneLiner'])
     
     # see if cached image exists. if so, read into dict. if not, add to queue.
     need_imgs = []
