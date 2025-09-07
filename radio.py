@@ -210,8 +210,8 @@ def safe_display(image):
     
 
 def display_scud():
-    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
     '''
+    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
     rotations = 0
     max_rotations = 2
     while rotations <max_rotations:
@@ -233,7 +233,7 @@ def display_scud():
     safe_display(image)  
     '''
     frames = os.listdir('assets/splash')
-    for i in range(0,103): # might make 52
+    for i in range(0,52): # might make 52
         image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
         draw = ImageDraw.Draw(image)
         frame_num = str(i).zfill(3)
