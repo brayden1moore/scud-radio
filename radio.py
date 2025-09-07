@@ -237,7 +237,7 @@ def display_scud():
         image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
         draw = ImageDraw.Draw(image)
         frame_num = str(i).zfill(3)
-        frame = Image.open(f'assets/splash/frame_{frame_num}_delay-0.03s.gif')
+        frame = Image.open(f'assets/splash/frame_{frame_num}_delay-0.03s.gif').convert('RGBA')
         image.paste(frame, (40, 0), frame)
         safe_display(image) 
 
