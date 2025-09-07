@@ -210,7 +210,8 @@ def safe_display(image):
     
 
 def display_scud():
-    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    '''
     rotations = 0
     max_rotations = 2
     while rotations <max_rotations:
@@ -230,6 +231,16 @@ def display_scud():
     bg = Image.open(f'assets/gif/1.png') 
     image.paste(bg, (0, 0))
     safe_display(image)  
+    '''
+    frames = os.listdir('assets/splash')
+    for i in range(0,103): # might make 52
+        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
+        draw = ImageDraw.Draw(image)
+        frame_num = str(i).zfill(3)
+        frame = Image.open(f'assets/splash/frame_{frame_num}_delay-0.03s.gif')
+        image.paste(frame, (40, 0), frame)
+        safe_display(image) 
+
 
 def backlight_on():
     if disp:
