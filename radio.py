@@ -818,8 +818,9 @@ def display_one(name):
     formatted_time = current_time.strftime("%a %b %d %I:%M %p").replace(' 0', ' ').lstrip('0')
     
     draw.text((13,3), formatted_time, font=SMALL_FONT, fill=BLACK)
-            
-    get_wifi_strength()
+
+    # wifi    
+    display_wifi(image)
 
     safe_display(image)
 
@@ -855,19 +856,25 @@ def display_battery(draw):
         '''
 
 def get_wifi_strength():
+    global wifi_strength, wifi_ssid
     try:
         result = subprocess.run(['iwconfig', 'wlan0'], 
                             stdout=subprocess.PIPE, text=True, timeout=2)
         result_lines = result.stdout.strip().split('\n')
-        ssid = [i.split('ESSID:')[1].replace('"','').strip() for i in result_lines if 'ESSID:' in i][0]
-        logging.info(ssid)
+        wifi_ssid = [i.split('ESSID:')[1].replace('"','').strip() for i in result_lines if 'ESSID:' in i][0]
         signal_strength = [i.split('Link Quality=')[1].split('/')[0] for i in result_lines if 'Link Quality=' in i][0]
-        strength = int((float(signal_strength) / 70) * 100)
-        logging.info(strength)
+        wifi_strength = int((float(signal_strength) / 70) * 100)
     except Exception as e:
         logging.info(e)
-        ssid = "Not Found"
-        strength = 0
+        wifi_ssid = "Not Found"
+        wifi_strength = 0
+
+def display_wifi(image):
+    if not wifi_strength:
+        get_wifi_strength()
+    strength = 'low' if wifi_strength < 33 else 'med' if 66 < wifi_strength >= 33 else 'high'
+    signal = Image.open(f'assets/wifi_{strength}.png').convert('RGBA')
+    image.paste(signal, (260, 4), signal)
 
 def toggle_stream(name):
     global play_status
