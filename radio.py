@@ -309,7 +309,7 @@ def display_scud():
         image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
         draw = ImageDraw.Draw(image)
         
-        draw.ellipse(bbox, fill=color, outline=BLACK, width=1)
+        draw.ellipse(bbox, fill=color, outline=BLACK, width=2)
 
         draw.text((10, 9), greeting + ",", font=LARGE_FONT, fill=BLACK) 
         draw.text((10, 32),  "Friend.", font=LARGE_FONT, fill=BLACK) 
