@@ -854,7 +854,6 @@ def get_anchor(title, info, live):
     if info:
         for line in info:
             size += height(line, MEDIUM_FONT) + 8
-    size -= 8
 
     section_height = SCREEN_HEIGHT - 16 - TOP_DIVIDER_Y if live else SCREEN_HEIGHT - TOP_DIVIDER_Y
     return TOP_DIVIDER_Y + round((section_height - size) // 2)
