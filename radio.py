@@ -210,6 +210,24 @@ def safe_display(image):
     current_image = image.copy()
     
 
+def write_to_tmp_os_path(name):
+    file_path = os.path.join("/tmp", "scud_last_played.txt")
+    
+    with open(file_path, 'w') as file:
+        file.write(name)
+
+
+def read_last_played():
+    file_path = os.path.join("/tmp", "scud_last_played.txt")
+
+    try:
+        with open(file_path, 'r') as file:
+            last_played = file.read()
+        
+        return last_played
+    except:
+        return None
+
 def display_scud():
     '''
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -437,24 +455,6 @@ def s(number):
     else:
         return 's'
     
-
-def write_to_tmp_os_path(name):
-    file_path = os.path.join("/tmp", "scud_last_played.txt")
-    
-    with open(file_path, 'w') as file:
-        file.write(name)
-
-
-def read_last_played():
-    file_path = os.path.join("/tmp", "scud_last_played.txt")
-
-    try:
-        with open(file_path, 'r') as file:
-            last_played = file.read()
-        
-        return last_played
-    except:
-        return None
 
 def pause(show_icon=False):
     global play_status, saved_image_while_paused, current_image
