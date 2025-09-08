@@ -800,7 +800,7 @@ def display_one(name):
     if len(info_lines) == 1 and len(title_lines) == 2 and name not in reruns:
         y_offset += 10
     elif len(info_lines) == 2 and len(title_lines) == 2 and name not in reruns:
-        y_offset += 1
+        y_offset -= 5
     elif len(info_lines) == 2 and len(title_lines) == 1 and name not in reruns:
         y_offset += 14
     elif len(info_lines) == 1 and len(title_lines) == 1 and name not in reruns:
@@ -854,16 +854,17 @@ def display_battery(draw):
         get_battery()
     if battery:
         battery_y = 2
-        outer_sq = draw.rectangle([278, battery_y, 306, battery_y + 13], fill=BLACK)
+        outer_sq = draw.rectangle([278, battery_y, 306, battery_y + 12], fill=BLACK)
         nipple = draw.rectangle([306, battery_y + 3, 307, battery_y + 9], fill=BLACK)
         battery_color = YELLOW if charging else WHITE
-        inner_sq_bg = draw.rectangle([280, battery_y + 2, 280 + 24, battery_y + 11], fill=BLUE) 
-        inner_sq = draw.rectangle([280, battery_y + 2, 280 + round(24*battery/100), battery_y + 11], fill=battery_color) 
+        inner_sq_bg = draw.rectangle([280, battery_y + 2, 280 + 24, battery_y + 10], fill=BLUE) 
+        inner_sq = draw.rectangle([280, battery_y + 2, 280 + round(24*battery/100), battery_y + 10], fill=battery_color) 
+        '''
         if battery == 100:
             draw.text((282, battery_y + 1), str(battery), font=SMALL_FONT, fill=BLACK)
         else:
             draw.text((286, battery_y + 1), str(battery), font=SMALL_FONT, fill=BLACK)
-
+        '''
 
 def toggle_stream(name):
     global play_status
