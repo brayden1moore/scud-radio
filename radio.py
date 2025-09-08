@@ -862,7 +862,7 @@ def get_wifi_strength():
         ssid = [i.split('ESSID:')[1].replace('"','').strip() for i in result_lines if 'ESSID:' in i][0]
         logging.info(ssid)
         signal_strength = [i.split('Link Quality=')[1].split('/')[0] for i in result_lines if 'Link Quality=' in i][0]
-        strength = int((float(signal_strength) / 70))
+        strength = int((float(signal_strength) / 70) * 100)
         logging.info(strength)
     except Exception as e:
         logging.info(e)
