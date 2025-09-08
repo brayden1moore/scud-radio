@@ -834,7 +834,7 @@ def display_one(name):
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formatted_time =  current_time.strftime("%I:%M %p")
-    draw.text((15, 5), formatted_time, font=SMALL_FONT, fill=BLACK)
+    draw.text((x(formatted_time, SMALL_FONT), 4), formatted_time, font=SMALL_FONT, fill=BLACK)
             
     safe_display(image)
 
