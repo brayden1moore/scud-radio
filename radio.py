@@ -834,7 +834,7 @@ def display_one(name):
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formatted_time =  current_time.strftime("%I:%M %p")
-    draw.text((225, 7), formatted_time, font=SMALL_FONT, fill=BLACK)
+    draw.text((15, 5), formatted_time, font=SMALL_FONT, fill=BLACK)
             
     safe_display(image)
 
@@ -842,15 +842,15 @@ def display_battery(draw):
     if not battery:
         get_battery()
     if battery:
-        outer_sq = draw.rectangle([278, 6, 306, 19], fill=BLACK)
-        nipple = draw.rectangle([306, 10, 307, 15], fill=BLACK)
+        outer_sq = draw.rectangle([278, 4, 306, 17], fill=BLACK)
+        nipple = draw.rectangle([306, 8, 307, 13], fill=BLACK)
         battery_color = YELLOW if charging else WHITE
-        inner_sq_bg = draw.rectangle([280, 8, 280 + 24, 17], fill=BLUE) 
-        inner_sq = draw.rectangle([280, 8, 280 + round(24*battery/100), 17], fill=battery_color) 
+        inner_sq_bg = draw.rectangle([280, 6, 280 + 24, 15], fill=BLUE) 
+        inner_sq = draw.rectangle([280, 6, 280 + round(24*battery/100), 15], fill=battery_color) 
         if battery == 100:
-            draw.text((282, 7), str(battery), font=SMALL_FONT, fill=BLACK)
+            draw.text((282, 5), str(battery), font=SMALL_FONT, fill=BLACK)
         else:
-            draw.text((286, 7), str(battery), font=SMALL_FONT, fill=BLACK)
+            draw.text((286, 5), str(battery), font=SMALL_FONT, fill=BLACK)
 
 
 def toggle_stream(name):
