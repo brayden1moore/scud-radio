@@ -14,6 +14,7 @@ import logging
 import random
 import pickle
 import signal
+import pytz
 import time
 import math
 import html
@@ -253,6 +254,13 @@ def get_battery():
 
     return battery, charging
 
+def get_timezone_from_ip():
+    try:
+        response = requests.get('http://ip-api.com/json/')
+        data = response.json()
+        return data['timezone']
+    except:
+        return 'UTC' 
 
 def display_scud():
     '''
@@ -278,9 +286,11 @@ def display_scud():
     safe_display(image)  
     '''
 
+    timezone_name = get_timezone_from_ip()
+    user_tz = pytz.timezone(timezone_name)
     now = time.time()
-    current_hour = datetime.fromtimestamp(now).hour
-    logging.info(current_hour)
+    current_hour = datetime.fromtimestamp(now, tz=user_tz).hour
+
     greeting = 'Hello'
     size = 192
     bbox = [64, 120, 64 + size, 120 + size]
@@ -300,7 +310,7 @@ def display_scud():
         color = BLUE
     
     last_played = read_last_played()
-    volume = round(get_last_volume() / 150)
+    volume = get_last_volume()
     get_battery()
 
     frames = os.listdir('assets/splash')
