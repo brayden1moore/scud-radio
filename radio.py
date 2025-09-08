@@ -801,7 +801,7 @@ def display_one(name):
         draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=BLACK)
         anchor += avg_title_height + 4
 
-    anchor += 8
+    anchor += 10
 
     if info_lines:
         for i in info_lines:
@@ -826,7 +826,7 @@ def get_anchor(title, info, live):
     for line in title:
         size += height(line, LARGE_FONT) + 4
     if info:
-        size += 8
+        size += 10
         for line in info:
             size += height(line, MEDIUM_FONT) + 3
 
@@ -838,12 +838,12 @@ def display_battery(draw):
     if not battery:
         get_battery()
     if battery:
-        battery_y = 2
-        outer_sq = draw.rectangle([278, battery_y, 306, battery_y + 12], fill=BLACK)
-        nipple = draw.rectangle([306, battery_y + 3, 307, battery_y + 9], fill=BLACK)
+        battery_y = 4
+        outer_sq = draw.rectangle([278, battery_y, 306, battery_y + 10], fill=BLACK)
+        nipple = draw.rectangle([306, battery_y + 3, 307, battery_y + 7], fill=BLACK)
         battery_color = YELLOW if charging else WHITE
-        inner_sq_bg = draw.rectangle([280, battery_y + 2, 280 + 24, battery_y + 10], fill=BLUE) 
-        inner_sq = draw.rectangle([280, battery_y + 2, 280 + round(24*battery/100), battery_y + 10], fill=battery_color) 
+        inner_sq_bg = draw.rectangle([280, battery_y + 2, 280 + 24, battery_y + 8], fill=BLUE) 
+        inner_sq = draw.rectangle([280, battery_y + 2, 280 + round(24*battery/100), battery_y + 8], fill=battery_color) 
         '''
         if battery == 100:
             draw.text((282, battery_y + 1), str(battery), font=SMALL_FONT, fill=BLACK)
