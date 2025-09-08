@@ -64,6 +64,7 @@ charging = False
 restarting = False
 held = False
 user_tz = 'UTC'
+wifi_strength = None
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
