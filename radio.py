@@ -74,6 +74,7 @@ GREEN = (0,231,192)
 GREY = (100,100,100)
 ORANGE = (255,128,0)
 PURPLE = (134,97,245)
+RED = (255,71,71)
 
 BORDER_COLOR = BLACK
 TEXT_COLOR = BLACK
@@ -232,10 +233,47 @@ def display_scud():
     image.paste(bg, (0, 0))
     safe_display(image)  
     '''
+
+    now = time.time()
+    current_hour = datetime.fromtimestamp(now).hour
+    greeting = 'Hello'
+    size = 192
+    bbox = [64, 120, 64 + size, 120 + size]
+    color = PURPLE
+
+    if 5 <= current_hour < 12:
+        greeting = 'Good morning'
+        bbox = [160, 24, 160 + size, 24 + size]
+        color = RED
+    elif 12 <= current_hour < 17: 
+        greeting = 'Good afternoon'
+        bbox = [64, -59, 64 + size, -50 + size]
+        color = YELLOW
+    elif 17 <= current_hour < 22:
+        greeting = 'Good evening'
+        bbox = [-32, 24, -32 + size, 24 + size]
+        color = BLUE
+    
+    last_played = read_last_played()
+    volume = round(get_last_volume() / 150)
+    get_battery()
+
     frames = os.listdir('assets/splash')
     for i in range(0,52): # might make 52
+
         image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
         draw = ImageDraw.Draw(image)
+        
+        draw.ellipse(bbox, fill=color, outline=BLACK, width=1)
+
+        draw.text((10, 14), greeting + ",", font=LARGE_FONT, fill=BLACK) 
+        draw.text((10, 37),  "Friend.", font=LARGE_FONT, fill=BLACK) 
+
+        draw.text((10, 193), f'Last Played: {last_played}', font=SMALL_FONT, fill=BLACK)
+        draw.text((10, 203), f'Internet: Connected', font=SMALL_FONT, fill=BLACK)
+        draw.text((10, 213), f'Battery: {battery}%', font=SMALL_FONT, fill=BLACK)
+        draw.text((10, 223), f'Volume: {volume}%', font=SMALL_FONT, fill=BLACK)
+
         frame_num = str(i).zfill(3)
         frame = Image.open(f'assets/splash/frame_{frame_num}_delay-0.03s.gif').convert('RGBA')
         image.paste(frame, (40, 0), frame)
