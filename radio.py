@@ -301,15 +301,15 @@ def display_scud():
     color = PURPLE
 
     if 5 <= current_hour < 12:
-        greeting = 'Good morning'
+        greeting = 'Good Morning'
         bbox = [160, 24, 160 + size, 24 + size]
         color = RED
     elif 12 <= current_hour < 17: 
-        greeting = 'Good afternoon'
+        greeting = 'Good Afternoon'
         bbox = [64, -59, 64 + size, -50 + size]
         color = YELLOW
     elif 17 <= current_hour < 22:
-        greeting = 'Good evening'
+        greeting = 'Good Evening'
         bbox = [-32, 24, -32 + size, 24 + size]
         color = BLUE
     
