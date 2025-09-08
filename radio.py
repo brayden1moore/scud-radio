@@ -857,7 +857,7 @@ def get_anchor(title, info, live):
     size -= 8
 
     section_height = SCREEN_HEIGHT - 16 - TOP_DIVIDER_Y if live else SCREEN_HEIGHT - TOP_DIVIDER_Y
-    return round((section_height - size) // 2)
+    return TOP_DIVIDER_Y + round((section_height - size) // 2)
 
 
 def display_battery(draw):
