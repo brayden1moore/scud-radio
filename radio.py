@@ -738,11 +738,11 @@ def display_one(name):
     # top header
     draw.rectangle([
         0, 0, 
-        SCREEN_WIDTH, 22
+        SCREEN_WIDTH, 18
         ], fill=YELLOW)   
     draw.rectangle([
-        0, 22, 
-        SCREEN_WIDTH, 22 + 1
+        0, 18, 
+        SCREEN_WIDTH, 18 + 1
         ], fill=BLACK)     
 
     # logo
