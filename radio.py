@@ -353,6 +353,7 @@ def backlight_on():
 def backlight_off():
     if disp:
         disp.bl_DutyCycle(0)
+        disp.clear()
 
 display_scud()
 
