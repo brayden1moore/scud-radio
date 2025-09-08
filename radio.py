@@ -735,6 +735,16 @@ def display_one(name):
             SCREEN_WIDTH, TOP_DIVIDER_Y
                         ], fill=highlight_color)
 
+    # top header
+    draw.rectangle([
+        0, 0, 
+        SCREEN_WIDTH, 22
+        ], fill=YELLOW)   
+    draw.rectangle([
+        0, 22, 
+        SCREEN_WIDTH, 22 + BORDER_SIZE
+        ], fill=BLACK)     
+
     # logo
     logo = streams[name]['logo_smallest']
     border = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*2, SMALLEST_LOGO_SIZE+BORDER_SIZE*2), color=BORDER_COLOR)
