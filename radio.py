@@ -62,6 +62,7 @@ battery = None
 charging = False
 restarting = False
 held = False
+user_tz = 'UTC'
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -286,10 +287,13 @@ def display_scud():
     safe_display(image)  
     '''
 
+    global user_tz
+
     timezone_name = get_timezone_from_ip()
     user_tz = pytz.timezone(timezone_name)
     now = time.time()
-    current_hour = datetime.fromtimestamp(now, tz=user_tz).hour
+    current_time = datetime.fromtimestamp(now, tz=user_tz)
+    current_hour = current_time.hour
 
     greeting = 'Hello'
     size = 192
@@ -825,6 +829,12 @@ def display_one(name):
 
     # battery
     display_battery(draw)
+
+    # time
+    now = time.time()
+    current_time = datetime.fromtimestamp(now, tz=user_tz)
+    formtatted_time =  current_time.strftime("%I:%M %p")
+    draw.text((260, 12), formtatted_time, font=SMALL_FONT, fill=BLACK)
             
     safe_display(image)
 
