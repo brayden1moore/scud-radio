@@ -863,7 +863,8 @@ def get_wifi_strength():
         signal_strength = [i.split('Link Quality=')[1].split('/')[0] for i in result_lines if 'Link Quality=' in i][0]
         strength = int((float(signal_strength) + 110) * 10 / 7)
         print(strength)
-    except:
+    except Exception as e:
+        print(e)
         ssid = "Not Found"
         strength = 0
 
