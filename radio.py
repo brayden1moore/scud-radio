@@ -280,6 +280,7 @@ def display_scud():
 
     now = time.time()
     current_hour = datetime.fromtimestamp(now).hour
+    logging.info(current_hour)
     greeting = 'Hello'
     size = 192
     bbox = [64, 120, 64 + size, 120 + size]
@@ -310,8 +311,8 @@ def display_scud():
         
         draw.ellipse(bbox, fill=color, outline=BLACK, width=1)
 
-        draw.text((10, 14), greeting + ",", font=LARGE_FONT, fill=BLACK) 
-        draw.text((10, 37),  "Friend.", font=LARGE_FONT, fill=BLACK) 
+        draw.text((10, 9), greeting + ",", font=LARGE_FONT, fill=BLACK) 
+        draw.text((10, 32),  "Friend.", font=LARGE_FONT, fill=BLACK) 
 
         draw.text((10, 193), f'Last Played: {last_played}', font=SMALL_FONT, fill=BLACK)
         draw.text((10, 203), f'Internet: Connected', font=SMALL_FONT, fill=BLACK)
