@@ -833,8 +833,8 @@ def display_one(name):
     # time
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
-    formatted_time =  current_time.strftime("%I:%M %p")
-    draw.text((x(formatted_time, SMALL_FONT), 4), formatted_time, font=SMALL_FONT, fill=BLACK)
+    formatted_time =  current_time.strftime("%I:%M %p").lstrip('0')
+    draw.text((x(formatted_time, SMALL_FONT), 5), formatted_time, font=SMALL_FONT, fill=BLACK)
             
     safe_display(image)
 
