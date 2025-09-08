@@ -114,15 +114,19 @@ SUBTITLE_Y = LOCATION_Y + 45
 STATUS_SIZE = 25
 STATUS_LOCATION = (LOGO_X+round(LOGO_SIZE/2)-round(STATUS_SIZE/2), LOGO_Y+round(LOGO_SIZE/2)-round(STATUS_SIZE/2))
 
-SMALL_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf", 10)
-MEDIUM_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf", 20)
-LARGE_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf",28)
+#SMALL_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf", 10)
+#MEDIUM_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf", 20)
+#LARGE_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf",28)
 
-SMALL_FONT = ImageFont.truetype("assets/andalemono.ttf", 10)
-MEDIUM_FONT = ImageFont.truetype("assets/andalemono.ttf", 20)
-LARGE_FONT = ImageFont.truetype("assets/Arial Black.ttf",28)
-BIGGEST_FONT = ImageFont.truetype("assets/Arial Black.ttf",28)
-BIGGEST_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf",28)
+#SMALL_FONT = ImageFont.truetype("assets/andalemono.ttf", 10)
+#MEDIUM_FONT = ImageFont.truetype("assets/andalemono.ttf", 20)
+#LARGE_FONT = ImageFont.truetype("assets/Arial Black.ttf",28)
+#BIGGEST_FONT = ImageFont.truetype("assets/Arial Black.ttf",28)
+
+SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 10)
+MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 20)
+LARGE_FONT = ImageFont.truetype("assets/Archivo-ExtraBold.ttf",28)
+BIGGEST_FONT = LARGE_FONT
 
 PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+BORDER_SIZE*2, LOGO_SIZE+BORDER_SIZE*2)))
 
