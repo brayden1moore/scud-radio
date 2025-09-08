@@ -303,9 +303,9 @@ def display_scud():
     get_battery()
 
     frames = os.listdir('assets/splash')
-    for i in range(0,52): # might make 52
+    for i in range(0,103): # might make 52
 
-        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
+        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
         draw = ImageDraw.Draw(image)
         
         draw.ellipse(bbox, fill=color, outline=BLACK, width=1)
