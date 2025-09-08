@@ -144,7 +144,7 @@ ONE_LOGO_Y = 18 + 10
 ONE_NAME_X = 77
 ONE_NAME_Y = 12 + 10
 ONE_LOC_X = ONE_NAME_X
-ONE_LOC_Y = ONE_NAME_Y + 31 + 10
+ONE_LOC_Y = ONE_NAME_Y + 31 
 TOP_DIVIDER_X = 11
 TOP_DIVIDER_Y = 80
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
@@ -325,8 +325,8 @@ def display_scud():
         
         draw.ellipse(bbox, fill=color, outline=BLACK, width=2)
 
-        draw.text((10, 9), greeting + ",", font=LARGE_FONT, fill=BLACK) 
-        draw.text((10, 32),  "Friend.", font=LARGE_FONT, fill=BLACK) 
+        draw.text((10, 4), greeting + ",", font=LARGE_FONT, fill=BLACK) 
+        draw.text((10, 27),  "Friend.", font=LARGE_FONT, fill=BLACK) 
 
         draw.text((10, 193), f'Last Played: {last_played}', font=SMALL_FONT, fill=BLACK)
         draw.text((10, 203), f'Internet: Connected', font=SMALL_FONT, fill=BLACK)
