@@ -843,9 +843,9 @@ def display_one(name):
     # time
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
-    formatted_time = current_time.strftime("%a %b %-d %I:%M %p").lstrip('0')    
+    formatted_time = current_time.strftime("%a %b %d %I:%M %p").replace(' 0', ' ').lstrip('0')
     
-    draw.text((15,3), formatted_time, font=SMALL_FONT, fill=BLACK)
+    draw.text((13,3), formatted_time, font=SMALL_FONT, fill=BLACK)
             
     safe_display(image)
 
@@ -855,7 +855,7 @@ def display_battery(draw):
     if battery:
         battery_y = 2
         outer_sq = draw.rectangle([278, battery_y, 306, battery_y + 13], fill=BLACK)
-        nipple = draw.rectangle([306, battery_y + 4, 307, battery_y + 10], fill=BLACK)
+        nipple = draw.rectangle([306, battery_y + 3, 307, battery_y + 9], fill=BLACK)
         battery_color = YELLOW if charging else WHITE
         inner_sq_bg = draw.rectangle([280, battery_y + 2, 280 + 24, battery_y + 11], fill=BLUE) 
         inner_sq = draw.rectangle([280, battery_y + 2, 280 + round(24*battery/100), battery_y + 11], fill=battery_color) 
