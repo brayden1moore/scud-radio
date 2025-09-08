@@ -121,6 +121,7 @@ SMALL_FONT = ImageFont.truetype("assets/andalemono.ttf", 10)
 MEDIUM_FONT = ImageFont.truetype("assets/andalemono.ttf", 20)
 LARGE_FONT = ImageFont.truetype("assets/Arial Black.ttf",28)
 BIGGEST_FONT = ImageFont.truetype("assets/Arial Black.ttf",28)
+BIGGEST_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf",28)
 
 PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+BORDER_SIZE*2, LOGO_SIZE+BORDER_SIZE*2)))
 
@@ -856,7 +857,10 @@ def display_battery(draw):
 def get_wifi_strength():
     result = subprocess.run(['iwconfig', 'wlan0'], 
                         stdout=subprocess.PIPE, text=True, timeout=2)
-    logging.info(result.stdout.strip().find('Link Quality'))
+    result_lines = result.stdout.strip().split('\n')
+    print([i for i in result_lines if 'ESSID:' in i])
+    print([i for i in result_lines if 'Link Quality=:' in i])
+    logging.info(result.stdout.strip().split('\n'))
 
 def toggle_stream(name):
     global play_status
