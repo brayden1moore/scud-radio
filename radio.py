@@ -827,7 +827,7 @@ def display_one(name):
         y_offset -= 4
 
     if len(info) > 1:
-        image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 15))    
+        image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 11))    
 
     if len(title_lines) == 3 and len(info_lines) == 1 and name not in reruns: # 3 line title one line info + live (info offset)
         y_offset -= 4
