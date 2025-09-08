@@ -876,6 +876,7 @@ def display_wifi(image):
     strength = 'low' if wifi_strength < 20 else 'med' if 40 < wifi_strength >= 20 else 'high'
     signal = Image.open(f'assets/wifi_{strength}.png').convert('RGBA')
     image.paste(signal, (260, 4), signal)
+    logging.info(wifi_strength)
 
 def toggle_stream(name):
     global play_status
