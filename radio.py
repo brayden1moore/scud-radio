@@ -827,7 +827,7 @@ def display_one(name):
 
     for i in title_lines:
         draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=BLACK)
-        anchor += height(i, LARGE_FONT) + 12
+        anchor += height(i, LARGE_FONT) + 8
 
     if info_lines:
         for i in info_lines:
@@ -850,7 +850,7 @@ def display_one(name):
 def get_anchor(title, info, live):
     size = 0
     for line in title:
-        size += height(line, LARGE_FONT) + 12
+        size += height(line, LARGE_FONT) + 8
     if info:
         for line in info:
             size += height(line, MEDIUM_FONT) + 8
