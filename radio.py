@@ -6,6 +6,7 @@ import driver as LCD_2inch
 from pathlib import Path
 from io import BytesIO
 import spidev as SPI
+import numpy as np
 import subprocess
 import threading
 import requests
@@ -793,17 +794,19 @@ def display_one(name):
     info_lines = [i for i in calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines) if i != '']
 
     anchor = get_anchor(title_lines, info_lines, name not in reruns)
+    avg_title_height = np.mean([height(i, LARGE_FONT) for i in title_lines])
+    avg_info_height = np.mean([height(i, MEDIUM_FONT) for i in info_lines])
 
     for i in title_lines:
         draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=BLACK)
-        anchor += height(i, LARGE_FONT) + 4
+        anchor += avg_title_height + 4
 
     anchor += 8
 
     if info_lines:
         for i in info_lines:
             draw.text((SHOW_INFO_X, anchor), i, font=MEDIUM_FONT, fill=BLACK)
-            anchor += height(i, MEDIUM_FONT) + 3
+            anchor += avg_info_height + 3
 
     # battery
     display_battery(draw)
@@ -828,7 +831,7 @@ def get_anchor(title, info, live):
             size += height(line, MEDIUM_FONT) + 3
 
     section_height = SCREEN_HEIGHT - 16 - TOP_DIVIDER_Y if live else SCREEN_HEIGHT - TOP_DIVIDER_Y
-    return TOP_DIVIDER_Y + round((section_height - size) // 2) - 8
+    return TOP_DIVIDER_Y + round((section_height - size) // 2) - 5
 
 
 def display_battery(draw):
