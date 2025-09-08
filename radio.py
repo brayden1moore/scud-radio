@@ -792,47 +792,18 @@ def display_one(name):
     
     info_lines = [i for i in calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines) if i != '']
 
-    if len(info) == 1 and len(title_lines) == 2: # if two title lines and no other info
-        y_offset = 37
-    elif len(info) == 1 and len(title_lines) == 1: # if one title line and no other info
-        if name not in reruns:
-            y_offset = 55 - 10
-        else:
-            y_offset = 55
-
-    # set y_offset based on num lines
-    #logging.info(f'len title lines: {title_lines}, len info lines: {info_lines}')
-    if len(info_lines) == 1 and len(title_lines) == 2 and name not in reruns:
-        y_offset += 10
-    elif len(info_lines) == 2 and len(title_lines) == 2 and name not in reruns:
-        y_offset -= 7
-    elif len(info_lines) == 2 and len(title_lines) == 1 and name not in reruns:
-        y_offset += 14
-    elif len(info_lines) == 1 and len(title_lines) == 1 and name not in reruns:
-        y_offset += 24
-    elif len(info_lines) == 0 and len(title_lines) == 3 and name not in reruns:
-        y_offset += 15
-    elif len(info_lines) == 3 and len(title_lines) == 1 and name not in reruns:
-        y_offset += 8
-    elif len(info_lines) == 2 and len(title_lines) == 2: 
-        y_offset += 10
-    elif len(info_lines) == 1 and len(title_lines) == 2: 
-        y_offset += 18
-    elif len(info_lines) == 0 and len(title_lines) == 3:
-        y_offset += 23
-    elif len(info_lines) == 1 and len(title_lines) == 1:
-        y_offset += 32
-
     anchor = get_anchor(title_lines, info_lines, name not in reruns)
 
     for i in title_lines:
         draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=BLACK)
-        anchor += height(i, LARGE_FONT) + 8
+        anchor += height(i, LARGE_FONT) + 5
+
+    anchor += 8
 
     if info_lines:
         for i in info_lines:
             draw.text((SHOW_INFO_X, anchor), i, font=MEDIUM_FONT, fill=BLACK)
-            anchor += height(i, MEDIUM_FONT) + 8
+            anchor += height(i, MEDIUM_FONT) + 4
 
     # battery
     display_battery(draw)
@@ -850,10 +821,11 @@ def display_one(name):
 def get_anchor(title, info, live):
     size = 0
     for line in title:
-        size += height(line, LARGE_FONT) + 8
+        size += height(line, LARGE_FONT) + 5
     if info:
+        size += 8
         for line in info:
-            size += height(line, MEDIUM_FONT) + 8
+            size += height(line, MEDIUM_FONT) + 4
 
     section_height = SCREEN_HEIGHT - 16 - TOP_DIVIDER_Y if live else SCREEN_HEIGHT - TOP_DIVIDER_Y
     return TOP_DIVIDER_Y + round((section_height - size) // 2)
