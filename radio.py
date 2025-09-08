@@ -858,8 +858,8 @@ def get_wifi_strength():
     result = subprocess.run(['iwconfig', 'wlan0'], 
                         stdout=subprocess.PIPE, text=True, timeout=2)
     result_lines = result.stdout.strip().split('\n')
-    print([i for i in result_lines if 'ESSID:' in i])
-    print([i for i in result_lines if 'Link Quality=:' in i])
+    print([i.split('ESSID:')[1].replace('"','') for i in result_lines if 'ESSID:' in i])
+    print([i for i in result_lines if 'Link Quality=' in i])
     logging.info(result.stdout.strip().split('\n'))
 
 def toggle_stream(name):
