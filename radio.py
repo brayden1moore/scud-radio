@@ -149,7 +149,7 @@ live_banner = Image.open('assets/live_banner.png').convert('RGBA')
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18 + 16
 ONE_NAME_X = 77
-ONE_NAME_Y = 12 + 16
+ONE_NAME_Y = 12 + 16 + 2
 ONE_LOC_X = ONE_NAME_X
 ONE_LOC_Y = ONE_NAME_Y + 31 
 TOP_DIVIDER_X = 11
@@ -841,7 +841,7 @@ def get_anchor(title, info, live):
             size += height(line, MEDIUM_FONT) + 6
 
     section_height = SCREEN_HEIGHT - 16 - TOP_DIVIDER_Y if live else SCREEN_HEIGHT - TOP_DIVIDER_Y
-    return TOP_DIVIDER_Y + round((section_height - size) // 2) - 3
+    return TOP_DIVIDER_Y + round((section_height - size) // 2)
 
 
 def display_battery(draw):
