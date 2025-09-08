@@ -798,7 +798,7 @@ def display_one(name):
     # set y_offset based on num lines
     #logging.info(f'len title lines: {title_lines}, len info lines: {info_lines}')
     if len(info_lines) == 1 and len(title_lines) == 2 and name not in reruns:
-        y_offset += 5
+        y_offset += 10
     elif len(info_lines) == 2 and len(title_lines) == 2 and name not in reruns:
         y_offset -= 7
     elif len(info_lines) == 2 and len(title_lines) == 1 and name not in reruns:
@@ -818,7 +818,6 @@ def display_one(name):
     elif len(info_lines) == 1 and len(title_lines) == 1:
         y_offset += 32
 
-
     for i in title_lines:
         draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
         y_offset += 32
@@ -826,8 +825,8 @@ def display_one(name):
     if len(title_lines) == 3 and len(info_lines) == 1 and name not in reruns: # 3 line title one line info + live (divider offset)
         y_offset -= 4
 
-    if len(info) > 1:
-        image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 11))    
+    #if len(info) > 1:
+    #    image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 11))    
 
     if len(title_lines) == 3 and len(info_lines) == 1 and name not in reruns: # 3 line title one line info + live (info offset)
         y_offset -= 4
