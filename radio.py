@@ -325,8 +325,8 @@ def display_scud():
         
         draw.ellipse(bbox, fill=color, outline=BLACK, width=2)
 
-        draw.text((10, 4), greeting + ",", font=LARGE_FONT, fill=BLACK) 
-        draw.text((10, 27),  "Friend.", font=LARGE_FONT, fill=BLACK) 
+        draw.text((10, 0), greeting + ",", font=LARGE_FONT, fill=BLACK) 
+        draw.text((10, 23),  "Friend.", font=LARGE_FONT, fill=BLACK) 
 
         draw.text((10, 193), f'Last Played: {last_played}', font=SMALL_FONT, fill=BLACK)
         draw.text((10, 203), f'Internet: Connected', font=SMALL_FONT, fill=BLACK)
@@ -738,11 +738,11 @@ def display_one(name):
     # top header
     draw.rectangle([
         0, 0, 
-        SCREEN_WIDTH, 18
+        SCREEN_WIDTH, 17
         ], fill=YELLOW)   
     draw.rectangle([
-        0, 18, 
-        SCREEN_WIDTH, 18 + 1
+        0, 17, 
+        SCREEN_WIDTH, 17 + 1
         ], fill=BLACK)     
 
     # logo
@@ -844,7 +844,7 @@ def display_one(name):
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formatted_time =  current_time.strftime("%I:%M %p").lstrip('0')
-    draw.text((x(formatted_time, SMALL_FONT), 4), formatted_time, font=SMALL_FONT, fill=BLACK)
+    draw.text((x(formatted_time, SMALL_FONT), 3), formatted_time, font=SMALL_FONT, fill=BLACK)
             
     safe_display(image)
 
@@ -852,15 +852,16 @@ def display_battery(draw):
     if not battery:
         get_battery()
     if battery:
-        outer_sq = draw.rectangle([278, 3, 306, 16], fill=BLACK)
-        nipple = draw.rectangle([306, 7, 307, 12], fill=BLACK)
+        battery_y = 2
+        outer_sq = draw.rectangle([278, battery_y, 306, battery_y + 15], fill=BLACK)
+        nipple = draw.rectangle([306, battery_y + 4, 307, battery_y + 11], fill=BLACK)
         battery_color = YELLOW if charging else WHITE
-        inner_sq_bg = draw.rectangle([280, 5, 280 + 24, 14], fill=BLUE) 
-        inner_sq = draw.rectangle([280, 5, 280 + round(24*battery/100), 14], fill=battery_color) 
+        inner_sq_bg = draw.rectangle([280, battery_y + 1, 280 + 24, battery_y + 12], fill=BLUE) 
+        inner_sq = draw.rectangle([280, battery_y + 1, 280 + round(24*battery/100), battery_y + 11], fill=battery_color) 
         if battery == 100:
-            draw.text((282, 4), str(battery), font=SMALL_FONT, fill=BLACK)
+            draw.text((282, battery_y + 1), str(battery), font=SMALL_FONT, fill=BLACK)
         else:
-            draw.text((286, 4), str(battery), font=SMALL_FONT, fill=BLACK)
+            draw.text((286, battery_y + 1), str(battery), font=SMALL_FONT, fill=BLACK)
 
 
 def toggle_stream(name):
