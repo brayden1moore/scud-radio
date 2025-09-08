@@ -834,7 +834,7 @@ def display_one(name):
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formtatted_time =  current_time.strftime("%I:%M %p")
-    draw.text((260, 12), formtatted_time, font=SMALL_FONT, fill=BLACK)
+    draw.text((240, 12), formtatted_time, font=SMALL_FONT, fill=BLACK)
             
     safe_display(image)
 
@@ -1071,7 +1071,7 @@ from gpiozero import RotaryEncoder, Button
 
 click_button = Button(26, bounce_time=0.05)
 click_button.hold_time = 2
-click_button.when_pressed = on_button_pressed
+click_button.when_pressed = wrapped_action(lambda: on_button_pressed())
 click_button.when_held = toggle_favorite
 click_button.when_released = on_button_released
 
