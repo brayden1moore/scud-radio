@@ -323,7 +323,7 @@ def display_scud():
         image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
         draw = ImageDraw.Draw(image)
         
-        draw.ellipse(bbox, fill=color, outline=BLACK, width=2)
+        draw.ellipse(bbox, fill=color, outline=BLACK, width=1)
 
         draw.text((10, 0), greeting + ",", font=LARGE_FONT, fill=BLACK) 
         draw.text((10, 23),  "Friend.", font=LARGE_FONT, fill=BLACK) 
@@ -854,14 +854,14 @@ def display_battery(draw):
     if battery:
         battery_y = 2
         outer_sq = draw.rectangle([278, battery_y, 306, battery_y + 13], fill=BLACK)
-        nipple = draw.rectangle([306, battery_y + 4, 307, battery_y + 11], fill=BLACK)
+        nipple = draw.rectangle([306, battery_y + 3, 307, battery_y + 9], fill=BLACK)
         battery_color = YELLOW if charging else WHITE
-        inner_sq_bg = draw.rectangle([280, battery_y + 1, 280 + 24, battery_y + 11], fill=BLUE) 
-        inner_sq = draw.rectangle([280, battery_y + 1, 280 + round(24*battery/100), battery_y + 11], fill=battery_color) 
+        inner_sq_bg = draw.rectangle([280, battery_y + 2, 280 + 24, battery_y + 11], fill=BLUE) 
+        inner_sq = draw.rectangle([280, battery_y + 2, 280 + round(24*battery/100), battery_y + 11], fill=battery_color) 
         if battery == 100:
-            draw.text((282, battery_y + 1), str(battery), font=SMALL_FONT, fill=BLACK)
+            draw.text((282, battery_y), str(battery), font=SMALL_FONT, fill=BLACK)
         else:
-            draw.text((286, battery_y + 1), str(battery), font=SMALL_FONT, fill=BLACK)
+            draw.text((286, battery_y), str(battery), font=SMALL_FONT, fill=BLACK)
 
 
 def toggle_stream(name):
