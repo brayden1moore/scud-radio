@@ -819,7 +819,7 @@ def display_one(name):
     draw.text((13,3), formatted_time, font=SMALL_FONT, fill=BLACK)
             
     get_wifi_strength()
-    
+
     safe_display(image)
 
 
@@ -856,7 +856,7 @@ def display_battery(draw):
 def get_wifi_strength():
     result = subprocess.run(['iwconfig', 'wlan0'], 
                         stdout=subprocess.PIPE, text=True, timeout=2)
-    logging.info(result.find('Link Quality'))
+    logging.info(result.stdout.strip().find('Link Quality'))
 
 def toggle_stream(name):
     global play_status
