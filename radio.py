@@ -320,10 +320,10 @@ def display_scud():
     frames = os.listdir('assets/splash')
     for i in range(0,103): # might make 52
 
-        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
+        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=color)
         draw = ImageDraw.Draw(image)
         
-        draw.ellipse(bbox, fill=color, outline=BLACK, width=1)
+        #draw.ellipse(bbox, fill=color, outline=BLACK, width=1)
 
         draw.text((10, 0), greeting + ",", font=LARGE_FONT, fill=BLACK) 
         draw.text((10, 23),  "Friend.", font=LARGE_FONT, fill=BLACK) 
