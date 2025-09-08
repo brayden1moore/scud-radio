@@ -873,7 +873,7 @@ def get_wifi_strength():
 def display_wifi(image):
     if not wifi_strength:
         get_wifi_strength()
-    strength = 'low' if wifi_strength < 20 else 'med' if 50 < wifi_strength >= 20 else 'high'
+    strength = 'low' if wifi_strength < 20 else 'med' if 40 < wifi_strength >= 20 else 'high'
     signal = Image.open(f'assets/wifi_{strength}.png').convert('RGBA')
     image.paste(signal, (260, 4), signal)
 
