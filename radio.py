@@ -488,7 +488,7 @@ def width(string, font):
 
 def height(string, font):
     left, top, right, bottom = font.getbbox(string)
-    text_height = top - bottom
+    text_height =  bottom - top
     return text_height
 
 def x(string, font):
@@ -826,12 +826,12 @@ def display_one(name):
     anchor = get_anchor(title_lines, info_lines, name not in reruns)
 
     for i in title_lines:
-        draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=TEXT_COLOR)
+        draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=BLACK)
         anchor += height(i, LARGE_FONT) + 12
 
     if info_lines:
         for i in info_lines:
-            draw.text((SHOW_INFO_X, anchor), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
+            draw.text((SHOW_INFO_X, anchor), i, font=MEDIUM_FONT, fill=BLACK)
             anchor += height(i, MEDIUM_FONT) + 8
 
     # battery
