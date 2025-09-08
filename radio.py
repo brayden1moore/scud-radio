@@ -855,12 +855,17 @@ def display_battery(draw):
         '''
 
 def get_wifi_strength():
-    result = subprocess.run(['iwconfig', 'wlan0'], 
-                        stdout=subprocess.PIPE, text=True, timeout=2)
-    result_lines = result.stdout.strip().split('\n')
-    print([i.split('ESSID:')[1].replace('"','').strip() for i in result_lines if 'ESSID:' in i])
-    print([i.split('Link Quality=')[1].split('/')[0] for i in result_lines if 'Link Quality=' in i])
-    logging.info(result.stdout.strip().split('\n'))
+    try:
+        result = subprocess.run(['iwconfig', 'wlan0'], 
+                            stdout=subprocess.PIPE, text=True, timeout=2)
+        result_lines = result.stdout.strip().split('\n')
+        ssid = [i.split('ESSID:')[1].replace('"','').strip() for i in result_lines if 'ESSID:' in i][0]
+        signal_strength = [i.split('Link Quality=')[1].split('/')[0] for i in result_lines if 'Link Quality=' in i][0]
+        strength = int((float(signal_strength) + 110) * 10 / 7)
+        print(strength)
+    except:
+        ssid = "Not Found"
+        strength = 0
 
 def toggle_stream(name):
     global play_status
