@@ -140,13 +140,13 @@ live_readied = Image.open('assets/live_readied.png').convert('RGBA')
 live_banner = Image.open('assets/live_banner.png').convert('RGBA')
 
 ONE_LOGO_X = 15
-ONE_LOGO_Y = 18 + 10
+ONE_LOGO_Y = 18 + 7
 ONE_NAME_X = 77
-ONE_NAME_Y = 12 + 10
+ONE_NAME_Y = 12 + 7
 ONE_LOC_X = ONE_NAME_X
 ONE_LOC_Y = ONE_NAME_Y + 31 
 TOP_DIVIDER_X = 11
-TOP_DIVIDER_Y = 80
+TOP_DIVIDER_Y = 80 + 3
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
 BOTTOM_DIVIDER_Y = 175
 SHOW_ROW_1_X = TOP_DIVIDER_X
@@ -844,7 +844,7 @@ def display_one(name):
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formatted_time =  current_time.strftime("%I:%M %p").lstrip('0')
-    draw.text((x(formatted_time, SMALL_FONT), 5), formatted_time, font=SMALL_FONT, fill=BLACK)
+    draw.text((x(formatted_time, SMALL_FONT), 4), formatted_time, font=SMALL_FONT, fill=BLACK)
             
     safe_display(image)
 
@@ -852,15 +852,15 @@ def display_battery(draw):
     if not battery:
         get_battery()
     if battery:
-        outer_sq = draw.rectangle([278, 4, 306, 17], fill=BLACK)
-        nipple = draw.rectangle([306, 8, 307, 13], fill=BLACK)
+        outer_sq = draw.rectangle([278, 3, 306, 16], fill=BLACK)
+        nipple = draw.rectangle([306, 7, 307, 12], fill=BLACK)
         battery_color = YELLOW if charging else WHITE
-        inner_sq_bg = draw.rectangle([280, 6, 280 + 24, 15], fill=BLUE) 
-        inner_sq = draw.rectangle([280, 6, 280 + round(24*battery/100), 15], fill=battery_color) 
+        inner_sq_bg = draw.rectangle([280, 5, 280 + 24, 14], fill=BLUE) 
+        inner_sq = draw.rectangle([280, 5, 280 + round(24*battery/100), 14], fill=battery_color) 
         if battery == 100:
-            draw.text((282, 5), str(battery), font=SMALL_FONT, fill=BLACK)
+            draw.text((282, 4), str(battery), font=SMALL_FONT, fill=BLACK)
         else:
-            draw.text((286, 5), str(battery), font=SMALL_FONT, fill=BLACK)
+            draw.text((286, 4), str(battery), font=SMALL_FONT, fill=BLACK)
 
 
 def toggle_stream(name):
