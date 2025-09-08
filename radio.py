@@ -310,7 +310,7 @@ def display_scud():
         color = BLUE
     
     last_played = read_last_played()
-    volume = get_last_volume()
+    volume = round((get_last_volume()/150)*100)
     get_battery()
 
     frames = os.listdir('assets/splash')
