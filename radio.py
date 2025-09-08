@@ -227,6 +227,32 @@ def read_last_played():
         return last_played
     except:
         return None
+    
+def get_battery():
+    global battery, charging
+
+    try:
+        result = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
+                                input='get battery_charging\nget battery\n', 
+                                stdout=subprocess.PIPE, text=True, timeout=2)
+        
+        lines = result.stdout.strip().split('\n')
+        if 'battery' not in lines[0]:
+            lines = lines[1:]
+
+        #logging.info(lines)
+        
+        charging_line = lines[0].strip().split(': ')[1] 
+        charging = charging_line == 'true'
+        
+        battery_line = lines[1].strip().split(': ')[1] 
+        battery = int(float(battery_line))
+    except Exception as e:
+        #logging.info(e)
+        return battery, charging
+
+    return battery, charging
+
 
 def display_scud():
     '''
@@ -805,31 +831,6 @@ def display_battery(draw):
         else:
             draw.text((286, 12), str(battery), font=SMALL_FONT, fill=BLACK)
 
-def get_battery():
-    global battery, charging
-
-    try:
-        result = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
-                                input='get battery_charging\nget battery\n', 
-                                stdout=subprocess.PIPE, text=True, timeout=2)
-        
-        lines = result.stdout.strip().split('\n')
-        if 'battery' not in lines[0]:
-            lines = lines[1:]
-
-        #logging.info(lines)
-        
-        charging_line = lines[0].strip().split(': ')[1] 
-        charging = charging_line == 'true'
-        
-        battery_line = lines[1].strip().split(': ')[1] 
-        battery = int(float(battery_line))
-    except Exception as e:
-        #logging.info(e)
-        return battery, charging
-
-    return battery, charging
-    
 
 def toggle_stream(name):
     global play_status
