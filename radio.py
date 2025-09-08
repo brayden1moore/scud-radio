@@ -860,12 +860,12 @@ def get_wifi_strength():
                             stdout=subprocess.PIPE, text=True, timeout=2)
         result_lines = result.stdout.strip().split('\n')
         ssid = [i.split('ESSID:')[1].replace('"','').strip() for i in result_lines if 'ESSID:' in i][0]
-        print(ssid)
+        logging.info(ssid)
         signal_strength = [i.split('Link Quality=')[1].split('/')[0] for i in result_lines if 'Link Quality=' in i][0]
         strength = int((float(signal_strength) + 110) * 10 / 7)
-        print(strength)
+        logging.info(strength)
     except Exception as e:
-        print(e)
+        logging.info(e)
         ssid = "Not Found"
         strength = 0
 
