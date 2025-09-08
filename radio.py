@@ -742,7 +742,7 @@ def display_one(name):
         ], fill=YELLOW)   
     draw.rectangle([
         0, 22, 
-        SCREEN_WIDTH, 22 + BORDER_SIZE
+        SCREEN_WIDTH, 22 + 1
         ], fill=BLACK)     
 
     # logo
