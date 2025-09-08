@@ -486,6 +486,11 @@ def width(string, font):
     text_width = right - left
     return text_width
 
+def height(string, font):
+    left, top, right, bottom = font.getbbox(string)
+    text_height = top - bottom
+    return text_height
+
 def x(string, font):
     text_width = width(string,font)
     return max((SCREEN_WIDTH - text_width) // 2, 5)
@@ -818,23 +823,16 @@ def display_one(name):
     elif len(info_lines) == 1 and len(title_lines) == 1:
         y_offset += 32
 
+    anchor = get_anchor(title_lines, info_lines, name not in reruns)
+
     for i in title_lines:
-        draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset), i, font=BIGGEST_FONT, fill=TEXT_COLOR)
-        y_offset += 32
-
-    if len(title_lines) == 3 and len(info_lines) == 1 and name not in reruns: # 3 line title one line info + live (divider offset)
-        y_offset -= 4
-
-    #if len(info) > 1:
-    #    image.paste(divider, (0, SHOW_ROW_1_Y + y_offset + 11))    
-
-    if len(title_lines) == 3 and len(info_lines) == 1 and name not in reruns: # 3 line title one line info + live (info offset)
-        y_offset -= 4
+        draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=TEXT_COLOR)
+        anchor += height(i, LARGE_FONT) + 12
 
     if info_lines:
         for i in info_lines:
-            draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 8), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
-            y_offset += 20
+            draw.text((SHOW_INFO_X, anchor), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
+            anchor += height(i, MEDIUM_FONT) + 8
 
     # battery
     display_battery(draw)
@@ -847,6 +845,20 @@ def display_one(name):
     draw.text((13,3), formatted_time, font=SMALL_FONT, fill=BLACK)
             
     safe_display(image)
+
+
+def get_anchor(title, info, live):
+    size = 0
+    for line in title:
+        size += height(line, LARGE_FONT) + 12
+    if info:
+        for line in info:
+            size += height(line, MEDIUM_FONT) + 8
+    size -= 8
+
+    section_height = SCREEN_HEIGHT - 16 - TOP_DIVIDER_Y if live else SCREEN_HEIGHT - TOP_DIVIDER_Y
+    return round((section_height - size) // 2)
+
 
 def display_battery(draw):
     if not battery:
