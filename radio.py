@@ -834,7 +834,7 @@ def display_one(name):
 
     if info_lines:
         for i in info_lines:
-            draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 28), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
+            draw.text((SHOW_INFO_X, SHOW_ROW_1_Y + y_offset + 20), i, font=MEDIUM_FONT, fill=TEXT_COLOR_2)
             y_offset += 20
 
     # battery
