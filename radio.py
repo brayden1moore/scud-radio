@@ -140,11 +140,11 @@ live_readied = Image.open('assets/live_readied.png').convert('RGBA')
 live_banner = Image.open('assets/live_banner.png').convert('RGBA')
 
 ONE_LOGO_X = 15
-ONE_LOGO_Y = 18
+ONE_LOGO_Y = 18 + 10
 ONE_NAME_X = 77
-ONE_NAME_Y = 12
+ONE_NAME_Y = 12 + 10
 ONE_LOC_X = ONE_NAME_X
-ONE_LOC_Y = ONE_NAME_Y + 31
+ONE_LOC_Y = ONE_NAME_Y + 31 + 10
 TOP_DIVIDER_X = 11
 TOP_DIVIDER_Y = 80
 BOTTOM_DIVIDER_X = TOP_DIVIDER_X
