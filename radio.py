@@ -818,6 +818,8 @@ def display_one(name):
     
     draw.text((13,3), formatted_time, font=SMALL_FONT, fill=BLACK)
             
+    get_wifi_strength()
+    
     safe_display(image)
 
 
@@ -831,7 +833,7 @@ def get_anchor(title, info, live):
             size += height(line, MEDIUM_FONT) + 6
 
     section_height = SCREEN_HEIGHT - 16 - TOP_DIVIDER_Y if live else SCREEN_HEIGHT - TOP_DIVIDER_Y
-    return TOP_DIVIDER_Y + round((section_height - size) // 2) - 5
+    return TOP_DIVIDER_Y + round((section_height - size) // 2) - 3
 
 
 def display_battery(draw):
@@ -850,6 +852,11 @@ def display_battery(draw):
         else:
             draw.text((286, battery_y + 1), str(battery), font=SMALL_FONT, fill=BLACK)
         '''
+
+def get_wifi_strength():
+    result = subprocess.run(['iwconfig', 'wlan0'], 
+                        stdout=subprocess.PIPE, text=True, timeout=2)
+    logging.info(result.find('Link Quality'))
 
 def toggle_stream(name):
     global play_status
