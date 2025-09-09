@@ -808,7 +808,7 @@ def display_one(name):
         draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=BLACK)
         anchor += avg_title_height + 6
 
-    anchor += 10
+    anchor += 5
 
     if info_lines:
         for i in info_lines:
@@ -836,7 +836,7 @@ def get_anchor(title, info, live):
     for line in title:
         size += height(line, LARGE_FONT) + 6
     if info:
-        size += 10
+        size += 5
         for line in info:
             size += height(line, MEDIUM_FONT) + 6
 
