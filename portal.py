@@ -64,7 +64,7 @@ app.secret_key = 'sticky-lemon'
 def start_hotspot():
     subprocess.run(['sudo', 'nmcli','device', 'wifi', 'hotspot', 'ssid', 'Scud Radio', 'password', 'scudhouse'])
 
-def internet(host="8.8.8.8", port=53, timeout=3):
+def internet(host="8.8.8.8", port=53, timeout=4):
     """
     Host: 8.8.8.8 (google-public-dns-a.google.com)
     OpenPort: 53/tcp
