@@ -56,6 +56,10 @@ def display_setup():
     disp.ShowImage(image)
 
 def display_splash():
+    global is_first_boot
+
+    is_first_boot = True
+    
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
 
     # splash one
