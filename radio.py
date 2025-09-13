@@ -39,7 +39,7 @@ DC = 25
 BL = 23
 bus = 0 
 device = 0 
-MAX_BL = 100
+MAX_BL = 80
 disp = LCD_2inch.LCD_2inch()
 disp.Init()
 disp.clear()
@@ -952,7 +952,7 @@ def safe_restart():
     global restarting
     restarting = True
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    bg = Image.open(f'assets/restart.png') 
+    bg = Image.open(f'assets/updating.png') 
     image.paste(bg, (0, 0))
     safe_display(image)
     run(['sudo', '-u','scud','git', 'pull'], cwd='/home/scud/scud-radio')
