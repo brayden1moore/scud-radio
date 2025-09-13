@@ -39,7 +39,7 @@ DC = 25
 BL = 23
 bus = 0 
 device = 0 
-MAX_BL = 80
+MAX_BL = 100
 disp = LCD_2inch.LCD_2inch()
 disp.Init()
 disp.clear()
