@@ -105,9 +105,9 @@ def display_wifi_waiting():
     """Display WiFi waiting animation in sequence"""
     wifi_images = ['scud_wifi_1.png', 'scud_wifi_2.png', 'scud_wifi_3.png']
     
-    while wifi_waiting:  # Global flag to control the animation
+    while wifi_waiting:  
         for img in wifi_images:
-            if not wifi_waiting:  # Check if we should stop
+            if not wifi_waiting:  
                 break
             image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
             bg = Image.open(f'assets/{img}')
