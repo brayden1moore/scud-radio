@@ -10,7 +10,7 @@ import threading
 import logging
 import os
 
-from pathlob import Path
+from pathlib import Path
 
 STATE_FILE = Path("/var/lib/scud-radio/first_boot.flag")
 
