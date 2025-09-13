@@ -6,7 +6,6 @@ import driver as LCD_2inch
 from pathlib import Path
 from io import BytesIO
 import spidev as SPI
-import numpy as np
 import subprocess
 import threading
 import requests
@@ -803,8 +802,8 @@ def display_one(name):
     info_lines = [i for i in calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines) if i != '']
 
     anchor = get_anchor(title_lines, info_lines, name not in reruns)
-    avg_title_height = np.mean([height(i, LARGE_FONT) for i in title_lines])
-    avg_info_height = np.mean([height(i, MEDIUM_FONT) for i in info_lines])
+    avg_title_height = sum(height(i, LARGE_FONT) for i in title_lines) / len(title_lines) if title_lines else 0
+    avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
 
     for i in title_lines:
         draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=BLACK)
