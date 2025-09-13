@@ -87,9 +87,6 @@ def wait_for_wifi_interface(timeout=30):
     return False
 
 def internet(host="8.8.8.8", port=53, timeout=4, retries=3):
-    """
-    Check internet connectivity with retries
-    """
     for attempt in range(retries):
         try:
             socket.setdefaulttimeout(timeout)
