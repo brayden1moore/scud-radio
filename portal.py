@@ -186,7 +186,6 @@ if __name__ == '__main__':
         disp.reset()
         disp.close()
         time.sleep(1)
-        GPIO.cleanup()
         print("Internet connection already available. No configuration needed.")
         print("Starting radio")
         subprocess.run(['python', 'radio.py'])
