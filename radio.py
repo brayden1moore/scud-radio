@@ -2,7 +2,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from PIL import Image, ImageDraw, ImageFont, ImageSequence
 from datetime import date, datetime, timezone, timedelta
 from subprocess import Popen, run
-import driver as LCD_2inch
 from pathlib import Path
 from io import BytesIO
 import spidev as SPI
@@ -32,7 +31,9 @@ logging.basicConfig(
 
 ## constants and variables
 
-time.sleep(2)
+time.sleep(3)
+
+import driver as LCD_2inch
 
 # 2 inch
 RST = 27
