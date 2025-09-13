@@ -188,6 +188,7 @@ if __name__ == '__main__':
         disp.clear()
         disp.reset()
         disp.close()
+        GPIO.cleanup()
         time.sleep(1)
         print("Internet connection already available. No configuration needed.")
         print("Starting radio")
