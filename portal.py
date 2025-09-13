@@ -108,11 +108,14 @@ def display_wifi_waiting():
         for img in wifi_images:
             if not wifi_waiting:  
                 break
-            image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-            bg = Image.open(f'assets/{img}')
-            image.paste(bg, (0, 0))
-            disp.ShowImage(image)
-            time.sleep(1)
+            try:
+                image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
+                bg = Image.open(f'assets/{img}')
+                image.paste(bg, (0, 0))
+                disp.ShowImage(image)
+                time.sleep(1)
+            except:
+                pass
 
 def scan_wifi():
     options = []
