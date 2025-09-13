@@ -10,6 +10,8 @@ import threading
 import logging
 import os
 
+import RPi.GPIO as GPIO
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -184,6 +186,7 @@ if __name__ == '__main__':
         disp.reset()
         disp.close()
         time.sleep(1)
+        GPIO.cleanup()
         print("Internet connection already available. No configuration needed.")
         print("Starting radio")
         subprocess.run(['python', 'radio.py'])
