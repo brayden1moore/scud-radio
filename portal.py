@@ -10,7 +10,7 @@ import threading
 import logging
 import os
 
-import RPi.GPIO as GPIO
+first_boot = os.getenv('FIRST_BOOT', 'false').lower() == 'true'
 
 logging.basicConfig(
     level=logging.INFO,
@@ -166,7 +166,7 @@ def submit():
     else:
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
 
-if __name__ == '__main__':
+if first_boot:
     display_splash()
 
     wifi_waiting = True
@@ -185,12 +185,6 @@ if __name__ == '__main__':
         start_hotspot()
         app.run(host='0.0.0.0', port=8888, use_reloader=False)
     else:
-        disp.clear()
-        disp.reset()
-        disp.close()
-        GPIO.cleanup()
-        time.sleep(1)
-        print("Internet connection already available. No configuration needed.")
-        print("Starting radio")
-        subprocess.run(['python', 'radio.py'])
+        os.environ['FIRST_BOOT'] = 'false'
+        subprocess.run(['sudo','systemctl','restart','radio'])
         sys.exit(0)
