@@ -10,7 +10,19 @@ import threading
 import logging
 import os
 
-first_boot = os.getenv('FIRST_BOOT', 'false').lower() == 'true'
+from pathlob import Path
+
+STATE_FILE = Path("/var/lib/scud-radio/first_boot.flag")
+
+def is_first_boot():
+    return STATE_FILE.exists()
+
+def clear_first_boot():
+    STATE_FILE.unlink(missing_ok=True)
+
+def set_first_boot():
+    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    STATE_FILE.touch()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -158,6 +170,8 @@ def submit():
             id = result.stdout.strip().split('\t')[-1].replace('/python3','').strip()
             logging.info(id)
             subprocess.run(['sudo','kill',id])
+            
+            clear_first_boot()
             subprocess.run(['sudo','systemctl','restart','radio'])
             sys.exit(0)
         except:
@@ -166,7 +180,7 @@ def submit():
     else:
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
 
-if first_boot:
+if is_first_boot:
     display_splash()
 
     wifi_waiting = True
@@ -185,6 +199,6 @@ if first_boot:
         start_hotspot()
         app.run(host='0.0.0.0', port=8888, use_reloader=False)
     else:
-        os.environ['FIRST_BOOT'] = 'false'
+        clear_first_boot()
         subprocess.run(['sudo','systemctl','restart','radio'])
         sys.exit(0)
