@@ -32,6 +32,8 @@ logging.basicConfig(
 
 ## constants and variables
 
+time.sleep(2)
+
 # 2 inch
 RST = 27
 DC = 25
