@@ -21,6 +21,8 @@ logging.basicConfig(
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
 
+wifi_waiting = False
+
 # 2 inch
 RST = 27
 DC = 25
@@ -28,26 +30,31 @@ BL = 23
 bus = 0 
 device = 0 
 MAX_BL = 100
-disp = None
-
-def backlight_off():
-    if disp:
-        #display_scud()
-        disp.bl_DutyCycle(0)
+disp = LCD_2inch.LCD_2inch()
+disp.Init()
+disp.clear()
+disp.bl_DutyCycle(MAX_BL)
 
 def display_setup():
-    global disp
-    if disp is not None:
-        return 
-    
-    disp = LCD_2inch.LCD_2inch()
-    disp.Init()
-    disp.clear()
-    disp.bl_DutyCycle(MAX_BL)
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg = Image.open(f'assets/hello.png')
     image.paste(bg, (0, 0))
     disp.ShowImage(image)
+
+def display_splash():
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+    # splash one
+    bg = Image.open(f'assets/scud_splash_1.png')
+    image.paste(bg, (0, 0))
+    disp.ShowImage(image)
+    time.sleep(2)
+
+    # splash two
+    bg = Image.open(f'assets/scud_splash_2.png')
+    image.paste(bg, (0, 0))
+    disp.ShowImage(image)
+    time.sleep(2)
 
 def display_result(type):
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -64,19 +71,49 @@ app.secret_key = 'sticky-lemon'
 def start_hotspot():
     subprocess.run(['sudo', 'nmcli','device', 'wifi', 'hotspot', 'ssid', 'Scud Radio', 'password', 'scudhouse'])
 
-def internet(host="8.8.8.8", port=53, timeout=4):
+def wait_for_wifi_interface(timeout=30):
+    """Wait for WiFi interface to be available"""
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        try:
+            result = subprocess.run(['nmcli', 'device', 'status'], 
+                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                  text=True, timeout=5)
+            if 'wifi' in result.stdout.lower():
+                return True
+        except subprocess.TimeoutExpired:
+            pass
+        time.sleep(1)
+    return False
+
+def internet(host="8.8.8.8", port=53, timeout=4, retries=3):
     """
-    Host: 8.8.8.8 (google-public-dns-a.google.com)
-    OpenPort: 53/tcp
-    Service: domain (DNS/TCP)
+    Check internet connectivity with retries
     """
-    try:
-        socket.setdefaulttimeout(timeout)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        return True
-    except socket.error as ex:
-        print(ex)
-        return False
+    for attempt in range(retries):
+        try:
+            socket.setdefaulttimeout(timeout)
+            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+            return True
+        except socket.error as ex:
+            logging.info(f"Internet check attempt {attempt + 1} failed: {ex}")
+            if attempt < retries - 1:
+                time.sleep(2) 
+    return False
+
+def display_wifi_waiting():
+    """Display WiFi waiting animation in sequence"""
+    wifi_images = ['scud_wifi_1.png', 'scud_wifi_2.png', 'scud_wifi_3.png']
+    
+    while wifi_waiting:  # Global flag to control the animation
+        for img in wifi_images:
+            if not wifi_waiting:  # Check if we should stop
+                break
+            image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
+            bg = Image.open(f'assets/{img}')
+            image.paste(bg, (0, 0))
+            disp.ShowImage(image)
+            time.sleep(1)
 
 def scan_wifi():
     options = []
@@ -128,13 +165,27 @@ def submit():
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
 
 if __name__ == '__main__':
-    connected = internet()
+    display_splash()
+
+    wifi_waiting = True
+    wifi_thread = threading.Thread(target=display_wifi_waiting, daemon=True)
+    wifi_thread.start()
+    
+    if not wait_for_wifi_interface():
+        wifi_waiting = False
+        logging.error("WiFi interface not available")
+        sys.exit(1)
+    
+    connected = internet(retries=5)
 
     if not connected:
         display_setup()
         start_hotspot()
         app.run(host='0.0.0.0', port=8888, use_reloader=False)
     else:
+        disp.clear()
+        disp.reset()
+        disp.close()
         print("Internet connection already available. No configuration needed.")
         print("Starting radio")
         subprocess.run(['python', 'radio.py'])
