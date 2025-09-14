@@ -586,7 +586,7 @@ def calculate_text(text, font, max_width, lines):
 def display_everything(name, update=False, readied=False):
     global streams, play_status, first_display
 
-    highlight_color = BLUE #if name in favorites else BLUE if name not in reruns else GREEN
+    highlight_color = WHITE #if name in favorites else BLUE if name not in reruns else GREEN
     
     if readied and not restarting:
         first_display = False
@@ -604,7 +604,7 @@ def display_everything(name, update=False, readied=False):
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
-        bg_color = WHITE #BLUE if name in favorites else WHITE 
+        bg_color = BLACK #BLUE if name in favorites else WHITE 
         image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=bg_color)
         draw = ImageDraw.Draw(image)
 
@@ -693,7 +693,7 @@ def display_everything(name, update=False, readied=False):
 
         y_offset = 0
         for i in title_lines:
-            draw.text((SHOW_INFO_X, SUBTITLE_Y + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((SHOW_INFO_X, SUBTITLE_Y + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
             y_offset += 20
 
         '''
@@ -719,7 +719,7 @@ def display_everything(name, update=False, readied=False):
 
     
 def display_one(name):
-    highlight_color = BLUE #WHITE#BLUE #if name in favorites else BLUE if name not in reruns else GREEN
+    highlight_color = WHITE #WHITE#BLUE #if name in favorites else BLUE if name not in reruns else GREEN
 
     bg_color = BLACK #BLUE if name in favorites else WHITE 
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=bg_color)
