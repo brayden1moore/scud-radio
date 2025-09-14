@@ -271,25 +271,14 @@ def get_timezone_from_ip():
         return 'UTC' 
 
 def display_scud():
-    '''
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    rotations = 0
-    max_rotations = 2
-    while rotations <max_rotations:
-        for i in [2,3,4,5,6,7,1]:
-             
-            bg = Image.open(f'assets/gif/{i}.png') 
-            image.paste(bg, (0, 0))
-            safe_display(image)  
+    for i in 'welcome':
+            
+        bg = Image.open(f'assets/scud_{i}.png') 
+        image.paste(bg, (0, 0))
+        safe_display(image)  
 
-            if i==1 and rotations==max_rotations-1:
-                time.sleep(0)
-            else:
-                time.sleep(0.01)
-
-        rotations += 1
-
-    bg = Image.open(f'assets/gif/1.png') 
+    bg = Image.open(f'assets/scud_splash_2.png') 
     image.paste(bg, (0, 0))
     safe_display(image)  
     '''
@@ -324,7 +313,6 @@ def display_scud():
     volume = round((get_last_volume()/150)*100)
     get_battery()
 
-    '''
     frames = os.listdir('assets/splash')
     for i in range(0,103): # might make 52
 
