@@ -871,7 +871,6 @@ def display_wifi(image):
     strength = 'low' if wifi_strength < 20 else 'med' if wifi_strength <= 50 else 'high'
     signal = Image.open(f'assets/wifi_{strength}.png').convert('RGBA')
     image.paste(signal, (260, 4), signal)
-    logging.info(wifi_strength)
 
 def toggle_stream(name):
     global play_status
@@ -911,32 +910,20 @@ def confirm_seek():
 
 def show_volume_overlay(volume):
     global current_image
-
     if current_image:
         img = current_image.copy()
-        draw = ImageDraw.Draw(img)
+        time.sleep(0.008)  
         
+        draw = ImageDraw.Draw(img)
         total_bar_height = SCREEN_HEIGHT - TOP_DIVIDER_Y - 2
         volume_bar_end = TOP_DIVIDER_Y + 2 + total_bar_height * ((150-volume)/150)
-
-        #logging.info(f'from {SCREEN_HEIGHT} to {volume_bar_end}')
-
-        draw.rectangle([
-            SCREEN_WIDTH-9, TOP_DIVIDER_Y+2, 
-            SCREEN_WIDTH, SCREEN_HEIGHT
-                        ], fill=BLACK)
         
-        draw.rectangle([
-            SCREEN_WIDTH-7, TOP_DIVIDER_Y+2, 
-            SCREEN_WIDTH, SCREEN_HEIGHT
-                        ], fill=BLACK)
+        draw.rectangle([SCREEN_WIDTH-9, TOP_DIVIDER_Y+2, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
+        draw.rectangle([SCREEN_WIDTH-7, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
         
-        draw.rectangle([
-            SCREEN_WIDTH-7, volume_bar_end, 
-            SCREEN_WIDTH, SCREEN_HEIGHT
-                        ], fill=YELLOW)
-        
+        time.sleep(0.005)  
         safe_display(img)
+        time.sleep(0.005)
 
 def safe_restart():
     global restarting
