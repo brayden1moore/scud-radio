@@ -54,7 +54,7 @@ app = Flask(__name__,
 app.secret_key = 'sticky-lemon'
 
 def start_hotspot():
-    subprocess.run(['sudo', 'nmcli','device', 'wifi', 'hotspot', 'ssid', 'Scud Radio', 'password', 'scudhouse'])
+    subprocess.run(['sudo', 'nmcli','device', 'wifi', 'hotspot', 'ssid', 'Go to https://scud.local:8888', 'password', 'scudhouse'])
 
 def internet(host="8.8.8.8", port=53, timeout=4, retries=3):
     for attempt in range(retries):
@@ -118,7 +118,7 @@ def submit():
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
 
 connected = internet(retries=5)
-connected = False
+#connected = False
 
 if not connected:
     display_setup()
