@@ -40,10 +40,15 @@ BL = 23
 bus = 0 
 device = 0 
 MAX_BL = 100
+time.sleep(0.5) 
 disp = LCD_2inch.LCD_2inch()
+time.sleep(0.1)
 disp.Init()
+time.sleep(0.1) 
 disp.clear()
-disp.bl_DutyCycle(MAX_BL)
+time.sleep(0.1)
+disp.bl_DutyCycle(80) 
+time.sleep(0.2)
 
 mpv_process = None
 stream = None
@@ -145,6 +150,15 @@ live_smallest = Image.open('assets/live_smallest.png').convert('RGBA')
 live_small = Image.open('assets/live_small.png').convert('RGBA')
 live_readied = Image.open('assets/live_readied.png').convert('RGBA')
 live_banner = Image.open('assets/live_banner.png').convert('RGBA')
+
+SPLASH_IMAGES = {}
+def preload_splash_images():
+    try:
+        for char in 'welcome':
+            SPLASH_IMAGES[char] = Image.open(f'assets/scud_{char}.png')
+        SPLASH_IMAGES['splash_2'] = Image.open('assets/scud_splash_2.png')
+    except Exception as e:
+        logging.error(f"Failed to preload images: {e}")
 
 ONE_LOGO_X = 15
 ONE_LOGO_Y = 18 + 16
@@ -271,16 +285,31 @@ def get_timezone_from_ip():
         return 'UTC' 
 
 def display_scud():
+    welcome_images = {}
+    for char in 'welcome':
+        try:
+            welcome_images[char] = Image.open(f'assets/scud_{char}.png')
+            time.sleep(0.02) 
+        except:
+            pass
+    
+    splash_2_img = Image.open('assets/scud_splash_2.png')
+    time.sleep(0.1) 
+    
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    for i in 'welcome':
-            
-        bg = Image.open(f'assets/scud_{i}.png') 
-        image.paste(bg, (0, 0))
-        safe_display(image)  
-
-    bg = Image.open(f'assets/scud_splash_2.png') 
-    image.paste(bg, (0, 0))
-    safe_display(image)  
+    for char in 'welcome':
+        if char in welcome_images:
+            time.sleep(0.05)  
+            image.paste(welcome_images[char], (0, 0))
+            time.sleep(0.02)  
+            safe_display(image)
+            time.sleep(0.08) 
+    
+    time.sleep(0.2) 
+    image.paste(splash_2_img, (0, 0))
+    time.sleep(0.1) 
+    safe_display(image)
+    time.sleep(0.2)
 
     global user_tz
 
