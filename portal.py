@@ -10,20 +10,6 @@ import threading
 import logging
 import os
 
-from pathlib import Path
-
-STATE_FILE = Path("/var/lib/scud-radio/first_boot.flag")
-
-def is_first_boot():
-    return STATE_FILE.exists()
-
-def clear_first_boot():
-    STATE_FILE.unlink(missing_ok=True)
-
-def set_first_boot():
-    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    STATE_FILE.touch()
-
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -56,10 +42,7 @@ def display_setup():
     disp.ShowImage(image)
 
 def display_splash():
-    global is_first_boot
 
-    is_first_boot = True
-    
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
 
     # splash one
@@ -173,9 +156,7 @@ def submit():
                                     text=True, check=True)
             id = result.stdout.strip().split('\t')[-1].replace('/python3','').strip()
             logging.info(id)
-            subprocess.run(['sudo','kill',id])
-            
-            clear_first_boot()
+            subprocess.run(['sudo','kill',id])            
             subprocess.run(['sudo','systemctl','restart','radio'])
             sys.exit(0)
         except:
@@ -184,25 +165,23 @@ def submit():
     else:
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
 
-if is_first_boot:
-    display_splash()
+display_splash()
 
-    wifi_waiting = True
-    wifi_thread = threading.Thread(target=display_wifi_waiting, daemon=True)
-    wifi_thread.start()
-    
-    if not wait_for_wifi_interface():
-        wifi_waiting = False
-        logging.error("WiFi interface not available")
-        sys.exit(1)
-    
-    connected = internet(retries=5)
+wifi_waiting = True
+wifi_thread = threading.Thread(target=display_wifi_waiting, daemon=True)
+wifi_thread.start()
 
-    if not connected:
-        display_setup()
-        start_hotspot()
-        app.run(host='0.0.0.0', port=8888, use_reloader=False)
-    else:
-        clear_first_boot()
-        subprocess.run(['sudo','systemctl','restart','radio'])
-        sys.exit(0)
+if not wait_for_wifi_interface():
+    wifi_waiting = False
+    logging.error("WiFi interface not available")
+    sys.exit(1)
+
+connected = internet(retries=5)
+
+if not connected:
+    display_setup()
+    start_hotspot()
+    app.run(host='0.0.0.0', port=8888, use_reloader=False)
+else:
+    subprocess.run(['sudo','python','radio.py'])
+    sys.exit(0)
