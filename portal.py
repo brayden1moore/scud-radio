@@ -21,9 +21,13 @@ logging.basicConfig(
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
 
+disp = None
+
 wifi_waiting = False
 
 def display_setup():
+    global disp
+    
     # 2 inch
     RST = 27
     DC = 25
