@@ -118,6 +118,7 @@ def submit():
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
 
 connected = internet(retries=5)
+connected = False
 
 if not connected:
     display_setup()
