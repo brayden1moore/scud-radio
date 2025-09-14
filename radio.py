@@ -365,11 +365,11 @@ import json
 def send_mpv_command(cmd, max_retries=5, retry_delay=1):
     for attempt in range(max_retries):
         try:
+            logging.info(f"Sending MPV command: {cmd}")
             with socket.socket(socket.AF_UNIX) as s:
                 s.settimeout(2)
                 s.connect("/tmp/mpvsocket")
                 s.sendall((json.dumps(cmd) + '\n').encode())
-                #logging.info(f"Sent MPV command: {cmd}")
                 return True
         except (ConnectionRefusedError, FileNotFoundError, socket.timeout) as e:
             if attempt < max_retries - 1:
