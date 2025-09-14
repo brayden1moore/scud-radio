@@ -586,7 +586,7 @@ def calculate_text(text, font, max_width, lines):
 def display_everything(name, update=False, readied=False):
     global streams, play_status, first_display
 
-    highlight_color = YELLOW #if name in favorites else BLUE if name not in reruns else GREEN
+    highlight_color = BLUE #if name in favorites else BLUE if name not in reruns else GREEN
     
     if readied and not restarting:
         first_display = False
@@ -604,7 +604,7 @@ def display_everything(name, update=False, readied=False):
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
-        bg_color = BLACK #BLUE if name in favorites else WHITE 
+        bg_color = WHITE #BLUE if name in favorites else WHITE 
         image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=bg_color)
         draw = ImageDraw.Draw(image)
 
@@ -693,7 +693,7 @@ def display_everything(name, update=False, readied=False):
 
         y_offset = 0
         for i in title_lines:
-            draw.text((SHOW_INFO_X, SUBTITLE_Y + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
+            draw.text((SHOW_INFO_X, SUBTITLE_Y + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
             y_offset += 20
 
         '''
@@ -719,9 +719,9 @@ def display_everything(name, update=False, readied=False):
 
     
 def display_one(name):
-    highlight_color = BLACK #WHITE#BLUE #if name in favorites else BLUE if name not in reruns else GREEN
+    highlight_color = BLUE #WHITE#BLUE #if name in favorites else BLUE if name not in reruns else GREEN
 
-    bg_color = BLACK #BLUE if name in favorites else WHITE 
+    bg_color = WHITE #BLUE if name in favorites else WHITE 
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=bg_color)
     draw = ImageDraw.Draw(image)
 
@@ -751,10 +751,10 @@ def display_one(name):
         image.paste(live_banner, (0,0), live_banner)
 
     # name
-    draw.text((ONE_NAME_X, ONE_NAME_Y), calculate_text(name, font=LARGE_FONT, max_width=223, lines=1)[0], font=LARGE_FONT, fill=WHITE)
+    draw.text((ONE_NAME_X, ONE_NAME_Y), calculate_text(name, font=LARGE_FONT, max_width=223, lines=1)[0], font=LARGE_FONT, fill=TEXT_COLOR)
 
     # location
-    draw.text((ONE_LOC_X, ONE_LOC_Y), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=WHITE)    
+    draw.text((ONE_LOC_X, ONE_LOC_Y), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=TEXT_COLOR_2)    
 
     # top divider
     divider = Image.new('RGB', (SCREEN_WIDTH,BORDER_SIZE), color=BORDER_COLOR)
@@ -787,14 +787,14 @@ def display_one(name):
     avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
 
     for i in title_lines:
-        draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=WHITE)
+        draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=BLACK)
         anchor += avg_title_height + 6
 
     anchor += 5
 
     if info_lines:
         for i in info_lines:
-            draw.text((SHOW_INFO_X, anchor), i, font=MEDIUM_FONT, fill=WHITE)
+            draw.text((SHOW_INFO_X, anchor), i, font=MEDIUM_FONT, fill=BLACK)
             anchor += avg_info_height + 6
 
     # battery
