@@ -321,10 +321,10 @@ def display_scud():
     draw = ImageDraw.Draw(image)
     draw.text((10, 0), greeting + ",", font=LARGE_FONT, fill=WHITE) 
     draw.text((10, 23),  "Friend.", font=LARGE_FONT, fill=WHITE) 
-    draw.text((10, 193), f'Last Played: {last_played}', font=SMALL_FONT, fill=WHITE)
-    draw.text((10, 203), f'Internet: Connected', font=SMALL_FONT, fill=WHITE)
-    draw.text((10, 213), f'Battery: {battery}%', font=SMALL_FONT, fill=WHITE)
-    draw.text((10, 223), f'Volume: {volume}%', font=SMALL_FONT, fill=WHITE)
+    draw.text((10, 193), f'Last Played: {last_played}', font=MEDIUM_FONT, fill=WHITE)
+    draw.text((10, 203), f'Internet: Connected', font=MEDIUM_FONT, fill=WHITE)
+    draw.text((10, 213), f'Battery: {battery}%', font=MEDIUM_FONT, fill=WHITE)
+    draw.text((10, 223), f'Volume: {volume}%', font=MEDIUM_FONT, fill=WHITE)
     safe_display(image)
 
 
