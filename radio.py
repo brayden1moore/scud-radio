@@ -586,7 +586,7 @@ def calculate_text(text, font, max_width, lines):
 def display_everything(name, update=False, readied=False):
     global streams, play_status, first_display
 
-    highlight_color = WHITE #if name in favorites else BLUE if name not in reruns else GREEN
+    highlight_color = YELLOW #if name in favorites else BLUE if name not in reruns else GREEN
     
     if readied and not restarting:
         first_display = False
@@ -688,8 +688,8 @@ def display_everything(name, update=False, readied=False):
         name_line = calculate_text(name, LARGE_FONT, 300, 1)
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 300, 2)
 
-        draw.text((SHOW_INFO_X, TITLE_Y), name_line[0], font=LARGE_FONT, fill=BLACK)
-        draw.text((SHOW_INFO_X, LOCATION_Y), location, font=MEDIUM_FONT, fill=BLACK)
+        draw.text((SHOW_INFO_X, TITLE_Y), name_line[0], font=LARGE_FONT, fill=WHITE)
+        draw.text((SHOW_INFO_X, LOCATION_Y), location, font=MEDIUM_FONT, fill=WHITE)
 
         y_offset = 0
         for i in title_lines:
@@ -719,7 +719,7 @@ def display_everything(name, update=False, readied=False):
 
     
 def display_one(name):
-    highlight_color = WHITE #WHITE#BLUE #if name in favorites else BLUE if name not in reruns else GREEN
+    highlight_color = BLACK #WHITE#BLUE #if name in favorites else BLUE if name not in reruns else GREEN
 
     bg_color = BLACK #BLUE if name in favorites else WHITE 
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=bg_color)
