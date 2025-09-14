@@ -27,7 +27,7 @@ wifi_waiting = False
 
 def display_setup():
     global disp
-    
+
     # 2 inch
     RST = 27
     DC = 25
@@ -123,7 +123,7 @@ def submit():
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
 
 connected = internet(retries=5)
-connected = False
+#connected = False
 
 if not connected:
     display_setup()
