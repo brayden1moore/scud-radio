@@ -281,7 +281,6 @@ def display_scud():
     bg = Image.open(f'assets/scud_splash_2.png') 
     image.paste(bg, (0, 0))
     safe_display(image)  
-    '''
 
     global user_tz
 
@@ -291,6 +290,7 @@ def display_scud():
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     current_hour = current_time.hour
 
+    '''
     greeting = 'Hello'
     size = 192
     bbox = [64, 120, 64 + size, 120 + size]
