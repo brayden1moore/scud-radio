@@ -91,3 +91,5 @@ if not wait_for_wifi_interface():
     wifi_waiting = False
     logging.error("WiFi interface not available")
     sys.exit(1)
+
+subprocess.run(['sudo','systemctl','start','radio'])
