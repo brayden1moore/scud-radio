@@ -2,6 +2,7 @@ import driver as LCD_2inch
 from PIL import Image, ImageDraw, ImageFont, ImageSequence
 import subprocess
 import spidev as SPI
+import time
 
 # 2 inch
 RST = 27
@@ -29,6 +30,7 @@ def display_goodbye():
     bg = Image.open(f'assets/scud_splash_2.png') 
     image.paste(bg, (0, 0))
     disp.ShowImage(image)
+    time.sleep(1)
 
 display_goodbye()
 
