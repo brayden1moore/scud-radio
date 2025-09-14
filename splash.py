@@ -36,6 +36,7 @@ disp.Init()
 disp.clear()
 disp.bl_DutyCycle(MAX_BL)
 
+
 def display_splash():
 
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -80,13 +81,13 @@ def display_wifi_waiting():
 
 display_splash()
 
-wifi_waiting = True
+#wifi_waiting = True
 #wifi_thread = threading.Thread(target=display_wifi_waiting, daemon=True)
 #wifi_thread.start()
 
-if not wait_for_wifi_interface():
-    wifi_waiting = False
-    logging.error("WiFi interface not available")
-    sys.exit(1)
+#if not wait_for_wifi_interface():
+#    wifi_waiting = False
+#    logging.error("WiFi interface not available")
+#    sys.exit(1)
 
 subprocess.run(['sudo','systemctl','start','radio'])
