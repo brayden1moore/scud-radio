@@ -362,7 +362,7 @@ from gpiozero import Button
 import socket
 import json
 
-def send_mpv_command(cmd, max_retries=5, retry_delay=0.5):
+def send_mpv_command(cmd, max_retries=5, retry_delay=1):
     for attempt in range(max_retries):
         try:
             with socket.socket(socket.AF_UNIX) as s:
