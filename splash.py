@@ -8,6 +8,9 @@ import threading
 import logging
 import os
 
+subprocess.run(['sudo','iwconfig','wlan0','power','off'])
+subprocess.run(['sudo','iw','dev','wlan0','set','power_save','off'])
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
