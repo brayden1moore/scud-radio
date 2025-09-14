@@ -508,7 +508,7 @@ def pause(show_icon=False):
 
 
 def play(name, toggled=False):
-    global play_status, stream
+    global play_status, stream, first_boot
     play_status = 'play'
     stream = name
 
