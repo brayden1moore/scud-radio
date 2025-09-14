@@ -300,7 +300,6 @@ def display_scud():
     greeting = 'Hello'
     size = 192
     bbox = [64, 120, 64 + size, 120 + size]
-    color = PURPLE
 
     if 5 <= current_hour < 12:
         greeting = 'Good Morning'
@@ -326,7 +325,7 @@ def display_scud():
     draw.text((10, 203), f'Internet: Connected', font=SMALL_FONT, fill=WHITE)
     draw.text((10, 213), f'Battery: {battery}%', font=SMALL_FONT, fill=WHITE)
     draw.text((10, 223), f'Volume: {volume}%', font=SMALL_FONT, fill=WHITE)
-
+    safe_display(image)
 
 
 def backlight_on():
