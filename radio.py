@@ -282,6 +282,13 @@ def display_scud():
     image.paste(bg, (0, 0))
     safe_display(image)  
 
+    time.sleep(1)
+
+    bg = Image.open(f'assets/scud_splash_2_black.png') 
+    image.paste(bg, (0, 0))
+    safe_display(image)  
+
+
     global user_tz
 
     timezone_name = get_timezone_from_ip()
@@ -290,7 +297,6 @@ def display_scud():
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     current_hour = current_time.hour
 
-    '''
     greeting = 'Hello'
     size = 192
     bbox = [64, 120, 64 + size, 120 + size]
@@ -313,27 +319,14 @@ def display_scud():
     volume = round((get_last_volume()/150)*100)
     get_battery()
 
-    frames = os.listdir('assets/splash')
-    for i in range(0,103): # might make 52
+    draw = ImageDraw.Draw(image)
+    draw.text((10, 0), greeting + ",", font=LARGE_FONT, fill=WHITE) 
+    draw.text((10, 23),  "Friend.", font=LARGE_FONT, fill=WHITE) 
+    draw.text((10, 193), f'Last Played: {last_played}', font=SMALL_FONT, fill=WHITE)
+    draw.text((10, 203), f'Internet: Connected', font=SMALL_FONT, fill=WHITE)
+    draw.text((10, 213), f'Battery: {battery}%', font=SMALL_FONT, fill=WHITE)
+    draw.text((10, 223), f'Volume: {volume}%', font=SMALL_FONT, fill=WHITE)
 
-        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=color)
-        draw = ImageDraw.Draw(image)
-        
-        #draw.ellipse(bbox, fill=color, outline=BLACK, width=1)
-
-        draw.text((10, 0), greeting + ",", font=LARGE_FONT, fill=BLACK) 
-        draw.text((10, 23),  "Friend.", font=LARGE_FONT, fill=BLACK) 
-
-        draw.text((10, 193), f'Last Played: {last_played}', font=SMALL_FONT, fill=BLACK)
-        draw.text((10, 203), f'Internet: Connected', font=SMALL_FONT, fill=BLACK)
-        draw.text((10, 213), f'Battery: {battery}%', font=SMALL_FONT, fill=BLACK)
-        draw.text((10, 223), f'Volume: {volume}%', font=SMALL_FONT, fill=BLACK)
-
-        frame_num = str(i).zfill(3)
-        frame = Image.open(f'assets/splash/frame_{frame_num}_delay-0.03s.gif').convert('RGBA')
-        image.paste(frame, (40, 0), frame)
-        safe_display(image) 
-    '''
 
 
 def backlight_on():
