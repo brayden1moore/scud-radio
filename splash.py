@@ -81,8 +81,8 @@ def display_wifi_waiting():
 display_splash()
 
 wifi_waiting = True
-wifi_thread = threading.Thread(target=display_wifi_waiting, daemon=True)
-wifi_thread.start()
+#wifi_thread = threading.Thread(target=display_wifi_waiting, daemon=True)
+#wifi_thread.start()
 
 if not wait_for_wifi_interface():
     wifi_waiting = False
