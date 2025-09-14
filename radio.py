@@ -31,8 +31,6 @@ logging.basicConfig(
 
 ## constants and variables
 
-time.sleep(10)
-
 import driver as LCD_2inch
 
 # 2 inch
