@@ -363,7 +363,7 @@ from gpiozero import Button
 import socket
 import json
 
-def send_mpv_command(cmd, max_retries=5, retry_delay=1):
+def send_mpv_command(cmd, max_retries=10, retry_delay=1):
     for attempt in range(max_retries):
         try:
             logging.info(f"Sending MPV command: {cmd}")
