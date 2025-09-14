@@ -321,10 +321,10 @@ def display_scud():
     draw = ImageDraw.Draw(image)
     draw.text((10, 0), greeting + ",", font=LARGE_FONT, fill=WHITE) 
     draw.text((10, 23),  "Friend.", font=LARGE_FONT, fill=WHITE) 
-    draw.text((10, 193), f'Last Played: {last_played}', font=MEDIUM_FONT, fill=WHITE)
-    draw.text((10, 203), f'Internet: Connected', font=MEDIUM_FONT, fill=WHITE)
-    draw.text((10, 213), f'Battery: {battery}%', font=MEDIUM_FONT, fill=WHITE)
-    draw.text((10, 223), f'Volume: {volume}%', font=MEDIUM_FONT, fill=WHITE)
+    draw.text((10, 193), f'Last Played: {last_played}', font=SMALL_FONT, fill=WHITE)
+    draw.text((10, 203), f'Internet: Connected', font=SMALL_FONT, fill=WHITE)
+    draw.text((10, 213), f'Battery: {battery}%', font=SMALL_FONT, fill=WHITE)
+    draw.text((10, 223), f'Volume: {volume}%', font=SMALL_FONT, fill=WHITE)
     safe_display(image)
 
 
@@ -721,7 +721,7 @@ def display_everything(name, update=False, readied=False):
 def display_one(name):
     highlight_color = BLUE #WHITE#BLUE #if name in favorites else BLUE if name not in reruns else GREEN
 
-    bg_color = WHITE #BLUE if name in favorites else WHITE 
+    bg_color = BLACK #BLUE if name in favorites else WHITE 
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=bg_color)
     draw = ImageDraw.Draw(image)
 
@@ -787,14 +787,14 @@ def display_one(name):
     avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
 
     for i in title_lines:
-        draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=BLACK)
+        draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=WHITE)
         anchor += avg_title_height + 6
 
     anchor += 5
 
     if info_lines:
         for i in info_lines:
-            draw.text((SHOW_INFO_X, anchor), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((SHOW_INFO_X, anchor), i, font=MEDIUM_FONT, fill=WHITE)
             anchor += avg_info_height + 6
 
     # battery
