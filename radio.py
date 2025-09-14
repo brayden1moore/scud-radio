@@ -65,6 +65,7 @@ restarting = False
 held = False
 user_tz = 'UTC'
 wifi_strength = None
+first_boot = True
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -517,7 +518,11 @@ def play(name, toggled=False):
     else:
         #logging.info(f'attempting to play {name}')
         stream_url = streams[name]['streamLink']
-        send_mpv_command({"command": ["loadfile", stream_url, "replace"]})
+        if first_boot:
+            send_mpv_command({"command": ["loadfile", stream_url]})
+            first_boot = False
+        else:
+            send_mpv_command({"command": ["loadfile", stream_url, 'replace']})
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
     write_to_tmp_os_path(name)
