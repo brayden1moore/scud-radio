@@ -43,12 +43,6 @@ def display_splash():
     disp.ShowImage(image)
     time.sleep(2)
 
-    # splash two
-    bg = Image.open(f'assets/scud_splash_2.png')
-    image.paste(bg, (0, 0))
-    disp.ShowImage(image)
-    time.sleep(2)
-
 def wait_for_wifi_interface(timeout=30):
     """Wait for WiFi interface to be available"""
     start_time = time.time()
