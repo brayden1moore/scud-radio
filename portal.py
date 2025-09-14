@@ -101,7 +101,7 @@ def internet(host="8.8.8.8", port=53, timeout=4, retries=3):
 
 def display_wifi_waiting():
     """Display WiFi waiting animation in sequence"""
-    wifi_images = ['scud_wifi_3.png', 'scud_wifi_2.png', 'scud_wifi_1.png']
+    wifi_images = ['scud_wifi_3.png', 'scud_wifi_1.png', 'scud_wifi_2.png']
     
     while wifi_waiting:  
         for img in wifi_images:
