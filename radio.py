@@ -1013,7 +1013,7 @@ def periodic_update():
     global screen_on, failed_fetches
 
     if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 300):
-        subprocess.run(['sudo','shutdown','-h','now'])
+        subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
     if screen_on and (time.time() - last_input_time > 120):
         screen_on = False
