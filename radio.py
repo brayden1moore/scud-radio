@@ -226,10 +226,10 @@ def write_to_tmp_os_path(name):
     
     played_file = scud_path / 'last_played.txt'
 
-    if not scud_path.exists():
-        scud_path.touch() 
+    if not played_file.exists():
+        played_file.touch() 
         
-    with open(scud_path, 'w') as file:
+    with open(played_file, 'w') as file:
         file.write(name)
 
 
