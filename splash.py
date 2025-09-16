@@ -47,7 +47,7 @@ def display_splash():
     disp.ShowImage(image)
     time.sleep(2)
 
-def wait_for_wifi_interface(timeout=30):
+def wait_for_wifi_interface(timeout=60):
     """Wait for WiFi interface to be available"""
     start_time = time.time()
     while time.time() - start_time < timeout:
@@ -82,8 +82,8 @@ def display_wifi_waiting():
 display_splash()
 
 wifi_waiting = True
-wifi_thread = threading.Thread(target=display_wifi_waiting, daemon=True)
-wifi_thread.start()
+#wifi_thread = threading.Thread(target=display_wifi_waiting, daemon=True)
+#wifi_thread.start()
 
 if not wait_for_wifi_interface():
     wifi_waiting = False
