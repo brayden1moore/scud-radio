@@ -238,8 +238,8 @@ def read_last_played():
     scud_path.mkdir(parents=True, exist_ok=True)
     
     played_file = scud_path / 'last_played.txt'
-    if not scud_path.exists():
-        scud_path.touch() 
+    if not played_file.exists():
+        played_file.touch() 
         return None
     try:
         with open(played_file, 'r') as f:
