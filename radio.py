@@ -195,14 +195,14 @@ def get_last_volume():
     volume_file = vol_path / 'volume.txt'
     if not volume_file.exists():
         volume_file.touch() 
-        return 65
+        return 60
     
     try:
         with open(volume_file, 'r') as f:
             vol = int(f.read())
         return vol
     except:
-        return 65
+        return 60
 
 def set_last_volume(vol):
     vol_path = Path(LIB_PATH)
@@ -221,19 +221,23 @@ def safe_display(image):
     
 
 def write_to_tmp_os_path(name):
-    file_path = os.path.join("/tmp", "scud_last_played.txt")
+    file_path = os.path.join("/var/lib/scud", "last_played.txt")
     
     with open(file_path, 'w') as file:
         file.write(name)
 
 
 def read_last_played():
-    file_path = os.path.join("/tmp", "scud_last_played.txt")
-
+    scud_path = Path(LIB_PATH)
+    scud_path.mkdir(parents=True, exist_ok=True)
+    
+    played_file = scud_path / 'last_played.txt'
+    if not scud_path.exists():
+        scud_path.touch() 
+        return None
     try:
-        with open(file_path, 'r') as file:
-            last_played = file.read()
-        
+        with open(played_file, 'r') as f:
+            last_played = f.read()
         return last_played
     except:
         return None
@@ -278,6 +282,7 @@ def display_scud():
         bg = Image.open(f'assets/scud_{i}.png') 
         image.paste(bg, (0, 0))
         safe_display(image)  
+        time.sleep(0.05)
 
     bg = Image.open(f'assets/scud_splash_2.png') 
     image.paste(bg, (0, 0))
