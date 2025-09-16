@@ -221,9 +221,15 @@ def safe_display(image):
     
 
 def write_to_tmp_os_path(name):
-    file_path = os.path.join("/var/lib/scud", "last_played.txt")
+    scud_path = Path(LIB_PATH)
+    scud_path.mkdir(parents=True, exist_ok=True)
     
-    with open(file_path, 'w') as file:
+    played_file = scud_path / 'last_played.txt'
+
+    if not scud_path.exists():
+        scud_path.touch() 
+        
+    with open(scud_path, 'w') as file:
         file.write(name)
 
 
