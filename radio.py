@@ -945,20 +945,22 @@ def safe_restart():
     backlight_off()
     run(['sudo','systemctl', 'restart','splash'])
 
+button_released_time = None
 def on_button_pressed():
-    global button_press_time, rotated, button_press_times, held
+    global button_press_time, rotated, button_press_times, held, button_released_time
     button_press_time = time.time()
     if readied_stream:
         confirm_seek()
     held = True
     rotated = False
+    button_released_time = None
 
 button_press_times = []
 def on_button_released():
-     
-    global button_press_times, rotated, held
+    global button_press_times, rotated, held, button_released_time
     held = False
     current_time = time.time()
+    button_released_time = current_time
     if not readied_stream:
         set_last_volume(str(current_volume))
 
@@ -1015,7 +1017,7 @@ def handle_rotation(direction):
         show_volume_overlay(current_volume)
 
     else:
-        if (time.time() - button_press_time > 1):
+        if (time.time() - button_released_time > 0.2):
             last_rotation = time.time()
             seek_stream(direction)
 
