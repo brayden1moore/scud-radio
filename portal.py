@@ -109,11 +109,11 @@ def submit():
             disp.reset()
             disp.close()
             logging.info('Killing self')
-            result = subprocess.run(['sudo','netstat','-tulnp','|','grep','8888'],stdout=subprocess.PIPE,
-                                    text=True, check=True)
-            id = result.stdout.strip().split('\t')[-1].replace('/python3','').strip()
-            logging.info(id)
-            subprocess.run(['sudo','kill',id])            
+            #result = subprocess.run(['sudo','netstat','-tulnp','|','grep','8888'],stdout=subprocess.PIPE,
+            #                        text=True, check=True)
+            #id = result.stdout.strip().split('\t')[-1].replace('/python3','').strip()
+            #logging.info(id)
+            #subprocess.run(['sudo','kill',id])            
             subprocess.run(['sudo','systemctl','restart','radio'])
             sys.exit(0)
         except:
@@ -123,12 +123,12 @@ def submit():
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
 
 connected = internet(retries=5)
-#connected = False
+
+app.run(host='0.0.0.0', port=8888, use_reloader=False)
 
 if not connected:
     display_setup()
     start_hotspot()
-    app.run(host='0.0.0.0', port=8888, use_reloader=False)
 else:
     subprocess.run(['sudo','python','radio.py'])
     sys.exit(0)
