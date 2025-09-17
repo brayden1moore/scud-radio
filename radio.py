@@ -950,6 +950,7 @@ button_released_time = time.time()
 def on_button_pressed():
     global button_press_time, rotated, button_press_times, held, button_released_time
     button_press_time = time.time()
+    button_released_time = None
     if readied_stream:
         confirm_seek()
     held = True
@@ -1017,7 +1018,7 @@ def handle_rotation(direction):
         show_volume_overlay(current_volume)
 
     else:
-        if (time.time() - button_released_time > 1):
+        if button_released_time and (time.time() - button_released_time > 0.5):
             last_rotation = time.time()
             seek_stream(direction)
 
