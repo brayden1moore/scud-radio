@@ -124,11 +124,10 @@ def submit():
 
 connected = internet(retries=5)
 
-app.run(host='0.0.0.0', port=8888, use_reloader=False)
-
 if not connected:
     display_setup()
     start_hotspot()
+    app.run(host='0.0.0.0', port=8888, use_reloader=False)
 else:
     subprocess.run(['sudo','python','radio.py'])
     sys.exit(0)
