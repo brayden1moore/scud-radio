@@ -945,7 +945,8 @@ def safe_restart():
     backlight_off()
     run(['sudo','systemctl', 'restart','splash'])
 
-button_released_time = None
+button_released_time = time.time()
+
 def on_button_pressed():
     global button_press_time, rotated, button_press_times, held, button_released_time
     button_press_time = time.time()
@@ -953,7 +954,6 @@ def on_button_pressed():
         confirm_seek()
     held = True
     rotated = False
-    button_released_time = None
 
 button_press_times = []
 def on_button_released():
