@@ -1017,6 +1017,9 @@ def handle_rotation(direction):
             current_volume = min(150, current_volume + volume_step)
         else: 
             current_volume = max(0, current_volume - volume_step)
+            if current_volume == 0:
+                backlight_off()
+                screen_on = False
 
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
         show_volume_overlay(current_volume)
@@ -1030,8 +1033,8 @@ failed_fetches = 0
 def periodic_update():
     global screen_on, failed_fetches
 
-    if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 600):
-        subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
+    #if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 600):
+    #    subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
     #if screen_on and (time.time() - last_input_time > 60):
         #screen_dim = True
