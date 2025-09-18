@@ -1009,11 +1009,14 @@ def toggle_favorite():
 
 
 def handle_rotation(direction):
-    global rotated, current_volume, button_press_time, last_rotation
+    global rotated, current_volume, button_press_time, last_rotation, screen_on
     rotated = True
 
     if click_button.is_pressed:
         if direction == 1: 
+            if current_volume == 0:
+                backlight_on()
+                screen_on = True
             current_volume = min(150, current_volume + volume_step)
         else: 
             current_volume = max(0, current_volume - volume_step)
