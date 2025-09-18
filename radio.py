@@ -356,7 +356,7 @@ def backlight_off():
 
 def backlight_dim():
     if disp:
-        disp.bl_DutyCycle(50)
+        disp.bl_DutyCycle(20)
 
 display_scud()
 
