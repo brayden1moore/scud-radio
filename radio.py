@@ -1068,7 +1068,7 @@ def periodic_update():
 
 
 def wake_screen():
-    global screen_on, last_input_time, current_image
+    global screen_on, screen_dim, last_input_time, current_image
     last_input_time = time.time()
     if (not screen_on) or screen_dim:
         screen_on = True
