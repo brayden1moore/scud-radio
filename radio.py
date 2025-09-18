@@ -347,7 +347,7 @@ def backlight_on():
             safe_display(current_image)
         else:
             display_scud()
-        disp.bl_DutyCycle(current_bl)
+        disp.bl_DutyCycle(100)
 
 def backlight_off():
     if disp:
