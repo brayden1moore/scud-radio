@@ -39,11 +39,11 @@ DC = 25
 BL = 23
 bus = 0 
 device = 0 
-MAX_BL = 100
+current_bl = 100
 disp = LCD_2inch.LCD_2inch()
 disp.Init()
 disp.clear()
-disp.bl_DutyCycle(MAX_BL)
+disp.bl_DutyCycle(current_bl)
 
 mpv_process = None
 stream = None
@@ -346,7 +346,7 @@ def backlight_on():
             safe_display(current_image)
         else:
             display_scud()
-        disp.bl_DutyCycle(MAX_BL)
+        disp.bl_DutyCycle(current_bl)
 
 def backlight_off():
     if disp:
@@ -1010,11 +1010,12 @@ def handle_rotation(direction):
     if click_button.is_pressed:
         if direction == 1: 
             current_volume = min(150, current_volume + volume_step)
+            disp.bl_DutyCycle(min(100, current_bl + 10))
         else: 
             current_volume = max(0, current_volume - volume_step)
+            disp.bl_DutyCycle(max(0, current_bl - 10))
 
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
-        #logging.info(f'volume: {current_volume}')
         show_volume_overlay(current_volume)
 
     else:
@@ -1026,7 +1027,7 @@ failed_fetches = 0
 def periodic_update():
     global screen_on, failed_fetches
 
-    if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 300):
+    if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 600):
         subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
     if screen_on and (time.time() - last_input_time > 120):
