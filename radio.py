@@ -1033,10 +1033,10 @@ def periodic_update():
     if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 600):
         subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
-    if screen_on and (time.time() - last_input_time > 60):
-        screen_dim = True
-        backlight_dim()
-        pass
+    #if screen_on and (time.time() - last_input_time > 60):
+        #screen_dim = True
+        #backlight_dim()
+        #pass
 
     if screen_on and (time.time() - last_input_time > 120):
         screen_on = False
