@@ -50,6 +50,7 @@ stream = None
 readied_stream = None
 last_rotation = None
 screen_on = True
+screen_dim = False
 current_image = None
 saved_image_while_paused = None
 play_status = 'pause'
@@ -352,6 +353,10 @@ def backlight_off():
     if disp:
         disp.bl_DutyCycle(0)
         disp.clear()
+
+def backlight_dim():
+    if disp:
+        disp.bl_DutyCycle(50)
 
 display_scud()
 
@@ -1010,10 +1015,8 @@ def handle_rotation(direction):
     if click_button.is_pressed:
         if direction == 1: 
             current_volume = min(150, current_volume + volume_step)
-            disp.bl_DutyCycle(min(100, current_bl + 10))
         else: 
             current_volume = max(0, current_volume - volume_step)
-            disp.bl_DutyCycle(max(0, current_bl - 10))
 
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
         show_volume_overlay(current_volume)
@@ -1029,6 +1032,11 @@ def periodic_update():
 
     if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 600):
         subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
+
+    if screen_on and (time.time() - last_input_time > 60):
+        screen_dim = True
+        backlight_dim()
+        pass
 
     if screen_on and (time.time() - last_input_time > 120):
         screen_on = False
@@ -1062,12 +1070,12 @@ def periodic_update():
 def wake_screen():
     global screen_on, last_input_time, current_image
     last_input_time = time.time()
-    if not screen_on:
+    if (not screen_on) or screen_dim:
         screen_on = True
+        screen_dim = False
         backlight_on()
         if current_image:
-            #disp.display(current_image)
-            disp.ShowImage(current_image) # for 2 inch
+            disp.ShowImage(current_image) 
         else:
             display_scud()
         return True
