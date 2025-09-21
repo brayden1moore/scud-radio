@@ -573,27 +573,33 @@ def display_everything(name, update=False, readied=False):
         image.paste(logo, (130,114))
         if name in favorites:
             image.paste(star_60, (130,114), star_60)
-        if name not in reruns:
-            image.paste(selector_live_overlay, (0,0), selector_live_overlay)
+        #if name not in reruns:
+            #image.paste(selector_live_overlay, (0,0), selector_live_overlay)
 
         # prev and next
-        prev = streams[prev_stream]['logo_60'].rotate(50, expand=True)
-        next = streams[next_stream]['logo_60'].rotate(-50, expand=True)
+        prev = streams[prev_stream]['logo_40'].rotate(20, expand=True)
+        next = streams[next_stream]['logo_40'].rotate(-20, expand=True)
 
-        image.paste(prev, (26,140), prev)
-        image.paste(next, (210, 140), next)
+        image.paste(prev, (51,133), prev)
+        image.paste(next, (218, 133), next)
         if prev_stream in favorites:
-            prev_star_60 = star_60.copy().rotate(50, expand=True)
-            image.paste(prev_star_60, (26, 140), prev_star_60)
+            prev_star_40 = star_40.copy().rotate(20, expand=True)
+            image.paste(prev_star_40, (51, 133), prev_star_40)
         if next_stream in favorites:
-            next_star_60 = star_60.copy().rotate(-50, expand=True)
-            image.paste(next_star_60, (210, 140), next_star_60)
+            next_star_40 = star_40.copy().rotate(-20, expand=True)
+            image.paste(next_star_40, (218, 133), next_star_40)
 
         # double prev and next
-        double_prev = streams[double_prev_stream]['logo_60'].rotate(90, expand=True)
-        double_next = streams[double_next_stream]['logo_60'].rotate(-90, expand=True)
-        image.paste(double_prev, (7,235))
-        image.paste(double_next, (253, 235))
+        double_prev = streams[double_prev_stream]['logo_40'].rotate(30, expand=True)
+        double_next = streams[double_next_stream]['logo_40'].rotate(-30, expand=True)
+        image.paste(double_prev, (-13,160))
+        image.paste(double_next, (279, 160))
+        if prev_stream in favorites:
+            prev_star_40 = star_40.copy().rotate(30, expand=True)
+            image.paste(prev_star_40, (-13, 160), prev_star_40)
+        if next_stream in favorites:
+            next_star_40 = star_40.copy().rotate(-30, expand=True)
+            image.paste(next_star_40, (279, 160), next_star_40)
 
         safe_display(image) # display 
     
@@ -670,6 +676,8 @@ def display_one(name):
 
     # wifi    
     display_wifi(image)
+
+
 
     safe_display(image)
 
