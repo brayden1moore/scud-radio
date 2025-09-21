@@ -227,13 +227,13 @@ def display_scud():
         safe_display(image)  
         time.sleep(0.05)
 
-    bg = Image.open(f'assets/scud_splash_2.png') 
+    bg = Image.open(f'assets/scud_splash_1.png') 
     image.paste(bg, (0, 0))
     safe_display(image)  
 
     time.sleep(1)
 
-    bg = Image.open(f'assets/scud_splash_2_black.png') 
+    bg = Image.open(f'assets/scud_splash_1_black.png') 
     image.paste(bg, (0, 0))
     safe_display(image)  
 
