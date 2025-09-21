@@ -702,7 +702,7 @@ def display_battery(draw):
     if not battery:
         get_battery()
     if battery:
-        inner_sq = draw.rectangle([282, 226, 282 + round(16*battery/100), 232], fill=WHITE) 
+        inner_sq = draw.rectangle([282, 226, 282 + round(16*battery/100), 231], fill=WHITE) 
 
 def get_wifi_strength():
     global wifi_strength, wifi_ssid
