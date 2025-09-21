@@ -70,7 +70,6 @@ first_boot = True
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
-FONT_SIZE = 6
 
 WHITE = (255,255,255)
 BLACK = (0,0,0)
@@ -82,55 +81,9 @@ ORANGE = (255,128,0)
 PURPLE = (134,97,245)
 RED = (255,71,71)
 
-BORDER_COLOR = BLACK
-TEXT_COLOR = BLACK
-TEXT_COLOR_2 = BLACK
-BACKGROUND_COLORS = []
-BACKGROUND_COLOR = WHITE
-SLIDER_BG = WHITE
-SLIDER_COLOR = BLACK
-BORDER_SIZE = 2
-
-LOGO_SIZE = 120
-LOGO_Y = 0
-LOGO_X = round(SCREEN_WIDTH/2) - round(LOGO_SIZE/2)
-
-READIED_LOGO_SIZE = 90
-READIED_LOGO_Y = LOGO_Y + round((LOGO_SIZE-READIED_LOGO_SIZE) / 2) - 10
-READIED_LOGO_X = round(SCREEN_WIDTH/2) - round(READIED_LOGO_SIZE/2)
-
-SMALL_LOGO_SIZE = 70
-SMALL_LOGO_Y = LOGO_Y + round(LOGO_SIZE/2) - round(SMALL_LOGO_SIZE/2)
-PREV_LOGO_X = LOGO_X - round(SMALL_LOGO_SIZE) + 15 - BORDER_SIZE
-NEXT_LOGO_X = LOGO_X + LOGO_SIZE - 15 + BORDER_SIZE
-
-SMALLEST_LOGO_SIZE = 50
-SMALLEST_LOGO_Y = LOGO_Y + round(LOGO_SIZE/2) - round(SMALLEST_LOGO_SIZE/2) + 10
-DOUBLE_PREV_LOGO_X = PREV_LOGO_X - round(SMALLEST_LOGO_SIZE) + 15 - BORDER_SIZE
-DOUBLE_NEXT_LOGO_X = NEXT_LOGO_X + SMALL_LOGO_SIZE - 15 + BORDER_SIZE
-
-TITLE_Y = LOGO_SIZE + LOGO_Y - 13
-LOCATION_Y = TITLE_Y + 31
-SUBTITLE_Y = LOCATION_Y + 45
-
-STATUS_SIZE = 25
-STATUS_LOCATION = (LOGO_X+round(LOGO_SIZE/2)-round(STATUS_SIZE/2), LOGO_Y+round(LOGO_SIZE/2)-round(STATUS_SIZE/2))
-
-#SMALL_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf", 10)
-#MEDIUM_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf", 20)
-#LARGE_FONT = ImageFont.truetype("assets/Silkscreen-Regular.ttf",28)
-
-#SMALL_FONT = ImageFont.truetype("assets/andalemono.ttf", 10)
-#MEDIUM_FONT = ImageFont.truetype("assets/andalemono.ttf", 20)
-#LARGE_FONT = ImageFont.truetype("assets/Arial Black.ttf",28)
-#BIGGEST_FONT = ImageFont.truetype("assets/Arial Black.ttf",28)
-
 SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 10)
-MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 20)
+MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
 LARGE_FONT = ImageFont.truetype("assets/Archivo-ExtraBold.ttf",28)
-BIGGEST_FONT = LARGE_FONT
-
-PAUSE_IMAGE = (Image.open('assets/pause.png').convert('RGBA').resize((LOGO_SIZE+BORDER_SIZE*2, LOGO_SIZE+BORDER_SIZE*2)))
 
 unfavorite = Image.open('assets/unfavorited.png').convert('RGBA')
 favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'), 
@@ -139,31 +92,14 @@ favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'),
                    Image.open('assets/favorited4.png').convert('RGBA'),
                    Image.open('assets/favorited5.png').convert('RGBA')]
 
-star_smallest = Image.open('assets/star_smallest.png').convert('RGBA')
-star_small = Image.open('assets/star_small.png').convert('RGBA')
-star_readied = Image.open('assets/star_readied.png').convert('RGBA')
+star_60 = Image.open('assets/star_60.png').convert('RGBA')
+star_40 = Image.open('assets/star_40.png').convert('RGBA')
 
-live_smallest = Image.open('assets/live_smallest.png').convert('RGBA')
-live_small = Image.open('assets/live_small.png').convert('RGBA')
-live_readied = Image.open('assets/live_readied.png').convert('RGBA')
-live_banner = Image.open('assets/live_banner.png').convert('RGBA')
-
-ONE_LOGO_X = 15
-ONE_LOGO_Y = 18 + 16
-ONE_NAME_X = 77
-ONE_NAME_Y = 12 + 16 + 2
-ONE_LOC_X = ONE_NAME_X
-ONE_LOC_Y = ONE_NAME_Y + 31 
-TOP_DIVIDER_X = 11
-TOP_DIVIDER_Y = 80 + 3 + 12
-BOTTOM_DIVIDER_X = TOP_DIVIDER_X
-BOTTOM_DIVIDER_Y = 175
-SHOW_ROW_1_X = TOP_DIVIDER_X
-SHOW_ROW_1_Y = TOP_DIVIDER_Y
-BOTTOM_DIVIDER_X = TOP_DIVIDER_X
-BOTTOM_DIVIDER_Y = 170
-SHOW_INFO_X = TOP_DIVIDER_X
-SHOW_INFO_ROW_1_Y = 187
+selector = Image.open('assets/selector.png').convert('RGBA')
+mainview = Image.open('assets/mainview.png').convert('RGBA')
+logoview = Image.open('assets/mainview.png').convert('RGBA')
+live_overlay = Image.open('assets/liveoverlay.png').convert('RGBA')
+selector_live_overlay = Image.open('assets/selectorliveoverlay.png').convert('RGBA')
 
 LIB_PATH = "/var/lib/scud-radio"
 
@@ -442,16 +378,14 @@ def get_streams():
             img = Image.open(buf).convert('RGB')
 
             # crop images
-            full_img = img.resize((LOGO_SIZE,  LOGO_SIZE))
-            readied_img = img.resize((READIED_LOGO_SIZE,  READIED_LOGO_SIZE))
-            small_img = img.resize((SMALL_LOGO_SIZE, SMALL_LOGO_SIZE))
-            smallest_img = img.resize((SMALLEST_LOGO_SIZE, SMALLEST_LOGO_SIZE))
+            logo_140 = img.resize((140,  140))
+            logo_60 = img.resize((60,  60))
+            logo_40 = img.resize((40,  40))
     
             # save images to dict
-            active[name]['logo_full'] = full_img
-            active[name]['logo_readied']  = readied_img
-            active[name]['logo_small'] = small_img
-            active[name]['logo_smallest'] = smallest_img
+            active[name]['logo_140'] = logo_140
+            active[name]['logo_60']  = logo_60
+            active[name]['logo_40'] = logo_40
 
             # save images to lib
             for i in ['full','readied','small','smallest']:
@@ -508,20 +442,12 @@ def s(number):
     else:
         return 's'
     
-
 def pause(show_icon=False):
     global play_status, saved_image_while_paused, current_image
     #send_mpv_command({"command": ["stop"]})
     #send_mpv_command({"command": ["set_property", "volume", 0]})
 
-    if show_icon and current_image:
-        saved_image_while_paused = current_image.copy()
-        img = current_image.convert('RGBA')
-        img.paste(PAUSE_IMAGE, (LOGO_X, LOGO_Y), PAUSE_IMAGE)
-        safe_display(img.convert('RGB'))
-
     play_status = 'pause'
-
 
 def play(name, toggled=False):
     global play_status, stream, first_boot
@@ -546,7 +472,6 @@ def play(name, toggled=False):
 
 def play_random():
     global stream, play_status
-    pause()
     available_streams = [i for i in stream_list if i != stream]
     chosen = random.choice(available_streams)
     display_everything(chosen)
@@ -606,8 +531,6 @@ def calculate_text(text, font, max_width, lines):
 
 def display_everything(name, update=False, readied=False):
     global streams, play_status, first_display
-
-    highlight_color = BLUE #if name in favorites else BLUE if name not in reruns else GREEN
     
     if readied and not restarting:
         first_display = False
@@ -625,112 +548,49 @@ def display_everything(name, update=False, readied=False):
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
-        bg_color = WHITE #BLUE if name in favorites else WHITE 
-        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=bg_color)
+        image = selector.copy()
         draw = ImageDraw.Draw(image)
 
-        yellow_band_height = 55
-
-        draw.rectangle([0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2], fill=BLACK)
-        draw.rectangle([0, SCREEN_HEIGHT/2-21, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height], fill=highlight_color)
-
-        draw.rectangle([0, SCREEN_HEIGHT/2 + yellow_band_height, SCREEN_WIDTH, SCREEN_HEIGHT/2 + yellow_band_height + 1], fill=BLACK)
-
-        logo = streams[name]['logo_full']
-        readied_logo = streams[name]['logo_readied']
-        prev = streams[prev_stream]['logo_small']
-        next = streams[next_stream]['logo_small']
-        double_prev = streams[double_prev_stream]['logo_smallest']
-        double_next = streams[double_next_stream]['logo_smallest']
-
-        # double prev and next borders
-        border3 = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*2, SMALLEST_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
-
-        # double prev
-        image.paste(border3, (DOUBLE_PREV_LOGO_X, SMALLEST_LOGO_Y))
-
-        # double next
-        image.paste(border3, (DOUBLE_NEXT_LOGO_X, SMALLEST_LOGO_Y))
-
-        # paste
-        image.paste(double_prev, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE))
-        image.paste(double_next, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE))
-        if double_prev_stream in favorites:
-            image.paste(star_smallest, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), star_smallest)
-        if double_next_stream in favorites:
-            image.paste(star_smallest, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), star_smallest)
-        if double_prev_stream not in reruns:
-            image.paste(live_smallest, (DOUBLE_PREV_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), live_smallest)
-        if double_next_stream not in reruns:
-            image.paste(live_smallest, (DOUBLE_NEXT_LOGO_X+BORDER_SIZE, SMALLEST_LOGO_Y+BORDER_SIZE), live_smallest)
-
-
-        # prev and next borders
-        border3 = Image.new('RGB', (SMALL_LOGO_SIZE+BORDER_SIZE*2, SMALL_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
-
-        # prev
-        image.paste(border3, (PREV_LOGO_X, SMALL_LOGO_Y))
-
-        # next
-        image.paste(border3, (NEXT_LOGO_X, SMALL_LOGO_Y))
-
-        # paste
-        image.paste(prev, (PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE))
-        image.paste(next, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE))
-        if prev_stream in favorites:
-            image.paste(star_small, (PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), star_small)
-        if next_stream in favorites:
-            image.paste(star_small, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), star_small)
-        if prev_stream not in reruns:
-            image.paste(live_small, (PREV_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), live_small)
-        if next_stream not in reruns:
-            image.paste(live_small, (NEXT_LOGO_X+BORDER_SIZE, SMALL_LOGO_Y+BORDER_SIZE), live_small)
-
-        if readied:
-            border1 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*6, READIED_LOGO_SIZE+BORDER_SIZE*6), color=BLACK)
-            border2 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*4, READIED_LOGO_SIZE+BORDER_SIZE*4), color=highlight_color)
-            border3 = Image.new('RGB', (READIED_LOGO_SIZE+BORDER_SIZE*2, READIED_LOGO_SIZE+BORDER_SIZE*2), color=BLACK)
-            image.paste(border1, (READIED_LOGO_X-BORDER_SIZE*2, READIED_LOGO_Y-BORDER_SIZE*2))
-            image.paste(border2, (READIED_LOGO_X-BORDER_SIZE, READIED_LOGO_Y-BORDER_SIZE))
-            image.paste(border3, (READIED_LOGO_X, READIED_LOGO_Y))
-
-            draw.rectangle([0, SCREEN_HEIGHT/2-21, SCREEN_WIDTH, SCREEN_HEIGHT/2-21+10], fill=highlight_color)
-            image.paste(readied_logo, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE))
-            if name in favorites:
-                image.paste(star_readied, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE), star_readied)
-            if name not in reruns:
-                image.paste(live_readied, (READIED_LOGO_X+BORDER_SIZE, READIED_LOGO_Y+BORDER_SIZE), live_readied)                
-        else:
-            border3 = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*3, LOGO_SIZE+BORDER_SIZE*3), color=BORDER_COLOR)
-            image.paste(border3, (LOGO_X, LOGO_Y))
-            image.paste(logo, (LOGO_X+BORDER_SIZE, LOGO_Y+BORDER_SIZE))
-
         location = streams[name]['location']
-        name_line = calculate_text(name, LARGE_FONT, 300, 1)
-        title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 300, 2)
+        name_line = calculate_text(name, LARGE_FONT, 275, 1)
+        title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
-        draw.text((SHOW_INFO_X, TITLE_Y), name_line[0], font=LARGE_FONT, fill=BLACK)
-        draw.text((SHOW_INFO_X, LOCATION_Y), location, font=MEDIUM_FONT, fill=BLACK)
+        # draw name and underline
+        draw.text((38, 12), name_line[0], font=LARGE_FONT, fill=BLACK)
+        draw.rectangle([38, 37, width(name_line[0], LARGE_FONT), 39], fill=BLACK)
 
+        # draw location
+        draw.text((38, 43), location, font=SMALL_FONT, fill=BLACK)
+
+        # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((SHOW_INFO_X, SUBTITLE_Y + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((53, 59 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
             y_offset += 20
 
-        '''
-        show_logo_url = streams[name]['showLogo']
-        if show_logo_url:
-            try:
-                show_logo = Image.open(BytesIO(requests.get(show_logo_url).content)).resize((LOGO_SIZE, LOGO_SIZE))
-                border = Image.new('RGB', (LOGO_SIZE+BORDER_SIZE*2, LOGO_SIZE+BORDER_SIZE*2), color=BORDER_COLOR)
-                image.paste(border, (LOGO_X, LOGO_Y))
-                image.paste(show_logo, (LOGO_X+BORDER_SIZE, LOGO_Y+BORDER_SIZE))
-            except:
-                pass
-        '''
+        # draw logo
+        logo = streams[name]['logo_60']
+        image.paste(logo, (130,114))
+        if name in favorites:
+            image.paste(star_60, (130,114))
+        if name not in reruns:
+            image.paste(selector_live_overlay, (0,0))
 
-        # battery
-        #display_battery(draw)
+        # prev and next
+        prev = streams[prev_stream]['logo_60'].rotate(50, expand=True)
+        next = streams[next_stream]['logo_60'].rotate(-50, expand=True)
+        image.paste(prev, (26,140))
+        image.paste(next, (210, 140))
+        if prev_stream in favorites:
+            image.paste(star_60.rotate(50, expand=True), 26, 140, star_60)
+        if next_stream in favorites:
+            image.paste(star_60.rotate(-50, expand=True), 210, 140, star_60)
+
+        # double prev and next
+        double_prev = streams[double_prev_stream]['logo_60'].rotate(90, expand=True)
+        double_next = streams[double_next_stream]['logo_60'].rotate(-90, expand=True)
+        image.paste(double_prev, (7,235))
+        image.paste(double_next, (253, 235))
 
         safe_display(image) # display 
     
@@ -740,46 +600,23 @@ def display_everything(name, update=False, readied=False):
 
     
 def display_one(name):
-    highlight_color = BLUE #WHITE#BLUE #if name in favorites else BLUE if name not in reruns else GREEN
 
-    bg_color = WHITE #BLUE if name in favorites else WHITE 
-    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=bg_color)
-    draw = ImageDraw.Draw(image)
-
-    draw.rectangle([
-            0, 0, 
-            SCREEN_WIDTH, TOP_DIVIDER_Y
-                        ], fill=highlight_color)
-
-    # top header
-    draw.rectangle([
-        0, 0, 
-        SCREEN_WIDTH, 17
-        ], fill=YELLOW)   
-    draw.rectangle([
-        0, 17, 
-        SCREEN_WIDTH, 17 + 1
-        ], fill=BLACK)     
+    image = mainview
+    draw = ImageDraw.Draw(image)   
 
     # logo
-    logo = streams[name]['logo_smallest']
-    border = Image.new('RGB', (SMALLEST_LOGO_SIZE+BORDER_SIZE*2, SMALLEST_LOGO_SIZE+BORDER_SIZE*2), color=BORDER_COLOR)
-    image.paste(border, (ONE_LOGO_X-BORDER_SIZE*2, ONE_LOGO_Y-BORDER_SIZE*2))
-    image.paste(logo, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE))
+    logo = streams[name]['logo_40']
+    image.paste(logo, (16, 12))
     if name in favorites:
-        image.paste(star_smallest, (ONE_LOGO_X-BORDER_SIZE, ONE_LOGO_Y-BORDER_SIZE), star_smallest)
-    if name not in reruns:
-        image.paste(live_banner, (0,0), live_banner)
+        image.paste(star_40, (16, 12), star_40)
 
-    # name
-    draw.text((ONE_NAME_X, ONE_NAME_Y), calculate_text(name, font=LARGE_FONT, max_width=223, lines=1)[0], font=LARGE_FONT, fill=TEXT_COLOR)
-
+    # name and underline
+    name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
+    draw.text((72, 12), name_line, font=LARGE_FONT, fill=BLACK)
+    draw.rectangle([72, 37, width(name_line, LARGE_FONT), 39], fill=BLACK)
+   
     # location
-    draw.text((ONE_LOC_X, ONE_LOC_Y), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=TEXT_COLOR_2)    
-
-    # top divider
-    divider = Image.new('RGB', (SCREEN_WIDTH,BORDER_SIZE), color=BORDER_COLOR)
-    image.paste(divider, (0, TOP_DIVIDER_Y))
+    draw.text((72, 43), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
 
     # now playing
     y_offset = 0
@@ -792,7 +629,7 @@ def display_one(name):
     elif len(info) == 2:
         num_title_lines = 3
 
-    title_lines = [i for i in calculate_text(info[0], font=BIGGEST_FONT, max_width=290, lines=num_title_lines) if i != '']
+    title_lines = [i for i in calculate_text(info[0], font=LARGE_FONT, max_width=290, lines=num_title_lines) if i != '']
 
     if len(title_lines) == 3:
         num_info_lines = 1
@@ -808,14 +645,14 @@ def display_one(name):
     avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
 
     for i in title_lines:
-        draw.text((SHOW_INFO_X, anchor), i, font=LARGE_FONT, fill=BLACK)
+        draw.text((14, anchor), i, font=LARGE_FONT, fill=BLACK)
         anchor += avg_title_height + 6
 
     anchor += 5
 
     if info_lines:
         for i in info_lines:
-            draw.text((SHOW_INFO_X, anchor), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((14, anchor), i, font=MEDIUM_FONT, fill=BLACK)
             anchor += avg_info_height + 6
 
     # battery
@@ -826,7 +663,7 @@ def display_one(name):
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formatted_time = current_time.strftime("%a %b %d %I:%M %p").replace(' 0', '  ').lstrip('0')
     
-    draw.text((13,3), formatted_time, font=SMALL_FONT, fill=BLACK)
+    draw.text((14,224), formatted_time, font=SMALL_FONT, fill=BLACK)
 
     # wifi    
     display_wifi(image)
@@ -843,26 +680,15 @@ def get_anchor(title, info, live):
         for line in info:
             size += height(line, MEDIUM_FONT) + 6
 
-    section_height = SCREEN_HEIGHT - 16 - TOP_DIVIDER_Y if live else SCREEN_HEIGHT - TOP_DIVIDER_Y
-    return TOP_DIVIDER_Y + round((section_height - size) // 2)
+    section_height = 220 - 54 
+    return 54 + round((section_height - size) // 2)
 
 
 def display_battery(draw):
     if not battery:
         get_battery()
     if battery:
-        battery_y = 4
-        outer_sq = draw.rectangle([278, battery_y, 303, battery_y + 10], fill=BLACK)
-        nipple = draw.rectangle([304, battery_y + 3, 305, battery_y + 7], fill=BLACK)
-        battery_color = YELLOW if charging else WHITE
-        inner_sq_bg = draw.rectangle([280, battery_y + 2, 277 + 24, battery_y + 8], fill=BLACK) 
-        inner_sq = draw.rectangle([280, battery_y + 2, 277 + round(24*battery/100), battery_y + 8], fill=battery_color) 
-        '''
-        if battery == 100:
-            draw.text((282, battery_y + 1), str(battery), font=SMALL_FONT, fill=BLACK)
-        else:
-            draw.text((286, battery_y + 1), str(battery), font=SMALL_FONT, fill=BLACK)
-        '''
+        inner_sq = draw.rectangle([282, 226, 298, 232], fill=WHITE) 
 
 def get_wifi_strength():
     global wifi_strength, wifi_ssid
@@ -882,8 +708,8 @@ def display_wifi(image):
     if not wifi_strength:
         get_wifi_strength()
     strength = 'low' if wifi_strength < 20 else 'med' if wifi_strength <= 50 else 'high'
-    signal = Image.open(f'assets/wifi_{strength}.png').convert('RGBA')
-    image.paste(signal, (260, 4), signal)
+    signal = Image.open(f'assets/wifi_{strength}_white.png').convert('RGBA')
+    image.paste(signal, (257, 224), signal)
 
 def toggle_stream(name):
     global play_status
@@ -928,10 +754,10 @@ def show_volume_overlay(volume):
         time.sleep(0.008)  
         
         draw = ImageDraw.Draw(img)
-        total_bar_height = SCREEN_HEIGHT - TOP_DIVIDER_Y - 2
-        volume_bar_end = TOP_DIVIDER_Y + 2 + total_bar_height * ((150-volume)/150)
+        total_bar_height = SCREEN_HEIGHT - 0 - 2
+        volume_bar_end = 0 + 2 + total_bar_height * ((150-volume)/150)
         
-        draw.rectangle([SCREEN_WIDTH-9, TOP_DIVIDER_Y+2, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
+        draw.rectangle([SCREEN_WIDTH-9, 0+2, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
         draw.rectangle([SCREEN_WIDTH-7, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
         
         time.sleep(0.005)  
