@@ -557,7 +557,7 @@ def display_everything(name, update=False, readied=False):
 
         # draw name and underline
         draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT, fill=BLACK)
-        draw.rectangle([38, 37, width(name_line[0], LARGE_FONT), 38], fill=BLACK)
+        draw.rectangle([38, 37, 38 + width(name_line[0], LARGE_FONT), 38], fill=BLACK)
 
         # draw location
         draw.text((38, 43), location, font=SMALL_FONT, fill=BLACK)
@@ -622,7 +622,7 @@ def display_one(name):
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
     draw.text((72, 12 - 7), name_line, font=LARGE_FONT, fill=BLACK)
-    draw.rectangle([72, 37, width(name_line, LARGE_FONT), 38], fill=BLACK)
+    draw.rectangle([72, 37, 72 + width(name_line, LARGE_FONT), 38], fill=BLACK)
    
     # location
     draw.text((72, 43), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
@@ -702,7 +702,7 @@ def display_battery(draw):
     if not battery:
         get_battery()
     if battery:
-        inner_sq = draw.rectangle([282, 226, 298, 232], fill=WHITE) 
+        inner_sq = draw.rectangle([282, 226, 282 + round(16*battery/100), 232], fill=WHITE) 
 
 def get_wifi_strength():
     global wifi_strength, wifi_ssid
@@ -723,7 +723,7 @@ def display_wifi(image):
         get_wifi_strength()
     strength = 'low' if wifi_strength < 20 else 'med' if wifi_strength <= 50 else 'high'
     signal = Image.open(f'assets/wifi_{strength}_white.png').convert('RGBA')
-    image.paste(signal, (257, 224), signal)
+    image.paste(signal, (258, 224), signal)
 
 def toggle_stream(name):
     global play_status
