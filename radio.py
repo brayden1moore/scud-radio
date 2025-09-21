@@ -961,8 +961,6 @@ rotor = RotaryEncoder(CLK_PIN, DT_PIN)
 rotor.when_rotated_counter_clockwise = handle_rotation(-1)
 rotor.when_rotated_clockwise = handle_rotation(1)
 
-rotor.rotated_counter_clockwise
-
 last_played = read_last_played()
 if last_played in stream_list:
     play(last_played)
