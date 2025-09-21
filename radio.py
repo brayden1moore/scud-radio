@@ -665,7 +665,7 @@ def display_one(name):
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formatted_time = current_time.strftime("%a %b %d %I:%M %p").replace(' 0', '  ').lstrip('0')
     
-    draw.text((14,224), formatted_time, font=SMALL_FONT, fill=BLACK)
+    draw.text((14,224), formatted_time, font=SMALL_FONT, fill=WHITE)
 
     # wifi    
     display_wifi(image)
