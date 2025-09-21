@@ -580,8 +580,8 @@ def display_everything(name, update=False, readied=False):
         prev = streams[prev_stream]['logo_40'].rotate(20, expand=True)
         next = streams[next_stream]['logo_40'].rotate(-20, expand=True)
 
-        image.paste(prev, (51,133), prev)
-        image.paste(next, (218, 133), next)
+        image.paste(prev, (51,167), prev)
+        image.paste(next, (218, 167), next)
         if prev_stream in favorites:
             prev_star_40 = star_40.copy().rotate(20, expand=True)
             image.paste(prev_star_40, (51, 167), prev_star_40)
@@ -672,7 +672,7 @@ def display_one(name):
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formatted_time = current_time.strftime("%a %b %d %I:%M %p").replace(' 0', '  ').lstrip('0')
     
-    draw.text((14,223), formatted_time, font=SMALL_FONT, fill=WHITE)
+    draw.text((13,221), formatted_time, font=SMALL_FONT, fill=WHITE)
 
     # wifi    
     display_wifi(image)
@@ -723,7 +723,7 @@ def display_wifi(image):
         get_wifi_strength()
     strength = 'low' if wifi_strength < 20 else 'med' if wifi_strength <= 50 else 'high'
     signal = Image.open(f'assets/wifi_{strength}_white.png').convert('RGBA')
-    image.paste(signal, (258, 222), signal)
+    image.paste(signal, (258, 223), signal)
 
 def toggle_stream(name):
     global play_status
