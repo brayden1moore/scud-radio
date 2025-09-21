@@ -573,8 +573,8 @@ def display_everything(name, update=False, readied=False):
         image.paste(logo, (130,114))
         if name in favorites:
             image.paste(star_60, (130,114), star_60)
-        #if name not in reruns:
-            #image.paste(selector_live_overlay, (0,0), selector_live_overlay)
+        if name not in reruns:
+            image.paste(selector_live_overlay, (0,0), selector_live_overlay)
 
         # prev and next
         prev = streams[prev_stream]['logo_40'].rotate(20, expand=True)
