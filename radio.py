@@ -81,7 +81,7 @@ ORANGE = (255,128,0)
 PURPLE = (134,97,245)
 RED = (255,71,71)
 
-SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 10)
+SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
 MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
 LARGE_FONT = ImageFont.truetype("assets/Archivo-ExtraBold.ttf",28)
 
@@ -560,21 +560,21 @@ def display_everything(name, update=False, readied=False):
         draw.rectangle([38, 37, 38 + width(name_line[0], LARGE_FONT), 38], fill=BLACK)
 
         # draw location
-        draw.text((38, 43), location, font=SMALL_FONT, fill=BLACK)
+        draw.text((38, 43), location, font=MEDIUM_FONT, fill=BLACK)
 
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((53, 59 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((53, 83 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
             y_offset += 20
 
         # draw logo
         logo = streams[name]['logo_60']
-        image.paste(logo, (130,114))
+        image.paste(logo, (130,148))
         if name in favorites:
-            image.paste(star_60, (130,114), star_60)
-        if name not in reruns:
-            image.paste(selector_live_overlay, (0,0), selector_live_overlay)
+            image.paste(star_60, (130,148), star_60)
+        #if name not in reruns:
+        #    image.paste(selector_live_overlay, (0,0), selector_live_overlay)
 
         # prev and next
         prev = streams[prev_stream]['logo_40'].rotate(20, expand=True)
@@ -584,22 +584,22 @@ def display_everything(name, update=False, readied=False):
         image.paste(next, (218, 133), next)
         if prev_stream in favorites:
             prev_star_40 = star_40.copy().rotate(20, expand=True)
-            image.paste(prev_star_40, (51, 133), prev_star_40)
+            image.paste(prev_star_40, (51, 167), prev_star_40)
         if next_stream in favorites:
             next_star_40 = star_40.copy().rotate(-20, expand=True)
-            image.paste(next_star_40, (218, 133), next_star_40)
+            image.paste(next_star_40, (218, 167), next_star_40)
 
         # double prev and next
         double_prev = streams[double_prev_stream]['logo_40'].rotate(30, expand=True)
         double_next = streams[double_next_stream]['logo_40'].rotate(-30, expand=True)
-        image.paste(double_prev, (-13,160), double_prev)
-        image.paste(double_next, (279, 160), double_next)
+        image.paste(double_prev, (-13,194), double_prev)
+        image.paste(double_next, (279, 194), double_next)
         if double_prev_stream in favorites:
             double_prev_star_40 = star_40.copy().rotate(30, expand=True)
-            image.paste(double_prev_star_40, (-13, 160), double_prev_star_40)
+            image.paste(double_prev_star_40, (-13, 194), double_prev_star_40)
         if double_next_stream in favorites:
             double_next_star_40 = star_40.copy().rotate(-30, expand=True)
-            image.paste(double_next_star_40, (279, 160), double_next_star_40)
+            image.paste(double_next_star_40, (279, 194), double_next_star_40)
 
         safe_display(image) # display 
     
@@ -672,7 +672,7 @@ def display_one(name):
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formatted_time = current_time.strftime("%a %b %d %I:%M %p").replace(' 0', '  ').lstrip('0')
     
-    draw.text((14,224), formatted_time, font=SMALL_FONT, fill=WHITE)
+    draw.text((14,223), formatted_time, font=SMALL_FONT, fill=WHITE)
 
     # wifi    
     display_wifi(image)
@@ -702,7 +702,7 @@ def display_battery(draw):
     if not battery:
         get_battery()
     if battery:
-        inner_sq = draw.rectangle([282, 226, 282 + round(16*battery/100), 231], fill=WHITE) 
+        inner_sq = draw.rectangle([282, 225, 282 + round(16*battery/100), 230], fill=WHITE) 
 
 def get_wifi_strength():
     global wifi_strength, wifi_ssid
@@ -723,7 +723,7 @@ def display_wifi(image):
         get_wifi_strength()
     strength = 'low' if wifi_strength < 20 else 'med' if wifi_strength <= 50 else 'high'
     signal = Image.open(f'assets/wifi_{strength}_white.png').convert('RGBA')
-    image.paste(signal, (258, 224), signal)
+    image.paste(signal, (258, 222), signal)
 
 def toggle_stream(name):
     global play_status
