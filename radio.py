@@ -388,7 +388,7 @@ def get_streams():
             active[name]['logo_40'] = logo_40
 
             # save images to lib
-            for i in ['full','readied','small','smallest']:
+            for i in ['140','60','40']:
                 entire_path = Path(LIB_PATH) / f'{name}_logo_{i}.pkl'
                 if not entire_path.exists():
                     entire_path.touch() 
