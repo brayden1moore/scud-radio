@@ -579,8 +579,10 @@ def display_everything(name, update=False, readied=False):
         # prev and next
         prev = streams[prev_stream]['logo_60'].rotate(50, expand=True)
         next = streams[next_stream]['logo_60'].rotate(-50, expand=True)
-        image.paste(prev, (26,140))
-        image.paste(next, (210, 140))
+
+        mask = Image.new('L', 60, 60)
+        image.paste(prev, (26,140), mask.rotate(50))
+        image.paste(next, (210, 140), mask.rotate(-100))
         if prev_stream in favorites:
             image.paste(star_60.rotate(50, expand=True), 26, 140, star_60)
         if next_stream in favorites:
@@ -601,7 +603,7 @@ def display_everything(name, update=False, readied=False):
     
 def display_one(name):
 
-    image = mainview
+    image = mainview.copy()
     draw = ImageDraw.Draw(image)   
 
     # logo
