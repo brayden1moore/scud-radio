@@ -572,7 +572,7 @@ def display_everything(name, update=False, readied=False):
         logo = streams[name]['logo_60']
         image.paste(logo, (130,114))
         if name in favorites:
-            image.paste(star_60, (130,114))
+            image.paste(star_60, (130,114) star_60)
         if name not in reruns:
             image.paste(selector_live_overlay, (0,0))
 
@@ -585,9 +585,9 @@ def display_everything(name, update=False, readied=False):
         mask = Image.new('L', (60, 60))
         image.paste(next, (210, 140), mask.rotate(-50, expand=True))
         if prev_stream in favorites:
-            image.paste(star_60.rotate(50, expand=True), 26, 140, star_60)
+            image.paste(star_60.rotate(50, expand=True), (26, 140), star_60)
         if next_stream in favorites:
-            image.paste(star_60.rotate(-50, expand=True), 210, 140, star_60)
+            image.paste(star_60.rotate(-50, expand=True), (210, 140), star_60)
 
         # double prev and next
         double_prev = streams[double_prev_stream]['logo_60'].rotate(90, expand=True)
