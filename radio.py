@@ -556,7 +556,7 @@ def display_everything(name, update=False, readied=False):
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
         # draw name and underline
-        draw.text((38, 12), name_line[0], font=LARGE_FONT, fill=BLACK)
+        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT, fill=BLACK)
         draw.rectangle([38, 37, width(name_line[0], LARGE_FONT), 39], fill=BLACK)
 
         # draw location
@@ -621,7 +621,7 @@ def display_one(name):
 
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
-    draw.text((72, 12), name_line, font=LARGE_FONT, fill=BLACK)
+    draw.text((72, 12 - 7), name_line, font=LARGE_FONT, fill=BLACK)
     draw.rectangle([72, 37, width(name_line, LARGE_FONT), 39], fill=BLACK)
    
     # location
