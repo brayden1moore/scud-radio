@@ -583,9 +583,11 @@ def display_everything(name, update=False, readied=False):
         image.paste(prev, (26,140), prev)
         image.paste(next, (210, 140), next)
         if prev_stream in favorites:
-            image.paste(star_60.rotate(50, expand=True), (26, 140), star_60)
+            prev_star_60 = star_60.copy().rotate(50, expand=True)
+            image.paste(prev_star_60, (26, 140), prev_star_60)
         if next_stream in favorites:
-            image.paste(star_60.rotate(-50, expand=True), (210, 140), star_40)
+            next_star_60 = star_60.copy().rotate(-50, expand=True)
+            image.paste(next_star_60, (210, 140), next_star_60)
 
 
         # double prev and next
