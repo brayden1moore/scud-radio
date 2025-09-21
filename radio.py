@@ -364,7 +364,7 @@ def get_streams():
             else:
                 for i in ['60','40','140']:
                     with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
-                        active[name][f'logo_{i}'] = pickle.load(f)
+                        active[name][f'logo_{i}'] = pickle.load(f).convert('RGBA')
 
     with ThreadPoolExecutor(max_workers=8) as exe:
         futures = [
@@ -378,9 +378,9 @@ def get_streams():
             img = Image.open(buf).convert('RGB')
 
             # crop images
-            logo_140 = img.resize((140,  140))
-            logo_60 = img.resize((60,  60))
-            logo_40 = img.resize((40,  40))
+            logo_140 = img.resize((140,  140)).convert('RGBA')
+            logo_60 = img.resize((60,  60)).convert('RGBA')
+            logo_40 = img.resize((40,  40)).convert('RGBA')
     
             # save images to dict
             active[name]['logo_140'] = logo_140
@@ -579,15 +579,13 @@ def display_everything(name, update=False, readied=False):
         # prev and next
         prev = streams[prev_stream]['logo_60'].rotate(50, expand=True)
         next = streams[next_stream]['logo_60'].rotate(-50, expand=True)
-        prev_mask = Image.new('L', prev.size, 255).rotate(50, expand=True)
-        next_mask = Image.new('L', next.size, 255).rotate(-50, expand=True)
 
-        image.paste(prev, (26,140), prev_mask)
-        image.paste(next, (210, 140), next_mask)
+        image.paste(prev, (26,140), prev)
+        image.paste(next, (210, 140), next)
         if prev_stream in favorites:
-            image.paste(star_60.rotate(50, expand=True), (26, 140), prev_mask)
+            image.paste(star_60.rotate(50, expand=True), (26, 140), star_60)
         if next_stream in favorites:
-            image.paste(star_60.rotate(-50, expand=True), (210, 140), next_mask)
+            image.paste(star_60.rotate(-50, expand=True), (210, 140), star_40)
 
 
         # double prev and next
