@@ -565,7 +565,7 @@ def display_everything(name, update=False, readied=False):
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((53, 83 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((53, 81 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
             y_offset += 20
 
         # draw logo
@@ -702,7 +702,7 @@ def display_battery(draw):
     if not battery:
         get_battery()
     if battery:
-        inner_sq = draw.rectangle([282, 225, 282 + round(16*battery/100), 230], fill=WHITE) 
+        inner_sq = draw.rectangle([282, 225, 281 + round(16*battery/100), 230], fill=WHITE) 
 
 def get_wifi_strength():
     global wifi_strength, wifi_ssid
@@ -723,7 +723,7 @@ def display_wifi(image):
         get_wifi_strength()
     strength = 'low' if wifi_strength < 20 else 'med' if wifi_strength <= 50 else 'high'
     signal = Image.open(f'assets/wifi_{strength}_white.png').convert('RGBA')
-    image.paste(signal, (258, 223), signal)
+    image.paste(signal, (260, 223), signal)
 
 def toggle_stream(name):
     global play_status
