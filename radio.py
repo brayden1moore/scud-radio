@@ -852,6 +852,9 @@ def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on
     rotated = True
 
+    # to remove
+    direction = direction * -1
+
     if click_button.is_pressed:
         if direction == 1: 
             if current_volume == 0:
