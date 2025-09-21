@@ -582,7 +582,8 @@ def display_everything(name, update=False, readied=False):
 
         mask = Image.new('L', (60, 60))
         image.paste(prev, (26,140), mask.rotate(50, expand=True))
-        image.paste(next, (210, 140), mask.rotate(-100, expand=True))
+        mask = Image.new('L', (60, 60))
+        image.paste(next, (210, 140), mask.rotate(-50, expand=True))
         if prev_stream in favorites:
             image.paste(star_60.rotate(50, expand=True), 26, 140, star_60)
         if next_stream in favorites:
