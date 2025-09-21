@@ -854,6 +854,7 @@ def handle_rotation(direction):
 
     if click_button.is_pressed:
         if direction == 1: 
+            wake_screen()
             if current_volume == 0:
                 backlight_on()
                 screen_on = True
@@ -869,6 +870,7 @@ def handle_rotation(direction):
 
     else:
         # to remove
+        wake_screen()
         direction = direction * -1
         if button_released_time and (time.time() - button_released_time > 0.3):
             last_rotation = time.time()
@@ -956,8 +958,10 @@ click_button.when_released = on_button_released
 CLK_PIN = 5 
 DT_PIN = 6   
 rotor = RotaryEncoder(CLK_PIN, DT_PIN)
-rotor.when_rotated_counter_clockwise = wrapped_action(lambda: handle_rotation(-1))
-rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1))
+rotor.when_rotated_counter_clockwise = handle_rotation(-1)
+rotor.when_rotated_clockwise = handle_rotation(1)
+
+rotor.rotated_counter_clockwise
 
 last_played = read_last_played()
 if last_played in stream_list:
