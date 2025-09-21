@@ -579,15 +579,14 @@ def display_everything(name, update=False, readied=False):
         # prev and next
         prev = streams[prev_stream]['logo_60'].rotate(50, expand=True)
         next = streams[next_stream]['logo_60'].rotate(-50, expand=True)
-
-        mask = Image.new('L', (60, 60))
-        image.paste(prev, (26,140), mask.rotate(50, expand=True))
-        mask = Image.new('L', (60, 60))
-        image.paste(next, (210, 140), mask.rotate(-50, expand=True))
-        if prev_stream in favorites:
-            image.paste(star_60.rotate(50, expand=True), (26, 140), star_60)
-        if next_stream in favorites:
-            image.paste(star_60.rotate(-50, expand=True), (210, 140), star_60)
+        if prev.mode != 'RGBA':
+            prev = prev.convert('RGBA')
+        if next.mode != 'RGBA':
+            next = next.convert('RGBA')
+        prev_rotated = prev.rotate(50, expand=True)
+        next_rotated = next.rotate(-50, expand=True)
+        image.paste(prev_rotated, (26, 140), prev_rotated)
+        image.paste(next_rotated, (210, 140), next_rotated)
 
         # double prev and next
         double_prev = streams[double_prev_stream]['logo_60'].rotate(90, expand=True)
