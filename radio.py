@@ -593,13 +593,13 @@ def display_everything(name, update=False, readied=False):
         double_prev = streams[double_prev_stream]['logo_40'].rotate(30, expand=True)
         double_next = streams[double_next_stream]['logo_40'].rotate(-30, expand=True)
         image.paste(double_prev, (-13,160), double_prev)
-        image.paste(double_next, (279, 160), double_prev)
-        if prev_stream in favorites:
-            prev_star_40 = star_40.copy().rotate(30, expand=True)
-            image.paste(prev_star_40, (-13, 160), prev_star_40)
-        if next_stream in favorites:
-            next_star_40 = star_40.copy().rotate(-30, expand=True)
-            image.paste(next_star_40, (279, 160), next_star_40)
+        image.paste(double_next, (279, 160), double_next)
+        if double_prev_stream in favorites:
+            double_prev_star_40 = star_40.copy().rotate(30, expand=True)
+            image.paste(double_prev_star_40, (-13, 160), double_prev_star_40)
+        if double_next_stream in favorites:
+            double_next_star_40 = star_40.copy().rotate(-30, expand=True)
+            image.paste(double_next_star_40, (279, 160), double_next_star_40)
 
         safe_display(image) # display 
     
@@ -677,6 +677,9 @@ def display_one(name):
     # wifi    
     display_wifi(image)
 
+    # live
+    if name not in reruns:
+        image.paste(live_overlay, (0,0), live_overlay)
 
 
     safe_display(image)
