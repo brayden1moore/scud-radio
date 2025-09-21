@@ -592,8 +592,8 @@ def display_everything(name, update=False, readied=False):
         # double prev and next
         double_prev = streams[double_prev_stream]['logo_40'].rotate(30, expand=True)
         double_next = streams[double_next_stream]['logo_40'].rotate(-30, expand=True)
-        image.paste(double_prev, (-13,160))
-        image.paste(double_next, (279, 160))
+        image.paste(double_prev, (-13,160), double_prev)
+        image.paste(double_next, (279, 160), double_prev)
         if prev_stream in favorites:
             prev_star_40 = star_40.copy().rotate(30, expand=True)
             image.paste(prev_star_40, (-13, 160), prev_star_40)
