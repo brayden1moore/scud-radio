@@ -572,7 +572,7 @@ def display_everything(name, update=False, readied=False):
         logo = streams[name]['logo_60']
         image.paste(logo, (130,114))
         if name in favorites:
-            image.paste(star_60, (130,114) star_60)
+            image.paste(star_60, (130,114), star_60)
         if name not in reruns:
             image.paste(selector_live_overlay, (0,0))
 
