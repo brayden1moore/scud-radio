@@ -564,7 +564,7 @@ def display_everything(direction, name, update=False, readied=False):
                 selector = selector_list[0]
             else:
                 selector = selector_list[-1]
-                
+
         draw = ImageDraw.Draw(image)
 
         location = streams[name]['location']
@@ -918,7 +918,7 @@ def periodic_update():
     if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 600):
         subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
-    if screen_on and (time.time() - last_input_time > 10):
+    if screen_on and not first_display and (time.time() - last_input_time > 10):
         screen_dim = True
         display_ambient(stream)
         pass
