@@ -569,18 +569,17 @@ def display_everything(direction, name, update=False, readied=False):
         '''
 
         image = selector_bg.copy()
-        draw = ImageDraw.Draw(image)
-
-        # draw circle
-        cur_x = -54
-        cur_y = 225
-        image_width = 428
-        for x in range(cur_x, image_width, 4):
-            draw.line([(x, cur_y), (x + 2, cur_y)], fill=(0, 0, 0 ))
+        draw = ImageDraw.Draw(image)  
 
         location = streams[name]['location']
         name_line = calculate_text(name, LARGE_FONT, 275, 1)
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
+
+        # draw mark
+        mark_width = SCREEN_WIDTH / len(stream_list)
+        mark_start = stream_list.index(name) * mark_width
+        mark_end = mark_start + mark_width
+        draw.rectangle([mark_start, 222, mark_end, 239], fill=YELLOW)
 
         # draw name and underline
         draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT, fill=BLACK)
