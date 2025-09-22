@@ -647,18 +647,18 @@ def display_one(name):
     draw = ImageDraw.Draw(image)   
 
     # logo
-    logo = streams[name]['logo_40']
+    logo = streams[name]['logo_60']
     image.paste(logo, (16, 12))
     if name in favorites:
-        image.paste(star_40, (16, 12), star_40)
+        image.paste(star_60, (16, 12), star_60)
 
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
-    draw.text((72, 12 - 7), name_line, font=LARGE_FONT, fill=BLACK)
-    draw.rectangle([72, 37, 72 + width(name_line, LARGE_FONT), 38], fill=BLACK)
+    draw.text((84, 23 - 7), name_line, font=LARGE_FONT, fill=BLACK)
+    draw.rectangle([84, 46, 84 + width(name_line, LARGE_FONT), 47], fill=BLACK)
    
     # location
-    draw.text((72, 43), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
+    draw.text((84, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
 
     # now playing
     y_offset = 0
@@ -742,8 +742,8 @@ def get_anchor(title, info, live):
         for line in info:
             size += height(line, MEDIUM_FONT) + 6
 
-    section_height = 220 - 54 
-    return 54 + round((section_height - size) // 2)
+    section_height = 215 - 72 
+    return 72 + round((section_height - size) // 2)
 
 
 def display_battery(draw):
