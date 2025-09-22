@@ -106,7 +106,8 @@ for i in selector_list:
 
 mainview = Image.open('assets/mainview.png').convert('RGBA')
 logoview = Image.open('assets/logoview.png').convert('RGBA')
-live_overlay = Image.open('assets/liveoverlay.png').convert('RGBA')
+live_overlay_1 = Image.open('assets/liveoverlay1.png').convert('RGBA')
+live_overlay_2 = Image.open('assets/liveoverlay2.png').convert('RGBA')
 selector_bg = Image.open(f'assets/selector.png').convert('RGBA')
 selector_live_overlay = Image.open('assets/selectorliveoverlay.png').convert('RGBA')
 
@@ -553,7 +554,7 @@ def draw_angled_text(text, font, angle, image, coords, color):
     image.paste(ImageOps.colorize(w, (0,0,0), color), coords, w)
 
 
-def display_everything(direction, name, update=False, readied=False):
+def display_everything(direction, name, live_overlay_version, update=False, readied=False):
     global streams, play_status, first_display, selector
     
     if readied and not restarting:
@@ -677,10 +678,10 @@ def display_everything(direction, name, update=False, readied=False):
     
     else:
         if not restarting:
-            display_one(name)
+            display_one(name, live_overlay_version)
 
     
-def display_one(name):
+def display_one(name, live_overlay_version):
 
     image = mainview.copy()
     draw = ImageDraw.Draw(image)   
@@ -753,8 +754,10 @@ def display_one(name):
     display_wifi(image)
 
     # live
-    #if name not in reruns:
-    #    image.paste(live_overlay, (0,0), live_overlay)
+    if live_overlay_version == 1:
+        image.paste(live_overlay_1, (0,0), live_overlay_1)
+    else:
+        image.paste(live_overlay_2, (0,0), live_overlay_2)
 
 
     safe_display(image)
@@ -864,7 +867,7 @@ def show_volume_overlay(volume):
         draw.rectangle([SCREEN_WIDTH-9, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
         draw.rectangle([SCREEN_WIDTH-7, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
         draw.rectangle([SCREEN_WIDTH-9, 215, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
-        
+
         time.sleep(0.005)  
         safe_display(img)
         time.sleep(0.005)
@@ -1064,20 +1067,17 @@ else:
 periodic_update()
 
 time_since_battery_check = 0
+live_overlay_version = 1
 try:
     while True:
         if time_since_battery_check == 10:
             get_battery()
             time_since_battery_check = 0
 
-        if screen_on and stream and readied_stream == None and restarting == False and rotated == False and held == False:
-            #display_everything(stream)
-            pass
-
         if readied_stream and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
             readied_stream = None
             if screen_on and stream:
-                display_everything(0, stream)
+                display_everything(0, stream, live_overlay_version=live_overlay_version)
         
         time.sleep(1)
         time_since_battery_check += 1
