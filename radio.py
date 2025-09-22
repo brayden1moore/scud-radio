@@ -833,7 +833,7 @@ def show_volume_overlay(volume):
         draw.rectangle([SCREEN_WIDTH-7, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
         '''
         bar_start_x = 253
-        bar_max_width = 112  // (253 - 141)
+        bar_max_width = (253 - 141)
         volume_bar_end_x = bar_start_x + (bar_max_width * (volume/150))
 
         draw.rectangle([volume_bar_end_x, 223, bar_start_x, 233], fill=BLUE)
