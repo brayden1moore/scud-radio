@@ -726,7 +726,7 @@ def display_one(name):
     image.paste(live_overlay, (0,0), live_overlay)
 
     # vol
-    show_volume_overlay(current_volume)
+    show_volume_overlay(current_volume, image)
 
     safe_display(image)
 
@@ -822,10 +822,8 @@ def confirm_seek():
         display_everything(0, stream)
         readied_stream = None
 
-def show_volume_overlay(volume):
-    global current_image
+def show_volume_overlay(volume, image):
     if current_image:
-        img = current_image.copy()
         time.sleep(0.008)  
         draw = ImageDraw.Draw(img)
         img.paste(live_overlay, (0,0), live_overlay)
@@ -931,7 +929,8 @@ def handle_rotation(direction):
                 backlight_off()
                 screen_on = False
 
-        show_volume_overlay(current_volume)
+        #show_volume_overlay(current_volume)
+        display_one(stream)
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
     else:
