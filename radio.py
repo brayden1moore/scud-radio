@@ -575,12 +575,6 @@ def display_everything(direction, name, update=False, readied=False):
         name_line = calculate_text(name, LARGE_FONT, 275, 1)
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
-        # draw mark
-        mark_width = SCREEN_WIDTH / len(stream_list)
-        mark_start = stream_list.index(name) * mark_width
-        mark_end = mark_start + mark_width
-        draw.rectangle([mark_start, 222, mark_end, 239], fill=YELLOW)
-
         # draw name and underline
         draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT, fill=BLACK)
         draw.rectangle([38, 37, 38 + width(name_line[0], LARGE_FONT), 38], fill=BLACK)
@@ -639,6 +633,12 @@ def display_everything(direction, name, update=False, readied=False):
         if double_next_stream not in reruns:
             double_next_live_40 = live_40.copy().rotate(-30, expand=True)
             image.paste(double_next_live_40, (271, 201), double_next_live_40)
+
+        # draw mark
+        mark_width = SCREEN_WIDTH / len(stream_list)
+        mark_start = stream_list.index(name) * mark_width
+        mark_end = mark_start + mark_width
+        draw.rectangle([mark_start, 222, mark_end, 239], fill=YELLOW)
 
         safe_display(image) # display 
     
