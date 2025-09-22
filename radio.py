@@ -600,39 +600,39 @@ def display_everything(direction, name, update=False, readied=False):
         # prev and next
         prev = streams[prev_stream]['logo_40'].rotate(20, expand=True)
         next = streams[next_stream]['logo_40'].rotate(-20, expand=True)
+        image.paste(prev, (54,175), prev)
+        image.paste(next, (214, 175), next)
 
-        image.paste(prev, (51,167), prev)
-        image.paste(next, (218, 167), next)
         if prev_stream in favorites:
             prev_star_40 = star_40.copy().rotate(20, expand=True)
-            image.paste(prev_star_40, (51, 167), prev_star_40)
+            image.paste(prev_star_40, (54,175), prev_star_40)
         if next_stream in favorites:
             next_star_40 = star_40.copy().rotate(-20, expand=True)
-            image.paste(next_star_40, (218, 167), next_star_40)
+            image.paste(next_star_40, (214, 175), next_star_40)
         if prev_stream not in reruns:
             prev_live_40 = live_40.copy().rotate(20, expand=True)
-            image.paste(prev_live_40, (51, 167), prev_live_40)
+            image.paste(prev_live_40, (54,175), prev_live_40)
         if next_stream not in reruns:
             next_live_40 = live_40.copy().rotate(-20, expand=True)
-            image.paste(next_live_40, (218, 167), next_live_40)
+            image.paste(next_live_40, (214, 175), next_live_40)
 
         # double prev and next
         double_prev = streams[double_prev_stream]['logo_40'].rotate(30, expand=True)
         double_next = streams[double_next_stream]['logo_40'].rotate(-30, expand=True)
-        image.paste(double_prev, (-13,194), double_prev)
-        image.paste(double_next, (279, 194), double_next)
+        image.paste(double_prev, (-6,201), double_prev)
+        image.paste(double_next, (271, 201), double_next)
         if double_prev_stream in favorites:
             double_prev_star_40 = star_40.copy().rotate(30, expand=True)
-            image.paste(double_prev_star_40, (-13, 194), double_prev_star_40)
+            image.paste(double_prev_star_40, (-6,201), double_prev_star_40)
         if double_next_stream in favorites:
             double_next_star_40 = star_40.copy().rotate(-30, expand=True)
-            image.paste(double_next_star_40, (279, 194), double_next_star_40)
+            image.paste(double_next_star_40, (271, 201), double_next_star_40)
         if double_prev_stream not in reruns:
             double_prev_live_40 = live_40.copy().rotate(30, expand=True)
-            image.paste(double_prev_live_40, (-13, 194), double_prev_live_40)
+            image.paste(double_prev_live_40, (-6,201), double_prev_live_40)
         if double_next_stream not in reruns:
             double_next_live_40 = live_40.copy().rotate(-30, expand=True)
-            image.paste(double_next_live_40, (279, 194), double_next_live_40)
+            image.paste(double_next_live_40, (271, 201), double_next_live_40)
 
         safe_display(image) # display 
     
@@ -654,11 +654,11 @@ def display_one(name):
 
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
-    draw.text((84, 23 - 7), name_line, font=LARGE_FONT, fill=BLACK)
-    draw.rectangle([84, 46, 84 + width(name_line, LARGE_FONT), 47], fill=BLACK)
+    draw.text((92, 20 - 7), name_line, font=LARGE_FONT, fill=BLACK)
+    draw.rectangle([92, 46, 92 + width(name_line, LARGE_FONT), 47], fill=BLACK)
    
     # location
-    draw.text((84, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
+    draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
 
     # now playing
     y_offset = 0
