@@ -638,8 +638,8 @@ def display_everything(direction, name, update=False, readied=False):
         mark_width = SCREEN_WIDTH / len(stream_list)
         mark_start = stream_list.index(name) * mark_width
         mark_end = mark_start + mark_width
-        draw.rectangle([0, 225, 320, 240], fill=BLACK)
-        draw.rectangle([mark_start, 226, mark_end, 239], fill=YELLOW)
+        draw.rectangle([0, 233, 320, 240], fill=BLACK)
+        draw.rectangle([mark_start, 234, mark_end, 239], fill=YELLOW)
 
         safe_display(image) # display 
     
