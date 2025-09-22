@@ -554,7 +554,7 @@ def draw_angled_text(text, font, angle, image, coords, color):
     image.paste(ImageOps.colorize(w, (0,0,0), color), coords, w)
 
 
-def display_everything(direction, name, live_overlay_version, update=False, readied=False):
+def display_everything(direction, name, live_overlay_version=1, update=False, readied=False):
     global streams, play_status, first_display, selector
     
     if readied and not restarting:
