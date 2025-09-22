@@ -824,13 +824,19 @@ def show_volume_overlay(volume):
     if current_image:
         img = current_image.copy()
         time.sleep(0.008)  
-        
         draw = ImageDraw.Draw(img)
+        '''
         total_bar_height = SCREEN_HEIGHT
         volume_bar_end = total_bar_height * ((150-volume)/150)
         
         draw.rectangle([SCREEN_WIDTH-9, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
         draw.rectangle([SCREEN_WIDTH-7, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
+        '''
+        bar_start_x = 141
+        bar_max_width = 112  // (253 - 141)
+        volume_bar_end_x = bar_start_x + (bar_max_width * (volume/150))
+
+        draw.rectangle([bar_start_x, 223, volume_bar_end_x, 240], fill=BLUE)
         
         time.sleep(0.005)  
         safe_display(img)
