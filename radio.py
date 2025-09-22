@@ -591,10 +591,11 @@ def display_everything(direction, name, update=False, readied=False):
         # draw logo
         logo = streams[name]['logo_60']
         image.paste(logo, (130,148))
+        this_star_60 = star_60.copy()
         if name in favorites:
-            image.paste(star_60, (130,148), star_60)
+            image.paste(this_star_60, (130,148), this_star_60)
         if name not in reruns:
-            image.paste(live_60, (130,148), star_60)
+            image.paste(live_60, (130,148), live_60)
 
         # prev and next
         prev = streams[prev_stream]['logo_40'].rotate(20, expand=True)
