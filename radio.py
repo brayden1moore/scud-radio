@@ -638,8 +638,8 @@ def display_everything(direction, name, update=False, readied=False):
         mark_width = SCREEN_WIDTH / len(stream_list)
         mark_start = stream_list.index(name) * mark_width
         mark_end = mark_start + mark_width
-        draw.rectangle([0, 230, 320, 240], fill=BLACK)
-        draw.rectangle([mark_start, 232, mark_end, 239], fill=YELLOW)
+        draw.rectangle([0, 233, 320, 240], fill=BLACK)
+        draw.rectangle([mark_start, 234, mark_end, 239], fill=YELLOW)
 
         safe_display(image) # display 
     
@@ -721,12 +721,9 @@ def display_one(name):
     display_wifi(image)
 
     # live
-    #if name not in reruns:
-    #    image.paste(live_overlay, (0,0), live_overlay)
-    image.paste(live_overlay, (0,0), live_overlay)
+    if name not in reruns:
+        image.paste(live_overlay, (0,0), live_overlay)
 
-    # vol
-    show_volume_overlay(current_volume, image)
 
     safe_display(image)
 
@@ -822,25 +819,21 @@ def confirm_seek():
         display_everything(0, stream)
         readied_stream = None
 
-def show_volume_overlay(volume, image):
+def show_volume_overlay(volume):
+    global current_image
     if current_image:
+        img = current_image.copy()
         time.sleep(0.008)  
-        draw = ImageDraw.Draw(image)
-        image.paste(live_overlay, (0,0), live_overlay)
-        '''
+        
+        draw = ImageDraw.Draw(img)
         total_bar_height = SCREEN_HEIGHT
         volume_bar_end = total_bar_height * ((150-volume)/150)
         
         draw.rectangle([SCREEN_WIDTH-9, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
         draw.rectangle([SCREEN_WIDTH-7, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
-        '''
-        bar_end = 254
-        bar_start = 141 + (volume / 150) * (254 - 141) - 1
-        
-        draw.rectangle([bar_start, 223, bar_end, 233], fill=BLUE)
         
         time.sleep(0.005)  
-        safe_display(image)
+        safe_display(img)
         time.sleep(0.005)
 
 def safe_restart():
@@ -929,8 +922,7 @@ def handle_rotation(direction):
                 backlight_off()
                 screen_on = False
 
-        #show_volume_overlay(current_volume)
-        display_one(stream)
+        show_volume_overlay(current_volume)
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
     else:
