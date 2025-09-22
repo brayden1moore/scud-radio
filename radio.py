@@ -1,5 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from PIL import Image, ImageDraw, ImageFont, ImageSequence
+from PIL import Image, ImageDraw, ImageFont, ImageSequence, ImageOps
 from datetime import date, datetime, timezone, timedelta
 from subprocess import Popen, run
 from pathlib import Path
@@ -538,6 +538,21 @@ def calculate_text(text, font, max_width, lines):
         return line_list
     
 
+def draw_angled_text(text, font, angle, image, coords, color):
+    temp_img = Image.new('L', (1, 1))
+    temp_draw = ImageDraw.Draw(temp_img)
+    bbox = temp_draw.textbbox((0, 0), text, font=font)
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
+    
+    txt = Image.new('L', (text_width, text_height))
+    d = ImageDraw.Draw(txt)
+    d.text((-bbox[0], -bbox[1]), text, font=font, fill=255)
+    
+    w = txt.rotate(angle, expand=1)
+    image.paste(ImageOps.colorize(w, (0,0,0), color), coords, w)
+
+
 def display_everything(direction, name, update=False, readied=False):
     global streams, play_status, first_display, selector
     
@@ -585,54 +600,62 @@ def display_everything(direction, name, update=False, readied=False):
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((53, 81 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((54, 77 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
             y_offset += 20
 
         # draw logo
         logo = streams[name]['logo_60']
-        image.paste(logo, (130,148))
+        image.paste(logo, (130,135))
         this_star_60 = star_60.copy()
         if name in favorites:
-            image.paste(this_star_60, (130,148), this_star_60)
+            image.paste(this_star_60, (130,135), this_star_60)
         if name not in reruns:
-            image.paste(live_60, (130,148), live_60)
+            image.paste(live_60, (130,135), live_60)
+        draw_angled_text(name, MEDIUM_FONT, -90, image, (155,206), BLACK)
 
         # prev and next
-        prev = streams[prev_stream]['logo_40'].rotate(20, expand=True)
-        next = streams[next_stream]['logo_40'].rotate(-20, expand=True)
-        image.paste(prev, (54,175), prev)
-        image.paste(next, (214, 175), next)
+        prev = streams[prev_stream]['logo_40'].rotate(16, expand=True)
+        next = streams[next_stream]['logo_40'].rotate(-16, expand=True)
+        image.paste(prev, (54,139), prev)
+        image.paste(next, (217, 139), next)
+        
+        draw_angled_text(prev_stream, MEDIUM_FONT, -74, image, (79,188), BLACK)
+        draw_angled_text(next_stream, MEDIUM_FONT, -106, image, (217,188), BLACK)
 
         if prev_stream in favorites:
-            prev_star_40 = star_40.copy().rotate(20, expand=True)
-            image.paste(prev_star_40, (54,175), prev_star_40)
+            prev_star_40 = star_40.copy().rotate(16, expand=True)
+            image.paste(prev_star_40, (54,139), prev_star_40)
         if next_stream in favorites:
-            next_star_40 = star_40.copy().rotate(-20, expand=True)
-            image.paste(next_star_40, (214, 175), next_star_40)
+            next_star_40 = star_40.copy().rotate(-16, expand=True)
+            image.paste(next_star_40, (217, 139), next_star_40)
         if prev_stream not in reruns:
-            prev_live_40 = live_40.copy().rotate(20, expand=True)
-            image.paste(prev_live_40, (54,175), prev_live_40)
+            prev_live_40 = live_40.copy().rotate(16, expand=True)
+            image.paste(prev_live_40, (54,139), prev_live_40)
         if next_stream not in reruns:
-            next_live_40 = live_40.copy().rotate(-20, expand=True)
-            image.paste(next_live_40, (214, 175), next_live_40)
+            next_live_40 = live_40.copy().rotate(-16, expand=True)
+            image.paste(next_live_40, (217, 139), next_live_40)
 
         # double prev and next
-        double_prev = streams[double_prev_stream]['logo_40'].rotate(30, expand=True)
-        double_next = streams[double_next_stream]['logo_40'].rotate(-30, expand=True)
-        image.paste(double_prev, (-6,201), double_prev)
-        image.paste(double_next, (271, 201), double_next)
+        double_prev = streams[double_prev_stream]['logo_40'].rotate(26, expand=True)
+        double_next = streams[double_next_stream]['logo_40'].rotate(-26, expand=True)
+        image.paste(double_prev, (-5,161), double_prev)
+        image.paste(double_next, (272, 159), double_next)
+
+        draw_angled_text(double_prev_stream, MEDIUM_FONT, -64, image, (27,210), BLACK)
+        draw_angled_text(double_next_stream, MEDIUM_FONT, -116, image, (264,208), BLACK)
+
         if double_prev_stream in favorites:
-            double_prev_star_40 = star_40.copy().rotate(30, expand=True)
-            image.paste(double_prev_star_40, (-6,201), double_prev_star_40)
+            double_prev_star_40 = star_40.copy().rotate(26, expand=True)
+            image.paste(double_prev_star_40, (-5,161), double_prev_star_40)
         if double_next_stream in favorites:
-            double_next_star_40 = star_40.copy().rotate(-30, expand=True)
-            image.paste(double_next_star_40, (271, 201), double_next_star_40)
+            double_next_star_40 = star_40.copy().rotate(-26, expand=True)
+            image.paste(double_next_star_40, (272, 159), double_next_star_40)
         if double_prev_stream not in reruns:
-            double_prev_live_40 = live_40.copy().rotate(30, expand=True)
-            image.paste(double_prev_live_40, (-6,201), double_prev_live_40)
+            double_prev_live_40 = live_40.copy().rotate(26, expand=True)
+            image.paste(double_prev_live_40, (-5,161), double_prev_live_40)
         if double_next_stream not in reruns:
-            double_next_live_40 = live_40.copy().rotate(-30, expand=True)
-            image.paste(double_next_live_40, (271, 201), double_next_live_40)
+            double_next_live_40 = live_40.copy().rotate(-26, expand=True)
+            image.paste(double_next_live_40, (272, 159), double_next_live_40)
 
         # draw mark
         mark_width = SCREEN_WIDTH / len(stream_list)
