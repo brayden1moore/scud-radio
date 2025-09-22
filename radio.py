@@ -1075,14 +1075,14 @@ try:
             time_since_battery_check = 0
 
         if not readied_stream and not restarting and not held:
-            draw = ImageDraw.Draw(current_image)
+            image = current_image
             
             # toggle live overlay version
             if live_overlay_version == 1:
-                draw.paste(live_overlay_1, (0,0), live_overlay_1)
+                image.paste(live_overlay_1, (0,0), live_overlay_1)
                 live_overlay_version = 2
             else:
-                draw.paste(live_overlay_2, (0,0), live_overlay_2)
+                image.paste(live_overlay_2, (0,0), live_overlay_2)
                 live_overlay_version = 1
 
         if readied_stream and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
