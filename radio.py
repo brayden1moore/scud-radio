@@ -67,6 +67,7 @@ held = False
 user_tz = 'UTC'
 wifi_strength = None
 first_boot = True
+selector = 'red'
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -95,7 +96,14 @@ favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'),
 star_60 = Image.open('assets/star_60.png').convert('RGBA')
 star_40 = Image.open('assets/star_40.png').convert('RGBA')
 
-selector = Image.open('assets/selector.png').convert('RGBA')
+live_60 = Image.open('assets/live_60.png').convert('RGBA')
+live_40 = Image.open('assets/live_40.png').convert('RGBA')
+
+selector_list = ['red','orange','purple','white','green','yellow']
+selectors = {}
+for i in selector_list:
+    selectors[i] = Image.open(f'assets/selector_{i}.png').convert('RGBA')
+
 mainview = Image.open('assets/mainview.png').convert('RGBA')
 logoview = Image.open('assets/mainview.png').convert('RGBA')
 live_overlay = Image.open('assets/liveoverlay.png').convert('RGBA')
@@ -530,7 +538,7 @@ def calculate_text(text, font, max_width, lines):
     
 
 def display_everything(name, update=False, readied=False):
-    global streams, play_status, first_display
+    global streams, play_status, first_display, selector
     
     if readied and not restarting:
         first_display = False
@@ -548,7 +556,11 @@ def display_everything(name, update=False, readied=False):
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
-        image = selector.copy()
+        image = selectors[selector].copy()
+        try:
+            selector = selectors[selector_list[selector_list.index(selector) + 1]]
+        except:
+            selector = selectors[selector_list[0]]
         draw = ImageDraw.Draw(image)
 
         location = streams[name]['location']
@@ -573,8 +585,8 @@ def display_everything(name, update=False, readied=False):
         image.paste(logo, (130,148))
         if name in favorites:
             image.paste(star_60, (130,148), star_60)
-        #if name not in reruns:
-        #    image.paste(selector_live_overlay, (0,0), selector_live_overlay)
+        if name not in reruns:
+            image.paste(live_60, (130,148), star_60)
 
         # prev and next
         prev = streams[prev_stream]['logo_40'].rotate(20, expand=True)
@@ -588,6 +600,12 @@ def display_everything(name, update=False, readied=False):
         if next_stream in favorites:
             next_star_40 = star_40.copy().rotate(-20, expand=True)
             image.paste(next_star_40, (218, 167), next_star_40)
+        if prev_stream not in reruns:
+            prev_live_40 = live_40.copy().rotate(20, expand=True)
+            image.paste(prev_live_40, (51, 167), prev_live_40)
+        if next_stream not in reruns:
+            next_live_40 = live_40.copy().rotate(-20, expand=True)
+            image.paste(next_live_40, (218, 167), next_live_40)
 
         # double prev and next
         double_prev = streams[double_prev_stream]['logo_40'].rotate(30, expand=True)
@@ -600,6 +618,12 @@ def display_everything(name, update=False, readied=False):
         if double_next_stream in favorites:
             double_next_star_40 = star_40.copy().rotate(-30, expand=True)
             image.paste(double_next_star_40, (279, 194), double_next_star_40)
+        if double_prev_stream not in reruns:
+            double_prev_live_40 = live_40.copy().rotate(30, expand=True)
+            image.paste(prev_live_40, (51, 167), prev_live_40)
+        if double_next_stream not in reruns:
+            double_next_live_40 = live_40.copy().rotate(-30, expand=True)
+            image.paste(double_next_live_40, (218, 167), double_next_live_40)
 
         safe_display(image) # display 
     
