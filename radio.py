@@ -836,7 +836,7 @@ def show_volume_overlay(volume):
         bar_max_width = 112  // (253 - 141)
         volume_bar_end_x = bar_start_x + (bar_max_width * (volume/150))
 
-        draw.rectangle([bar_start_x, 223, volume_bar_end_x, 240], fill=BLUE)
+        draw.rectangle([bar_start_x, 223, volume_bar_end_x, 233], fill=BLUE)
         
         time.sleep(0.005)  
         safe_display(img)
