@@ -903,8 +903,6 @@ def handle_rotation(direction):
         show_volume_overlay(current_volume)
 
     else:
-        # to remove
-        direction = direction * -1
         if button_released_time and (time.time() - button_released_time > 0.3):
             last_rotation = time.time()
             seek_stream(direction)
