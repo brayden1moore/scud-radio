@@ -482,7 +482,7 @@ def play_random():
     global stream, play_status
     available_streams = [i for i in stream_list if i != stream]
     chosen = random.choice(available_streams)
-    display_everything(chosen)
+    display_everything(0, chosen)
     play(chosen)
     stream = chosen
     play_status = 'play'
@@ -558,9 +558,13 @@ def display_everything(direction, name, update=False, readied=False):
 
         image = selectors[selector].copy()
         try:
-            selector = selector_list[selector_list.index(selector) + 1]
+            selector = selector_list[selector_list.index(selector) + direction]
         except:
-            selector = selector_list[0]
+            if direction == 1:
+                selector = selector_list[0]
+            else:
+                selector = selector_list[-1]
+                
         draw = ImageDraw.Draw(image)
 
         location = streams[name]['location']
@@ -784,7 +788,7 @@ def seek_stream(direction):
         else:
             readied_stream = stream_list[idx + direction]
 
-    display_everything(readied_stream, readied=True)
+    display_everything(direction, readied_stream, readied=True)
 
 def confirm_seek():
     global readied_stream, stream
@@ -793,7 +797,7 @@ def confirm_seek():
             #pause()
             stream = readied_stream
             play(stream)
-        display_everything(stream)
+        display_everything(0, stream)
         readied_stream = None
 
 def show_volume_overlay(volume):
@@ -933,7 +937,7 @@ def periodic_update():
             failed_fetches = 0
 
             if not held and not readied_stream:
-                display_everything(stream, update=True)
+                display_everything(0, stream, update=True)
                 
         except Exception as e:
             failed_fetches += 1
@@ -1014,7 +1018,7 @@ try:
         if readied_stream and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
             readied_stream = None
             if screen_on and stream:
-                display_everything(stream)
+                display_everything(0, stream)
         
         time.sleep(1)
         time_since_battery_check += 1
