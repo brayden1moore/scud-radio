@@ -571,6 +571,13 @@ def display_everything(direction, name, update=False, readied=False):
         image = selector_bg.copy()
         draw = ImageDraw.Draw(image)
 
+        # draw circle
+        cur_x = -54
+        cur_y = 225
+        image_width = 428
+        for x in range(cur_x, image_width, 4):
+            draw.line([(x, cur_y), (x + 2, cur_y)], fill=(0, 0, 0 ))
+
         location = streams[name]['location']
         name_line = calculate_text(name, LARGE_FONT, 275, 1)
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
@@ -911,7 +918,7 @@ def handle_rotation(direction):
             if current_volume == 0:
                 backlight_off()
                 screen_on = False
-                
+
         show_volume_overlay(current_volume)
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
