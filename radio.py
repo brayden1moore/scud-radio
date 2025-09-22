@@ -558,9 +558,9 @@ def display_everything(name, update=False, readied=False):
 
         image = selectors[selector].copy()
         try:
-            selector = selectors[selector_list[selector_list.index(selector) + 1]]
+            selector = selector_list[selector_list.index(selector) + 1]
         except:
-            selector = selectors[selector_list[0]]
+            selector = selector_list[0]
         draw = ImageDraw.Draw(image)
 
         location = streams[name]['location']
