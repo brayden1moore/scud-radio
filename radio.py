@@ -1079,7 +1079,7 @@ try:
             if screen_on and stream:
                 display_everything(0, stream)
         
-        if not readied_stream and not restarting and not held:
+        if stream and not readied_stream and not restarting and not held:
             image = current_image.copy()
             # toggle live overlay version
             if live_overlay_version == 1:
