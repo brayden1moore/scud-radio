@@ -658,6 +658,9 @@ def display_one(name):
     image.paste(logo, (16, 12))
     if name in favorites:
         image.paste(star_60, (16, 12), star_60)
+    if name not in reruns:
+        image.paste(live_60, (16, 12), live_60)
+
 
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
