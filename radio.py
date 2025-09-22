@@ -554,7 +554,7 @@ def draw_angled_text(text, font, angle, image, coords, color):
     image.paste(ImageOps.colorize(w, (0,0,0), color), coords, w)
 
 
-def display_everything(direction, name, live_overlay_version=1, update=False, readied=False):
+def display_everything(direction, name, update=False, readied=False):
     global streams, play_status, first_display, selector
     
     if readied and not restarting:
@@ -678,10 +678,10 @@ def display_everything(direction, name, live_overlay_version=1, update=False, re
     
     else:
         if not restarting:
-            display_one(name, live_overlay_version)
+            display_one(name)
 
     
-def display_one(name, live_overlay_version):
+def display_one(name):
 
     image = mainview.copy()
     draw = ImageDraw.Draw(image)   
@@ -1077,7 +1077,7 @@ try:
         if readied_stream and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
             readied_stream = None
             if screen_on and stream:
-                display_everything(0, stream, live_overlay_version=live_overlay_version)
+                display_everything(0, stream)
                 
                 # toggle live overlay version
                 if live_overlay_version == 1:
