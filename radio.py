@@ -620,7 +620,7 @@ def display_everything(name, update=False, readied=False):
             image.paste(double_next_star_40, (279, 194), double_next_star_40)
         if double_prev_stream not in reruns:
             double_prev_live_40 = live_40.copy().rotate(30, expand=True)
-            image.paste(prev_live_40, (51, 167), prev_live_40)
+            image.paste(double_prev_live_40, (51, 167), double_prev_live_40)
         if double_next_stream not in reruns:
             double_next_live_40 = live_40.copy().rotate(-30, expand=True)
             image.paste(double_next_live_40, (218, 167), double_next_live_40)
