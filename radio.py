@@ -135,6 +135,7 @@ def set_favorites(favorites):
 favorites = get_favorites()
 
 def get_last_volume():
+    return 75
     vol_path = Path(LIB_PATH)
     vol_path.mkdir(parents=True, exist_ok=True)
     
