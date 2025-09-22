@@ -1074,6 +1074,11 @@ try:
             get_battery()
             time_since_battery_check = 0
 
+        if readied_stream and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
+            readied_stream = None
+            if screen_on and stream:
+                display_everything(0, stream)
+        
         if not readied_stream and not restarting and not held:
             image = current_image
             
@@ -1084,12 +1089,7 @@ try:
             else:
                 image.paste(live_overlay_2, (0,0), live_overlay_2)
                 live_overlay_version = 1
-
-        if readied_stream and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
-            readied_stream = None
-            if screen_on and stream:
-                display_everything(0, stream)
-        
+                
         time.sleep(1)
         time_since_battery_check += 1
 
