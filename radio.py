@@ -135,7 +135,6 @@ def set_favorites(favorites):
 favorites = get_favorites()
 
 def get_last_volume():
-    return 75
     vol_path = Path(LIB_PATH)
     vol_path.mkdir(parents=True, exist_ok=True)
     
@@ -722,8 +721,8 @@ def display_one(name):
     display_wifi(image)
 
     # live
-    if name not in reruns:
-        image.paste(live_overlay, (0,0), live_overlay)
+    #if name not in reruns:
+    #    image.paste(live_overlay, (0,0), live_overlay)
 
 
     safe_display(image)
