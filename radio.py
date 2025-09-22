@@ -105,7 +105,7 @@ for i in selector_list:
     selectors[i] = Image.open(f'assets/selector_{i}.png').convert('RGBA')
 
 mainview = Image.open('assets/mainview.png').convert('RGBA')
-logoview = Image.open('assets/mainview.png').convert('RGBA')
+logoview = Image.open('assets/logoview.png').convert('RGBA')
 live_overlay = Image.open('assets/liveoverlay.png').convert('RGBA')
 selector_live_overlay = Image.open('assets/selectorliveoverlay.png').convert('RGBA')
 
@@ -537,7 +537,7 @@ def calculate_text(text, font, max_width, lines):
         return line_list
     
 
-def display_everything(name, update=False, readied=False):
+def display_everything(direction, name, update=False, readied=False):
     global streams, play_status, first_display, selector
     
     if readied and not restarting:
