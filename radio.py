@@ -982,7 +982,10 @@ def wrapped_action(func, direction=0):
         return None
     else:
         def inner():
-            if not wake_screen():
+            if not (current_volume == 0 and direction == -1):
+                if not wake_screen():
+                    func()
+            else:
                 func()
         return inner
 
