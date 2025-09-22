@@ -840,7 +840,7 @@ def show_volume_overlay(volume, image):
         draw.rectangle([bar_start, 223, bar_end, 233], fill=BLUE)
         
         time.sleep(0.005)  
-        safe_display(img)
+        safe_display(image)
         time.sleep(0.005)
 
 def safe_restart():
