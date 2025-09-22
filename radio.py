@@ -825,7 +825,7 @@ def show_volume_overlay(volume):
         img = current_image.copy()
         time.sleep(0.008)  
         draw = ImageDraw.Draw(img)
-        img.paste(live_overlay, (0,0))
+        img.paste(live_overlay, (0,0), live_overlay)
         '''
         total_bar_height = SCREEN_HEIGHT
         volume_bar_end = total_bar_height * ((150-volume)/150)
