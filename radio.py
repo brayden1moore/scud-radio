@@ -982,12 +982,21 @@ def wrapped_action(func, direction=0):
         return None
     else:
         def inner():
-            if not (current_volume == 0 and direction == -1):
-                if not wake_screen():
-                    func()
-            else:
+            if not wake_screen():
                 func()
         return inner
+    
+def wrapped_action(func, direction=0):
+    def inner():
+        # Check if this is navigation (button not pressed) with left rotation and volume 0
+        if not click_button.is_pressed and current_volume == 0 and direction == -1:
+            # For navigation with volume 0 and left rotation, don't wake screen
+            func()
+        else:
+            # For volume control or other cases, wake screen first
+            if not wake_screen():
+                func()
+    return inner
 
 
 def restart():
