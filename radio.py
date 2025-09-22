@@ -641,9 +641,6 @@ def display_everything(direction, name, update=False, readied=False):
         draw.rectangle([0, 230, 320, 240], fill=BLACK)
         draw.rectangle([mark_start, 232, mark_end, 239], fill=YELLOW)
 
-        # vol
-        show_volume_overlay(current_volume)
-
         safe_display(image) # display 
     
     else:
@@ -727,6 +724,9 @@ def display_one(name):
     #if name not in reruns:
     #    image.paste(live_overlay, (0,0), live_overlay)
     image.paste(live_overlay, (0,0), live_overlay)
+
+    # vol
+    show_volume_overlay(current_volume)
 
     safe_display(image)
 
