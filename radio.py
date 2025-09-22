@@ -1079,19 +1079,19 @@ try:
             if screen_on and stream:
                 display_everything(0, stream)
         
-        if stream and not readied_stream and not restarting and not held:
-            image = current_image.copy()
+        #if stream and not readied_stream and not restarting and not held:
+            #image = current_image.copy()
             # toggle live overlay version
-            if live_overlay_version == 1:
-                image.paste(live_overlay_1, (0,0), live_overlay_1)
-                live_overlay_version = 2
-            else:
-                image.paste(live_overlay_2, (0,0), live_overlay_2)
-                live_overlay_version = 1
-            safe_display(image)
+            #if live_overlay_version == 1:
+            #    image.paste(live_overlay_1, (0,0), live_overlay_1)
+            #    live_overlay_version = 2
+            #else:
+            #    image.paste(live_overlay_2, (0,0), live_overlay_2)
+            #    live_overlay_version = 1
+            #safe_display(image)
 
-        time.sleep(0.5)
-        time_since_battery_check += 0.5
+        time.sleep(1)
+        time_since_battery_check += 1
 
 except KeyboardInterrupt:
     if mpv_process:
