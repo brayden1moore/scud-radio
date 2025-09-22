@@ -617,7 +617,7 @@ def display_everything(direction, name, update=False, readied=False):
         # prev and next
         prev_position = (54,149)
         next_position = (218,149)
-        prev_next_rotation = 13
+        prev_next_rotation = 0#13
         prev = streams[prev_stream]['logo_40'].rotate(prev_next_rotation, expand=True)
         next = streams[next_stream]['logo_40'].rotate(-prev_next_rotation, expand=True)
         image.paste(prev, prev_position, prev)
@@ -642,7 +642,7 @@ def display_everything(direction, name, update=False, readied=False):
         # double prev and next
         double_prev_position = (-8,167)
         double_next_position = (275,167)
-        double_prev_next_rotation = 25
+        double_prev_next_rotation = 0#25
         double_prev = streams[double_prev_stream]['logo_40'].rotate(double_prev_next_rotation, expand=True)
         double_next = streams[double_next_stream]['logo_40'].rotate(-double_prev_next_rotation, expand=True)
         image.paste(double_prev, double_prev_position, double_prev)
