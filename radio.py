@@ -1090,8 +1090,8 @@ try:
                 live_overlay_version = 1
             safe_display(image)
 
-        time.sleep(1)
-        time_since_battery_check += 1
+        time.sleep(0.5)
+        time_since_battery_check += 0.5
 
 except KeyboardInterrupt:
     if mpv_process:
