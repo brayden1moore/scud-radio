@@ -107,6 +107,7 @@ for i in selector_list:
 mainview = Image.open('assets/mainview.png').convert('RGBA')
 logoview = Image.open('assets/logoview.png').convert('RGBA')
 live_overlay = Image.open('assets/liveoverlay.png').convert('RGBA')
+selector_bg = Image.open(f'assets/selector.png').convert('RGBA')
 selector_live_overlay = Image.open('assets/selectorliveoverlay.png').convert('RGBA')
 
 LIB_PATH = "/var/lib/scud-radio"
@@ -556,6 +557,7 @@ def display_everything(direction, name, update=False, readied=False):
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
+        '''
         image = selectors[selector].copy()
         try:
             selector = selector_list[selector_list.index(selector) + direction]
@@ -564,7 +566,9 @@ def display_everything(direction, name, update=False, readied=False):
                 selector = selector_list[0]
             else:
                 selector = selector_list[-1]
+        '''
 
+        image = selector_bg.copy()
         draw = ImageDraw.Draw(image)
 
         location = streams[name]['location']
