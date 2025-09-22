@@ -1089,7 +1089,8 @@ try:
             else:
                 image.paste(live_overlay_2, (0,0), live_overlay_2)
                 live_overlay_version = 1
-                
+            safe_display(image)
+
         time.sleep(1)
         time_since_battery_check += 1
 
