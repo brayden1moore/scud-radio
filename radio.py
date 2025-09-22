@@ -911,9 +911,9 @@ def handle_rotation(direction):
             if current_volume == 0:
                 backlight_off()
                 screen_on = False
-
-        send_mpv_command({"command": ["set_property", "volume", current_volume]})
+                
         show_volume_overlay(current_volume)
+        send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
     else:
         if button_released_time and (time.time() - button_released_time > 0.3):
@@ -978,26 +978,12 @@ def wake_screen():
     return False
 
 def wrapped_action(func, direction=0):
-    if current_volume == 0 and direction == -1:
-        return None
-    else:
-        def inner():
-            if not wake_screen():
-                func()
-        return inner
-
-def wrapped_action(func, direction=0):
     def inner():
-        # Check if this is navigation (button not pressed) with left rotation and volume 0
         if not click_button.is_pressed and current_volume == 0 and direction == -1:
-            # For navigation with volume 0 and left rotation, don't wake screen
             func()
-        # Check if this is volume control (button pressed) going down when volume is 0
         elif click_button.is_pressed and current_volume == 0 and direction == -1:
-            # For volume down when already at 0, don't wake screen
             func()
         else:
-            # For all other cases, wake screen first
             if not wake_screen():
                 func()
     return inner
