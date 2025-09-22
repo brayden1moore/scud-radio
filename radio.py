@@ -1070,7 +1070,7 @@ time_since_battery_check = 0
 live_overlay_version = 1
 try:
     while True:
-        if time_since_battery_check == 10:
+        if time_since_battery_check == 20:
             get_battery()
             time_since_battery_check = 0
 
@@ -1080,8 +1080,7 @@ try:
                 display_everything(0, stream)
         
         if not readied_stream and not restarting and not held:
-            image = current_image
-            
+            image = current_image.copy()
             # toggle live overlay version
             if live_overlay_version == 1:
                 image.paste(live_overlay_1, (0,0), live_overlay_1)
