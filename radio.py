@@ -918,11 +918,6 @@ def periodic_update():
     if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 600):
         subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
-    if screen_on and not first_display and (time.time() - last_input_time > 10):
-        screen_dim = True
-        display_ambient(stream)
-        pass
-
     if screen_on and (time.time() - last_input_time > 120):
         screen_on = False
         backlight_off()
@@ -937,7 +932,11 @@ def periodic_update():
             failed_fetches = 0
 
             if not held and not readied_stream:
-                display_everything(0, stream, update=True)
+                if screen_on and not first_display and (time.time() - last_input_time > 10):
+                    screen_dim = True
+                    display_ambient(stream)
+                else:
+                    display_everything(0, stream, update=True)
                 
         except Exception as e:
             failed_fetches += 1
