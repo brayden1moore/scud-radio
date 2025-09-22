@@ -670,7 +670,7 @@ def display_everything(direction, name, update=False, readied=False):
         mark_end = mark_start + mark_width
         draw.rectangle([0, 233, 320, 240], fill=BLACK)
         draw.rectangle([mark_start, 234, mark_end, 239], fill=YELLOW)
-        draw.text((mark_start, 220), name, font=MEDIUM_FONT, fill=BLACK)
+        draw.text((mark_start, 216), name, font=MEDIUM_FONT, fill=BLACK)
 
         safe_display(image) # display 
     
