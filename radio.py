@@ -721,9 +721,9 @@ def display_one(name):
     display_wifi(image)
 
     # live
-    if name not in reruns:
-        image.paste(live_overlay, (0,0), live_overlay)
-
+    #if name not in reruns:
+    #    image.paste(live_overlay, (0,0), live_overlay)
+    image.paste(live_overlay, (0,0), live_overlay)
 
     safe_display(image)
 
@@ -832,11 +832,11 @@ def show_volume_overlay(volume):
         draw.rectangle([SCREEN_WIDTH-9, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
         draw.rectangle([SCREEN_WIDTH-7, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
         '''
-        bar_start_x = 141
+        bar_start_x = 253
         bar_max_width = 112  // (253 - 141)
         volume_bar_end_x = bar_start_x + (bar_max_width * (volume/150))
 
-        draw.rectangle([bar_start_x, 223, volume_bar_end_x, 233], fill=BLUE)
+        draw.rectangle([volume_bar_end_x, 223, bar_start_x, 233], fill=BLUE)
         
         time.sleep(0.005)  
         safe_display(img)
