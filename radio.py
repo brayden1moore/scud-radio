@@ -709,6 +709,17 @@ def display_one(name):
     safe_display(image)
 
 
+def display_ambient(name):
+    image = logoview.copy()
+    draw = ImageDraw.Draw(image)  
+
+    # logo
+    logo = streams[name]['logo_140']
+    image.paste(logo, (90, 50))
+
+    safe_display(image)
+
+
 def get_anchor(title, info, live):
     size = 0
     for line in title:
@@ -902,13 +913,13 @@ failed_fetches = 0
 def periodic_update():
     global screen_on, failed_fetches
 
-    #if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 600):
-    #    subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
+    if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 600):
+        subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
-    #if screen_on and (time.time() - last_input_time > 60):
-        #screen_dim = True
-        #backlight_dim()
-        #pass
+    if screen_on and (time.time() - last_input_time > 10):
+        screen_dim = True
+        display_ambient(stream)
+        pass
 
     if screen_on and (time.time() - last_input_time > 120):
         screen_on = False
