@@ -914,7 +914,10 @@ def handle_rotation(direction):
     else:
         if button_released_time and (time.time() - button_released_time > 0.3):
             last_rotation = time.time()
-            seek_stream(direction)
+            if screen_dim:
+                display_one(stream)
+            else:
+                seek_stream(direction)
 
 failed_fetches = 0
 def periodic_update():
