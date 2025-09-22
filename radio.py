@@ -977,11 +977,14 @@ def wake_screen():
         return True
     return False
 
-def wrapped_action(func):
-    def inner():
-        if not wake_screen():
-            func()
-    return inner
+def wrapped_action(func, direction=0):
+    if current_volume == 0 and direction == -1:
+        return None
+    else:
+        def inner():
+            if not wake_screen():
+                func()
+        return inner
 
 
 def restart():
@@ -1004,8 +1007,8 @@ click_button.when_released = on_button_released
 CLK_PIN = 5 
 DT_PIN = 6   
 rotor = RotaryEncoder(CLK_PIN, DT_PIN)
-rotor.when_rotated_counter_clockwise = wrapped_action(lambda: handle_rotation(-1))
-rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1))
+rotor.when_rotated_counter_clockwise = wrapped_action(lambda: handle_rotation(-1), -1)
+rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1), 1)
 
 last_played = read_last_played()
 if last_played in stream_list:
