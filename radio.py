@@ -57,7 +57,7 @@ play_status = 'pause'
 last_input_time = time.time()
 first_display = True
 current_volume = 60
-volume_step = 15
+volume_step = 10
 button_press_time = 0
 rotated = False
 battery = None
@@ -863,6 +863,7 @@ def show_volume_overlay(volume):
         
         draw.rectangle([SCREEN_WIDTH-9, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
         draw.rectangle([SCREEN_WIDTH-7, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
+        draw.rectangle([SCREEN_WIDTH-9, 215, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
         
         time.sleep(0.005)  
         safe_display(img)
