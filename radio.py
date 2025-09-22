@@ -600,7 +600,7 @@ def display_everything(direction, name, update=False, readied=False):
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((54, 77 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((54, 74 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
             y_offset += 20
 
         # draw logo
@@ -670,6 +670,7 @@ def display_everything(direction, name, update=False, readied=False):
         mark_end = mark_start + mark_width
         draw.rectangle([0, 233, 320, 240], fill=BLACK)
         draw.rectangle([mark_start, 234, mark_end, 239], fill=YELLOW)
+        draw.text(name, (mark_start, 220), font=MEDIUM_FONT, fill=BLACK)
 
         safe_display(image) # display 
     
