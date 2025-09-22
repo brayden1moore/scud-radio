@@ -1078,6 +1078,12 @@ try:
             readied_stream = None
             if screen_on and stream:
                 display_everything(0, stream, live_overlay_version=live_overlay_version)
+                
+                # toggle live overlay version
+                if live_overlay_version == 1:
+                    live_overlay_version = 2
+                else:
+                    live_overlay_version = 1
         
         time.sleep(1)
         time_since_battery_check += 1
