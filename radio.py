@@ -719,6 +719,8 @@ def display_one(name):
 
 
 def display_ambient(name):
+    global screen_dim
+
     image = logoview.copy()
     draw = ImageDraw.Draw(image)  
 
@@ -727,6 +729,8 @@ def display_ambient(name):
     image.paste(logo, (90, 50))
 
     safe_display(image)
+
+    screen_dim = True
 
 
 def get_anchor(title, info, live):
@@ -812,10 +816,10 @@ def show_volume_overlay(volume):
         time.sleep(0.008)  
         
         draw = ImageDraw.Draw(img)
-        total_bar_height = SCREEN_HEIGHT - 0 - 2
-        volume_bar_end = 0 + 2 + total_bar_height * ((150-volume)/150)
+        total_bar_height = SCREEN_HEIGHT
+        volume_bar_end = total_bar_height * ((150-volume)/150)
         
-        draw.rectangle([SCREEN_WIDTH-9, 0+2, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
+        draw.rectangle([SCREEN_WIDTH-9, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
         draw.rectangle([SCREEN_WIDTH-7, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
         
         time.sleep(0.005)  
@@ -893,7 +897,7 @@ def toggle_favorite():
 
 
 def handle_rotation(direction):
-    global rotated, current_volume, button_press_time, last_rotation, screen_on
+    global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim
     rotated = True
 
     if click_button.is_pressed:
