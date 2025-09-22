@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="/favicon/site.webmanifest"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Scud Radio Setup</title>
+    
+    <style>
+        body {
+            background-color: white;
+            font-family: Andale Mono;
+            padding: 10vw;
+            padding-top: 10px;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-top: -47px;
+            line-height: 1em;
+            font-size: 24pt;
+            font-family: "Arial Black";
+        }
+        
+        @font-face {
+            font-family: "Arial Black";
+            src: url("assets/Arial Black.ttf") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Andale Mono";
+            src: url("assets/andalemono.ttf") format("truetype");}
+        
+        #main-content {
+            max-width: 500px;
+            margin: 0 auto;
+            height: 80vh;
+            align-content: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        #main-logo {
+            height: 225px;
+            width: 225px;
+        }
+        
+        form {
+            margin-top: 25px;
+            background: yellow;
+            border: 1px solid black;
+            padding: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            background-color: black;
+            color: white;
+            width: fit-content;
+        }
+        
+        select, input[id="password"], input[type="submit"] {
+            width: 96%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid black;
+            font-family: inherit;
+            font-size: 14px;
+            padding-right: 0
+        }
+        
+        input[type="submit"] {
+            background-color: black;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            justify-content: left;
+            text-align: center;
+            margin-bottom: 0;
+        }
+        
+        input[type="submit"]:hover {
+            background-color: white;
+            color: black;
+        }
+
+        .input-div {
+            display: block;
+        }
+
+        .an-input {
+            justify-content: left;
+            align-items: baseline;
+            text-align: left;
+            flex: 1;
+            width: 100%;
+        }
+
+        #ssid {
+            border: 1px solid black;
+            height: 40px;
+            width: 100%;
+        }
+
+        #submit-div {
+            display: flex;
+            margin-bottom: 0;
+            justify-content: right;
+        }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+        <div class="logo-container">
+            <img id="main-logo" src="assets/scudradiocenter.gif" alt="Scud Radio Center" width="auto">
+        </div>
+        
+        <h1 id="main-text">CONNECT<br>SCUD RADIO<br>TO WIFI</h1>
+        
+        <form id="form" action="/submit" method="post">
+            <div class="input-div">
+                <div class="an-input">
+                    <label for="ssid">NETWORK</label>
+                    <select name="ssid" id="ssid" required>
+                        {% for ssid in wifi_networks %}
+                        <option value="{{ ssid }}">{{ ssid }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="an-input">
+                    <label for="password">PASSWORD</label>
+                    <input name="password" id="password" placeholder="Enter your password..."/>
+                </div>
+
+            </div>
+
+            <div id="submit-div">
+                <input id="submit-button" type="submit" value="CONNECT">
+            </div>
+        </form>
+
+        <p id="message">{{message}}</p>
+    </div>
+</body>
+<script>
+    const submitButton = document.getElementById('submit-button');
+    const mainText = document.getElementById('main-text');
+    const form = document.getElementById('form');
+    const message = document.getElementById('message');
+
+    submitButton.addEventListener('click', () => {
+        mainText.textContent = 'CONNECTING...';
+        form.style.display = 'None';
+        message.innerHTML = "Keep an eye on your radio.<br>It will let you know if it connects successfully.<br>If it doesn't, this page will refresh."
+    })
+</script>
+</html>
