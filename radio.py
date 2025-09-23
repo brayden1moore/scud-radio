@@ -687,7 +687,7 @@ def display_everything(direction, name, update=False, readied=False):
             draw.rectangle([tick_start, 232, tick_start + tick_width, 237], fill=YELLOW)
             tick_start += mark_width
 
-        bar_width = 2
+        bar_width = 1
         mark_start = stream_list.index(name) * mark_width
         label_width = round(width(name, SMALL_FONT) + 2)
         label_start = mark_start + (2 * bar_width) + 2
@@ -842,7 +842,7 @@ def display_wifi(image):
         get_wifi_strength()
     strength = 'low' if wifi_strength < 20 else 'med' if wifi_strength <= 50 else 'high'
     signal = Image.open(f'assets/wifi_{strength}.png').convert('RGBA')
-    image.paste(signal, (260, 223), signal)
+    image.paste(signal, (260, 227), signal)
 
 def toggle_stream(name):
     global play_status
