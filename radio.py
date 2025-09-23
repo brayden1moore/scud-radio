@@ -657,8 +657,8 @@ def display_everything(direction, name, update=False, readied=False):
         #draw_angled_text(name, MEDIUM_FONT, -90, image, (155,206), BLACK)
 
         # prev and next
-        prev_position = (mark_start - 40 - 4, 155)
-        next_position = (mark_start + 68 + 4, 155)
+        prev_position = (mark_start - 40 - 2, 155)
+        next_position = (mark_start + 68 + 2, 155)
         prev_next_rotation = 0
         prev = streams[prev_stream]['logo_40'].rotate(prev_next_rotation, expand=True)
         next = streams[next_stream]['logo_40'].rotate(-prev_next_rotation, expand=True)
@@ -682,8 +682,8 @@ def display_everything(direction, name, update=False, readied=False):
             image.paste(next_live_40, next_position, next_live_40)
 
         # double prev and next
-        double_prev_position = (mark_start - 40 - 25 - 2 - 4, 170)
-        double_next_position = (mark_start + 68 + 40 + 2 + 4, 170)
+        double_prev_position = (mark_start - 40 - 25 - 2 - 6, 170)
+        double_next_position = (mark_start + 68 + 40 + 2 + 6, 170)
         double_prev_next_rotation = 0
         double_prev = streams[double_prev_stream]['logo_25'].rotate(double_prev_next_rotation, expand=True)
         double_next = streams[double_next_stream]['logo_25'].rotate(-double_prev_next_rotation, expand=True)
