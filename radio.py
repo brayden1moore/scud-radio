@@ -691,7 +691,7 @@ def display_everything(direction, name, update=False, readied=False):
         #draw_angled_text(double_prev_stream, MEDIUM_FONT, -64, image, (27,210), BLACK)
         #draw_angled_text(double_next_stream, MEDIUM_FONT, -116, image, (264,208), BLACK)
         
-        if direction:
+        if direction is not None:
             image.paste(double_prev, double_prev_position, double_prev)
             if double_prev_stream in favorites:
                 double_prev_star = star_25.copy().rotate(double_prev_next_rotation, expand=True)
