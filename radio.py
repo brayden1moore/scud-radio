@@ -371,7 +371,7 @@ def get_streams():
     # see if cached image exists. if so, read into dict. if not, add to queue.
     need_imgs = []
     for name, _ in active.items():
-        full_img_path = Path(LIB_PATH) / f'{name}_logo_96.pkl'
+        full_img_path = Path(LIB_PATH) / f'{name}_logo_176.pkl'
         if not full_img_path.exists():
             need_imgs.append(name)
         else:
@@ -382,7 +382,7 @@ def get_streams():
             if file_age_days > 7:  # refresh if older than 7 days
                 need_imgs.append(name)
             else:
-                for i in ['25','60','96']:
+                for i in ['25','60','96','176']:
                     with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
                         image = pickle.load(f).convert('RGBA')
                         
@@ -403,14 +403,16 @@ def get_streams():
             logo_96 = img.resize((96,  96)).convert('RGBA')#.convert('LA')
             logo_60 = img.resize((60,  60)).convert('RGBA')#.convert('LA')
             logo_25 = img.resize((25,  25)).convert('RGBA')#.convert('LA')
+            logo_176 = img.resize((176, 176)).convert('RGBA')
 
             # save images to dict
             active[name]['logo_96'] = logo_96
             active[name]['logo_60']  = logo_60
             active[name]['logo_25'] = logo_25
+            active[name]['logo_176'] = logo_176
 
             # save images to lib
-            for i in ['96','60','25']:
+            for i in ['96','60','25','176']:
                 entire_path = Path(LIB_PATH) / f'{name}_logo_{i}.pkl'
                 if not entire_path.exists():
                     entire_path.touch() 
@@ -794,8 +796,8 @@ def display_ambient(name):
     draw = ImageDraw.Draw(image)  
 
     # logo
-    logo = streams[name]['logo_140']
-    image.paste(logo, (90, 50))
+    logo = streams[name]['logo_176']
+    image.paste(logo, (72, 32))
 
     safe_display(image)
 
@@ -1003,6 +1005,9 @@ def periodic_update():
     if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 900):
         subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
+    if screen_on and stream and (time.time() - last_input_time > 10):
+        display_ambient(stream)
+
     if screen_on and (time.time() - last_input_time > 300):
         screen_on = False
         backlight_off()
@@ -1105,6 +1110,8 @@ try:
             readied_stream = None
             if screen_on and stream:
                 display_everything(0, stream)
+
+    
         
         #if stream and not readied_stream and not restarting and not held:
             #image = current_image.copy()
