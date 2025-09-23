@@ -241,7 +241,7 @@ def display_scud():
     image.paste(bg, (0, 0))
     safe_display(image)  
 
-    time.sleep(1)
+    #time.sleep(1)
 
     bg = Image.open(f'assets/scud_splash_1_black.png') 
     image.paste(bg, (0, 0))
@@ -431,7 +431,6 @@ disp = st7789.ST7789(
 disp.begin()
 '''
 
-
 def width(string, font):
     left, top, right, bottom = font.getbbox(string)
     text_width = right - left
@@ -592,16 +591,16 @@ def display_everything(direction, name, update=False, readied=False):
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
         # draw name and underline
-        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT, fill=BLACK)
-        draw.rectangle([38, 37, 38 + width(name_line[0], LARGE_FONT), 38], fill=BLACK)
+        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT, fill=YELLOW)
+        draw.rectangle([38, 37, 38 + width(name_line[0], LARGE_FONT), 38], fill=YELLOW)
 
         # draw location
-        draw.text((38, 43), location, font=MEDIUM_FONT, fill=BLACK)
+        draw.text((38, 43), location, font=MEDIUM_FONT, fill=YELLOW)
 
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((54, 74 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((54, 74 + y_offset), i, font=MEDIUM_FONT, fill=YELLOW)
             y_offset += 20
 
         # draw logo
@@ -697,11 +696,11 @@ def display_one(name):
 
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
-    draw.text((92, 20 - 7), name_line, font=LARGE_FONT, fill=BLACK)
-    draw.rectangle([92, 46, 92 + width(name_line, LARGE_FONT), 47], fill=BLACK)
+    draw.text((92, 20 - 7), name_line, font=LARGE_FONT, fill=YELLOW)
+    draw.rectangle([92, 46, 92 + width(name_line, LARGE_FONT), 47], fill=YELLOW)
    
     # location
-    draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
+    draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=YELLOW)    
 
     # now playing
     y_offset = 0
@@ -730,14 +729,14 @@ def display_one(name):
     avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
 
     for i in title_lines:
-        draw.text((14, anchor), i, font=LARGE_FONT, fill=BLACK)
+        draw.text((14, anchor), i, font=LARGE_FONT, fill=YELLOW)
         anchor += avg_title_height + 6
 
     anchor += 5
 
     if info_lines:
         for i in info_lines:
-            draw.text((14, anchor), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((14, anchor), i, font=MEDIUM_FONT, fill=YELLOW)
             anchor += avg_info_height + 6
 
     # battery
@@ -748,7 +747,7 @@ def display_one(name):
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formatted_time = current_time.strftime("%a %b %d %I:%M %p").replace(' 0', '  ').lstrip('0')
     
-    draw.text((13,221), formatted_time, font=SMALL_FONT, fill=WHITE)
+    draw.text((13,221), formatted_time, font=SMALL_FONT, fill=BLACK)
 
     # wifi    
     display_wifi(image)
@@ -795,7 +794,7 @@ def display_battery(draw):
     if not battery:
         get_battery()
     if battery:
-        inner_sq = draw.rectangle([282, 225, 281 + round(16*battery/100), 230], fill=WHITE) 
+        inner_sq = draw.rectangle([282, 225, 281 + round(16*battery/100), 230], fill=BLACK) 
 
 def get_wifi_strength():
     global wifi_strength, wifi_ssid
@@ -815,7 +814,7 @@ def display_wifi(image):
     if not wifi_strength:
         get_wifi_strength()
     strength = 'low' if wifi_strength < 20 else 'med' if wifi_strength <= 50 else 'high'
-    signal = Image.open(f'assets/wifi_{strength}_white.png').convert('RGBA')
+    signal = Image.open(f'assets/wifi_{strength}.png').convert('RGBA')
     image.paste(signal, (260, 223), signal)
 
 def toggle_stream(name):
