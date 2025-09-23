@@ -99,15 +99,15 @@ star_40 = Image.open('assets/star_40.png').convert('RGBA')
 live_60 = Image.open('assets/live_60.png').convert('RGBA')
 live_40 = Image.open('assets/live_40.png').convert('RGBA')
 
-selector_list = ['red','orange','purple','white','green','yellow']
-selectors = {}
-for i in selector_list:
-    selectors[i] = Image.open(f'assets/selector_{i}.png').convert('RGBA')
+#selector_list = ['red','orange','purple','white','green','yellow']
+#selectors = {}
+#for i in selector_list:
+#    selectors[i] = Image.open(f'assets/selector_{i}.png').convert('RGBA')
 
 mainview = Image.open('assets/mainview.png').convert('RGBA')
 logoview = Image.open('assets/logoview.png').convert('RGBA')
 live_overlay_1 = Image.open('assets/liveoverlay1.png').convert('RGBA')
-live_overlay_2 = Image.open('assets/liveoverlay2.png').convert('RGBA')
+#live_overlay_2 = Image.open('assets/liveoverlay2.png').convert('RGBA')
 selector_bg = Image.open(f'assets/selector.png').convert('RGBA')
 selector_live_overlay = Image.open('assets/selectorliveoverlay.png').convert('RGBA')
 
@@ -759,11 +759,7 @@ def display_one(name):
     display_wifi(image)
 
     # live
-    if live_overlay_version == 1:
-        image.paste(live_overlay_1, (0,0), live_overlay_1)
-    else:
-        image.paste(live_overlay_2, (0,0), live_overlay_2)
-
+    image.paste(live_overlay_1, (0,0), live_overlay_1)
 
     safe_display(image)
 
