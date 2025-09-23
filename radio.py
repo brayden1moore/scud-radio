@@ -95,11 +95,11 @@ favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'),
                    Image.open('assets/favorited5.png').convert('RGBA')]
 
 star_60 = Image.open('assets/star_60.png').convert('RGBA')
-star_106 = Image.open('assets/star_106.png').convert('RGBA')
+star_96 = Image.open('assets/star_96.png').convert('RGBA')
 star_25 = Image.open('assets/star_25.png').convert('RGBA')
 
 live_60 = Image.open('assets/live_60.png').convert('RGBA')
-live_106 = Image.open('assets/live_106.png').convert('RGBA')
+live_96 = Image.open('assets/live_96.png').convert('RGBA')
 live_25 = Image.open('assets/live_25.png').convert('RGBA')
 
 #selector_list = ['red','orange','purple','white','green','yellow']
@@ -371,7 +371,7 @@ def get_streams():
     # see if cached image exists. if so, read into dict. if not, add to queue.
     need_imgs = []
     for name, _ in active.items():
-        full_img_path = Path(LIB_PATH) / f'{name}_logo_106.pkl'
+        full_img_path = Path(LIB_PATH) / f'{name}_logo_96.pkl'
         if not full_img_path.exists():
             need_imgs.append(name)
         else:
@@ -382,7 +382,7 @@ def get_streams():
             if file_age_days > 7:  # refresh if older than 7 days
                 need_imgs.append(name)
             else:
-                for i in ['25','60','106']:
+                for i in ['25','60','96']:
                     with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
                         image = pickle.load(f).convert('RGBA')
                         
@@ -400,17 +400,17 @@ def get_streams():
             img = Image.open(buf).convert('RGB')
 
             # crop images
-            logo_106 = img.resize((106,  106)).convert('RGBA')#.convert('LA')
+            logo_96 = img.resize((96,  96)).convert('RGBA')#.convert('LA')
             logo_60 = img.resize((60,  60)).convert('RGBA')#.convert('LA')
             logo_25 = img.resize((25,  25)).convert('RGBA')#.convert('LA')
 
             # save images to dict
-            active[name]['logo_106'] = logo_106
+            active[name]['logo_96'] = logo_96
             active[name]['logo_60']  = logo_60
             active[name]['logo_25'] = logo_25
 
             # save images to lib
-            for i in ['106','60','25']:
+            for i in ['96','60','25']:
                 entire_path = Path(LIB_PATH) / f'{name}_logo_{i}.pkl'
                 if not entire_path.exists():
                     entire_path.touch() 
@@ -614,11 +614,11 @@ def display_everything(direction, name, update=False, readied=False):
         #mark_start = label_start - 2 #round(mark_start - 67/2)
         #draw.rectangle([mark_start, 131 + 67, mark_start + 67, 131 + 63], fill=WHITE)
         #draw.rectangle([mark_start + 1, 131 + 1, mark_start + 67 - 1, 131 + 67 - 1], fill=BLACK)
-        logo_position = (106, 134)
-        logo = streams[name]['logo_106']
+        logo_position = (96, 134)
+        logo = streams[name]['logo_96']
         image.paste(logo, logo_position)
-        this_star = star_106.copy()
-        this_live = live_106.copy()
+        this_star = star_96.copy()
+        this_live = live_96.copy()
         if name in favorites:
             image.paste(this_star, logo_position, this_star)
         if name not in reruns:
