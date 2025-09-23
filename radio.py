@@ -794,7 +794,7 @@ def display_ambient(name):
 
     # logo
     logo = streams[name]['logo_176']
-    first_pixel = logo.getpixel((0,0))
+    first_pixel = logo.getpixel((5,5))
 
     image = Image.new('RGB',(SCREEN_WIDTH, SCREEN_HEIGHT), color = first_pixel)
     image.paste(logo, (72, 32))
