@@ -892,7 +892,7 @@ def show_volume_overlay(volume):
         draw = ImageDraw.Draw(img)
         total_bar_height = SCREEN_HEIGHT
         volume_bar_end = total_bar_height * ((150-volume)/150)
-        draw.rectangle([SCREEN_WIDTH-10, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
+        draw.rectangle([SCREEN_WIDTH-12, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
 
         # border
         tick_gap = round(SCREEN_HEIGHT / (150/ volume_step))
