@@ -229,7 +229,13 @@ def get_timezone_from_ip():
         return 'UTC' 
 
 def display_scud():
+    last_played = read_last_played()
+    volume = round((get_last_volume()/150)*100)
+    get_battery()
+
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+    '''
     for i in 'welcome':
             
         bg = Image.open(f'assets/scud_{i}.png') 
@@ -242,6 +248,7 @@ def display_scud():
     safe_display(image)  
 
     #time.sleep(1)
+    '''
 
     bg = Image.open(f'assets/scud_splash_1_black.png') 
     image.paste(bg, (0, 0))
@@ -255,6 +262,8 @@ def display_scud():
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     current_hour = current_time.hour
+
+    '''
 
     greeting = 'Hello'
     size = 192
@@ -272,10 +281,6 @@ def display_scud():
         greeting = 'Good Evening'
         bbox = [-32, 24, -32 + size, 24 + size]
         color = BLUE
-    
-    last_played = read_last_played()
-    volume = round((get_last_volume()/150)*100)
-    get_battery()
 
     draw = ImageDraw.Draw(image)
     draw.text((10, 0), greeting + ",", font=LARGE_FONT, fill=WHITE) 
@@ -285,6 +290,7 @@ def display_scud():
     draw.text((10, 213), f'Battery: {battery}%', font=SMALL_FONT, fill=WHITE)
     draw.text((10, 223), f'Volume: {volume}%', font=SMALL_FONT, fill=WHITE)
     safe_display(image)
+    '''
 
 
 def backlight_on():
