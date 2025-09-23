@@ -70,6 +70,7 @@ wifi_strength = None
 first_boot = True
 selector = 'red'
 has_displayed_once = False
+volume_overlay_showing = False
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -741,7 +742,7 @@ def display_one(name):
     if name not in reruns:
         #draw.rectangle([logo_position[0] + 30, logo_position[1] + 46, logo_position[0] + 30 + 31, logo_position[1] + 46 + 16], fill=first_pixel_color)
         #draw.rectangle([logo_position[0] + 31, logo_position[1] + 47, logo_position[0] + 30 + 31, logo_position[1] + 46 + 16], fill=RED)
-        #draw.text((logo_position[0] + 33, logo_position[1] + 49), "LIVE", fill=WHITE)
+        #draw.text((logo_position[0] + 33, logo_position[1] + 49), "LIVE", fill=WHITE, font=SMALL_FONT)
         image.paste(live_60, (16, 12), live_60)
 
     # bottom bar
@@ -905,7 +906,7 @@ def confirm_seek():
         readied_stream = None
 
 def show_volume_overlay(volume):
-    global current_image
+    global current_image, volume_overlay_showing
     if current_image:
         img = current_image.copy()
         time.sleep(0.008)  
@@ -938,6 +939,7 @@ def show_volume_overlay(volume):
         time.sleep(0.005)  
         safe_display(img)
         time.sleep(0.005)
+        volume_overlay_showing = True
 
 def safe_restart():
     global restarting
@@ -1071,8 +1073,8 @@ def periodic_update():
                     sys.exit(0)
                 pass
 
-        if not held and not readied_stream and not screen_dim:
-            display_everything(0, stream, update=True)
+            if not held and not readied_stream and not screen_dim:
+                display_everything(0, stream, update=True)
 
         time_since_last_update = 0
     
@@ -1146,8 +1148,9 @@ try:
             get_battery()
             time_since_battery_check = 0
 
-        if readied_stream and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
+        if (readied_stream or volume_overlay_showing) and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
             readied_stream = None
+            volume_overlay_showing = False
             if screen_on and stream and not screen_dim:
                 display_everything(0, stream)
 
