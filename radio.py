@@ -723,7 +723,7 @@ def display_one(name):
     draw = ImageDraw.Draw(image)  
 
     draw.rectangle([13, 9, 79, 75], fill=WHITE)
-    draw.rectangle([13 + 1, 9 + 1, 79 - 1, 75 - 1], fill=BLACK)
+    draw.rectangle([13 + 1, 9 + 1, 79 - 1, 75 - 1], fill=first_pixel_color)
     image.paste(logo, (16, 12))
     if name in favorites:
         image.paste(star_60, (16, 12), star_60)
@@ -731,7 +731,7 @@ def display_one(name):
         image.paste(live_60, (16, 12), live_60)
 
     # bottom bar
-    draw.rectangle([0, 225, 320, 240], fill=WHITE)
+    draw.rectangle([0, 224, 320, 240], fill=WHITE)
 
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
@@ -833,7 +833,7 @@ def display_battery(draw, image):
         outer_sq = draw.rectangle([280, 227, 300, 237], fill=BLACK)
         nipple = draw.rectangle([300, 229, 301, 235], fill=BLACK)
         inner_white = draw.rectangle([281, 228, 299, 236], fill=WHITE) 
-        inner_sq = draw.rectangle([282, 229, 282 + round(15*battery/100), 234], fill=BLACK) 
+        inner_sq = draw.rectangle([282, 229, 282 + round(15*battery/100), 235], fill=BLACK) 
 
 def get_wifi_strength():
     global wifi_strength, wifi_ssid
@@ -1025,7 +1025,7 @@ def periodic_update():
     if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 900):
         subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
-    if screen_on and has_displayed_once and stream and (time.time() - last_input_time > 10):
+    if screen_on and has_displayed_once and stream and (time.time() - last_input_time > 20):
         display_ambient(stream)
 
     if screen_on and (time.time() - last_input_time > 600):
