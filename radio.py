@@ -724,7 +724,7 @@ def display_one(name):
 
     distance_to_black = np.sum(np.abs(black_array - pixel_array))
     distance_to_white = np.sum(np.abs(white_array - pixel_array))
-    if distance_to_black <= distance_to_white:
+    if distance_to_black * 0.9 <= distance_to_white:
         trim_color = WHITE
     else:
         trim_color = BLACK
@@ -741,6 +741,7 @@ def display_one(name):
         image.paste(live_60, (16, 12), live_60)
 
     # bottom bar
+    draw.rectangle([0, 223, 320, 240], fill=BLACK)
     draw.rectangle([0, 224, 320, 240], fill=WHITE)
 
     # name and underline
