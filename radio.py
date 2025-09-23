@@ -701,7 +701,7 @@ def display_everything(direction, name, update=False, readied=False):
             label_end = label_start + label_width
 
         # marker
-        draw.rectangle([mark_start, 225, mark_start + bar_width, 238], fill=WHITE)
+        draw.rectangle([mark_start, 226, mark_start + bar_width, 237], fill=WHITE)
         #draw.rectangle([mark_start - mark_width, 229, mark_start - mark_width + bar_width, 234], fill=WHITE)
         #draw.rectangle([mark_start + mark_width, 229, mark_start + mark_width + bar_width, 234], fill=WHITE)
 
@@ -894,9 +894,15 @@ def show_volume_overlay(volume):
         volume_bar_end = total_bar_height * ((150-volume)/150)
         
         # border
-        draw.rectangle([SCREEN_WIDTH-9, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
+        tick_gap = round(SCREEN_HEIGHT / 150)
+        tick_start = 0
+        tick_height = 1
+        while tick_start < SCREEN_HEIGHT:
+            draw.rectangle([314, tick_start, 316, tick_start + tick_height], fill=WHITE)
+            tick_start += tick_gap
+
         # volume fill
-        draw.rectangle([SCREEN_WIDTH-7, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=WHITE)
+        draw.rectangle([SCREEN_WIDTH-10, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=WHITE)
 
         #draw.rectangle([SCREEN_WIDTH-9, 215, SCREEN_WIDTH, SCREEN_HEIGHT], fill=WHITE)
 
