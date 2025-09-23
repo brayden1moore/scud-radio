@@ -604,28 +604,6 @@ def display_everything(direction, name, update=False, readied=False):
             draw.text((54, 74 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
             y_offset += 20
 
-        # draw mark
-        tick_width = 0
-        mark_width = round(SCREEN_WIDTH / len(stream_list))
-        tick_start = 0
-        for i in stream_list:
-            draw.rectangle([tick_start, 230, tick_start + tick_width, 237], fill=WHITE)
-            tick_start += mark_width
-
-        bar_width = 0
-        mark_start = round(stream_list.index(name) * mark_width)
-        label_width = round(width(name, SMALL_FONT) + 2)
-        label_start = mark_start + (2 * bar_width) + 4
-        label_end = label_start + label_width
-
-        if label_end > 320:
-            label_start = mark_start - label_width - (bar_width) - 2
-            label_end = label_start + label_width
-
-        # marker
-        draw.rectangle([mark_start, 216, mark_start + bar_width + 1, 240], fill=WHITE)
-        draw.rectangle([mark_start, 217, mark_start + bar_width, 240], fill=WHITE)
-
         # label
         #draw.rectangle([label_start, 216, label_end, 233], fill=BLACK)
         #draw.rectangle([label_start, 217, label_end, 229], fill=WHITE)
@@ -700,6 +678,28 @@ def display_everything(direction, name, update=False, readied=False):
         if double_next_stream not in reruns:
             double_next_live = live_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
             image.paste(double_next_live, double_next_position, double_next_live)
+
+        # draw mark
+        tick_width = 0
+        mark_width = round(SCREEN_WIDTH / len(stream_list))
+        tick_start = 0
+        for i in stream_list:
+            draw.rectangle([tick_start, 230, tick_start + tick_width, 237], fill=WHITE)
+            tick_start += mark_width
+
+        bar_width = 0
+        mark_start = round(stream_list.index(name) * mark_width)
+        label_width = round(width(name, SMALL_FONT) + 2)
+        label_start = mark_start + (2 * bar_width) + 4
+        label_end = label_start + label_width
+
+        if label_end > 320:
+            label_start = mark_start - label_width - (bar_width) - 2
+            label_end = label_start + label_width
+
+        # marker
+        draw.rectangle([mark_start, 216, mark_start + bar_width + 1, 240], fill=WHITE)
+        draw.rectangle([mark_start, 217, mark_start + bar_width, 240], fill=WHITE)
 
         safe_display(image)
     
