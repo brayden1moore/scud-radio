@@ -699,8 +699,8 @@ def display_everything(direction, name, update=False, readied=False):
 
         # marker
         draw.rectangle([mark_start, 227, mark_start + bar_width, 235], fill=WHITE)
-        draw.rectangle([mark_start - mark_width, 229, mark_start - mark_start + bar_width, 233], fill=WHITE)
-        draw.rectangle([mark_start + mark_width, 229, mark_start + mark_start + bar_width, 233], fill=WHITE)
+        draw.rectangle([mark_start - mark_width, 229, mark_start - mark_width + bar_width, 233], fill=WHITE)
+        draw.rectangle([mark_start + mark_width, 229, mark_start + mark_width + bar_width, 233], fill=WHITE)
 
         safe_display(image)
     
