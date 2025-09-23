@@ -706,8 +706,8 @@ def display_everything(direction, name, update=False, readied=False):
 
         # label
         draw.rectangle([label_start, 216, label_end, 233], fill=WHITE)
-        draw.rectangle([label_start, 217, label_end, 229], fill=YELLOW)
-        draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
+        draw.rectangle([label_start, 217, label_end, 229], fill=BLACK)
+        draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=WHITE)
         
         safe_display(image)
     
