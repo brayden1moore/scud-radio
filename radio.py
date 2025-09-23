@@ -639,7 +639,7 @@ def display_everything(direction, name, update=False, readied=False):
         draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
 
         # line
-        draw.line([mark_start, 216, label_start, 131 + 16], fill=YELLOW, width=2)
+        draw.line([mark_start, 216, label_start, 131 + 67], fill=YELLOW, width=2)
 
         # draw logo
         mark_start = label_start
