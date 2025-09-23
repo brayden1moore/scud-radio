@@ -659,8 +659,8 @@ def display_everything(direction, name, update=False, readied=False):
         #draw_angled_text(name, MEDIUM_FONT, -90, image, (155,206), BLACK)
 
         # prev and next
-        prev_position = (mark_start - 40, 155)
-        next_position = (mark_start + 60, 155)
+        prev_position = (mark_start - 40 - 2, 155)
+        next_position = (mark_start + 68 + 2, 155)
         prev_next_rotation = 0
         prev = streams[prev_stream]['logo_40'].rotate(prev_next_rotation, expand=True)
         next = streams[next_stream]['logo_40'].rotate(-prev_next_rotation, expand=True)
