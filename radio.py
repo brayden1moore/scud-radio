@@ -69,6 +69,7 @@ user_tz = 'UTC'
 wifi_strength = None
 first_boot = True
 selector = 'red'
+has_displayed_once = False
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -712,6 +713,7 @@ def display_everything(direction, name, update=False, readied=False):
 
     
 def display_one(name):
+    global has_displayed_once
 
     image = mainview.copy()
     draw = ImageDraw.Draw(image)   
@@ -787,6 +789,7 @@ def display_one(name):
     #image.paste(live_overlay_1, (0,0), live_overlay_1)
 
     safe_display(image)
+    has_displayed_once = True
 
 
 def display_ambient(name):
@@ -1006,7 +1009,7 @@ def periodic_update():
     if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 900):
         subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
-    if screen_on and stream and (time.time() - last_input_time > 10):
+    if screen_on and has_displayed_once and stream and (time.time() - last_input_time > 10):
         display_ambient(stream)
 
     if screen_on and (time.time() - last_input_time > 600):
