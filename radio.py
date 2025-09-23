@@ -1095,6 +1095,7 @@ rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1), 1)
 last_played = read_last_played()
 if last_played in stream_list:
     play(last_played)
+    display_everything(last_played)
 else:
     play_random()
 
@@ -1113,8 +1114,6 @@ try:
             if screen_on and stream and not screen_dim:
                 display_everything(0, stream)
 
-    
-        
         #if stream and not readied_stream and not restarting and not held:
             #image = current_image.copy()
             # toggle live overlay version
