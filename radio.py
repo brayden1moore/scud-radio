@@ -687,27 +687,27 @@ def display_everything(direction, name, update=False, readied=False):
         double_prev_next_rotation = 0
         double_prev = streams[double_prev_stream]['logo_25'].rotate(double_prev_next_rotation, expand=True)
         double_next = streams[double_next_stream]['logo_25'].rotate(-double_prev_next_rotation, expand=True)
-        if direction == -1:
-            image.paste(double_prev, double_prev_position, double_prev)
-        else:
-            image.paste(double_next, double_next_position, double_next)
 
         #draw_angled_text(double_prev_stream, MEDIUM_FONT, -64, image, (27,210), BLACK)
         #draw_angled_text(double_next_stream, MEDIUM_FONT, -116, image, (264,208), BLACK)
-
-        if double_prev_stream in favorites:
-            double_prev_star = star_25.copy().rotate(double_prev_next_rotation, expand=True)
-            image.paste(double_prev_star, double_prev_position, double_prev_star)
-        if double_next_stream in favorites:
-            double_next_star = star_25.copy().rotate(-double_prev_next_rotation, expand=True)
-            image.paste(double_next_star, double_next_position, double_next_star)
-        if double_prev_stream not in reruns:
-            double_prev_live = live_25.copy().rotate(double_prev_next_rotation, expand=True)
-            image.paste(double_prev_live, double_prev_position, double_prev_live)
-        if double_next_stream not in reruns:
-            double_next_live = live_25.copy().rotate(-double_prev_next_rotation, expand=True)
-            image.paste(double_next_live, double_next_position, double_next_live)
         
+        if direction == -1:
+            image.paste(double_prev, double_prev_position, double_prev)
+            if double_prev_stream in favorites:
+                double_prev_star = star_25.copy().rotate(double_prev_next_rotation, expand=True)
+                image.paste(double_prev_star, double_prev_position, double_prev_star)
+            if double_next_stream in favorites:
+                double_next_star = star_25.copy().rotate(-double_prev_next_rotation, expand=True)
+                image.paste(double_next_star, double_next_position, double_next_star)
+        else:
+            image.paste(double_next, double_next_position, double_next)
+            if double_prev_stream not in reruns:
+                double_prev_live = live_25.copy().rotate(double_prev_next_rotation, expand=True)
+                image.paste(double_prev_live, double_prev_position, double_prev_live)
+            if double_next_stream not in reruns:
+                double_next_live = live_25.copy().rotate(-double_prev_next_rotation, expand=True)
+                image.paste(double_next_live, double_next_position, double_next_live)
+
         safe_display(image)
     
     else:
