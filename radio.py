@@ -794,7 +794,7 @@ def display_ambient(name):
 
     # logo
     logo = streams[name]['logo_176']
-    first_pixel = logo.getpixel(0,0)
+    first_pixel = logo.getpixel((0,0))
 
     image = Image.new(SCREEN_WIDTH, SCREEN_HEIGHT, color = first_pixel)
     image.paste(logo, (72, 32))
@@ -999,6 +999,7 @@ def handle_rotation(direction):
                 seek_stream(direction)
 
 failed_fetches = 0
+time_since_last_update = 0
 def periodic_update():
     global screen_on, failed_fetches
 
@@ -1013,28 +1014,31 @@ def periodic_update():
         backlight_off()
         pass
     else:
-        try:
-            info = requests.get('https://internetradioprotocol.org/info').json()
-            for name, v in info.items():
-                if name in streams:
-                    streams[name].update(v)
-            stream_list = get_stream_list(streams)
-            failed_fetches = 0
+        if time_since_last_update == 15:
+            try:
+                info = requests.get('https://internetradioprotocol.org/info').json()
+                for name, v in info.items():
+                    if name in streams:
+                        streams[name].update(v)
+                stream_list = get_stream_list(streams)
+                failed_fetches = 0
 
-            if not held and not readied_stream and not screen_dim:
-                    display_everything(0, stream, update=True)
-                
-        except Exception as e:
-            failed_fetches += 1
-            if failed_fetches == 3:
-                disp.clear()
-                disp.reset()
-                disp.close()
-                subprocess.run(['sudo','systemctl','restart','radio'])
-                sys.exit(0)
-            pass
+                if not held and not readied_stream and not screen_dim:
+                        display_everything(0, stream, update=True)
+                    
+            except Exception as e:
+                failed_fetches += 1
+                if failed_fetches == 3:
+                    disp.clear()
+                    disp.reset()
+                    disp.close()
+                    subprocess.run(['sudo','systemctl','restart','radio'])
+                    sys.exit(0)
+                pass
+        time_since_last_update = 0
     
-    threading.Timer(10, periodic_update).start()
+    time_since_last_update += 5
+    threading.Timer(5, periodic_update).start()
 
 def wake_screen():
     global screen_on, screen_dim, last_input_time, current_image
