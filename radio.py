@@ -1001,7 +1001,7 @@ def handle_rotation(direction):
 failed_fetches = 0
 time_since_last_update = 0
 def periodic_update():
-    global screen_on, failed_fetches
+    global screen_on, failed_fetches, time_since_last_update
 
     if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 900):
         subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
