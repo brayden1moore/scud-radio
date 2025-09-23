@@ -682,11 +682,11 @@ def display_everything(direction, name, update=False, readied=False):
         mark_width = SCREEN_WIDTH / len(stream_list)
         mark_start = stream_list.index(name) * mark_width
         mark_end = mark_start + mark_width
-        draw.rectangle([0, 233, 320, 240], fill=YELLOW)
-        draw.rectangle([mark_start, 232, mark_end, 239], fill=BLACK)
-        draw.rectangle([mark_start, 216, round(mark_start + width(name, MEDIUM_FONT)), 232], fill=YELLOW)
-        draw.text((mark_start, 216), name, font=MEDIUM_FONT, fill=BLACK)
-
+        #draw.rectangle([0, 233, 320, 240], fill=YELLOW)
+        draw.rectangle([mark_start, 234, mark_start + 6, 240], fill=BLACK)
+        draw.rectangle([mark_start, 217, mark_start + 6, 233], fill=YELLOW)
+        draw.rectangle([mark_start + 12, 217, round(mark_start + width(name, MEDIUM_FONT)) + 2, 233], fill=YELLOW)
+        draw.text((mark_start + 13, 218), name, font=MEDIUM_FONT, fill=BLACK)
         safe_display(image) # display 
     
     else:
