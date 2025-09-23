@@ -696,17 +696,17 @@ def display_everything(direction, name, update=False, readied=False):
             if double_prev_stream in favorites:
                 double_prev_star = star_25.copy().rotate(double_prev_next_rotation, expand=True)
                 image.paste(double_prev_star, double_prev_position, double_prev_star)
-            if double_next_stream not in reruns:
-                double_next_live = live_25.copy().rotate(-double_prev_next_rotation, expand=True)
-                image.paste(double_next_live, double_next_position, double_next_live)
-        else:
-            image.paste(double_next, double_next_position, double_next)
             if double_prev_stream not in reruns:
                 double_prev_live = live_25.copy().rotate(double_prev_next_rotation, expand=True)
                 image.paste(double_prev_live, double_prev_position, double_prev_live)
+        else:
+            image.paste(double_next, double_next_position, double_next)
             if double_next_stream in favorites:
                 double_next_star = star_25.copy().rotate(-double_prev_next_rotation, expand=True)
                 image.paste(double_next_star, double_next_position, double_next_star)
+            if double_next_stream not in reruns:
+                double_next_live = live_25.copy().rotate(-double_prev_next_rotation, expand=True)
+                image.paste(double_next_live, double_next_position, double_next_live)
 
         safe_display(image)
     
