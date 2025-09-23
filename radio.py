@@ -818,8 +818,8 @@ def get_anchor(title, info, live):
         for line in info:
             size += height(line, MEDIUM_FONT) + 6
 
-    section_height = 215 - 72 
-    return 72 + round((section_height - size) // 2)
+    section_height = 215 - 74
+    return 74 + round((section_height - size) // 2)
 
 
 def display_battery(draw, image):
