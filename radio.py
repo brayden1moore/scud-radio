@@ -614,7 +614,7 @@ def display_everything(direction, name, update=False, readied=False):
         #mark_start = label_start - 2 #round(mark_start - 67/2)
         #draw.rectangle([mark_start, 131 + 67, mark_start + 67, 131 + 63], fill=WHITE)
         #draw.rectangle([mark_start + 1, 131 + 1, mark_start + 67 - 1, 131 + 67 - 1], fill=BLACK)
-        logo_position = (96, 134)
+        logo_position = (111, 235)
         logo = streams[name]['logo_96']
         image.paste(logo, logo_position)
         this_star = star_96.copy()
@@ -630,8 +630,8 @@ def display_everything(direction, name, update=False, readied=False):
         # prev and next
         #prev_position = (mark_start - 40 - 2, 155)
         #next_position = (mark_start + 68 + 2, 155)
-        prev_position = (35, 180)
-        next_position = (223, 180)
+        prev_position = (39, 161)
+        next_position = (219, 161)
         prev_next_rotation = 0
         prev = streams[prev_stream]['logo_60']#.rotate(prev_next_rotation, expand=True)
         next = streams[next_stream]['logo_60']#.rotate(-prev_next_rotation, expand=True)
@@ -654,8 +654,8 @@ def display_everything(direction, name, update=False, readied=False):
         # double prev and next
         #double_prev_position = (mark_start - 40 - 25 - 2 - 6, 170)
         #double_next_position = (mark_start + 68 + 40 + 2 + 6, 170)
-        double_prev_position = (3, 215)
-        double_next_position = (290, 215)
+        double_prev_position = (7, 196)
+        double_next_position = (286, 196)
         double_prev_next_rotation = 0
         double_prev = streams[double_prev_stream]['logo_25']#.rotate(double_prev_next_rotation, expand=True)
         double_next = streams[double_next_stream]['logo_25']#.rotate(-double_prev_next_rotation, expand=True)
