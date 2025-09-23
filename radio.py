@@ -684,7 +684,7 @@ def display_everything(direction, name, update=False, readied=False):
         mark_width = SCREEN_WIDTH / len(stream_list)
         tick_start = 0
         for i in stream_list:
-            draw.rectangle([tick_start, 232, tick_start + tick_width, 237], fill=YELLOW)
+            draw.rectangle([tick_start, 230, tick_start + tick_width, 237], fill=YELLOW)
             tick_start += mark_width
 
         bar_width = 1
