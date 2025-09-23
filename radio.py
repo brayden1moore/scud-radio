@@ -699,8 +699,8 @@ def display_everything(direction, name, update=False, readied=False):
 
         draw.rectangle([mark_start, 216, mark_start + bar_width + 1, 240], fill=BLACK)
         draw.rectangle([mark_start, 217, mark_start + bar_width, 240], fill=YELLOW)
-        draw.rectangle([label_start, 217, label_end, 230], fill=YELLOW)
-        draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
+        draw.rectangle([label_start, 227, label_end, 240], fill=YELLOW)
+        draw.text((label_start + 1, 227), name, font=SMALL_FONT, fill=BLACK)
         
         safe_display(image)
     
