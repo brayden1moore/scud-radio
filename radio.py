@@ -1032,9 +1032,6 @@ def periodic_update():
                         streams[name].update(v)
                 stream_list = get_stream_list(streams)
                 failed_fetches = 0
-
-                if not held and not readied_stream and not screen_dim:
-                    display_everything(0, stream, update=True)
                     
             except Exception as e:
                 failed_fetches += 1
@@ -1045,6 +1042,10 @@ def periodic_update():
                     subprocess.run(['sudo','systemctl','restart','radio'])
                     sys.exit(0)
                 pass
+
+            if not held and not readied_stream and not screen_dim:
+                display_everything(0, stream, update=True)
+                
         time_since_last_update = 0
     
     time_since_last_update += 5
