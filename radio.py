@@ -1008,7 +1008,7 @@ def periodic_update():
     if screen_on and stream and (time.time() - last_input_time > 10):
         display_ambient(stream)
 
-    if screen_on and (time.time() - last_input_time > 300):
+    if screen_on and (time.time() - last_input_time > 600):
         screen_on = False
         backlight_off()
         pass
