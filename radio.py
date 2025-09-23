@@ -85,7 +85,7 @@ RED = (255,71,71)
 
 SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
 MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
-LARGE_FONT = ImageFont.truetype("assets/Archivo-ExtraBold.ttf",28)
+LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",28)
 
 unfavorite = Image.open('assets/unfavorited.png').convert('RGBA')
 favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'), 
