@@ -399,14 +399,19 @@ def get_streams():
                             yellow_mask = (brightness > 127) & non_transparent
                             black_mask = (brightness <= 127) & non_transparent
                             
-                            # Apply yellow color
-                            img_array[yellow_mask] = [255, 255, 0, img_array[yellow_mask, 3]]
-                            # Apply black color  
-                            img_array[black_mask] = [0, 0, 0, img_array[black_mask, 3]]
+                            # Apply yellow color (preserve alpha channel)
+                            img_array[yellow_mask, 0] = 255  # Red
+                            img_array[yellow_mask, 1] = 255  # Green
+                            img_array[yellow_mask, 2] = 0    # Blue
+                            # Alpha channel stays the same
                             
-                            # Convert back to PIL Image
-                            from PIL import Image as PILImage
-                            image = PILImage.fromarray(img_array, 'RGBA')
+                            # Apply black color (preserve alpha channel)
+                            img_array[black_mask, 0] = 0     # Red
+                            img_array[black_mask, 1] = 0     # Green
+                            img_array[black_mask, 2] = 0     # Blue
+                            # Alpha channel stays the same
+                            
+                            image = Image.fromarray(img_array, 'RGBA')
                         
                         active[name][f'logo_{i}'] = image
 
