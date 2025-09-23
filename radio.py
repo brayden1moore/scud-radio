@@ -1022,10 +1022,6 @@ def periodic_update():
             failed_fetches = 0
 
             if not held and not readied_stream and not screen_dim:
-                #if screen_on and not first_display and (time.time() - last_input_time > 10):
-                #    screen_dim = True
-                    #display_ambient(stream)
-                #else:
                     display_everything(0, stream, update=True)
                 
         except Exception as e:
@@ -1040,7 +1036,6 @@ def periodic_update():
     
     threading.Timer(10, periodic_update).start()
 
-
 def wake_screen():
     global screen_on, screen_dim, last_input_time, current_image
     last_input_time = time.time()
@@ -1048,8 +1043,8 @@ def wake_screen():
         screen_on = True
         screen_dim = False
         backlight_on()
-        if current_image:
-            disp.ShowImage(current_image) 
+        if stream:
+            display_one(stream)
         else:
             display_scud()
         return True
