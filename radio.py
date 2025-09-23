@@ -642,7 +642,7 @@ def display_everything(direction, name, update=False, readied=False):
         draw.line([mark_start + 1, 216, round(mark_start - 67/2), 131 + 67], fill=YELLOW, width=2)
 
         # draw logo
-        mark_start = round(mark_start - 67/2)
+        mark_start = label_start - 2 #round(mark_start - 67/2)
         draw.rectangle([mark_start, 131, mark_start + 67, 131 + 67], fill=YELLOW)
         draw.rectangle([mark_start + 2, 131 + 2, mark_start + 67 - 2, 131 + 67 - 2], fill=BLACK)
         logo = streams[name]['logo_60']
