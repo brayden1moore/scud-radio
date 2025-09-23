@@ -638,9 +638,6 @@ def display_everything(direction, name, update=False, readied=False):
         draw.rectangle([label_start, 217, label_end, 229], fill=YELLOW)
         draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
 
-        # line
-        draw.line([mark_start + 1, 216, round(mark_start - 67/2), 131 + 67], fill=YELLOW, width=2)
-
         # draw logo
         mark_start = label_start - 2 #round(mark_start - 67/2)
         draw.rectangle([mark_start, 131, mark_start + 67, 131 + 67], fill=YELLOW)
@@ -652,6 +649,9 @@ def display_everything(direction, name, update=False, readied=False):
             image.paste(this_star_60, (mark_start + 4, 131 + 4), this_star_60)
         if name not in reruns:
             image.paste(live_60, (mark_start + 4, 131 + 4), live_60)
+
+        # line
+        draw.line([mark_start + 1, 216, round(mark_start + 67/2), 131 + 67], fill=YELLOW, width=2)
         
         #draw_angled_text(name, MEDIUM_FONT, -90, image, (155,206), BLACK)
 
