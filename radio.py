@@ -638,11 +638,11 @@ def display_everything(direction, name, update=False, readied=False):
 
         # marker
         draw.rectangle([mark_start, 216, mark_start + bar_width + 1, 240], fill=YELLOW)
-        draw.rectangle([mark_start, 217, mark_start + bar_width, 240], fill=YELLOW)
+        draw.rectangle([mark_start, 190, mark_start + bar_width, 240], fill=YELLOW)
 
         # label
         draw.rectangle([label_start, 216, label_end, 233], fill=BLACK)
-        draw.rectangle([label_start, 190, label_end, 229], fill=YELLOW)
+        draw.rectangle([label_start, 217, label_end, 229], fill=YELLOW)
         draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
 
         # draw logo
