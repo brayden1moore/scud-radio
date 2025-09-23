@@ -285,12 +285,12 @@ def display_scud():
         color = BLUE
 
     draw = ImageDraw.Draw(image)
-    draw.text((10, 0), greeting + ",", font=LARGE_FONT, fill=WHITE) 
-    draw.text((10, 23),  "Friend.", font=LARGE_FONT, fill=WHITE) 
-    draw.text((10, 193), f'Last Played: {last_played}', font=SMALL_FONT, fill=WHITE)
-    draw.text((10, 203), f'Internet: Connected', font=SMALL_FONT, fill=WHITE)
-    draw.text((10, 213), f'Battery: {battery}%', font=SMALL_FONT, fill=WHITE)
-    draw.text((10, 223), f'Volume: {volume}%', font=SMALL_FONT, fill=WHITE)
+    draw.text((10, 0), greeting + ",", font=LARGE_FONT, fill=YELLOW) 
+    draw.text((10, 23),  "Friend.", font=LARGE_FONT, fill=YELLOW) 
+    draw.text((10, 193), f'Last Played: {last_played}', font=SMALL_FONT, fill=YELLOW)
+    draw.text((10, 203), f'Internet: Connected', font=SMALL_FONT, fill=YELLOW)
+    draw.text((10, 213), f'Battery: {battery}%', font=SMALL_FONT, fill=YELLOW)
+    draw.text((10, 223), f'Volume: {volume}%', font=SMALL_FONT, fill=YELLOW)
     safe_display(image)
     '''
 
@@ -606,16 +606,16 @@ def display_everything(direction, name, update=False, readied=False):
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
         # draw name and underline
-        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT, fill=WHITE)
-        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT), 38], fill=WHITE)
+        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT, fill=YELLOW)
+        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT), 38], fill=YELLOW)
 
         # draw location
-        draw.text((38, 43), location, font=MEDIUM_FONT, fill=WHITE)
+        draw.text((38, 43), location, font=MEDIUM_FONT, fill=YELLOW)
 
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((54, 74 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
+            draw.text((54, 74 + y_offset), i, font=MEDIUM_FONT, fill=YELLOW)
             y_offset += 20
 
         # draw logo
@@ -693,7 +693,7 @@ def display_everything(direction, name, update=False, readied=False):
 
         draw.rectangle([mark_start, 216, mark_start + bar_width + 1, 240], fill=BLACK)
         draw.rectangle([mark_start, 217, mark_start + bar_width, 240], fill=ORANGE)
-        draw.rectangle([label_start, 217, label_end, 230], fill=WHITE)
+        draw.rectangle([label_start, 217, label_end, 230], fill=YELLOW)
         draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
         
         safe_display(image)
@@ -719,11 +719,11 @@ def display_one(name):
 
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
-    draw.text((92, 20 - 7), name_line, font=LARGE_FONT, fill=WHITE)
-    draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT), 47], fill=WHITE)
+    draw.text((92, 20 - 7), name_line, font=LARGE_FONT, fill=YELLOW)
+    draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT), 47], fill=YELLOW)
    
     # location
-    draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=WHITE)    
+    draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=YELLOW)    
 
     # now playing
     y_offset = 0
@@ -752,14 +752,14 @@ def display_one(name):
     avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
 
     for i in title_lines:
-        draw.text((14, anchor), i, font=LARGE_FONT, fill=WHITE)
+        draw.text((14, anchor), i, font=LARGE_FONT, fill=YELLOW)
         anchor += avg_title_height + 6
 
     anchor += 5
 
     if info_lines:
         for i in info_lines:
-            draw.text((14, anchor), i, font=MEDIUM_FONT, fill=WHITE)
+            draw.text((14, anchor), i, font=MEDIUM_FONT, fill=YELLOW)
             anchor += avg_info_height + 6
 
     # battery
@@ -885,7 +885,7 @@ def show_volume_overlay(volume):
         volume_bar_end = total_bar_height * ((150-volume)/150)
         
         draw.rectangle([SCREEN_WIDTH-9, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
-        draw.rectangle([SCREEN_WIDTH-7, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=WHITE)
+        draw.rectangle([SCREEN_WIDTH-7, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
         draw.rectangle([SCREEN_WIDTH-9, 215, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
 
         time.sleep(0.005)  
