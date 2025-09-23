@@ -108,6 +108,7 @@ live_40 = Image.open('assets/live_40.png').convert('RGBA')
 mainview = Image.open('assets/mainview.png').convert('RGBA')
 logoview = Image.open('assets/logoview.png').convert('RGBA')
 live_overlay_1 = Image.open('assets/liveoverlay1.png').convert('RGBA')
+charging_overlay = Image.open('assets/chargingoverlay.png').convert('RGBA')
 #live_overlay_2 = Image.open('assets/liveoverlay2.png').convert('RGBA')
 selector_bg = Image.open(f'assets/selector.png').convert('RGBA')
 selector_live_overlay = Image.open('assets/selectorliveoverlay.png').convert('RGBA')
@@ -813,6 +814,8 @@ def display_battery(draw):
         get_battery()
     if battery:
         inner_sq = draw.rectangle([282, 225, 281 + round(16*battery/100), 230], fill=BLACK) 
+    if charging:
+        draw.paste(charging_overlay, (0,0), charging_overlay)
 
 def get_wifi_strength():
     global wifi_strength, wifi_ssid
