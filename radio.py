@@ -639,6 +639,7 @@ def display_everything(direction, name, update=False, readied=False):
         draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
 
         # draw logo
+        tick_mark_start = mark_start
         mark_start = label_start - 2 #round(mark_start - 67/2)
         draw.rectangle([mark_start, 131, mark_start + 67, 131 + 67], fill=YELLOW)
         draw.rectangle([mark_start + 2, 131 + 2, mark_start + 67 - 2, 131 + 67 - 2], fill=BLACK)
@@ -651,7 +652,7 @@ def display_everything(direction, name, update=False, readied=False):
             image.paste(live_60, (mark_start + 4, 131 + 4), live_60)
 
         # line
-        draw.line([mark_start + 1, 216, round(mark_start + 67/2), 131 + 67], fill=YELLOW, width=2)
+        draw.line([tick_mark_start + 1, 216, round(mark_start + 67/2), 131 + 67], fill=YELLOW, width=2)
         
         #draw_angled_text(name, MEDIUM_FONT, -90, image, (155,206), BLACK)
 
