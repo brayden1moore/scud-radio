@@ -626,7 +626,7 @@ def display_everything(direction, name, update=False, readied=False):
             draw.rectangle([tick_start, 230, tick_start + tick_width, 237], fill=YELLOW)
             tick_start += mark_width
 
-        bar_width = 2
+        bar_width = 0
         mark_start = round(stream_list.index(name) * mark_width)
         label_width = round(width(name, SMALL_FONT) + 2)
         label_start = mark_start + (2 * bar_width) + 4
@@ -638,7 +638,7 @@ def display_everything(direction, name, update=False, readied=False):
 
         # marker
         draw.rectangle([mark_start, 216, mark_start + bar_width + 1, 240], fill=YELLOW)
-        draw.rectangle([mark_start, 190, mark_start + bar_width, 240], fill=YELLOW)
+        draw.rectangle([mark_start, 217, mark_start + bar_width, 240], fill=YELLOW)
 
         # label
         draw.rectangle([label_start, 216, label_end, 233], fill=BLACK)
