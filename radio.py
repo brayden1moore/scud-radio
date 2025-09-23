@@ -591,17 +591,6 @@ def display_everything(direction, name, update=False, readied=False):
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
-        '''
-        image = selectors[selector].copy()
-        try:
-            selector = selector_list[selector_list.index(selector) + direction]
-        except:
-            if direction == 1:
-                selector = selector_list[0]
-            else:
-                selector = selector_list[-1]
-        '''
-
         image = selector_bg.copy()
         draw = ImageDraw.Draw(image)  
 
@@ -648,6 +637,9 @@ def display_everything(direction, name, update=False, readied=False):
         draw.rectangle([label_start, 216, label_end, 233], fill=BLACK)
         draw.rectangle([label_start, 217, label_end, 229], fill=YELLOW)
         draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
+
+        # line
+        draw.line([mark_start, 216, label_start, 131 + 16], fill=YELLOW, width=2)
 
         # draw logo
         mark_start = label_start
