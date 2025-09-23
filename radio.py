@@ -767,7 +767,7 @@ def display_one(name):
     display_wifi(image)
 
     # live
-    image.paste(live_overlay_1, (0,0), live_overlay_1)
+    #image.paste(live_overlay_1, (0,0), live_overlay_1)
 
     safe_display(image)
 
