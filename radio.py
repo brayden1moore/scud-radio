@@ -687,7 +687,7 @@ def display_everything(direction, name, update=False, readied=False):
             draw.rectangle([tick_start, 230, tick_start + tick_width, 237], fill=YELLOW)
             tick_start += mark_width
 
-        bar_width = 1
+        bar_width = 0
         mark_start = stream_list.index(name) * mark_width
         label_width = round(width(name, SMALL_FONT) + 2)
         label_start = mark_start + (2 * bar_width) + 2
@@ -776,7 +776,7 @@ def display_one(name):
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formatted_time = current_time.strftime("%a %b %d %I:%M %p").replace(' 0', '  ').lstrip('0')
     
-    draw.text((13,225), formatted_time, font=SMALL_FONT, fill=BLACK)
+    draw.text((13,224), formatted_time, font=SMALL_FONT, fill=BLACK)
 
     # wifi    
     display_wifi(image)
