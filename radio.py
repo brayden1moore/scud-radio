@@ -734,11 +734,14 @@ def display_one(name):
 
     draw.rectangle([13, 9, 79, 75], fill=trim_color)
     draw.rectangle([13 + 1, 9 + 1, 79 - 1, 75 - 1], fill=first_pixel_color)
-    image.paste(logo, (16, 12))
+    logo_position = (16, 12)
+    image.paste(logo, logo_position)
     if name in favorites:
-        image.paste(star_60, (16, 12), star_60)
+        image.paste(star_60, logo_position, star_60)
     if name not in reruns:
-        image.paste(live_60, (16, 12), live_60)
+        draw.rectangle([logo_position[0] + 30, logo_position[1] + 46, logo_position[0] + 30 + 31, logo_position[1] + 46 + 16], fill=first_pixel_color)
+        draw.rectangle([logo_position[0] + 31, logo_position[1] + 47, logo_position[0] + 30 + 31, logo_position[1] + 46 + 16], fill=RED)
+        draw.text((logo_position[0] + 33, logo_position[1] + 49), "LIVE", fill=WHITE)
 
     # bottom bar
     draw.rectangle([0, 222, 320, 240], fill=BLACK)
