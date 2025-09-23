@@ -644,7 +644,7 @@ def display_everything(direction, name, update=False, readied=False):
         if name in favorites:
             image.paste(this_star, logo_position, this_star)
         if name not in reruns:
-            image.paste(live_60, logo_position, live_60)
+            image.paste(this_live, logo_position, this_live)
 
         # line
         #draw.line([tick_mark_start + 1, 216, round(mark_start + 67/2), 131 + 67], fill=WHITE, width=2)
