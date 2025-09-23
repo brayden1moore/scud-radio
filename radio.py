@@ -374,7 +374,7 @@ def get_streams():
             else:
                 for i in ['60','40','140']:
                     with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
-                        active[name][f'logo_{i}'] = pickle.load(f)#.convert('LA')
+                        active[name][f'logo_{i}'] = pickle.load(f).convert('RGBA')
 
     with ThreadPoolExecutor(max_workers=8) as exe:
         futures = [
