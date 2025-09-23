@@ -683,11 +683,11 @@ def display_everything(direction, name, update=False, readied=False):
         mark_width = SCREEN_WIDTH / len(stream_list)
         mark_start = stream_list.index(name) * mark_width
         label_width = round(width(name, SMALL_FONT) + 2)
-        label_start = mark_start + (2 * bar_width) + 1
+        label_start = mark_start + (2 * bar_width) + 2
         label_end = label_start + label_width
 
         if label_end > 320:
-            label_start = mark_start - label_width - (bar_width) - 1 
+            label_start = mark_start - label_width - (bar_width) - 2
             label_end = label_start + label_width
 
         draw.rectangle([mark_start, 234, mark_start + bar_width, 240], fill=BLACK)
