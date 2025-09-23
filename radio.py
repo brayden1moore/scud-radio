@@ -679,15 +679,23 @@ def display_everything(direction, name, update=False, readied=False):
             image.paste(double_next_live_40, double_next_position, double_next_live_40)
 
         # draw mark
+        bar_width = 2
         mark_width = SCREEN_WIDTH / len(stream_list)
         mark_start = stream_list.index(name) * mark_width
-        mark_end = mark_start + mark_width
-        #draw.rectangle([0, 233, 320, 240], fill=YELLOW)
-        draw.rectangle([mark_start, 234, mark_start + 3, 240], fill=BLACK)
-        draw.rectangle([mark_start, 217, mark_start + 3, 233], fill=YELLOW)
-        draw.rectangle([mark_start + 7, 217, round(mark_start + 6 + width(name, SMALL_FONT)) + 2, 230], fill=YELLOW)
-        draw.text((mark_start + 7, 217), name, font=SMALL_FONT, fill=BLACK)
-        safe_display(image) # display 
+        label_width = round(width(name, SMALL_FONT) + 1)
+        label_start = mark_start + (2 * bar_width) + 1
+        label_end = label_start + label_width
+        
+        if label_end > 320:
+            label_start = mark_start - label_width - (bar_width) - 1 
+            label_end = label_start + label_width
+
+        draw.rectangle([mark_start, 234, mark_start + bar_width, 240], fill=BLACK)
+        draw.rectangle([mark_start, 217, mark_start + bar_width, 233], fill=YELLOW)
+        draw.rectangle([label_start, 217, label_end, 230], fill=YELLOW)
+        draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
+        
+        safe_display(image)
     
     else:
         if not restarting:
