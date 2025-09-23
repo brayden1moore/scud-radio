@@ -680,13 +680,14 @@ def display_everything(direction, name, update=False, readied=False):
             image.paste(double_next_live_40, double_next_position, double_next_live_40)
 
         # draw mark
-        bar_width = 2
+        tick_width = 1
         mark_width = SCREEN_WIDTH / len(stream_list)
         tick_start = 0
         for i in stream_list:
-            draw.rectangle([tick_start, 232, tick_start + bar_width, 236], fill=YELLOW)
+            draw.rectangle([tick_start, 232, tick_start + tick_width, 237], fill=YELLOW)
             tick_start += mark_width
 
+        bar_width = 2
         mark_start = stream_list.index(name) * mark_width
         label_width = round(width(name, SMALL_FONT) + 2)
         label_start = mark_start + (2 * bar_width) + 2
