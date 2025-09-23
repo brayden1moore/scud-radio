@@ -895,9 +895,12 @@ def show_volume_overlay(volume):
         total_bar_height = SCREEN_HEIGHT
         volume_bar_end = total_bar_height * ((150-volume)/150)
         
+        # border
         draw.rectangle([SCREEN_WIDTH-9, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
+        # volume fill
         draw.rectangle([SCREEN_WIDTH-7, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
-        draw.rectangle([SCREEN_WIDTH-9, 215, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
+
+        #draw.rectangle([SCREEN_WIDTH-9, 215, SCREEN_WIDTH, SCREEN_HEIGHT], fill=YELLOW)
 
         time.sleep(0.005)  
         safe_display(img)
