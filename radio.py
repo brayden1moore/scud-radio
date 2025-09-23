@@ -649,12 +649,12 @@ def display_everything(direction, name, update=False, readied=False):
         draw.rectangle([mark_start, 131, mark_start + 68, 131 + 68], fill=YELLOW)
         draw.rectangle([mark_start + 2, 131 + 2, mark_start + 68 - 2, 131 + 68 - 2], fill=BLACK)
         logo = streams[name]['logo_60']
-        image.paste(logo, (mark_start + 4, 131 + 4))
+        image.paste(logo, (mark_start + 5, 131 + 5))
         this_star_60 = star_60.copy()
         if name in favorites:
-            image.paste(this_star_60, (mark_start + 4, 131 + 4), this_star_60)
+            image.paste(this_star_60, (mark_start + 5, 131 + 5), this_star_60)
         if name not in reruns:
-            image.paste(live_60, (mark_start + 4, 131 + 4), live_60)
+            image.paste(live_60, (mark_start + 5, 131 + 5), live_60)
         
         #draw_angled_text(name, MEDIUM_FONT, -90, image, (155,206), BLACK)
 
