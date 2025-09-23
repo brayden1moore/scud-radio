@@ -724,7 +724,7 @@ def display_one(name):
 
     distance_to_black = np.sum(np.abs(black_array - pixel_array))
     distance_to_white = np.sum(np.abs(white_array - pixel_array))
-    if distance_to_black * 0.8 <= distance_to_white:
+    if distance_to_black * 0.7 <= distance_to_white:
         trim_color = WHITE
     else:
         trim_color = BLACK
@@ -910,6 +910,8 @@ def show_volume_overlay(volume):
         time.sleep(0.008)  
 
         img_background = img.getpixel((5,5))
+        if img_background == (255, 255, 255, 255) or img_background == (255, 255, 255):
+            img_background = BLACK
         
         draw = ImageDraw.Draw(img)
         total_bar_height = SCREEN_HEIGHT
