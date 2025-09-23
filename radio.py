@@ -692,7 +692,7 @@ def display_everything(direction, name, update=False, readied=False):
             label_end = label_start + label_width
 
         draw.rectangle([mark_start, 216, mark_start + bar_width + 1, 240], fill=BLACK)
-        draw.rectangle([mark_start, 217, mark_start + bar_width, 240], fill=WHITE)
+        draw.rectangle([mark_start, 217, mark_start + bar_width, 240], fill=ORANGE)
         draw.rectangle([label_start, 217, label_end, 230], fill=WHITE)
         draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
         
