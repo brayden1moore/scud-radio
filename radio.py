@@ -741,8 +741,8 @@ def display_one(name):
         image.paste(live_60, (16, 12), live_60)
 
     # bottom bar
-    draw.rectangle([0, 223, 320, 240], fill=BLACK)
-    draw.rectangle([0, 224, 320, 240], fill=WHITE)
+    draw.rectangle([0, 222, 320, 240], fill=BLACK)
+    draw.rectangle([0, 223, 320, 240], fill=WHITE)
 
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
@@ -908,11 +908,13 @@ def show_volume_overlay(volume):
     if current_image:
         img = current_image.copy()
         time.sleep(0.008)  
+
+        img_background = img.get_pixel((5,5))
         
         draw = ImageDraw.Draw(img)
         total_bar_height = SCREEN_HEIGHT
         volume_bar_end = total_bar_height * ((150-volume)/150)
-        draw.rectangle([SCREEN_WIDTH-14, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
+        draw.rectangle([SCREEN_WIDTH-14, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=img_background)
 
         # border
         tick_gap = round(SCREEN_HEIGHT / (150/ volume_step))
