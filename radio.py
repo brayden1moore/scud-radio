@@ -601,7 +601,7 @@ def display_everything(direction, name, update=False, readied=False):
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((54, 74 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
+            draw.text((50, 74 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
             y_offset += 20
 
         # label
