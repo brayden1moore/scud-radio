@@ -229,9 +229,6 @@ def get_timezone_from_ip():
         return 'UTC' 
 
 def display_scud():
-    last_played = read_last_played()
-    volume = round((get_last_volume()/150)*100)
-    get_battery()
 
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
 
@@ -254,7 +251,6 @@ def display_scud():
     image.paste(bg, (0, 0))
     safe_display(image)  
 
-
     global user_tz
 
     timezone_name = get_timezone_from_ip()
@@ -262,6 +258,10 @@ def display_scud():
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     current_hour = current_time.hour
+
+    last_played = read_last_played()
+    volume = round((get_last_volume()/150)*100)
+    get_battery()
 
     '''
 
