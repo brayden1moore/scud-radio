@@ -763,7 +763,7 @@ def display_one(name):
             anchor += avg_info_height + 6
 
     # battery
-    display_battery(draw)
+    display_battery(draw, image)
 
     # time
     now = time.time()
@@ -809,13 +809,13 @@ def get_anchor(title, info, live):
     return 72 + round((section_height - size) // 2)
 
 
-def display_battery(draw):
+def display_battery(draw, image):
     if not battery:
         get_battery()
     if battery:
         inner_sq = draw.rectangle([282, 225, 281 + round(16*battery/100), 230], fill=BLACK) 
     if charging:
-        draw.paste(charging_overlay, (0,0), charging_overlay)
+        image.paste(charging_overlay, (0,0), charging_overlay)
 
 def get_wifi_strength():
     global wifi_strength, wifi_ssid
