@@ -684,10 +684,10 @@ def display_everything(direction, name, update=False, readied=False):
         mark_width = round(SCREEN_WIDTH / len(stream_list))
         tick_start = 0
         for i in stream_list:
-            draw.rectangle([tick_start, 227, tick_start + tick_width, 235], fill=WHITE)
+            draw.rectangle([tick_start, 229, tick_start + tick_width, 233], fill=WHITE)
             tick_start += mark_width
 
-        bar_width = 0
+        bar_width = 1
         mark_start = round(stream_list.index(name) * mark_width)
         label_width = round(width(name, SMALL_FONT) + 2)
         label_start = mark_start + (2 * bar_width) + 4
