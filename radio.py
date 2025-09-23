@@ -96,9 +96,11 @@ favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'),
 
 star_60 = Image.open('assets/star_60.png').convert('RGBA')
 star_40 = Image.open('assets/star_40.png').convert('RGBA')
+star_25 = Image.open('assets/star_25.png').convert('RGBA')
 
 live_60 = Image.open('assets/live_60.png').convert('RGBA')
 live_40 = Image.open('assets/live_40.png').convert('RGBA')
+live_25 = Image.open('assets/live_25.png').convert('RGBA')
 
 #selector_list = ['red','orange','purple','white','green','yellow']
 #selectors = {}
@@ -369,7 +371,7 @@ def get_streams():
     # see if cached image exists. if so, read into dict. if not, add to queue.
     need_imgs = []
     for name, _ in active.items():
-        full_img_path = Path(LIB_PATH) / f'{name}_logo_140.pkl'
+        full_img_path = Path(LIB_PATH) / f'{name}_logo_140_bonk.pkl' # to remove
         if not full_img_path.exists():
             need_imgs.append(name)
         else:
@@ -380,7 +382,7 @@ def get_streams():
             if file_age_days > 7:  # refresh if older than 7 days
                 need_imgs.append(name)
             else:
-                for i in ['60','40','140']:
+                for i in ['25','60','40','140']:
                     with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
                         image = pickle.load(f).convert('RGBA')
                         
@@ -406,14 +408,16 @@ def get_streams():
             logo_140 = img.resize((140,  140)).convert('RGBA')#.convert('LA')
             logo_60 = img.resize((60,  60)).convert('RGBA')#.convert('LA')
             logo_40 = img.resize((40,  40)).convert('RGBA')#.convert('LA')
-    
+            logo_25 = img.resize((25,  25)).convert('RGBA')#.convert('LA')
+
             # save images to dict
             active[name]['logo_140'] = logo_140
             active[name]['logo_60']  = logo_60
             active[name]['logo_40'] = logo_40
+            active[name]['logo_25'] = logo_25
 
             # save images to lib
-            for i in ['140','60','40']:
+            for i in ['140','60','40', '25']:
                 entire_path = Path(LIB_PATH) / f'{name}_logo_{i}.pkl'
                 if not entire_path.exists():
                     entire_path.touch() 
@@ -684,29 +688,29 @@ def display_everything(direction, name, update=False, readied=False):
             image.paste(next_live_40, next_position, next_live_40)
 
         # double prev and next
-        double_prev_position = (-10,146)
-        double_next_position = (288,146)
+        double_prev_position = (mark_start - 40 - 25 - 2 - 2, 170)
+        double_next_position = (mark_start + 68 + 40 + 2 + 2, 170)
         double_prev_next_rotation = 0
-        double_prev = streams[double_prev_stream]['logo_40'].rotate(double_prev_next_rotation, expand=True)
-        double_next = streams[double_next_stream]['logo_40'].rotate(-double_prev_next_rotation, expand=True)
-        #image.paste(double_prev, double_prev_position, double_prev)
-        #image.paste(double_next, double_next_position, double_next)
+        double_prev = streams[double_prev_stream]['logo_25'].rotate(double_prev_next_rotation, expand=True)
+        double_next = streams[double_next_stream]['logo_25'].rotate(-double_prev_next_rotation, expand=True)
+        image.paste(double_prev, double_prev_position, double_prev)
+        image.paste(double_next, double_next_position, double_next)
 
         #draw_angled_text(double_prev_stream, MEDIUM_FONT, -64, image, (27,210), BLACK)
         #draw_angled_text(double_next_stream, MEDIUM_FONT, -116, image, (264,208), BLACK)
 
         if double_prev_stream in favorites:
-            double_prev_star_40 = star_40.copy().rotate(double_prev_next_rotation, expand=True)
-            #image.paste(double_prev_star_40, double_prev_position, double_prev_star_40)
+            double_prev_star = star_25.copy().rotate(double_prev_next_rotation, expand=True)
+            image.paste(double_prev_star, double_prev_position, double_prev_star)
         if double_next_stream in favorites:
-            double_next_star_40 = star_40.copy().rotate(-double_prev_next_rotation, expand=True)
-            #image.paste(double_next_star_40, double_next_position, double_next_star_40)
+            double_next_star = star_25.copy().rotate(-double_prev_next_rotation, expand=True)
+            image.paste(double_next_star, double_next_position, double_next_star)
         if double_prev_stream not in reruns:
-            double_prev_live_40 = live_40.copy().rotate(double_prev_next_rotation, expand=True)
-            #image.paste(double_prev_live_40, double_prev_position, double_prev_live_40)
+            double_prev_live = live_25.copy().rotate(double_prev_next_rotation, expand=True)
+            image.paste(double_prev_live, double_prev_position, double_prev_live)
         if double_next_stream not in reruns:
-            double_next_live_40 = live_40.copy().rotate(-double_prev_next_rotation, expand=True)
-            #image.paste(double_next_live_40, double_next_position, double_next_live_40)
+            double_next_live = live_25.copy().rotate(-double_prev_next_rotation, expand=True)
+            image.paste(double_next_live, double_next_position, double_next_live)
         
         safe_display(image)
     
