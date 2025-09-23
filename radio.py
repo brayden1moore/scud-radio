@@ -990,10 +990,10 @@ failed_fetches = 0
 def periodic_update():
     global screen_on, failed_fetches
 
-    if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 600):
+    if screen_on == False and current_volume == 0 and (time.time() - last_input_time > 900):
         subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
-    if screen_on and (time.time() - last_input_time > 120):
+    if screen_on and (time.time() - last_input_time > 300):
         screen_on = False
         backlight_off()
         pass
