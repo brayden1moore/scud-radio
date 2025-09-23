@@ -1021,7 +1021,7 @@ def periodic_update():
             stream_list = get_stream_list(streams)
             failed_fetches = 0
 
-            if not held and not readied_stream:
+            if not held and not readied_stream and not screen_dim:
                 #if screen_on and not first_display and (time.time() - last_input_time > 10):
                 #    screen_dim = True
                     #display_ambient(stream)
