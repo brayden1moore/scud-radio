@@ -1108,7 +1108,7 @@ try:
 
         if readied_stream and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
             readied_stream = None
-            if screen_on and stream:
+            if screen_on and stream and not screen_dim:
                 display_everything(0, stream)
 
     
