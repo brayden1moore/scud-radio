@@ -371,7 +371,7 @@ def get_streams():
     # see if cached image exists. if so, read into dict. if not, add to queue.
     need_imgs = []
     for name, _ in active.items():
-        full_img_path = Path(LIB_PATH) / f'{name}_logo_140_bonk.pkl' # to remove
+        full_img_path = Path(LIB_PATH) / f'{name}_logo_140.pkl'
         if not full_img_path.exists():
             need_imgs.append(name)
         else:
@@ -650,8 +650,8 @@ def display_everything(direction, name, update=False, readied=False):
         draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
 
         # draw logo
-        draw.rectangle([mark_start, 131, mark_start + 68, 131 + 68], fill=YELLOW)
-        draw.rectangle([mark_start + 2, 131 + 2, mark_start + 68 - 2, 131 + 68 - 2], fill=BLACK)
+        draw.rectangle([mark_start, 131, mark_start + 67, 131 + 67], fill=YELLOW)
+        draw.rectangle([mark_start + 2, 131 + 2, mark_start + 67 - 2, 131 + 67 - 2], fill=BLACK)
         logo = streams[name]['logo_60']
         image.paste(logo, (mark_start + 4, 131 + 4))
         this_star_60 = star_60.copy()
