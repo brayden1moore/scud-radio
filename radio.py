@@ -701,7 +701,7 @@ def display_everything(direction, name, update=False, readied=False):
             label_end = label_start + label_width
 
         # marker
-        draw.rectangle([mark_start - 1, 225, mark_start + bar_width + 1, 238], fill=WHITE)
+        draw.rectangle([mark_start, 225, mark_start + bar_width, 238], fill=WHITE)
         #draw.rectangle([mark_start - mark_width, 229, mark_start - mark_width + bar_width, 234], fill=WHITE)
         #draw.rectangle([mark_start + mark_width, 229, mark_start + mark_width + bar_width, 234], fill=WHITE)
 
