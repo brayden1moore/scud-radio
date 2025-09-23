@@ -682,7 +682,7 @@ def display_everything(direction, name, update=False, readied=False):
         bar_width = 2
         mark_width = SCREEN_WIDTH / len(stream_list)
         mark_start = stream_list.index(name) * mark_width
-        label_width = round(width(name, SMALL_FONT) + 1)
+        label_width = round(width(name, SMALL_FONT) + 2)
         label_start = mark_start + (2 * bar_width) + 1
         label_end = label_start + label_width
 
