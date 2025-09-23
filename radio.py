@@ -614,7 +614,7 @@ def display_everything(direction, name, update=False, readied=False):
         #mark_start = label_start - 2 #round(mark_start - 67/2)
         #draw.rectangle([mark_start, 131 + 67, mark_start + 67, 131 + 63], fill=WHITE)
         #draw.rectangle([mark_start + 1, 131 + 1, mark_start + 67 - 1, 131 + 67 - 1], fill=BLACK)
-        logo_position = (111, 235)
+        logo_position = (111, 125)
         logo = streams[name]['logo_96']
         image.paste(logo, logo_position)
         this_star = star_96.copy()
