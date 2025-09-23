@@ -1095,10 +1095,11 @@ rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1), 1)
 last_played = read_last_played()
 if last_played in stream_list:
     play(last_played)
-    display_everything(0, last_played)
 else:
     play_random()
-
+    
+display_everything(0, stream)
+last_input_time = time.time()
 periodic_update()
 
 time_since_battery_check = 0
