@@ -231,7 +231,7 @@ def get_timezone_from_ip():
 
 def display_scud():
 
-    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    #image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
 
     '''
     for i in 'welcome':
@@ -248,9 +248,9 @@ def display_scud():
     #time.sleep(1)
     '''
 
-    bg = Image.open(f'assets/scud_splash_1_black.png') 
-    image.paste(bg, (0, 0))
-    safe_display(image)  
+    #bg = Image.open(f'assets/scud_splash_1_black.png') 
+    #image.paste(bg, (0, 0))
+    #safe_display(image)  
 
     global user_tz
 
