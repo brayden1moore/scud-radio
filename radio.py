@@ -911,7 +911,9 @@ def show_volume_overlay(volume):
 
         img_background = img.getpixel((5,5))
         if img_background == (255, 255, 255, 255) or img_background == (255, 255, 255):
-            img_background = BLACK
+            trim_color = BLACK
+        else:
+            trim_color = WHITE
         
         draw = ImageDraw.Draw(img)
         total_bar_height = SCREEN_HEIGHT
@@ -923,11 +925,11 @@ def show_volume_overlay(volume):
         tick_start = 0
         tick_height = 0
         while tick_start < SCREEN_HEIGHT:
-            draw.rectangle([313, tick_start, 317, tick_start + tick_height], fill=WHITE)
+            draw.rectangle([313, tick_start, 317, tick_start + tick_height], fill=trim_color)
             tick_start += tick_gap
 
         # volume fill
-        draw.rectangle([SCREEN_WIDTH-10, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=WHITE)
+        draw.rectangle([SCREEN_WIDTH-10, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=trim_color)
 
         #draw.rectangle([SCREEN_WIDTH-9, 215, SCREEN_WIDTH, SCREEN_HEIGHT], fill=WHITE)
 
