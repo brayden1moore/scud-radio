@@ -95,11 +95,11 @@ favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'),
                    Image.open('assets/favorited5.png').convert('RGBA')]
 
 star_60 = Image.open('assets/star_60.png').convert('RGBA')
-star_40 = Image.open('assets/star_40.png').convert('RGBA')
+star_106 = Image.open('assets/star_106.png').convert('RGBA')
 star_25 = Image.open('assets/star_25.png').convert('RGBA')
 
 live_60 = Image.open('assets/live_60.png').convert('RGBA')
-live_40 = Image.open('assets/live_40.png').convert('RGBA')
+live_106 = Image.open('assets/live_106.png').convert('RGBA')
 live_25 = Image.open('assets/live_25.png').convert('RGBA')
 
 #selector_list = ['red','orange','purple','white','green','yellow']
@@ -371,7 +371,7 @@ def get_streams():
     # see if cached image exists. if so, read into dict. if not, add to queue.
     need_imgs = []
     for name, _ in active.items():
-        full_img_path = Path(LIB_PATH) / f'{name}_logo_140.pkl'
+        full_img_path = Path(LIB_PATH) / f'{name}_logo_106.pkl'
         if not full_img_path.exists():
             need_imgs.append(name)
         else:
@@ -382,14 +382,9 @@ def get_streams():
             if file_age_days > 7:  # refresh if older than 7 days
                 need_imgs.append(name)
             else:
-                for i in ['25','60','40','140']:
+                for i in ['25','60','106']:
                     with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
                         image = pickle.load(f).convert('RGBA')
-                        
-                        #if i == '40':
-                        #    img_array = np.array(image)
-                        #    img_array[:,:,3] = (img_array[:,:,3] * 0.5).astype(np.uint8)
-                        #    image = Image.fromarray(img_array, 'RGBA')
                         
                         active[name][f'logo_{i}'] = image
 
@@ -405,19 +400,17 @@ def get_streams():
             img = Image.open(buf).convert('RGB')
 
             # crop images
-            logo_140 = img.resize((140,  140)).convert('RGBA')#.convert('LA')
+            logo_106 = img.resize((106,  106)).convert('RGBA')#.convert('LA')
             logo_60 = img.resize((60,  60)).convert('RGBA')#.convert('LA')
-            logo_40 = img.resize((40,  40)).convert('RGBA')#.convert('LA')
             logo_25 = img.resize((25,  25)).convert('RGBA')#.convert('LA')
 
             # save images to dict
-            active[name]['logo_140'] = logo_140
+            active[name]['logo_106'] = logo_106
             active[name]['logo_60']  = logo_60
-            active[name]['logo_40'] = logo_40
             active[name]['logo_25'] = logo_25
 
             # save images to lib
-            for i in ['140','60','40', '25']:
+            for i in ['106','60','25']:
                 entire_path = Path(LIB_PATH) / f'{name}_logo_{i}.pkl'
                 if not entire_path.exists():
                     entire_path.touch() 
@@ -616,7 +609,7 @@ def display_everything(direction, name, update=False, readied=False):
         mark_width = round(SCREEN_WIDTH / len(stream_list))
         tick_start = 0
         for i in stream_list:
-            draw.rectangle([tick_start, 230, tick_start + tick_width, 237], fill=WHITE)
+            #draw.rectangle([tick_start, 230, tick_start + tick_width, 237], fill=WHITE)
             tick_start += mark_width
 
         bar_width = 0
@@ -630,82 +623,82 @@ def display_everything(direction, name, update=False, readied=False):
             label_end = label_start + label_width
 
         # marker
-        draw.rectangle([mark_start, 216, mark_start + bar_width + 1, 240], fill=WHITE)
-        draw.rectangle([mark_start, 217, mark_start + bar_width, 240], fill=WHITE)
+        #draw.rectangle([mark_start, 216, mark_start + bar_width + 1, 240], fill=WHITE)
+        #draw.rectangle([mark_start, 217, mark_start + bar_width, 240], fill=WHITE)
 
         # label
-        draw.rectangle([label_start, 216, label_end, 233], fill=BLACK)
-        draw.rectangle([label_start, 217, label_end, 229], fill=WHITE)
-        draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
+        #draw.rectangle([label_start, 216, label_end, 233], fill=BLACK)
+        #draw.rectangle([label_start, 217, label_end, 229], fill=WHITE)
+        #draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
 
         # draw logo
-        tick_mark_start = mark_start
-        mark_start = label_start - 2 #round(mark_start - 67/2)
-        draw.rectangle([mark_start, 131 + 67, mark_start + 67, 131 + 63], fill=WHITE)
-        draw.rectangle([mark_start + 1, 131 + 1, mark_start + 67 - 1, 131 + 67 - 1], fill=BLACK)
-        logo = streams[name]['logo_60']
-        image.paste(logo, (mark_start + 4, 131 + 4))
-        this_star_60 = star_60.copy()
+        #tick_mark_start = mark_start
+        #mark_start = label_start - 2 #round(mark_start - 67/2)
+        #draw.rectangle([mark_start, 131 + 67, mark_start + 67, 131 + 63], fill=WHITE)
+        #draw.rectangle([mark_start + 1, 131 + 1, mark_start + 67 - 1, 131 + 67 - 1], fill=BLACK)
+        logo_position = (106, 136)
+        logo = streams[name]['logo_106']
+        image.paste(logo, logo_position)
+        this_star = star_106.copy()
+        this_live = live_106.copy()
         if name in favorites:
-            image.paste(this_star_60, (mark_start + 4, 131 + 4), this_star_60)
+            image.paste(this_star, logo_position, this_star)
         if name not in reruns:
-            image.paste(live_60, (mark_start + 4, 131 + 4), live_60)
+            image.paste(live_60, logo_position, live_60)
 
         # line
-        draw.line([tick_mark_start + 1, 216, round(mark_start + 67/2), 131 + 67], fill=WHITE, width=2)
+        #draw.line([tick_mark_start + 1, 216, round(mark_start + 67/2), 131 + 67], fill=WHITE, width=2)
         
-        #draw_angled_text(name, MEDIUM_FONT, -90, image, (155,206), BLACK)
-
         # prev and next
-        prev_position = (mark_start - 40 - 2, 155)
-        next_position = (mark_start + 68 + 2, 155)
+        #prev_position = (mark_start - 40 - 2, 155)
+        #next_position = (mark_start + 68 + 2, 155)
+        prev_position = (35, 180)
+        next_position = (223, 180)
         prev_next_rotation = 0
-        prev = streams[prev_stream]['logo_40'].rotate(prev_next_rotation, expand=True)
-        next = streams[next_stream]['logo_40'].rotate(-prev_next_rotation, expand=True)
+        prev = streams[prev_stream]['logo_60']#.rotate(prev_next_rotation, expand=True)
+        next = streams[next_stream]['logo_60']#.rotate(-prev_next_rotation, expand=True)
         image.paste(prev, prev_position, prev)
         image.paste(next, next_position, next)
         
-        #draw_angled_text(prev_stream, MEDIUM_FONT, -74, image, (79,188), BLACK)
-        #draw_angled_text(next_stream, MEDIUM_FONT, -106, image, (217,188), BLACK)
-
         if prev_stream in favorites:
-            prev_star_40 = star_40.copy().rotate(prev_next_rotation, expand=True)
-            image.paste(prev_star_40, prev_position, prev_star_40)
+            prev_star = star_60.copy().rotate(prev_next_rotation, expand=True)
+            image.paste(prev_star, prev_position, prev_star)
         if next_stream in favorites:
-            next_star_40 = star_40.copy().rotate(-prev_next_rotation, expand=True)
-            image.paste(next_star_40, next_position, next_star_40)
+            next_star = star_60.copy().rotate(-prev_next_rotation, expand=True)
+            image.paste(next_star, next_position, next_star)
         if prev_stream not in reruns:
-            prev_live_40 = live_40.copy().rotate(prev_next_rotation, expand=True)
-            image.paste(prev_live_40, prev_position, prev_live_40)
+            prev_live = live_60.copy().rotate(prev_next_rotation, expand=True)
+            image.paste(prev_live, prev_position, prev_live)
         if next_stream not in reruns:
-            next_live_40 = live_40.copy().rotate(-prev_next_rotation, expand=True)
-            image.paste(next_live_40, next_position, next_live_40)
+            next_live = live_60.copy().rotate(-prev_next_rotation, expand=True)
+            image.paste(next_live, next_position, next_live)
 
         # double prev and next
-        double_prev_position = (mark_start - 40 - 25 - 2 - 6, 170)
-        double_next_position = (mark_start + 68 + 40 + 2 + 6, 170)
+        #double_prev_position = (mark_start - 40 - 25 - 2 - 6, 170)
+        #double_next_position = (mark_start + 68 + 40 + 2 + 6, 170)
+        double_prev_position = (3, 215)
+        double_next_position = (290, 215)
         double_prev_next_rotation = 0
-        double_prev = streams[double_prev_stream]['logo_25'].rotate(double_prev_next_rotation, expand=True)
-        double_next = streams[double_next_stream]['logo_25'].rotate(-double_prev_next_rotation, expand=True)
+        double_prev = streams[double_prev_stream]['logo_25']#.rotate(double_prev_next_rotation, expand=True)
+        double_next = streams[double_next_stream]['logo_25']#.rotate(-double_prev_next_rotation, expand=True)
 
         #draw_angled_text(double_prev_stream, MEDIUM_FONT, -64, image, (27,210), BLACK)
         #draw_angled_text(double_next_stream, MEDIUM_FONT, -116, image, (264,208), BLACK)
         
-
         image.paste(double_prev, double_prev_position, double_prev)
         if double_prev_stream in favorites:
-            double_prev_star = star_25.copy().rotate(double_prev_next_rotation, expand=True)
+            double_prev_star = star_25.copy()#.rotate(double_prev_next_rotation, expand=True)
             image.paste(double_prev_star, double_prev_position, double_prev_star)
         if double_prev_stream not in reruns:
-            double_prev_live = live_25.copy().rotate(double_prev_next_rotation, expand=True)
+            double_prev_live = live_25.copy()#.rotate(double_prev_next_rotation, expand=True)
             image.paste(double_prev_live, double_prev_position, double_prev_live)
 
         image.paste(double_next, double_next_position, double_next)
         if double_next_stream in favorites:
-            double_next_star = star_25.copy().rotate(-double_prev_next_rotation, expand=True)
+            double_next_star = star_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
             image.paste(double_next_star, double_next_position, double_next_star)
         if double_next_stream not in reruns:
-            double_next_live = live_25.copy().rotate(-double_prev_next_rotation, expand=True)
+            double_next_live = live_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
             image.paste(double_next_live, double_next_position, double_next_live)
 
         safe_display(image)
