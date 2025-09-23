@@ -606,7 +606,7 @@ def display_everything(direction, name, update=False, readied=False):
 
         # draw name and underline
         draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT, fill=YELLOW)
-        draw.rectangle([38, 37, 38 + width(name_line[0], LARGE_FONT), 37], fill=YELLOW)
+        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT), 38], fill=YELLOW)
 
         # draw location
         draw.text((38, 43), location, font=MEDIUM_FONT, fill=YELLOW)
@@ -719,7 +719,7 @@ def display_one(name):
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
     draw.text((92, 20 - 7), name_line, font=LARGE_FONT, fill=YELLOW)
-    draw.rectangle([92, 46, 92 + width(name_line, LARGE_FONT), 46], fill=YELLOW)
+    draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT), 47], fill=YELLOW)
    
     # location
     draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=YELLOW)    
