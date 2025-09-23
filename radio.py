@@ -1027,7 +1027,7 @@ def periodic_update():
                 failed_fetches = 0
 
                 if not held and not readied_stream and not screen_dim:
-                        display_everything(0, stream, update=True)
+                    display_everything(0, stream, update=True)
                     
             except Exception as e:
                 failed_fetches += 1
