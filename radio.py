@@ -718,11 +718,20 @@ def display_one(name):
     # logo
     logo = streams[name]['logo_60']
     first_pixel_color = logo.getpixel((2,2))
+    pixel_array = np.asarray(first_pixel_color)
+    white_array = np.asarray([255, 255, 255])
+    black_array = np.asarray([0, 0, 0])
+
+    light = abs(np.sum((black_array - pixel_array))) <= abs(np.sum((white_array - pixel_array)))
+    if light:
+        trim_color = BLACK
+    else:
+        trim_color = WHITE
 
     image = Image.new('RGBA',(320, 240), color=first_pixel_color)
     draw = ImageDraw.Draw(image)  
 
-    draw.rectangle([13, 9, 79, 75], fill=WHITE)
+    draw.rectangle([13, 9, 79, 75], fill=trim_color)
     draw.rectangle([13 + 1, 9 + 1, 79 - 1, 75 - 1], fill=first_pixel_color)
     image.paste(logo, (16, 12))
     if name in favorites:
@@ -735,11 +744,11 @@ def display_one(name):
 
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
-    draw.text((92, 20 - 7), name_line, font=LARGE_FONT, fill=WHITE)
-    draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT), 47], fill=WHITE)
+    draw.text((92, 20 - 7), name_line, font=LARGE_FONT, fill=trim_color)
+    draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT), 47], fill=trim_color)
    
     # location
-    draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=WHITE)    
+    draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=trim_color)    
 
     # now playing
     y_offset = 0
@@ -768,14 +777,14 @@ def display_one(name):
     avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
 
     for i in title_lines:
-        draw.text((14, anchor), i, font=LARGE_FONT, fill=WHITE)
+        draw.text((14, anchor), i, font=LARGE_FONT, fill=trim_color)
         anchor += avg_title_height + 6
 
     anchor += 5
 
     if info_lines:
         for i in info_lines:
-            draw.text((14, anchor), i, font=MEDIUM_FONT, fill=WHITE)
+            draw.text((14, anchor), i, font=MEDIUM_FONT, fill=trim_color)
             anchor += avg_info_height + 6
 
     # battery
