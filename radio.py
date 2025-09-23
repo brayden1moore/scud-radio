@@ -719,8 +719,8 @@ def display_one(name):
     logo = streams[name]['logo_60']
     first_pixel_color = logo.getpixel((2,2))
     pixel_array = np.asarray(first_pixel_color)
-    white_array = np.asarray([255, 255, 255])
-    black_array = np.asarray([0, 0, 0])
+    white_array = np.asarray([255, 255, 255, 255])
+    black_array = np.asarray([0, 0, 0, 255])
 
     light = abs(np.sum((black_array - pixel_array))) <= abs(np.sum((white_array - pixel_array)))
     if light:
