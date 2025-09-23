@@ -680,7 +680,7 @@ def display_everything(direction, name, update=False, readied=False):
             image.paste(double_next_live_40, double_next_position, double_next_live_40)
 
         # draw mark
-        tick_width = 1
+        tick_width = 0
         mark_width = SCREEN_WIDTH / len(stream_list)
         tick_start = 0
         for i in stream_list:
