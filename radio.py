@@ -668,8 +668,8 @@ def display_everything(direction, name, update=False, readied=False):
         mark_width = SCREEN_WIDTH / len(stream_list)
         mark_start = stream_list.index(name) * mark_width
         mark_end = mark_start + mark_width
-        draw.rectangle([0, 233, 320, 240], fill=BLACK)
-        draw.rectangle([mark_start, 232, mark_end, 239], fill=YELLOW)
+        draw.rectangle([0, 233, 320, 240], fill=YELLOW)
+        draw.rectangle([mark_start, 232, mark_end, 239], fill=BLACK)
         draw.rectangle([mark_start, 216, round(mark_start + width(name, MEDIUM_FONT)), 232], fill=YELLOW)
         draw.text((mark_start, 216), name, font=MEDIUM_FONT, fill=BLACK)
 
