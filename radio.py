@@ -620,12 +620,12 @@ def display_everything(direction, name, update=False, readied=False):
 
         # draw logo
         logo = streams[name]['logo_60']
-        image.paste(logo, (130,135))
+        image.paste(logo, (129,135))
         this_star_60 = star_60.copy()
         if name in favorites:
-            image.paste(this_star_60, (130,135), this_star_60)
+            image.paste(this_star_60, (129,135), this_star_60)
         if name not in reruns:
-            image.paste(live_60, (130,135), live_60)
+            image.paste(live_60, (129,135), live_60)
         
         #draw_angled_text(name, MEDIUM_FONT, -90, image, (155,206), BLACK)
 
@@ -705,9 +705,9 @@ def display_everything(direction, name, update=False, readied=False):
         draw.rectangle([mark_start, 217, mark_start + bar_width, 240], fill=YELLOW)
 
         # label
-        draw.rectangle([label_start, 216, label_end, 233], fill=WHITE)
+        draw.rectangle([label_start, 216, label_end, 233], fill=BLACK)
         draw.rectangle([label_start, 217, label_end, 229], fill=YELLOW)
-        draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=WHITE)
+        draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
         
         safe_display(image)
     
