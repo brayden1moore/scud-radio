@@ -690,7 +690,7 @@ def display_everything(direction, name, update=False, readied=False):
         bar_width = 0
         mark_start = stream_list.index(name) * mark_width
         label_width = round(width(name, SMALL_FONT) + 2)
-        label_start = mark_start + (2 * bar_width) + 2
+        label_start = mark_start + (2 * bar_width) + 4
         label_end = label_start + label_width
 
         if label_end > 320:
