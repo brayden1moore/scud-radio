@@ -383,10 +383,10 @@ def get_streams():
                     with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
                         image = pickle.load(f).convert('RGBA')
                         
-                        if i == '40':
-                            img_array = np.array(image)
-                            img_array[:,:,3] = (img_array[:,:,3] * 0.5).astype(np.uint8)
-                            image = Image.fromarray(img_array, 'RGBA')
+                        #if i == '40':
+                        #    img_array = np.array(image)
+                        #    img_array[:,:,3] = (img_array[:,:,3] * 0.5).astype(np.uint8)
+                        #    image = Image.fromarray(img_array, 'RGBA')
                         
                         active[name][f'logo_{i}'] = image
 
