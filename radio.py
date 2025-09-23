@@ -609,7 +609,7 @@ def display_everything(direction, name, update=False, readied=False):
         mark_width = round(SCREEN_WIDTH / len(stream_list))
         tick_start = 0
         for i in stream_list:
-            #draw.rectangle([tick_start, 230, tick_start + tick_width, 237], fill=WHITE)
+            draw.rectangle([tick_start, 230, tick_start + tick_width, 237], fill=WHITE)
             tick_start += mark_width
 
         bar_width = 0
@@ -623,8 +623,8 @@ def display_everything(direction, name, update=False, readied=False):
             label_end = label_start + label_width
 
         # marker
-        #draw.rectangle([mark_start, 216, mark_start + bar_width + 1, 240], fill=WHITE)
-        #draw.rectangle([mark_start, 217, mark_start + bar_width, 240], fill=WHITE)
+        draw.rectangle([mark_start, 216, mark_start + bar_width + 1, 240], fill=WHITE)
+        draw.rectangle([mark_start, 217, mark_start + bar_width, 240], fill=WHITE)
 
         # label
         #draw.rectangle([label_start, 216, label_end, 233], fill=BLACK)
