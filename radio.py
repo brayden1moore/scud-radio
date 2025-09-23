@@ -641,18 +641,18 @@ def display_everything(direction, name, update=False, readied=False):
         #draw_angled_text(prev_stream, MEDIUM_FONT, -74, image, (79,188), BLACK)
         #draw_angled_text(next_stream, MEDIUM_FONT, -106, image, (217,188), BLACK)
 
-        #if prev_stream in favorites:
-        #    prev_star_40 = star_40.copy().rotate(prev_next_rotation, expand=True)
-        #    image.paste(prev_star_40, prev_position, prev_star_40)
-        #if next_stream in favorites:
-        #    next_star_40 = star_40.copy().rotate(-prev_next_rotation, expand=True)
-        #    image.paste(next_star_40, next_position, next_star_40)
-        #if prev_stream not in reruns:
-        #    prev_live_40 = live_40.copy().rotate(prev_next_rotation, expand=True)
-        #    image.paste(prev_live_40, prev_position, prev_live_40)
-        #if next_stream not in reruns:
-        #    next_live_40 = live_40.copy().rotate(-prev_next_rotation, expand=True)
-        #    image.paste(next_live_40, next_position, next_live_40)
+        if prev_stream in favorites:
+            prev_star_40 = star_40.copy().rotate(prev_next_rotation, expand=True)
+            image.paste(prev_star_40, prev_position, prev_star_40)
+        if next_stream in favorites:
+            next_star_40 = star_40.copy().rotate(-prev_next_rotation, expand=True)
+            image.paste(next_star_40, next_position, next_star_40)
+        if prev_stream not in reruns:
+            prev_live_40 = live_40.copy().rotate(prev_next_rotation, expand=True)
+            image.paste(prev_live_40, prev_position, prev_live_40)
+        if next_stream not in reruns:
+            next_live_40 = live_40.copy().rotate(-prev_next_rotation, expand=True)
+            image.paste(next_live_40, next_position, next_live_40)
 
         # double prev and next
         double_prev_position = (-10,146)
@@ -666,18 +666,18 @@ def display_everything(direction, name, update=False, readied=False):
         #draw_angled_text(double_prev_stream, MEDIUM_FONT, -64, image, (27,210), BLACK)
         #draw_angled_text(double_next_stream, MEDIUM_FONT, -116, image, (264,208), BLACK)
 
-        #if double_prev_stream in favorites:
-        #    double_prev_star_40 = star_40.copy().rotate(double_prev_next_rotation, expand=True)
-        #    image.paste(double_prev_star_40, double_prev_position, double_prev_star_40)
-        #if double_next_stream in favorites:
-        #    double_next_star_40 = star_40.copy().rotate(-double_prev_next_rotation, expand=True)
-        #    image.paste(double_next_star_40, double_next_position, double_next_star_40)
-        #if double_prev_stream not in reruns:
-        #    double_prev_live_40 = live_40.copy().rotate(double_prev_next_rotation, expand=True)
-        #    image.paste(double_prev_live_40, double_prev_position, double_prev_live_40)
-        #if double_next_stream not in reruns:
-        #    double_next_live_40 = live_40.copy().rotate(-double_prev_next_rotation, expand=True)
-        #    image.paste(double_next_live_40, double_next_position, double_next_live_40)
+        if double_prev_stream in favorites:
+            double_prev_star_40 = star_40.copy().rotate(double_prev_next_rotation, expand=True)
+            image.paste(double_prev_star_40, double_prev_position, double_prev_star_40)
+        if double_next_stream in favorites:
+            double_next_star_40 = star_40.copy().rotate(-double_prev_next_rotation, expand=True)
+            image.paste(double_next_star_40, double_next_position, double_next_star_40)
+        if double_prev_stream not in reruns:
+            double_prev_live_40 = live_40.copy().rotate(double_prev_next_rotation, expand=True)
+            image.paste(double_prev_live_40, double_prev_position, double_prev_live_40)
+        if double_next_stream not in reruns:
+            double_next_live_40 = live_40.copy().rotate(-double_prev_next_rotation, expand=True)
+            image.paste(double_next_live_40, double_next_position, double_next_live_40)
 
         # draw mark
         tick_width = 0
