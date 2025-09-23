@@ -713,19 +713,25 @@ def display_everything(direction, name, update=False, readied=False):
 
     
 def display_one(name):
-    global has_displayed_once
-
-    image = mainview.copy()
-    draw = ImageDraw.Draw(image)   
+    global has_displayed_once 
 
     # logo
     logo = streams[name]['logo_60']
+    first_pixel_color = logo.getpixel((2,2))
+
+    image = Image.new('RGBA',(320, 240), color=first_pixel_color)
+    draw = ImageDraw.Draw(image)  
+
+    draw.rectangle([13, 9, 79, 75], fill=WHITE)
+    draw.rectangle([13 + 1, 9 + 1, 79 - 1, 75 - 1], fill=BLACK)
     image.paste(logo, (16, 12))
     if name in favorites:
         image.paste(star_60, (16, 12), star_60)
     if name not in reruns:
         image.paste(live_60, (16, 12), live_60)
 
+    # bottom bar
+    draw.rectangle([0, 225, 320, 240], fill=WHITE)
 
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
@@ -824,6 +830,9 @@ def display_battery(draw, image):
     if not battery:
         get_battery()
     if battery:
+        outer_sq = draw.rectangle([280, 227, 300, 237], fill=BLACK)
+        nipple = draw.rectangle([300, 229, 301, 235], fill=BLACK)
+        inner_white = draw.rectangle([281, 228, 299, 236], fill=WHITE) 
         inner_sq = draw.rectangle([282, 229, 282 + round(15*battery/100), 234], fill=BLACK) 
 
 def get_wifi_strength():
