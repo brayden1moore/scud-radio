@@ -685,8 +685,8 @@ def display_everything(direction, name, update=False, readied=False):
         #draw.rectangle([0, 233, 320, 240], fill=YELLOW)
         draw.rectangle([mark_start, 234, mark_start + 3, 240], fill=BLACK)
         draw.rectangle([mark_start, 217, mark_start + 3, 233], fill=YELLOW)
-        draw.rectangle([mark_start + 6, 217, round(mark_start + 6 + width(name, MEDIUM_FONT)) + 2, 230], fill=YELLOW)
-        draw.text((mark_start + 13, 218), name, font=MEDIUM_FONT, fill=BLACK)
+        draw.rectangle([mark_start + 7, 217, round(mark_start + 6 + width(name, SMALL_FONT)) + 2, 230], fill=YELLOW)
+        draw.text((mark_start + 7, 217), name, font=SMALL_FONT, fill=BLACK)
         safe_display(image) # display 
     
     else:
