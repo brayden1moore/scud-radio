@@ -722,11 +722,12 @@ def display_one(name):
     white_array = np.asarray([255, 255, 255, 255])
     black_array = np.asarray([0, 0, 0, 255])
 
-    light = abs(np.sum((black_array - pixel_array))) <= abs(np.sum((white_array - pixel_array)))
-    if light:
-        trim_color = BLACK
-    else:
+    distance_to_black = np.sum(np.abs(black_array - pixel_array))
+    distance_to_white = np.sum(np.abs(white_array - pixel_array))
+    if distance_to_black <= distance_to_white:
         trim_color = WHITE
+    else:
+        trim_color = BLACK
 
     image = Image.new('RGBA',(320, 240), color=first_pixel_color)
     draw = ImageDraw.Draw(image)  
