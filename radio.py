@@ -5,6 +5,7 @@ from subprocess import Popen, run
 from pathlib import Path
 from io import BytesIO
 import spidev as SPI
+import numpy as np
 import subprocess
 import threading
 import requests
@@ -383,34 +384,8 @@ def get_streams():
                         image = pickle.load(f).convert('RGBA')
                         
                         if i == '40':
-                            # Convert to black and yellow only (faster numpy approach)
-                            import numpy as np
-                            
-                            # Convert to numpy array
                             img_array = np.array(image)
-                            
-                            # Calculate brightness for non-transparent pixels
-                            brightness = 0.299 * img_array[:,:,0] + 0.587 * img_array[:,:,1] + 0.114 * img_array[:,:,2]
-                            
-                            # Create mask for non-transparent pixels
-                            non_transparent = img_array[:,:,3] > 0
-                            
-                            # Set colors based on brightness threshold
-                            yellow_mask = (brightness > 127) & non_transparent
-                            black_mask = (brightness <= 127) & non_transparent
-                            
-                            # Apply yellow color (preserve alpha channel)
-                            img_array[yellow_mask, 0] = 255  # Red
-                            img_array[yellow_mask, 1] = 255  # Green
-                            img_array[yellow_mask, 2] = 0    # Blue
-                            # Alpha channel stays the same
-                            
-                            # Apply black color (preserve alpha channel)
-                            img_array[black_mask, 0] = 0     # Red
-                            img_array[black_mask, 1] = 0     # Green
-                            img_array[black_mask, 2] = 0     # Blue
-                            # Alpha channel stays the same
-                            
+                            img_array[:,:,3] = (img_array[:,:,3] * 0.5).astype(np.uint8)
                             image = Image.fromarray(img_array, 'RGBA')
                         
                         active[name][f'logo_{i}'] = image
