@@ -380,7 +380,35 @@ def get_streams():
             else:
                 for i in ['60','40','140']:
                     with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
-                        active[name][f'logo_{i}'] = pickle.load(f).convert('RGBA')
+                        image = pickle.load(f).convert('RGBA')
+                        
+                        if i == '40':
+                            # Convert to black and yellow only (faster numpy approach)
+                            import numpy as np
+                            
+                            # Convert to numpy array
+                            img_array = np.array(image)
+                            
+                            # Calculate brightness for non-transparent pixels
+                            brightness = 0.299 * img_array[:,:,0] + 0.587 * img_array[:,:,1] + 0.114 * img_array[:,:,2]
+                            
+                            # Create mask for non-transparent pixels
+                            non_transparent = img_array[:,:,3] > 0
+                            
+                            # Set colors based on brightness threshold
+                            yellow_mask = (brightness > 127) & non_transparent
+                            black_mask = (brightness <= 127) & non_transparent
+                            
+                            # Apply yellow color
+                            img_array[yellow_mask] = [255, 255, 0, img_array[yellow_mask, 3]]
+                            # Apply black color  
+                            img_array[black_mask] = [0, 0, 0, img_array[black_mask, 3]]
+                            
+                            # Convert back to PIL Image
+                            from PIL import Image as PILImage
+                            image = PILImage.fromarray(img_array, 'RGBA')
+                        
+                        active[name][f'logo_{i}'] = image
 
     with ThreadPoolExecutor(max_workers=8) as exe:
         futures = [
