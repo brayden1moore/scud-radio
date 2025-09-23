@@ -792,11 +792,11 @@ def display_one(name):
 def display_ambient(name):
     global screen_dim
 
-    image = logoview.copy()
-    draw = ImageDraw.Draw(image)  
-
     # logo
     logo = streams[name]['logo_176']
+    first_pixel = logo.getpixel(0,0)
+
+    image = Image.new(SCREEN_WIDTH, SCREEN_HEIGHT, color = first_pixel)
     image.paste(logo, (72, 32))
 
     safe_display(image)
