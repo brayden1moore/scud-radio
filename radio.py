@@ -739,8 +739,8 @@ def display_one(name):
         trim_color = BLACK
 
     if first_pixel_color == (255, 255, 255) or first_pixel_color == (255, 255, 255, 255):
-       first_pixel_color = (71, 71, 71)
-       trim_color = WHITE
+       first_pixel_color = (171, 171, 171)
+       trim_color = BLACK
 
     image = Image.new('RGBA',(320, 240), color=first_pixel_color)
     draw = ImageDraw.Draw(image)  
