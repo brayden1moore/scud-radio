@@ -969,8 +969,8 @@ button_released_time = time.time()
 
 def on_button_pressed():
     global button_press_time, rotated, button_press_times, held, button_released_time, last_input_time
-    last_input_time = time.time()
-    button_press_time = last_input_time
+    #last_input_time = time.time()
+    button_press_time = time.time()
     button_released_time = None
     if readied_stream:
         display_everything(0, readied_stream, readied=True, pushed=True)
