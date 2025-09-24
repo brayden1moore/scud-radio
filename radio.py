@@ -970,6 +970,7 @@ def on_button_pressed():
     if readied_stream:
         display_everything(0, stream, readied=True, pushed=True)
         time.sleep(0.08)
+        display_everything(0, stream, readied=True, pushed=False)
         confirm_seek()
     held = True
     rotated = False
