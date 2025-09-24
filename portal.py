@@ -59,7 +59,7 @@ app.secret_key = 'sticky-lemon'
 
 def start_hotspot():
     subprocess.run(['sudo', 'nmcli', 'device', 'wifi', 'hotspot', 
-                'ifname', 'wlan0', 'ssid', 'Scud Radio','password','scudworks'])
+                'ifname', 'wlan0', 'ssid', 'Scud Radio','password','scudradio'])
 
 def internet(host="8.8.8.8", port=53, timeout=4, retries=3):
     for attempt in range(retries):
