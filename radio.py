@@ -740,14 +740,16 @@ def display_one(name):
     white_array = np.asarray([255, 255, 255, 255])
     black_array = np.asarray([0, 0, 0, 255])
 
+    if pixel_array - white_array == 0:
+        first_pixel_color = (0,0,0,255)
+        pixel_array = black_array
+
     distance_to_black = np.sum(np.abs(black_array - pixel_array))
     distance_to_white = np.sum(np.abs(white_array - pixel_array))
-    if distance_to_black * 0.7 <= distance_to_white:
+    if distance_to_black * 0.9 <= distance_to_white:
         trim_color = WHITE
-        text_bg = BLACK
     else:
         trim_color = BLACK
-        text_bg = WHITE
 
     #if first_pixel_color == (255, 255, 255) or first_pixel_color == (255, 255, 255, 255):
     #   first_pixel_color = (171, 171, 171)
