@@ -738,7 +738,7 @@ def display_one(name):
     else:
         trim_color = BLACK
 
-    if first_pixel_color == (255, 255, 255):
+    if first_pixel_color == (255, 255, 255) or first_pixel_color == (255, 255, 255, 255):
        first_pixel_color = (166, 166, 166)
        trim_color = WHITE
 
