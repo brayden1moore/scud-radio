@@ -858,7 +858,9 @@ def display_battery(draw, image):
         outer_sq = draw.rectangle([280, 227, 300, 237], fill=BLACK)
         nipple = draw.rectangle([300, 229, 301, 235], fill=BLACK)
         inner_white = draw.rectangle([281, 228, 299, 236], fill=WHITE) 
-        inner_sq = draw.rectangle([282, 229, 282 + round(15*battery/100), 235], fill=BLACK) 
+
+        fill = BLACK if not charging else GREEN
+        inner_sq = draw.rectangle([282, 229, 282 + round(15*battery/100), 235], fill=fill) 
 
 def get_wifi_strength():
     global wifi_strength, wifi_ssid
