@@ -769,7 +769,7 @@ def display_one(name):
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
     draw.rectangle([92, 13, 92 + width(name_line, LARGE_FONT), 13 + height(name_line, LARGE_FONT)], fill=text_bg)
-    draw.text((92, 23), name_line, font=LARGE_FONT, fill=trim_color)
+    draw.text((92, 13), name_line, font=LARGE_FONT, fill=trim_color)
     #draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT), 47], fill=trim_color)
    
     # location
@@ -971,7 +971,7 @@ def safe_restart():
     run(['sudo', '-u','scud','git', 'pull'], cwd='/home/scud/scud-radio')
     time.sleep(4)  
     backlight_off()
-    run(['sudo','systemctl', 'restart','splash'])
+    run(['sudo','systemctl', 'restart','radio'])
 
 button_released_time = time.time()
 
