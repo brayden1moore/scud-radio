@@ -987,7 +987,9 @@ def on_button_released():
         display_everything(0, readied_stream, readied=True, pushed=False)
         confirm_seek()
     else:
-        set_last_volume(str(current_volume))
+        if len(button_press_times) >= 1:
+            display_one(stream)
+            set_last_volume(str(current_volume))
 
         button_press_times.append(current_time)
         button_press_times = [t for t in button_press_times if current_time - t <= 3.0]
