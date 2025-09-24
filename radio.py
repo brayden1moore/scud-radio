@@ -740,7 +740,7 @@ def display_one(name):
     white_array = np.asarray([255, 255, 255, 255])
     black_array = np.asarray([0, 0, 0, 255])
 
-    if pixel_array - white_array == 0:
+    if pixel_array == white_array:
         first_pixel_color = (0,0,0,255)
         pixel_array = black_array
 
