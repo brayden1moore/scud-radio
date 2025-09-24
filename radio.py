@@ -1038,6 +1038,7 @@ def toggle_favorite():
 
         #stream_list = stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
         time.sleep(0.3)
+        display_everything(0, chosen_stream, readied=True)
 
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
