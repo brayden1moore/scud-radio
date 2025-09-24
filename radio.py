@@ -569,7 +569,7 @@ def draw_angled_text(text, font, angle, image, coords, color):
     image.paste(ImageOps.colorize(w, (0,0,0), color), coords, w)
 
 
-def display_everything(direction, name, update=False, readied=False):
+def display_everything(direction, name, update=False, readied=False, pushed=False):
     global streams, play_status, first_display, selector
     
     if readied and not restarting:
@@ -618,11 +618,19 @@ def display_everything(direction, name, update=False, readied=False):
         #mark_start = label_start - 2 #round(mark_start - 67/2)
         #draw.rectangle([mark_start, 131 + 67, mark_start + 67, 131 + 63], fill=WHITE)
         #draw.rectangle([mark_start + 1, 131 + 1, mark_start + 67 - 1, 131 + 67 - 1], fill=BLACK)
-        logo_position = (111, 125)
-        logo = streams[name]['logo_96']
+        if pushed:
+            logo_position = (129, 143)
+            logo = streams[name]['logo_60']            
+            this_star = star_60.copy()
+            this_live = live_60.copy()
+        else:
+            logo_position = (111, 125)
+            logo = streams[name]['logo_96']
+            this_star = star_96.copy()
+            this_live = live_96.copy()
+        
         image.paste(logo, logo_position)
-        this_star = star_96.copy()
-        this_live = live_96.copy()
+
         if name in favorites:
             image.paste(this_star, logo_position, this_star)
         if name not in reruns:
@@ -960,6 +968,8 @@ def on_button_pressed():
     button_press_time = time.time()
     button_released_time = None
     if readied_stream:
+        display_everything(0, stream, readied=True, pushed=True)
+        time.sleep(0.08)
         confirm_seek()
     held = True
     rotated = False
