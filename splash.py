@@ -11,14 +11,6 @@ import os
 subprocess.run(['sudo','iwconfig','wlan0','power','off'])
 subprocess.run(['sudo','iw','dev','wlan0','set','power_save','off'])
 
-subprocess.run(['sudo', 'systemctl', 'start', 'polkit'])
-subprocess.run(['sudo', 'systemctl', 'start', 'rtkit-daemon'])
-
-subprocess.run(['sudo', 'systemctl', 'enable', 'polkit'])
-subprocess.run(['sudo', 'systemctl', 'enable', 'rtkit-daemon'])
-
-subprocess.run(['sudo', 'systemctl', 'restart', 'ssh'])
-
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -95,5 +87,9 @@ if not wait_for_wifi_interface():
     wifi_waiting = False
     logging.error("WiFi interface not available")
     sys.exit(1)
+
+subprocess.run(['cd','scud-radio'])
+subprocess.run(['git','pull'])
+subprocess.run(['cd','~'])
 
 subprocess.run(['sudo','systemctl','start','radio'])
