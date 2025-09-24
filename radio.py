@@ -700,8 +700,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         tick_start = 0
         for i in stream_list:
             fill = YELLOW if i in favorites else WHITE
-            extra_width = 1 if i in favorites else 0
-            draw.rectangle([tick_start, 231 - extra_width*2, tick_start + tick_width + extra_width, 232 + extra_width*2], fill=fill)
+            extra_width = 2 if i in favorites else 0
+            draw.rectangle([tick_start, 231 - extra_width, tick_start + tick_width + extra_width, 232 + extra_width], fill=fill)
             tick_start += mark_width
 
         bar_width = 1
