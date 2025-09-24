@@ -1001,7 +1001,7 @@ def toggle_favorite():
     global favorites, stream_list
     now = time.time()
     if not rotated:
-        img = current_image.convert('RGBA')
+        img = current_image.copy().convert('RGBA')
         
         if stream in favorites:
             favorites = [i for i in favorites if i != stream]
