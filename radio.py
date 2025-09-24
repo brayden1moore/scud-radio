@@ -657,10 +657,10 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         
         if prev_stream in favorites:
             prev_star = star_60.copy().rotate(prev_next_rotation, expand=True)
-            image.paste(prev_star, prev_position, prev_star)
+            #image.paste(prev_star, prev_position, prev_star)
         if next_stream in favorites:
             next_star = star_60.copy().rotate(-prev_next_rotation, expand=True)
-            image.paste(next_star, next_position, next_star)
+            #image.paste(next_star, next_position, next_star)
         if prev_stream not in reruns:
             prev_live = live_60.copy().rotate(prev_next_rotation, expand=True)
             #image.paste(prev_live, prev_position, prev_live)
@@ -761,7 +761,8 @@ def display_one(name):
     logo_position = (16, 12)
     image.paste(logo, logo_position)
     if name in favorites:
-        image.paste(star_60, logo_position, star_60)
+        #image.paste(star_60, logo_position, star_60)
+        draw.rectangle([13, 9, 78, 74], outline=trim_color, width=2)
     #if name not in reruns:
         #draw.rectangle([logo_position[0] + 30, logo_position[1] + 46, logo_position[0] + 30 + 31, logo_position[1] + 46 + 16], fill=first_pixel_color)
         #draw.rectangle([logo_position[0] + 31, logo_position[1] + 47, logo_position[0] + 30 + 31, logo_position[1] + 46 + 16], fill=RED)
