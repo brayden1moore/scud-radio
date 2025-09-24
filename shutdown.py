@@ -21,17 +21,10 @@ disp.bl_DutyCycle(MAX_BL)
 
 def display_goodbye():
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    for i in 'goodbye':
-            
-        bg = Image.open(f'assets/scud_{i}.png') 
-        image.paste(bg, (0, 0))
-        disp.ShowImage(image)
-        time.sleep(0.05)
-
-    bg = Image.open(f'assets/scud_splash_2.png') 
+    bg = Image.open(f'assets/goodbye.png') 
     image.paste(bg, (0, 0))
     disp.ShowImage(image)
-    time.sleep(1)
+    time.sleep(2)
 
 display_goodbye()
 

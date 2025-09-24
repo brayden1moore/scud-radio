@@ -969,7 +969,7 @@ button_released_time = time.time()
 
 def on_button_pressed():
     global button_press_time, rotated, button_press_times, held, button_released_time, last_input_time
-    #last_input_time = time.time()
+    last_input_time = time.time()
     button_press_time = time.time()
     button_released_time = None
     if readied_stream:
@@ -1024,7 +1024,6 @@ def toggle_favorite():
 
         stream_list = stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
         time.sleep(0.3)
-        display_one(stream)
         display_one(stream)
 
 def handle_rotation(direction):
