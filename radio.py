@@ -987,8 +987,6 @@ def on_button_released():
         display_everything(0, readied_stream, readied=True, pushed=False)
         confirm_seek()
     else:
-
-        display_one(stream)
         set_last_volume(str(current_volume))
 
         button_press_times.append(current_time)
@@ -1026,6 +1024,7 @@ def toggle_favorite():
 
         stream_list = stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
         time.sleep(0.3)
+        display_everything(0, stream)
 
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
