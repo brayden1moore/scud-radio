@@ -623,7 +623,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             bg_position = (111, 125)
             logo = streams[name]['logo_60']    
             first_pixel_color = logo.getpixel((2,2))
-            draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], fill=first_pixel_color)
+            draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 94], fill=first_pixel_color)
             this_star = star_60.copy()
             this_live = live_60.copy()
         else:
@@ -738,8 +738,10 @@ def display_one(name):
     distance_to_white = np.sum(np.abs(white_array - pixel_array))
     if distance_to_black * 0.7 <= distance_to_white:
         trim_color = WHITE
+        text_bg = BLACK
     else:
         trim_color = BLACK
+        text_bg = WHITE
 
     #if first_pixel_color == (255, 255, 255) or first_pixel_color == (255, 255, 255, 255):
     #   first_pixel_color = (171, 171, 171)
@@ -766,8 +768,9 @@ def display_one(name):
 
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
-    draw.text((92, 20 - 7), name_line, font=LARGE_FONT, fill=trim_color)
-    draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT), 47], fill=trim_color)
+    draw.rectangle([92, 13, 92 + width(name_line, LARGE_FONT), 13 + height(name_line, LARGE_FONT)], fill=text_bg)
+    draw.text((92, 23), name_line, font=LARGE_FONT, fill=trim_color)
+    #draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT), 47], fill=trim_color)
    
     # location
     draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=trim_color)    
