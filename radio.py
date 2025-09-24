@@ -969,9 +969,6 @@ def on_button_pressed():
     button_released_time = None
     if readied_stream:
         display_everything(0, stream, readied=True, pushed=True)
-        time.sleep(0.08)
-        display_everything(0, stream, readied=True, pushed=False)
-        confirm_seek()
     held = True
     rotated = False
 
@@ -981,7 +978,10 @@ def on_button_released():
     held = False
     current_time = time.time()
     button_released_time = current_time
-    if not readied_stream:
+    if readied_stream:
+        display_everything(0, stream, readied=True, pushed=False)
+        confirm_seek()
+    else:
         set_last_volume(str(current_volume))
 
         button_press_times.append(current_time)
