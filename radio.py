@@ -1115,9 +1115,7 @@ def wake_screen():
 
 def wrapped_action(func, direction=0):
     def inner():
-        if not click_button.is_pressed and current_volume == 0 and direction == -1:
-            func()
-        elif click_button.is_pressed and current_volume == 0 and direction == -1:
+        if click_button.is_pressed and current_volume == 0 and direction == -1:
             func()
         else:
             if not wake_screen():
