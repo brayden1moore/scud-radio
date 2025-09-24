@@ -967,8 +967,9 @@ def safe_restart():
 button_released_time = time.time()
 
 def on_button_pressed():
-    global button_press_time, rotated, button_press_times, held, button_released_time
-    button_press_time = time.time()
+    global button_press_time, rotated, button_press_times, held, button_released_time, last_input_time
+    last_input_time = time.time()
+    button_press_time = last_input_time
     button_released_time = None
     if readied_stream:
         display_everything(0, readied_stream, readied=True, pushed=True)
@@ -1026,8 +1027,9 @@ def toggle_favorite():
 
 
 def handle_rotation(direction):
-    global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim
+    global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
     rotated = True
+    last_input_time = time.time()
 
     if click_button.is_pressed:
         if direction == 1: 
