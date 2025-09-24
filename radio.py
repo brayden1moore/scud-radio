@@ -738,6 +738,9 @@ def display_one(name):
     else:
         trim_color = BLACK
 
+    first_pixel_color = (166, 166, 166)
+    trim_color = WHITE
+
     image = Image.new('RGBA',(320, 240), color=first_pixel_color)
     draw = ImageDraw.Draw(image)  
 
