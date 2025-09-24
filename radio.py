@@ -636,6 +636,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         if name in favorites:
             image.paste(this_star, logo_position, this_star)
+            draw.rectangle([107, 120, 213, 222], outline=YELLOW, width=1)
         if name not in reruns:
             draw.ellipse([15, 15, 28, 28], fill=RED)
             #image.paste(this_live, logo_position, this_live)
