@@ -620,7 +620,10 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         #draw.rectangle([mark_start + 1, 131 + 1, mark_start + 67 - 1, 131 + 67 - 1], fill=BLACK)
         if pushed:
             logo_position = (129, 143)
-            logo = streams[name]['logo_60']            
+            bg_position = (111, 125)
+            logo = streams[name]['logo_60']    
+            first_pixel_color = logo.getpixel((2,2))
+            draw.rectangle([logo_position[0], logo_position[1], logo_position[0] + 96, logo_position[1] + 96], fill=first_pixel_color)
             this_star = star_60.copy()
             this_live = live_60.copy()
         else:
