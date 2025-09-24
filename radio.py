@@ -631,10 +631,10 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         
         image.paste(logo, logo_position)
 
-        if name in favorites:
-            image.paste(this_star, logo_position, this_star)
-        if name not in reruns:
-            image.paste(this_live, logo_position, this_live)
+        #if name in favorites:
+        #    image.paste(this_star, logo_position, this_star)
+        #if name not in reruns:
+        #    image.paste(this_live, logo_position, this_live)
 
         # line
         #draw.line([tick_mark_start + 1, 216, round(mark_start + 67/2), 131 + 67], fill=WHITE, width=2)
@@ -652,16 +652,16 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         
         if prev_stream in favorites:
             prev_star = star_60.copy().rotate(prev_next_rotation, expand=True)
-            image.paste(prev_star, prev_position, prev_star)
+            #image.paste(prev_star, prev_position, prev_star)
         if next_stream in favorites:
             next_star = star_60.copy().rotate(-prev_next_rotation, expand=True)
-            image.paste(next_star, next_position, next_star)
+            #image.paste(next_star, next_position, next_star)
         if prev_stream not in reruns:
             prev_live = live_60.copy().rotate(prev_next_rotation, expand=True)
-            image.paste(prev_live, prev_position, prev_live)
+            #image.paste(prev_live, prev_position, prev_live)
         if next_stream not in reruns:
             next_live = live_60.copy().rotate(-prev_next_rotation, expand=True)
-            image.paste(next_live, next_position, next_live)
+            #image.paste(next_live, next_position, next_live)
 
         # double prev and next
         #double_prev_position = (mark_start - 40 - 25 - 2 - 6, 170)
@@ -678,18 +678,18 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         image.paste(double_prev, double_prev_position, double_prev)
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()#.rotate(double_prev_next_rotation, expand=True)
-            image.paste(double_prev_star, double_prev_position, double_prev_star)
+            ##image.paste(double_prev_star, double_prev_position, double_prev_star)
         if double_prev_stream not in reruns:
             double_prev_live = live_25.copy()#.rotate(double_prev_next_rotation, expand=True)
-            image.paste(double_prev_live, double_prev_position, double_prev_live)
+            #image.paste(double_prev_live, double_prev_position, double_prev_live)
 
         image.paste(double_next, double_next_position, double_next)
         if double_next_stream in favorites:
             double_next_star = star_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
-            image.paste(double_next_star, double_next_position, double_next_star)
+            #image.paste(double_next_star, double_next_position, double_next_star)
         if double_next_stream not in reruns:
             double_next_live = live_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
-            image.paste(double_next_live, double_next_position, double_next_live)
+            #image.paste(double_next_live, double_next_position, double_next_live)
 
         # draw mark
         tick_width = 0
