@@ -1090,8 +1090,8 @@ def periodic_update():
                     sys.exit(0)
                 pass
 
-            if not held and not readied_stream and not screen_dim:
-                display_everything(0, stream, update=True)
+        if not held and not readied_stream and not screen_dim:
+            display_everything(0, stream, update=True)
 
         time_since_last_update = 0
     
