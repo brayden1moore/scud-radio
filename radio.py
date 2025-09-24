@@ -768,7 +768,7 @@ def display_one(name):
 
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
-    draw.rectangle([92, 20 - 4, 92 + width(name_line, LARGE_FONT), 20 + height('S', LARGE_FONT)], fill=text_bg)
+    #draw.rectangle([92, 20 - 4, 92 + width(name_line, LARGE_FONT), 20 + height('S', LARGE_FONT)], fill=text_bg)
     draw.text((92, 13), name_line, font=LARGE_FONT, fill=trim_color)
     draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT), 47], fill=trim_color)
    
