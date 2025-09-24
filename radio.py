@@ -744,8 +744,8 @@ def display_one(name):
     image = Image.new('RGBA',(320, 240), color=first_pixel_color)
     draw = ImageDraw.Draw(image)  
 
-    draw.rectangle([13, 9, 79, 75], fill=trim_color)
-    draw.rectangle([13 + 1, 9 + 1, 79 - 1, 75 - 1], fill=first_pixel_color)
+    draw.rectangle([13, 9, 78, 74], fill=trim_color)
+    draw.rectangle([13 + 1, 9 + 1, 78 - 1, 74 - 1], fill=first_pixel_color)
     logo_position = (16, 12)
     image.paste(logo, logo_position)
     if name in favorites:
@@ -757,7 +757,7 @@ def display_one(name):
         image.paste(live_60, (16, 12), live_60)
 
     # bottom bar
-    draw.rectangle([0, 222, 320, 240], fill=BLACK)
+    draw.rectangle([0, 222, 320, 222], fill=BLACK)
     draw.rectangle([0, 223, 320, 240], fill=WHITE)
 
     # name and underline
