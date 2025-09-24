@@ -623,7 +623,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             bg_position = (111, 125)
             logo = streams[name]['logo_60']    
             first_pixel_color = logo.getpixel((2,2))
-            draw.rectangle([logo_position[0], logo_position[1], logo_position[0] + 96, logo_position[1] + 96], fill=first_pixel_color)
+            draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], fill=first_pixel_color)
             this_star = star_60.copy()
             this_live = live_60.copy()
         else:
