@@ -995,7 +995,7 @@ def on_button_released():
     held = False
     current_time = time.time()
     button_released_time = current_time
-    if readied_stream:
+    if readied_stream and (button_released_time - button_press_time < 2):
         display_everything(0, readied_stream, readied=True, pushed=False)
         confirm_seek()
     else:
@@ -1179,17 +1179,6 @@ try:
             volume_overlay_showing = False
             if screen_on and stream and not screen_dim:
                 display_everything(0, stream)
-
-        #if stream and not readied_stream and not restarting and not held:
-            #image = current_image.copy()
-            # toggle live overlay version
-            #if live_overlay_version == 1:
-            #    image.paste(live_overlay_1, (0,0), live_overlay_1)
-            #    live_overlay_version = 2
-            #else:
-            #    image.paste(live_overlay_2, (0,0), live_overlay_2)
-            #    live_overlay_version = 1
-            #safe_display(image)
 
         time.sleep(1)
         time_since_battery_check += 1
