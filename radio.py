@@ -1013,10 +1013,11 @@ def toggle_favorite():
     global favorites, stream_list
     now = time.time()
     if not rotated:
+        chosen_stream = stream if not readied_stream else readied_stream
         img = current_image.copy().convert('RGBA')
         
-        if stream in favorites:
-            favorites = [i for i in favorites if i != stream]
+        if chosen_stream in favorites:
+            favorites = [i for i in favorites if i != chosen_stream]
             for i in list(reversed(favorite_images)):
                 img.paste(i, (0, 0), i)
                 disp.ShowImage(img)  
@@ -1025,7 +1026,7 @@ def toggle_favorite():
             disp.ShowImage(img)
             set_favorites(favorites)
         else:
-            favorites.append(stream)
+            favorites.append(chosen_stream)
             favorites = list(set(favorites))
             set_favorites(favorites)
             img.paste(unfavorite, (0, 0), unfavorite)
@@ -1036,7 +1037,6 @@ def toggle_favorite():
 
         #stream_list = stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
         time.sleep(0.3)
-        display_one(stream)
 
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
