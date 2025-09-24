@@ -716,7 +716,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # marker
         fill = YELLOW if name in favorites else WHITE
-        draw.rectangle([mark_start, 226, mark_start + bar_width, 237], fill=fill)
+        extra_width = 2 if name in favorites else 0
+        draw.rectangle([mark_start, 226, mark_start + bar_width + extra_width, 237], fill=fill)
         #draw.rectangle([mark_start - mark_width, 229, mark_start - mark_width + bar_width, 234], fill=WHITE)
         #draw.rectangle([mark_start + mark_width, 229, mark_start + mark_width + bar_width, 234], fill=WHITE)
 
