@@ -429,7 +429,7 @@ def get_stream_list(streams):
     global reruns 
     stream_list = list(streams.keys())
     reruns = [i for i in stream_list if any(j in streams[i]['oneLiner'].lower() for j in ['(r)','re-run','re-wav','restream','playlist','auto dj','night moves']) or i=='Monotonic Radio' or ' ARCHIVE' in streams[i]['oneLiner']]
-    stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
+    #stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
     return stream_list
 
 streams = get_streams()
@@ -699,7 +699,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         mark_width = round(SCREEN_WIDTH / len(stream_list))
         tick_start = 0
         for i in stream_list:
-            draw.rectangle([tick_start, 231, tick_start + tick_width, 232], fill=WHITE)
+            fill = YELLOW if i in favorites else WHITE
+            extra_width = 1 if i in favorites else 0
+            draw.rectangle([tick_start, 231, tick_start + tick_width + extra_width, 232], fill=fill)
             tick_start += mark_width
 
         bar_width = 1
@@ -1030,7 +1032,7 @@ def toggle_favorite():
                 img.paste(i, (0, 0), i)
                 disp.ShowImage(img)           
 
-        stream_list = stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
+        #stream_list = stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
         time.sleep(0.3)
         display_one(stream)
 
