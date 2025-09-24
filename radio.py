@@ -739,7 +739,7 @@ def display_one(name):
         trim_color = BLACK
 
     if first_pixel_color == (255, 255, 255) or first_pixel_color == (255, 255, 255, 255):
-       first_pixel_color = (166, 166, 166)
+       first_pixel_color = (71, 71, 71)
        trim_color = WHITE
 
     image = Image.new('RGBA',(320, 240), color=first_pixel_color)
