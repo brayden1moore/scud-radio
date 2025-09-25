@@ -704,18 +704,20 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw mark
         tick_width = 0
-        tick_padding = 30
-        mark_width = round((SCREEN_WIDTH - (tick_padding + (2 * len(favorites)))) / len(stream_list))
-        first_tick_start = 30
-        tick_start = first_tick_start
+        padding = 30
+        total_ticks = len(stream_list)
+        total_span = SCREEN_WIDTH - (2 * padding)
+        mark_width = total_span / (total_ticks - 1)
+        tick_start = padding  
 
         for i in stream_list:
             fill = YELLOW if i in favorites else WHITE
-            extra_width = 2 if i in favorites else 0
+            extra_width = 2 if i in favorites else 0  # Makes favorites 3px wide
             draw.rectangle([tick_start, 231 - extra_width, tick_start + tick_width + extra_width, 232 + extra_width], fill=fill)
             tick_start += mark_width
 
         # marker
+        first_tick_start = padding
         bar_width = 1
         mark_start = round(stream_list.index(name) * mark_width) + first_tick_start
         fill = YELLOW if name in favorites else WHITE
