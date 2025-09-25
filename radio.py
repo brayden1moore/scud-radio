@@ -1129,11 +1129,12 @@ def wake_screen():
     if (not screen_on) or screen_dim:
         screen_on = True
         screen_dim = False
-        backlight_on()
         if stream:
             display_one(stream)
         else:
             display_scud()
+        time.sleep(0.08)
+        backlight_on()
         return True
     return False
 
