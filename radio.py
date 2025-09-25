@@ -707,7 +707,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         padding = 30
         total_ticks = len(stream_list)
         total_span = SCREEN_WIDTH - (2 * padding)
-        mark_width = total_span / (total_ticks - 1)
+        mark_width = round(total_span / (total_ticks - 1))
         tick_start = padding  
 
         for i in stream_list:
