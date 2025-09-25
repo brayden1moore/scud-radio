@@ -715,13 +715,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         bar_width = 1
         mark_start = round(stream_list.index(name) * mark_width) + tick_start
-        label_width = round(width(name, SMALL_FONT) + 2)
-        label_start = mark_start + (2 * bar_width) + 4
-        label_end = label_start + label_width
-
-        if label_end > 320:
-            label_start = mark_start - label_width - (bar_width) - 2
-            label_end = label_start + label_width
 
         # marker
         fill = YELLOW if name in favorites else WHITE
