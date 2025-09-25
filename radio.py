@@ -705,7 +705,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # draw mark
         tick_width = 0
         mark_width = round(SCREEN_WIDTH - 20 / len(stream_list))
-        tick_start = 10
+        tick_start = 5
         for i in stream_list:
             fill = YELLOW if i in favorites else WHITE
             extra_width = 2 if i in favorites else 0
