@@ -427,9 +427,15 @@ def get_streams():
 reruns = []
 def get_stream_list(streams):
     global reruns 
-    stream_list = list(streams.keys())
+    stream_list = sorted(list(streams.keys()))
     reruns = [i for i in stream_list if any(j in streams[i]['oneLiner'].lower() for j in ['(r)','re-run','re-wav','restream','playlist','auto dj','night moves']) or i=='Monotonic Radio' or ' ARCHIVE' in streams[i]['oneLiner']]
-    #stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
+    
+    if favorites:
+        fav_start_idx = round(len(stream_list) / 2) - round(len(favorites) / 2)
+        front_half = [i for i in stream_list if i not in favorites][:fav_start_idx]
+        back_half = [i for i in stream_list if i not in favorites and i not in front_half]
+        stream_list = front_half + sorted(favorites) + back_half
+    
     return stream_list
 
 streams = get_streams()
@@ -1041,7 +1047,7 @@ def toggle_favorite():
                 img.paste(i, (0, 0), i)
                 disp.ShowImage(img)           
 
-        #stream_list = stream_list = sorted([i for i in stream_list if i in favorites]) + sorted([i for i in stream_list if i not in favorites])
+        stream_list = get_stream_list(streams)
         time.sleep(0.3)
         show_readied = False if not readied_stream else True
         display_everything(0, chosen_stream, readied=show_readied)
