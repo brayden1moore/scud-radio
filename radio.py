@@ -705,7 +705,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # draw mark
         tick_width = 0
         mark_width = round((SCREEN_WIDTH - 40) / len(stream_list))
-        first_tick_start = 40
+        first_tick_start = 30
         tick_start = first_tick_start
 
         for i in stream_list:
