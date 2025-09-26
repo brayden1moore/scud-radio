@@ -647,12 +647,12 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         if name in favorites:
             #image.paste(this_star, logo_position, this_star)
             draw.rectangle([107, 121, 210, 224], outline=YELLOW, width=4)
-            draw.rectangle([106, 120, 211, 225], outline=BLACK, width=1)
+            draw.rectangle([106, 120, 212, 226], outline=BLACK, width=1)
         if name not in reruns:
             draw.ellipse([15, 15, 28, 28], fill=RED)
             #image.paste(this_live, logo_position, this_live)
         
-        draw.rectangle([border_logo_position[0], border_logo_position[1], border_logo_position[0]+97, border_logo_position[1]+97], outline=BLACK, width=1)
+        draw.rectangle([border_logo_position[0], border_logo_position[1], border_logo_position[0]+96, border_logo_position[1]+96], outline=BLACK, width=1)
 
         # line
         #draw.line([tick_mark_start + 1, 216, round(mark_start + 67/2), 131 + 67], fill=WHITE, width=2)
