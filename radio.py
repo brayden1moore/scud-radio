@@ -743,26 +743,26 @@ def display_one(name):
     white_array = np.asarray([255, 255, 255, 255])
     black_array = np.asarray([0, 0, 0, 255])
 
-    if first_pixel_color == (255, 255, 255 ,255):
-        first_pixel_color = (0,0,0,255)
-        pixel_array = black_array
+    #if first_pixel_color == (255, 255, 255 ,255):
+    #    first_pixel_color = (0,0,0,255)
+    #    pixel_array = black_array
 
-    distance_to_black = np.sum(np.abs(black_array - pixel_array))
-    distance_to_white = np.sum(np.abs(white_array - pixel_array))
-    if distance_to_black * 0.9 <= distance_to_white:
-        trim_color = WHITE
-    else:
-        trim_color = BLACK
+    #distance_to_black = np.sum(np.abs(black_array - pixel_array))
+    #distance_to_white = np.sum(np.abs(white_array - pixel_array))
+    #if distance_to_black * 0.9 <= distance_to_white:
+    #    trim_color = WHITE
+    #else:
+    #    trim_color = BLACK
 
     #if first_pixel_color == (255, 255, 255) or first_pixel_color == (255, 255, 255, 255):
     #   first_pixel_color = (171, 171, 171)
     #   trim_color = BLACK
 
-    image = Image.new('RGBA',(320, 240), color=first_pixel_color)
+    image = Image.new('RGBA',(320, 240), color=WHITE)
     draw = ImageDraw.Draw(image)  
 
-    draw.rectangle([13, 9, 78, 74], fill=trim_color)
-    draw.rectangle([13 + 1, 9 + 1, 78 - 1, 74 - 1], fill=first_pixel_color)
+    draw.rectangle([13, 9, 78, 74], fill=BLACK)
+    draw.rectangle([13 + 1, 9 + 1, 78 - 1, 74 - 1], fill=WHITE)
     logo_position = (16, 12)
     image.paste(logo, logo_position)
     if name in favorites:
@@ -781,8 +781,8 @@ def display_one(name):
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
     #draw.rectangle([92, 20 - 4, 92 + width(name_line, LARGE_FONT), 20 + height('S', LARGE_FONT)], fill=text_bg)
-    draw.text((92, 13), name_line, font=LARGE_FONT, fill=trim_color)
-    draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT), 47], fill=trim_color)
+    draw.text((92, 13), name_line, font=LARGE_FONT, fill=BLACK)
+    draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT), 47], fill=BLACK)
    
     # location
     draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=trim_color)    
@@ -814,14 +814,14 @@ def display_one(name):
     avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
 
     for i in title_lines:
-        draw.text((14, anchor), i, font=LARGE_FONT, fill=trim_color)
+        draw.text((14, anchor), i, font=LARGE_FONT, fill=BLACK)
         anchor += avg_title_height + 6
 
     anchor += 5
 
     if info_lines:
         for i in info_lines:
-            draw.text((14, anchor), i, font=MEDIUM_FONT, fill=trim_color)
+            draw.text((14, anchor), i, font=MEDIUM_FONT, fill=BLACK)
             anchor += avg_info_height + 6
 
     # battery
