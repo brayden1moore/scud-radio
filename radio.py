@@ -714,7 +714,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             #image.paste(double_next_live, double_next_position, double_next_live)
 
         # draw mark
-        tick_width = 0
+        tick_width = 1
         padding = 30
         total_ticks = len(stream_list)
         total_span = SCREEN_WIDTH - (2 * padding)
