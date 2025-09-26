@@ -804,7 +804,10 @@ def display_one(name):
     draw.rectangle([0, 72 + 12, SCREEN_WIDTH, 72 + 12], outline=BLACK, width=1) # divider
     
     # location
-    draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
+    location = streams[name]['location']
+    draw.rectangle([92, 52, 92 + width(location, MEDIUM_FONT), 52 + height('S', MEDIUM_FONT)], fill=BLUE)# bg
+    draw.text((92, 52), calculate_text(location, font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
+
 
     # now playing
     y_offset = 0
