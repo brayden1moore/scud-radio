@@ -653,7 +653,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         image.paste(logo, logo_position)
 
         if name in favorites:
-            #image.paste(this_star, logo_position, this_star)
+            image.paste(this_star, logo_position, this_star)
             draw.rectangle([107, 121 - 4, 211, 225 - 4], outline=YELLOW, width=4)
             draw.rectangle([106, 120 - 4, 212, 226 - 4], outline=BLACK, width=1)
             #image.paste(this_live, logo_position, this_live)
@@ -707,15 +707,15 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()#.rotate(double_prev_next_rotation, expand=True)
             image.paste(double_prev_star, double_prev_position, double_prev_star)
-        if double_prev_stream not in reruns:
-            double_prev_live = live_25.copy()#.rotate(double_prev_next_rotation, expand=True)
-            image.paste(double_prev_live, double_prev_position, double_prev_live)
+        #if double_prev_stream not in reruns:
+            #double_prev_live = live_25.copy()#.rotate(double_prev_next_rotation, expand=True)
+        #    image.paste(double_prev_live, double_prev_position, double_prev_live)
 
         image.paste(double_next, double_next_position, double_next)
         draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + 25, double_next_position[1] + 25], outline=BLACK, width=1)
-        #if double_next_stream in favorites:
-        #    double_next_star = star_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
-            #image.paste(double_next_star, double_next_position, double_next_star)
+        if double_next_stream in favorites:
+            double_next_star = star_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
+            image.paste(double_next_star, double_next_position, double_next_star)
         #if double_next_stream not in reruns:
         #    double_next_live = live_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
             #image.paste(double_next_live, double_next_position, double_next_live)
