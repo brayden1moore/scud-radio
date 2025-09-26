@@ -433,10 +433,10 @@ def get_stream_list(streams):
     reruns = [i for i in stream_list if any(j in streams[i]['oneLiner'].lower() for j in ['(r)','re-run','re-wav','restream','playlist','auto dj','night moves']) or i=='Monotonic Radio' or ' ARCHIVE' in streams[i]['oneLiner']]
     
     if favorites:
-        fav_start_idx = round(len(stream_list) / 2) - round(len(favorites) / 2)
-        front_half = [i for i in stream_list if i not in favorites][:fav_start_idx]
-        back_half = [i for i in stream_list if i not in favorites and i not in front_half]
-        stream_list =  sorted(favorites, key=str.casefold) + front_half + back_half
+        #fav_start_idx = round(len(stream_list) / 2) - round(len(favorites) / 2)
+        #front_half = [i for i in stream_list if i not in favorites][:fav_start_idx]
+        #back_half = [i for i in stream_list if i not in favorites and i not in front_half]
+        stream_list =  sorted(favorites, key=str.casefold) + sorted([i for i in stream_list if i not in favorites], key=str.casefold)
     
     return stream_list
 
