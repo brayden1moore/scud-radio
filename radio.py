@@ -621,7 +621,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw lines
         draw.line([22, 28, 22, 76], fill=BLACK, width=1)
-        draw.line([22, 76, 36, 76], fill=BLACK, width=1)
+        draw.line([22, 76, 34, 76], fill=BLACK, width=1)
         circle_fill = WHITE if name in reruns else RED
         draw.ellipse([15, 15, 15 + 13, 15 + 13], fill=circle_fill, outline=BLACK, width=1)
 
@@ -635,17 +635,17 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         #mark_start = label_start - 2 #round(mark_start - 67/2)
         #draw.rectangle([mark_start, 131 + 67, mark_start + 67, 131 + 63], fill=WHITE)
         #draw.rectangle([mark_start + 1, 131 + 1, mark_start + 67 - 1, 131 + 67 - 1], fill=BLACK)
-        border_logo_position = (111, 125)
+        border_logo_position = (111, 125 - 4)
         if pushed:
-            logo_position = (129, 143)
-            bg_position = (111, 125)
+            logo_position = (129, 143 - 4)
+            bg_position = border_logo_position
             logo = streams[name]['logo_60']    
             first_pixel_color = logo.getpixel((2,2))
             draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 97, bg_position[1] + 97], fill=first_pixel_color)
             this_star = star_60.copy()
             this_live = live_60.copy()
         else:
-            logo_position = (111, 125)
+            logo_position = border_logo_position
             logo = streams[name]['logo_96']
             this_star = star_96.copy()
             this_live = live_96.copy()
@@ -654,8 +654,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         if name in favorites:
             #image.paste(this_star, logo_position, this_star)
-            draw.rectangle([107, 121, 211, 225], outline=YELLOW, width=4)
-            draw.rectangle([106, 120, 212, 226], outline=BLACK, width=1)
+            draw.rectangle([107, 121 - 4, 211, 225 - 4], outline=YELLOW, width=4)
+            draw.rectangle([106, 120 - 4, 212, 226 - 4], outline=BLACK, width=1)
             #image.paste(this_live, logo_position, this_live)
         
         draw.rectangle([border_logo_position[0], border_logo_position[1], border_logo_position[0]+96, border_logo_position[1]+96], outline=BLACK, width=1)
@@ -666,8 +666,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # prev and next
         #prev_position = (mark_start - 40 - 2, 155)
         #next_position = (mark_start + 68 + 2, 155)
-        prev_position = (39, 161)
-        next_position = (219, 161)
+        prev_position = (39, 161 - 4)
+        next_position = (219, 161 - 4)
         prev_next_rotation = 0
         prev = streams[prev_stream]['logo_60']#.rotate(prev_next_rotation, expand=True)
         next = streams[next_stream]['logo_60']#.rotate(-prev_next_rotation, expand=True)
@@ -692,8 +692,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # double prev and next
         #double_prev_position = (mark_start - 40 - 25 - 2 - 6, 170)
         #double_next_position = (mark_start + 68 + 40 + 2 + 6, 170)
-        double_prev_position = (7, 196)
-        double_next_position = (286, 196)
+        double_prev_position = (7, 196 - 4)
+        double_next_position = (286, 196 - 4)
         double_prev_next_rotation = 0
         double_prev = streams[double_prev_stream]['logo_25']#.rotate(double_prev_next_rotation, expand=True)
         double_next = streams[double_next_stream]['logo_25']#.rotate(-double_prev_next_rotation, expand=True)
