@@ -25,12 +25,16 @@ def display_goodbye():
     image.paste(bg, (0, 0))
     disp.ShowImage(image)
     time.sleep(2)
-    disp.clear()
     disp.bl_DutyCycle(0)
+    disp.clear()
 
 display_goodbye()
 
 def restart():
+    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    bg = Image.open(f'assets/scud_splash_1.png') 
+    image.paste(bg, (0, 0))
+    disp.ShowImage(image)
     subprocess.run(['sudo','systemctl','restart','radio'])
 
 from gpiozero import RotaryEncoder, Button
@@ -47,4 +51,5 @@ rotor.when_rotated_counter_clockwise = restart
 rotor.when_rotated_clockwise = restart
 
 while True:
+    time.sleep(1)
     pass
