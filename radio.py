@@ -88,6 +88,7 @@ RED = (255,71,71)
 SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
 MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
 LARGE_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
+LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28)
 
 unfavorite = Image.open('assets/unfavorited.png').convert('RGBA')
 favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'), 
@@ -598,12 +599,12 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw = ImageDraw.Draw(image)  
 
         location = streams[name]['location']
-        name_line = calculate_text(name, LARGE_FONT, 275, 1)
+        name_line = calculate_text(name, LARGE_FONT_THIN, 275, 1)
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
         # draw name and underline
-        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT, fill=WHITE)
-        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT), 38], fill=WHITE)
+        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT_THIN, fill=WHITE)
+        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT_THIN), 38], fill=WHITE)
 
         # draw location
         draw.text((38, 43), location, font=MEDIUM_FONT, fill=WHITE)
