@@ -721,6 +721,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             #image.paste(double_next_live, double_next_position, double_next_live)
 
         # draw mark
+
+        tick_locations = {}
+
         tick_width = 1
         padding = 30
         total_ticks = len(stream_list)
@@ -729,25 +732,26 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         tick_start = padding  
 
         square_start = padding - 5
-        square_end = padding + mark_width * len(favorites)
+        square_end = padding + mark_width * len(favorites) - 1
         if favorites:
             draw.rectangle([square_start, 228, square_end, 235], fill=YELLOW, outline=BLACK, width=1)
-        for i in favorites:
-            draw.rectangle([tick_start, 231, tick_start + tick_width, 232], fill=BLACK)
-            tick_start += mark_width
-            square_end += mark_width
+            for i in favorites:
+                draw.rectangle([tick_start, 231, tick_start + tick_width, 232], fill=BLACK)
+                tick_start += mark_width
+                square_end += mark_width
+                tick_locations[i] = tick_start
+            tick_start += 5
 
+        for i in [i for i in streams if i not in favorites]:
+            draw.rectangle([tick_start, 231, tick_start + tick_width, 232], fill=BLACK)
 
         # marker
         first_tick_start = padding
         bar_width = 1
-        mark_start = round(stream_list.index(name) * mark_width) + first_tick_start
+        mark_start = tick_locations[name]
         fill = BLACK if name in favorites else BLACK
         extra_width = 1 if name in favorites else 0
-        draw.rectangle([mark_start, 226, mark_start + bar_width + extra_width, 237], fill=fill)
-        #draw.rectangle([mark_start - mark_width, 229, mark_start - mark_width + bar_width, 234], fill=WHITE)
-        #draw.rectangle([mark_start + mark_width, 229, mark_start + mark_width + bar_width, 234], fill=WHITE)
-
+        draw.rectangle([mark_start, 227, mark_start + bar_width + extra_width, 235], fill=fill)
         safe_display(image)
     
     else:
