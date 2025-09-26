@@ -599,12 +599,13 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw = ImageDraw.Draw(image)  
 
         location = streams[name]['location']
-        name_line = calculate_text(name, LARGE_FONT, 275, 1)
+        name_line = calculate_text(name, LARGE_FONT_THIN, 275, 1)
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
         # draw name and underline
-        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT, fill=WHITE)
-        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT), 38], fill=WHITE)
+        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT_THIN, fill=BLACK)
+        draw.rectangle([38, 12 - 4, 38 + width(name_line, LARGE_FONT_THIN), 12 + height('S', LARGE_FONT_THIN)], fill=WHITE)
+        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT_THIN), 38], fill=WHITE)
 
         # draw location
         draw.text((38, 43), location, font=MEDIUM_FONT, fill=WHITE)
