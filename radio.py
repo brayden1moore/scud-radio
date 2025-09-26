@@ -673,23 +673,16 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         next = streams[next_stream]['logo_60']#.rotate(-prev_next_rotation, expand=True)
         image.paste(prev, prev_position, prev)
         draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + 60, prev_position[1] + 60], outline=BLACK, width=1)
-        if prev_stream in favorites:
-            draw.rectangle([prev_position[0] - 2,prev_position[1] - 2, prev_position[0] + 60 + 2, prev_position[1] + 60 + 2], outline=YELLOW, width=2)
-            draw.rectangle([prev_position[0] - 3,prev_position[1] - 3, prev_position[0] + 60 + 3, prev_position[1] + 60 + 3], outline=BLACK, width=1)
-
         image.paste(next, next_position, next)
         draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=BLACK, width=1)
+
+
+        if prev_stream in favorites:
+            prev_star = star_60.copy().rotate(prev_next_rotation, expand=True)
+            image.paste(prev_star, prev_position, prev_star)
         if next_stream in favorites:
-            draw.rectangle([next_position[0] - 2,next_position[1] - 2, next_position[0] + 60 + 2, next_position[1] + 60 + 2], outline=YELLOW, width=2)
-            draw.rectangle([next_position[0] - 3,next_position[1] - 3, next_position[0] + 60 + 3, next_position[1] + 60 + 3], outline=BLACK, width=1)
-
-
-        #if prev_stream in favorites:
-        #    prev_star = star_60.copy().rotate(prev_next_rotation, expand=True)
-            #image.paste(prev_star, prev_position, prev_star)
-        #if next_stream in favorites:
-        #    next_star = star_60.copy().rotate(-prev_next_rotation, expand=True)
-            #image.paste(next_star, next_position, next_star)
+            next_star = star_60.copy().rotate(-prev_next_rotation, expand=True)
+            image.paste(next_star, next_position, next_star)
         #if prev_stream not in reruns:
         #    prev_live = live_60.copy().rotate(prev_next_rotation, expand=True)
             #image.paste(prev_live, prev_position, prev_live)
@@ -711,12 +704,12 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         
         image.paste(double_prev, double_prev_position, double_prev)
         draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + 25, double_prev_position[1] + 25], outline=BLACK, width=1)
-        #if double_prev_stream in favorites:
-        #    double_prev_star = star_25.copy()#.rotate(double_prev_next_rotation, expand=True)
-            #image.paste(double_prev_star, double_prev_position, double_prev_star)
-        #if double_prev_stream not in reruns:
-        #    double_prev_live = live_25.copy()#.rotate(double_prev_next_rotation, expand=True)
-            #image.paste(double_prev_live, double_prev_position, double_prev_live)
+        if double_prev_stream in favorites:
+            double_prev_star = star_25.copy()#.rotate(double_prev_next_rotation, expand=True)
+            image.paste(double_prev_star, double_prev_position, double_prev_star)
+        if double_prev_stream not in reruns:
+            double_prev_live = live_25.copy()#.rotate(double_prev_next_rotation, expand=True)
+            image.paste(double_prev_live, double_prev_position, double_prev_live)
 
         image.paste(double_next, double_next_position, double_next)
         draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + 25, double_next_position[1] + 25], outline=BLACK, width=1)
