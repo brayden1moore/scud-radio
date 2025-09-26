@@ -25,7 +25,24 @@ def display_goodbye():
     image.paste(bg, (0, 0))
     disp.ShowImage(image)
     time.sleep(2)
+    disp.clear()
+    disp.bl_DutyCycle(0)
 
 display_goodbye()
 
-subprocess.run(['sudo','shutdown','-h','now'])
+def restart():
+    subprocess.run(['sudo','systemctl','restart','radio'])
+
+from gpiozero import RotaryEncoder, Button
+
+click_button = Button(26, bounce_time=0.05)
+click_button.when_pressed = restart
+click_button.when_held = restart
+click_button.when_released = restart
+
+CLK_PIN = 5 
+DT_PIN = 6   
+rotor = RotaryEncoder(CLK_PIN, DT_PIN)
+rotor.when_rotated_counter_clockwise = restart
+rotor.when_rotated_clockwise = restart
+
