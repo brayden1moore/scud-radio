@@ -599,11 +599,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
         draw = ImageDraw.Draw(image)  
 
-        # draw lines
-        draw.line([22, 28, 22, 76], fill=BLACK, width=1)
-        circle_fill = WHITE if name in reruns else RED
-        draw.ellipse([15, 15, 15 + 13, 15 + 13], fill=circle_fill, outline=BLACK, width=1)
-
         location = streams[name]['location']
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
@@ -621,8 +616,13 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((54, 66 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((38, 66 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
             y_offset += 20
+
+        # draw lines
+        draw.line([22, 28, 22, 76], fill=BLACK, width=1)
+        circle_fill = WHITE if name in reruns else RED
+        draw.ellipse([15, 15, 15 + 13, 15 + 13], fill=circle_fill, outline=BLACK, width=2)
 
         # label
         #draw.rectangle([label_start, 216, label_end, 233], fill=BLACK)
