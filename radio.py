@@ -827,14 +827,14 @@ def display_one(name):
 
     for i in title_lines:
         draw.text((14, anchor), i, font=LARGE_FONT, fill=BLACK)
-        anchor += avg_title_height + 6
+        anchor += avg_title_height + 3
 
     anchor += 5
 
     if info_lines:
         for i in info_lines:
             draw.text((14, anchor), i, font=MEDIUM_FONT, fill=BLACK)
-            anchor += avg_info_height + 6
+            anchor += avg_info_height + 3
 
     # battery
     display_battery(draw, image)
