@@ -728,11 +728,15 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         mark_width = round(total_span / (total_ticks - 1))
         tick_start = padding  
 
-        for i in stream_list:
-            fill = BLACK if i in favorites else BLACK
-            extra_width = 1 if i in favorites else 0 
+        square_start = padding - 5
+        square_end = padding * mark_width * len(favorites)
+        if favorites:
+            draw.rectangle([square_start, 228, square_end, 235], fill=YELLOW, outline=BLACK, width=1)
+        for i in favorites:
             draw.rectangle([tick_start, 231 - extra_width, tick_start + tick_width + extra_width, 232 + extra_width], fill=fill)
             tick_start += mark_width
+            square_end += mark_width
+
 
         # marker
         first_tick_start = padding
