@@ -673,7 +673,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         next = streams[next_stream]['logo_60']#.rotate(-prev_next_rotation, expand=True)
         image.paste(prev, prev_position, prev)
         draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + 60, prev_position[1] + 60], outline=BLACK, width=1)
-        draw.rectangle([prev_position[0] - 2,prev_position[1] - 2, prev_position[0] + 60 + 2, prev_position[1] + 60 + 2], outline=YELLOW, width=2)
+        if prev_stream in favorites:
+            draw.rectangle([prev_position[0] - 2,prev_position[1] - 2, prev_position[0] + 60 + 2, prev_position[1] + 60 + 2], outline=YELLOW, width=2)
+            draw.rectangle([prev_position[0] - 3,prev_position[1] - 3, prev_position[0] + 60 + 3, prev_position[1] + 60 + 3], outline=BLACK, width=1)
 
         image.paste(next, next_position, next)
         draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=BLACK, width=1)
