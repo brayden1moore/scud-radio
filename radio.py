@@ -679,7 +679,11 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         image.paste(next, next_position, next)
         draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=BLACK, width=1)
-        
+        if next_stream in favorites:
+            draw.rectangle([next_position[0] - 2,next_position[1] - 2, next_position[0] + 60 + 2, next_position[1] + 60 + 2], outline=YELLOW, width=2)
+            draw.rectangle([next_position[0] - 3,next_position[1] - 3, next_position[0] + 60 + 3, next_position[1] + 60 + 3], outline=BLACK, width=1)
+
+
         #if prev_stream in favorites:
         #    prev_star = star_60.copy().rotate(prev_next_rotation, expand=True)
             #image.paste(prev_star, prev_position, prev_star)
