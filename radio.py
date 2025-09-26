@@ -599,12 +599,12 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw = ImageDraw.Draw(image)  
 
         location = streams[name]['location']
-        name_line = calculate_text(name, LARGE_FONT_THIN, 275, 1)
+        name_line = calculate_text(name, LARGE_FONT, 275, 1)
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
         # draw name and underline
-        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT_THIN, fill=WHITE)
-        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT_THIN), 38], fill=WHITE)
+        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT, fill=WHITE)
+        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT), 38], fill=WHITE)
 
         # draw location
         draw.text((38, 43), location, font=MEDIUM_FONT, fill=WHITE)
@@ -780,10 +780,10 @@ def display_one(name):
     draw.rectangle([0, 223, 320, 240], fill=YELLOW)
 
     # name and underline
-    name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
-    draw.rectangle([92, 20 - 4, 92 + width(name_line, LARGE_FONT), 20 + height('S', LARGE_FONT)], fill=BLACK)
-    draw.text((92, 13), name_line, font=LARGE_FONT, fill=WHITE)
-    draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT), 47], fill=BLACK)
+    name_line = calculate_text(name, font=LARGE_FONT_THIN, max_width=225, lines=1)[0]
+    draw.rectangle([92, 20 - 4, 92 + width(name_line, LARGE_FONT_THIN), 20 + height('S', LARGE_FONT_THIN)], fill=BLACK)
+    draw.text((92, 13), name_line, font=LARGE_FONT_THIN, fill=WHITE)
+    draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT_THIN), 47], fill=BLACK)
    
     # location
     draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
