@@ -602,7 +602,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # draw lines
         draw.line([22, 28, 22, 76], fill=BLACK, width=1)
         circle_fill = WHITE if name in reruns else RED
-        draw.ellipse([13, 13, 13 + 10, 13 + 10], fill=circle_fill, outline=BLACK, width=1)
+        draw.ellipse([15, 15, 15 + 13, 15 + 13], fill=circle_fill, outline=BLACK, width=1)
 
         location = streams[name]['location']
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
@@ -655,8 +655,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             #image.paste(this_star, logo_position, this_star)
             draw.rectangle([107, 121, 211, 225], outline=YELLOW, width=4)
             draw.rectangle([106, 120, 212, 226], outline=BLACK, width=1)
-        if name not in reruns:
-            draw.ellipse([15, 15, 28, 28], fill=RED)
             #image.paste(this_live, logo_position, this_live)
         
         draw.rectangle([border_logo_position[0], border_logo_position[1], border_logo_position[0]+96, border_logo_position[1]+96], outline=BLACK, width=1)
