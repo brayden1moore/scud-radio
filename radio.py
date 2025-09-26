@@ -776,7 +776,7 @@ def display_one(name):
 
     # bottom bar
     draw.rectangle([0, 222, 320, 222], fill=BLACK)
-    draw.rectangle([0, 223, 320, 240], fill=WHITE)
+    draw.rectangle([0, 223, 320, 240], fill=YELLOW)
 
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT, max_width=225, lines=1)[0]
