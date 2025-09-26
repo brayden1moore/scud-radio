@@ -603,11 +603,11 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
         # draw name and underline
-        name_line = calculate_text(name, LARGE_ISH_FONT, 275, 1)
-        draw.rectangle([38, 12 - 4, 38 + width(name_line[0], LARGE_ISH_FONT), 12 + height('S', LARGE_ISH_FONT)], fill=YELLOW) # bg
-        draw.rectangle([38, 12 - 4, 38 + width(name_line[0], LARGE_ISH_FONT), 12 + height('S', LARGE_ISH_FONT)], outline=BLACK, width=1) # bg
-        draw.text((38, 12 - 7), name_line[0], font=LARGE_ISH_FONT, fill=BLACK) 
-        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_ISH_FONT), 38], fill=BLACK) # ul
+        name_line = calculate_text(name, LARGE_FONT_THIN, 275, 1)
+        draw.rectangle([38, 12 - 4, 38 + width(name_line[0], LARGE_FONT_THIN), 12 + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
+        #draw.rectangle([38, 12 - 4, 38 + width(name_line[0], LARGE_FONT_THIN), 12 + height('S', LARGE_FONT_THIN)], outline=BLACK, width=1) # bg border
+        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
+        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT_THIN), 38], fill=BLACK) # ul
 
         # draw location
         draw.rectangle([38, 43 + 2, 38 + width(location, MEDIUM_FONT), 43 + 3 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
