@@ -603,18 +603,18 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
         # draw name and underline
-        draw.rectangle([38, 12 - 4, 38 + width(name_line[0], LARGE_FONT_THIN), 12 + height('S', LARGE_FONT_THIN)], fill=WHITE)
+        draw.rectangle([38, 12 - 4, 38 + width(name_line[0], LARGE_FONT_THIN), 12 + height('S', LARGE_FONT_THIN)], fill=BLACK)
 
         draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT_THIN, fill=BLACK)
-        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT_THIN), 38], fill=WHITE)
+        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT_THIN), 38], fill=BLACK)
 
         # draw location
-        draw.text((38, 43), location, font=MEDIUM_FONT, fill=WHITE)
+        draw.text((38, 43), location, font=MEDIUM_FONT, fill=BLACK)
 
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((54, 70 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
+            draw.text((54, 70 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
             y_offset += 20
 
         # label
@@ -714,7 +714,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         tick_start = padding  
 
         for i in stream_list:
-            fill = YELLOW if i in favorites else WHITE
+            fill = YELLOW if i in favorites else BLACK
             extra_width = 1 if i in favorites else 0 
             draw.rectangle([tick_start, 231 - extra_width, tick_start + tick_width + extra_width, 232 + extra_width], fill=fill)
             tick_start += mark_width
@@ -723,7 +723,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         first_tick_start = padding
         bar_width = 1
         mark_start = round(stream_list.index(name) * mark_width) + first_tick_start
-        fill = YELLOW if name in favorites else WHITE
+        fill = YELLOW if name in favorites else BLACK
         extra_width = 1 if name in favorites else 0
         draw.rectangle([mark_start, 226, mark_start + bar_width + extra_width, 237], fill=fill)
         #draw.rectangle([mark_start - mark_width, 229, mark_start - mark_width + bar_width, 234], fill=WHITE)
