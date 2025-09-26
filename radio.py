@@ -596,8 +596,11 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
-        image = selector_bg.copy()
+        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
         draw = ImageDraw.Draw(image)  
+
+        # draw lines
+        draw.line([22, 28, 22, 76], fill=BLACK, width=1)
 
         location = streams[name]['location']
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
