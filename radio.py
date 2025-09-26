@@ -643,7 +643,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             this_live = live_96.copy()
         
         image.paste(logo, logo_position)
-        draw.rectangle([border_logo_position[0], border_logo_position[1], border_logo_position[0]+96, border_logo_position[1]+96], outline=BLACK, width=1)
 
         if name in favorites:
             #image.paste(this_star, logo_position, this_star)
@@ -652,6 +651,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         if name not in reruns:
             draw.ellipse([15, 15, 28, 28], fill=RED)
             #image.paste(this_live, logo_position, this_live)
+        
+        draw.rectangle([border_logo_position[0], border_logo_position[1], border_logo_position[0]+96, border_logo_position[1]+96], outline=BLACK, width=1)
 
         # line
         #draw.line([tick_mark_start + 1, 216, round(mark_start + 67/2), 131 + 67], fill=WHITE, width=2)
