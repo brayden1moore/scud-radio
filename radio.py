@@ -794,7 +794,7 @@ def display_one(name):
     draw.rectangle([92, 20 - 4, 92 + width(name_line, LARGE_FONT_THIN), 20 + height('S', LARGE_FONT_THIN)], fill=BLACK)
     draw.text((92, 13), name_line, font=LARGE_FONT_THIN, fill=WHITE)
     draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT_THIN), 47], fill=BLACK)
-    draw.rectangle([0, 47 + 16, SCREEN_WIDTH, 47 + 16], outline=BLACK, width=1)
+    draw.rectangle([0, 72 + 12, SCREEN_WIDTH, 72 + 12], outline=BLACK, width=1)
     
     # location
     draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
