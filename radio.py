@@ -762,7 +762,7 @@ def display_one(name):
     image = Image.new('RGBA',(320, 240), color=WHITE)
     draw = ImageDraw.Draw(image)  
 
-    draw.rectangle([13, 9, 78, 74], fill=BLACK)
+    draw.rectangle([14, 10, 77, 73], fill=BLACK)
     draw.rectangle([13 + 1, 9 + 1, 78 - 1, 74 - 1], fill=WHITE)
     logo_position = (16, 12)
     image.paste(logo, logo_position)
