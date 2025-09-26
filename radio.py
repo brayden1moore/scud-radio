@@ -729,7 +729,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         tick_start = padding  
 
         square_start = padding - 5
-        square_end = padding * mark_width * len(favorites)
+        square_end = padding + mark_width * len(favorites)
         if favorites:
             draw.rectangle([square_start, 228, square_end, 235], fill=YELLOW, outline=BLACK, width=1)
         for i in favorites:
