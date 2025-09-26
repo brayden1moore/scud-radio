@@ -88,6 +88,7 @@ RED = (255,71,71)
 SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
 MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
 LARGE_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",36)
+LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
 LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28)
 
 unfavorite = Image.open('assets/unfavorited.png').convert('RGBA')
@@ -602,10 +603,10 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
         # draw name and underline
-        name_line = calculate_text(name, LARGE_FONT, 275, 1)
-        draw.rectangle([38, 12 - 4, 38 + width(name_line[0], LARGE_FONT), 12 + height('S', LARGE_FONT_THIN)], fill=YELLOW) # bg
-        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT, fill=BLACK) 
-        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT), 38], fill=BLACK) # ul
+        name_line = calculate_text(name, LARGE_ISH_FONT, 275, 1)
+        draw.rectangle([38, 12 - 4, 38 + width(name_line[0], LARGE_ISH_FONT), 12 + height('S', LARGE_FONT_THIN)], fill=YELLOW) # bg
+        draw.text((38, 12 - 7), name_line[0], font=LARGE_ISH_FONT, fill=BLACK) 
+        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_ISH_FONT), 38], fill=BLACK) # ul
 
         # draw location
         draw.rectangle([38, 43 + 2, 38 + width(location, MEDIUM_FONT), 43 + 3 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
