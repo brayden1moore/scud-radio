@@ -715,7 +715,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw mark
         tick_width = 1
-        padding = 20
+        padding = 30
         total_ticks = len(stream_list)
         total_span = SCREEN_WIDTH - (2 * padding)
         mark_width = round(total_span / (total_ticks - 1))
