@@ -601,7 +601,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw lines
         draw.line([22, 28, 22, 76], fill=BLACK, width=1)
-        draw.circle([22, 28], radius=10, fill=RED, outline=BLACK, width=1)
+        circle_fill = WHITE if name in reruns else RED
+        draw.ellipse([13, 13, 13 + 10, 13 + 10], fill=circle_fill, outline=BLACK, width=1)
 
         location = streams[name]['location']
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
