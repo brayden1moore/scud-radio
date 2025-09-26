@@ -805,7 +805,7 @@ def display_one(name):
     
     # location
     location = streams[name]['location']
-    draw.rectangle([92, 52, 92 + width(location, MEDIUM_FONT), 52 + height('S', MEDIUM_FONT)], fill=BLUE)# bg
+    draw.rectangle([92, 52 + 2, 92 + width(location, MEDIUM_FONT), 52 + 3 + height('S', MEDIUM_FONT)], fill=BLUE)# bg
     draw.text((92, 52), calculate_text(location, font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
 
 
