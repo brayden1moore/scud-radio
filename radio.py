@@ -646,7 +646,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         if name in favorites:
             #image.paste(this_star, logo_position, this_star)
-            draw.rectangle([107, 121, 210, 224], outline=YELLOW, width=3)
+            draw.rectangle([107, 121, 210, 224], outline=YELLOW, width=4)
             draw.rectangle([106, 120, 211, 225], outline=BLACK, width=1)
         if name not in reruns:
             draw.ellipse([15, 15, 28, 28], fill=RED)
@@ -694,6 +694,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         #draw_angled_text(double_next_stream, MEDIUM_FONT, -116, image, (264,208), BLACK)
         
         image.paste(double_prev, double_prev_position, double_prev)
+        draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + 25, double_prev_position[1] + 25], outline=BLACK, width=1)
         #if double_prev_stream in favorites:
         #    double_prev_star = star_25.copy()#.rotate(double_prev_next_rotation, expand=True)
             #image.paste(double_prev_star, double_prev_position, double_prev_star)
@@ -702,6 +703,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             #image.paste(double_prev_live, double_prev_position, double_prev_live)
 
         image.paste(double_next, double_next_position, double_next)
+        draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + 25, double_next_position[1] + 25], outline=BLACK, width=1)
         #if double_next_stream in favorites:
         #    double_next_star = star_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
             #image.paste(double_next_star, double_next_position, double_next_star)
@@ -727,7 +729,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         first_tick_start = padding
         bar_width = 1
         mark_start = round(stream_list.index(name) * mark_width) + first_tick_start
-        fill = YELLOW if name in favorites else BLACK
+        fill = BLACK if name in favorites else BLACK
         extra_width = 1 if name in favorites else 0
         draw.rectangle([mark_start, 226, mark_start + bar_width + extra_width, 237], fill=fill)
         #draw.rectangle([mark_start - mark_width, 229, mark_start - mark_width + bar_width, 234], fill=WHITE)
