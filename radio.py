@@ -606,7 +606,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw.rectangle([38, 12 - 4, 38 + width(name_line[0], LARGE_FONT_THIN), 12 + height('S', LARGE_FONT_THIN)], fill=BLACK)
 
         draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT_THIN, fill=BLACK)
-        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT_THIN), 38], fill=BLACK)
+        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT_THIN), 38], fill=YELLOW)
 
         # draw location
         draw.text((38, 43), location, font=MEDIUM_FONT, fill=BLACK)
