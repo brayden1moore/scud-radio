@@ -436,7 +436,7 @@ def get_stream_list(streams):
         fav_start_idx = round(len(stream_list) / 2) - round(len(favorites) / 2)
         front_half = [i for i in stream_list if i not in favorites][:fav_start_idx]
         back_half = [i for i in stream_list if i not in favorites and i not in front_half]
-        stream_list =  back_half + sorted(favorites, key=str.casefold) + front_half
+        stream_list =  sorted(favorites, key=str.casefold) + front_half + back_half
     
     return stream_list
 
