@@ -627,8 +627,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         #mark_start = label_start - 2 #round(mark_start - 67/2)
         #draw.rectangle([mark_start, 131 + 67, mark_start + 67, 131 + 63], fill=WHITE)
         #draw.rectangle([mark_start + 1, 131 + 1, mark_start + 67 - 1, 131 + 67 - 1], fill=BLACK)
-        logo_position = (111, 125)
-        draw.rectangle([logo_position[0], logo_position[1], logo_position[0]+96, logo_position[1]+96], outline=BLACK, width=1)
+        border_logo_position = (111, 125)
         if pushed:
             logo_position = (129, 143)
             bg_position = (111, 125)
@@ -638,11 +637,13 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             this_star = star_60.copy()
             this_live = live_60.copy()
         else:
+            logo_position = (111, 125)
             logo = streams[name]['logo_96']
             this_star = star_96.copy()
             this_live = live_96.copy()
         
         image.paste(logo, logo_position)
+        draw.rectangle([border_logo_position[0], border_logo_position[1], border_logo_position[0]+96, border_logo_position[1]+96], outline=BLACK, width=1)
 
         if name in favorites:
             #image.paste(this_star, logo_position, this_star)
