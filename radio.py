@@ -785,7 +785,7 @@ def display_one(name):
     draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT), 47], fill=BLACK)
    
     # location
-    draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=trim_color)    
+    draw.text((92, 52), calculate_text(streams[name]['location'], font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
 
     # now playing
     y_offset = 0
