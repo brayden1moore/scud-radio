@@ -827,14 +827,14 @@ def display_one(name):
 
     for i in title_lines:
         draw.text((14, anchor), i, font=LARGE_FONT, fill=BLACK)
-        anchor += avg_title_height + 3
+        anchor += avg_title_height + 2
 
     anchor += 5
 
     if info_lines:
         for i in info_lines:
             draw.text((14, anchor), i, font=MEDIUM_FONT, fill=BLACK)
-            anchor += avg_info_height + 3
+            anchor += avg_info_height + 2
 
     # battery
     display_battery(draw, image)
@@ -877,8 +877,8 @@ def get_anchor(title, info, live):
         for line in info:
             size += height(line, MEDIUM_FONT) + 6
 
-    section_height = 215 - (72 + 12 + 7)
-    return 72 + 12 + 7 + round((section_height - size) // 2)
+    section_height = 215 - (72 + 12 + 9)
+    return 72 + 12 + 9 + round((section_height - size) // 2)
 
 
 def display_battery(draw, image):
