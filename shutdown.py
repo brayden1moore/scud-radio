@@ -46,3 +46,5 @@ rotor = RotaryEncoder(CLK_PIN, DT_PIN)
 rotor.when_rotated_counter_clockwise = restart
 rotor.when_rotated_clockwise = restart
 
+while True:
+    pass
