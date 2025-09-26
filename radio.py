@@ -821,20 +821,22 @@ def display_one(name):
     
     info_lines = [i for i in calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines) if i != '']
 
-    anchor = get_anchor(title_lines, info_lines, name not in reruns)
+    line_gap = 3
+    section_gap = 6
+    anchor = get_anchor(title_lines, info_lines, name not in reruns, line_gap, section_gap)
     avg_title_height = sum(height(i, LARGE_FONT) for i in title_lines) / len(title_lines) if title_lines else 0
     avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
 
     for i in title_lines:
         draw.text((14, anchor), i, font=LARGE_FONT, fill=BLACK)
-        anchor += avg_title_height + 2
+        anchor += avg_title_height + line_gap
 
-    anchor += 5
+    anchor += section_gap
 
     if info_lines:
         for i in info_lines:
             draw.text((14, anchor), i, font=MEDIUM_FONT, fill=BLACK)
-            anchor += avg_info_height + 2
+            anchor += avg_info_height + line_gap
 
     # battery
     display_battery(draw, image)
@@ -868,14 +870,14 @@ def display_ambient(name):
     screen_dim = True
 
 
-def get_anchor(title, info, live):
+def get_anchor(title, info, live, line_gap, section_gap):
     size = 0
     for line in title:
-        size += height(line, LARGE_FONT) + 3
+        size += height(line, LARGE_FONT) + line_gap
     if info:
-        size += 5
+        size += section_gap
         for line in info:
-            size += height(line, MEDIUM_FONT) + 3
+            size += height(line, MEDIUM_FONT) + line_gap
 
     section_height = 215 - (72 + 12 + 11)
     return 72 + 12 + 11 + round((section_height - size) // 2)
