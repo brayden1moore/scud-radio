@@ -871,11 +871,11 @@ def display_ambient(name):
 def get_anchor(title, info, live):
     size = 0
     for line in title:
-        size += height(line, LARGE_FONT) + 6
+        size += height(line, LARGE_FONT) + 3
     if info:
         size += 5
         for line in info:
-            size += height(line, MEDIUM_FONT) + 6
+            size += height(line, MEDIUM_FONT) + 3
 
     section_height = 215 - (72 + 12 + 11)
     return 72 + 12 + 11 + round((section_height - size) // 2)
