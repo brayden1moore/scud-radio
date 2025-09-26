@@ -621,8 +621,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw lines
         draw.line([22, 28, 22, 76], fill=BLACK, width=1)
+        draw.line([22, 76, 46, 76], fill=BLACK, width=1)
         circle_fill = WHITE if name in reruns else RED
-        draw.ellipse([15, 15, 15 + 13, 15 + 13], fill=circle_fill, outline=BLACK, width=2)
+        draw.ellipse([15, 15, 15 + 13, 15 + 13], fill=circle_fill, outline=BLACK, width=1)
 
         # label
         #draw.rectangle([label_start, 216, label_end, 233], fill=BLACK)
