@@ -768,7 +768,7 @@ def display_one(name):
     image.paste(logo, logo_position)
     if name in favorites:
         #image.paste(star_60, logo_position, star_60)
-        draw.rectangle([13, 9, 78, 74], outline=YELLOW, width=2)
+        draw.rectangle([12, 8, 79, 75], outline=YELLOW, width=2)
     #if name not in reruns:
         #draw.rectangle([logo_position[0] + 30, logo_position[1] + 46, logo_position[0] + 30 + 31, logo_position[1] + 46 + 16], fill=first_pixel_color)
         #draw.rectangle([logo_position[0] + 31, logo_position[1] + 47, logo_position[0] + 30 + 31, logo_position[1] + 46 + 16], fill=RED)
