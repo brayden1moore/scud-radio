@@ -642,10 +642,12 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             this_live = live_96.copy()
         
         image.paste(logo, logo_position)
+        draw.rectangle([logo_position[0], logo_position[1], logo_position[0]+96, logo_position[1]+96], outline=BLACK, width=1)
 
         if name in favorites:
             #image.paste(this_star, logo_position, this_star)
             draw.rectangle([107, 121, 210, 224], outline=YELLOW, width=3)
+            draw.rectangle([106, 120, 211, 225], outline=BLACK, width=1)
         if name not in reruns:
             draw.ellipse([15, 15, 28, 28], fill=RED)
             #image.paste(this_live, logo_position, this_live)
