@@ -744,6 +744,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         for i in [i for i in streams if i not in favorites]:
             draw.rectangle([tick_start, 231, tick_start + tick_width, 232], fill=BLACK)
+            tick_locations[i] = tick_start
+            tick_start += mark_width
 
         # marker
         first_tick_start = padding
