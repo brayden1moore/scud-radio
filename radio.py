@@ -652,7 +652,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             draw.ellipse([15, 15, 28, 28], fill=RED)
             #image.paste(this_live, logo_position, this_live)
         
-        draw.rectangle([border_logo_position[0], border_logo_position[1], border_logo_position[0]+96, border_logo_position[1]+96], outline=BLACK, width=1)
+        draw.rectangle([border_logo_position[0], border_logo_position[1], border_logo_position[0]+97, border_logo_position[1]+97], outline=BLACK, width=1)
 
         # line
         #draw.line([tick_mark_start + 1, 216, round(mark_start + 67/2), 131 + 67], fill=WHITE, width=2)
