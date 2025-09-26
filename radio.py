@@ -762,7 +762,7 @@ def display_one(name):
     image = Image.new('RGBA',(320, 240), color=WHITE)
     draw = ImageDraw.Draw(image)  
 
-    draw.rectangle([14, 10, 77, 73], outline=BLACK, width=1)
+    draw.rectangle([15, 11, 76, 72], outline=BLACK, width=1)
     logo_position = (16, 12)
     image.paste(logo, logo_position)
     if name in favorites:
