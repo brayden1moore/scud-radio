@@ -656,7 +656,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(this_star, logo_position, this_star)
             #draw.rectangle([107, 121 - 4, 211, 225 - 4], outline=YELLOW, width=4)
             #draw.rectangle([106, 120 - 4, 212, 226 - 4], outline=BLACK, width=1)
-            #image.paste(this_live, logo_position, this_live)
+        if name not in reruns:
+            image.paste(this_live, logo_position, this_live)
         
         draw.rectangle([border_logo_position[0], border_logo_position[1], border_logo_position[0]+96, border_logo_position[1]+96], outline=BLACK, width=1)
 
