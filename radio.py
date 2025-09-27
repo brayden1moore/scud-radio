@@ -683,12 +683,12 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         if next_stream in favorites:
             next_star = star_60.copy().rotate(-prev_next_rotation, expand=True)
             image.paste(next_star, next_position, next_star)
-        #if prev_stream not in reruns:
-        #    prev_live = live_60.copy().rotate(prev_next_rotation, expand=True)
-            #image.paste(prev_live, prev_position, prev_live)
-        #if next_stream not in reruns:
-        #    next_live = live_60.copy().rotate(-prev_next_rotation, expand=True)
-            #image.paste(next_live, next_position, next_live)
+        if prev_stream not in reruns:
+            prev_live = live_60.copy().rotate(prev_next_rotation, expand=True)
+            image.paste(prev_live, prev_position, prev_live)
+        if next_stream not in reruns:
+            next_live = live_60.copy().rotate(-prev_next_rotation, expand=True)
+            image.paste(next_live, next_position, next_live)
 
         # double prev and next
         #double_prev_position = (mark_start - 40 - 25 - 2 - 6, 170)
@@ -707,18 +707,18 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()#.rotate(double_prev_next_rotation, expand=True)
             image.paste(double_prev_star, double_prev_position, double_prev_star)
-        #if double_prev_stream not in reruns:
-            #double_prev_live = live_25.copy()#.rotate(double_prev_next_rotation, expand=True)
-        #    image.paste(double_prev_live, double_prev_position, double_prev_live)
+        if double_prev_stream not in reruns:
+            double_prev_live = live_25.copy()#.rotate(double_prev_next_rotation, expand=True)
+            image.paste(double_prev_live, double_prev_position, double_prev_live)
 
         image.paste(double_next, double_next_position, double_next)
         draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + 25, double_next_position[1] + 25], outline=BLACK, width=1)
         if double_next_stream in favorites:
             double_next_star = star_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
             image.paste(double_next_star, double_next_position, double_next_star)
-        #if double_next_stream not in reruns:
-        #    double_next_live = live_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
-            #image.paste(double_next_live, double_next_position, double_next_live)
+        if double_next_stream not in reruns:
+            double_next_live = live_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
+            image.paste(double_next_live, double_next_position, double_next_live)
 
         # draw mark
 
@@ -795,12 +795,12 @@ def display_one(name):
     if name in favorites:
         image.paste(star_60, logo_position, star_60)
     if name not in reruns:
-        draw.rectangle([13, 9, 78, 74], outline=RED, width=2)
-        draw.rectangle([12, 8, 79, 75], outline=BLACK, width=1)
+        #draw.rectangle([13, 9, 78, 74], outline=RED, width=2)
+        #draw.rectangle([12, 8, 79, 75], outline=BLACK, width=1)
         #draw.rectangle([logo_position[0] + 30, logo_position[1] + 46, logo_position[0] + 30 + 31, logo_position[1] + 46 + 16], fill=first_pixel_color)
         #draw.rectangle([logo_position[0] + 31, logo_position[1] + 47, logo_position[0] + 30 + 31, logo_position[1] + 46 + 16], fill=RED)
         #draw.text((logo_position[0] + 33, logo_position[1] + 49), "LIVE", fill=WHITE, font=SMALL_FONT)
-    #    image.paste(live_60, (16, 12), live_60)
+        image.paste(live_60, (16, 12), live_60)
 
     # bottom bar
     draw.rectangle([0, 222, 320, 222], fill=BLACK)
