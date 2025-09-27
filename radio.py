@@ -720,7 +720,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(double_next_live, double_next_position, double_next_live)
 
         # draw mark
-
         tick_locations = {}
 
         tick_width = 1
@@ -748,7 +747,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # marker
         first_tick_start = padding
-        bar_width = 1
+        bar_width = 2
         mark_start = tick_locations[name]
         fill = BLACK if name in favorites else BLACK
         draw.rectangle([mark_start, 228, mark_start + bar_width, 235], fill=fill)
