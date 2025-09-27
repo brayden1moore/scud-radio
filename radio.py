@@ -737,9 +737,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             draw.rectangle([square_start, 228, square_end, 235], fill=YELLOW, outline=BLACK, width=1)
             for i in sorted(favorites, key=str.casefold):
                 draw.rectangle([tick_start, 231, tick_start + tick_width, 232], fill=BLACK)
+                tick_locations[i] = tick_start
                 tick_start += mark_width
                 square_end += mark_width
-                tick_locations[i] = tick_start
             tick_start += 5
 
         for i in [i for i in stream_list if i not in favorites]:
