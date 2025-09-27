@@ -734,7 +734,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         square_start = padding - 5
         square_end = padding + mark_width * len(favorites) - 1
         if favorites:
-            draw.rectangle([square_start, 228, square_end, 235], fill=YELLOW, outline=BLACK, width=1)
+            draw.rectangle([square_start, 226, square_end, 236], fill=YELLOW, outline=BLACK, width=1)
             for i in sorted(favorites, key=str.casefold):
                 draw.rectangle([tick_start, 231, tick_start + tick_width, 232], fill=BLACK)
                 tick_locations[i] = tick_start
@@ -743,7 +743,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             tick_start += 5
 
         for i in [i for i in stream_list if i not in favorites]:
-            draw.rectangle([tick_start, 229, tick_start + tick_width, 232], fill=BLACK)
+            draw.rectangle([tick_start, 231, tick_start + tick_width, 232], fill=BLACK)
             tick_locations[i] = tick_start
             tick_start += mark_width
 
@@ -753,7 +753,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         mark_start = tick_locations[name]
         fill = BLACK if name in favorites else BLACK
         extra_width = 1 if name in favorites else 0
-        draw.rectangle([mark_start, 229, mark_start + bar_width + extra_width, 235], fill=fill)
+        draw.rectangle([mark_start, 227, mark_start + bar_width + extra_width, 235], fill=fill)
         logging.info(tick_locations)
         safe_display(image)
     
