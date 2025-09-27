@@ -635,17 +635,17 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         #mark_start = label_start - 2 #round(mark_start - 67/2)
         #draw.rectangle([mark_start, 131 + 67, mark_start + 67, 131 + 63], fill=WHITE)
         #draw.rectangle([mark_start + 1, 131 + 1, mark_start + 67 - 1, 131 + 67 - 1], fill=BLACK)
-        border_logo_position = (111, 125 - 4)
+        og_logo_position = (111, 125 - 4)
         if pushed:
             logo_position = (129, 143 - 4)
-            bg_position = border_logo_position
+            bg_position = og_logo_position
             logo = streams[name]['logo_60']    
             first_pixel_color = logo.getpixel((2,2))
             draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 97, bg_position[1] + 97], fill=first_pixel_color)
             this_star = star_60.copy()
             this_live = live_60.copy()
         else:
-            logo_position = border_logo_position
+            logo_position = og_logo_position
             logo = streams[name]['logo_96']
             this_star = star_96.copy()
             this_live = live_96.copy()
@@ -653,13 +653,13 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         image.paste(logo, logo_position)
 
         if name in favorites:
-            image.paste(this_star, logo_position, this_star)
+            image.paste(this_star, og_logo_position, this_star)
             #draw.rectangle([107, 121 - 4, 211, 225 - 4], outline=YELLOW, width=4)
             #draw.rectangle([106, 120 - 4, 212, 226 - 4], outline=BLACK, width=1)
         if name not in reruns:
-            image.paste(this_live, logo_position, this_live)
+            image.paste(this_live, og_logo_position, this_live)
         
-        draw.rectangle([border_logo_position[0], border_logo_position[1], border_logo_position[0]+96, border_logo_position[1]+96], outline=BLACK, width=1)
+        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLACK, width=1)
 
         # line
         #draw.line([tick_mark_start + 1, 216, round(mark_start + 67/2), 131 + 67], fill=WHITE, width=2)
