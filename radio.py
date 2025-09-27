@@ -641,7 +641,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             bg_position = og_logo_position
             logo = streams[name]['logo_60']    
             first_pixel_color = logo.getpixel((2,2))
-            draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 97, bg_position[1] + 97], fill=first_pixel_color)
+            draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], fill=first_pixel_color)
         else:
             logo_position = og_logo_position
             logo = streams[name]['logo_96']
