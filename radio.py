@@ -642,21 +642,19 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             logo = streams[name]['logo_60']    
             first_pixel_color = logo.getpixel((2,2))
             draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 97, bg_position[1] + 97], fill=first_pixel_color)
-            this_star = star_60.copy()
-            this_live = live_60.copy()
         else:
             logo_position = og_logo_position
             logo = streams[name]['logo_96']
-            this_star = star_96.copy()
-            this_live = live_96.copy()
         
         image.paste(logo, logo_position)
 
         if name in favorites:
+            this_star = star_96.copy()
             image.paste(this_star, og_logo_position, this_star)
             #draw.rectangle([107, 121 - 4, 211, 225 - 4], outline=YELLOW, width=4)
             #draw.rectangle([106, 120 - 4, 212, 226 - 4], outline=BLACK, width=1)
         if name not in reruns:
+            this_live = live_96.copy()
             image.paste(this_live, og_logo_position, this_live)
         
         draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLACK, width=1)
