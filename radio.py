@@ -1087,12 +1087,15 @@ def handle_rotation(direction):
     last_rotation = time.time()
     last_input_time = time.time()
 
-    if button_released_time and (time.time() - button_released_time > 0.3):
-        last_rotation = time.time()
-        if screen_dim:
-            display_one(stream)
-        else:
-            seek_stream(direction)
+    if held:
+        volume_handle_rotation(direction)
+    else:
+        if button_released_time and (time.time() - button_released_time > 0.3):
+            last_rotation = time.time()
+            if screen_dim:
+                display_one(stream)
+            else:
+                seek_stream(direction)
 
 def volume_handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
