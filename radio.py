@@ -1233,6 +1233,7 @@ try:
             readied_stream = None
             volume_overlay_showing = False
             if screen_on and stream and not screen_dim:
+                logging.info('displaying everything now ok?')
                 display_everything(0, stream)
 
         time.sleep(1)
