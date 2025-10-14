@@ -1120,8 +1120,10 @@ def volume_handle_rotation(direction):
 
 failed_fetches = 0
 time_since_last_update = 0
+last_successful_fetch = time.time()
+
 def periodic_update():
-    global screen_on, failed_fetches, time_since_last_update
+    global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list
 
     if not charging and screen_on == False and current_volume == 0 and (time.time() - last_input_time > 300):
         subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
@@ -1132,33 +1134,60 @@ def periodic_update():
     if screen_on and (time.time() - last_input_time > 600):
         screen_on = False
         backlight_off()
-        pass
     else:
-        if time_since_last_update == 15:
+        time_since_last_success = time.time() - last_successful_fetch
+        should_fetch = (time_since_last_update >= 15) or (time_since_last_success > 30)
+        
+        if should_fetch:
             try:
-                info = requests.get('https://internetradioprotocol.org/info').json()
+                logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
+                info = requests.get('https://internetradioprotocol.org/info', timeout=5).json()
+                
+                if not info or not isinstance(info, dict):
+                    raise ValueError("Invalid response format from API")
+                
+                updated_count = 0
                 for name, v in info.items():
                     if name in streams:
                         streams[name].update(v)
+                        updated_count += 1
+                
+                logging.info(f"Successfully updated {updated_count} streams")
                 stream_list = get_stream_list(streams)
                 failed_fetches = 0
+                last_successful_fetch = time.time()
                     
+            except requests.Timeout:
+                failed_fetches += 1
+                logging.error(f"Stream fetch timeout (attempt {failed_fetches}/3)")
+            except requests.RequestException as e:
+                failed_fetches += 1
+                logging.error(f"Stream fetch network error: {e} (attempt {failed_fetches}/3)")
+            except ValueError as e:
+                failed_fetches += 1
+                logging.error(f"Stream fetch invalid response: {e} (attempt {failed_fetches}/3)")
             except Exception as e:
                 failed_fetches += 1
-                if failed_fetches == 3:
+                logging.error(f"Stream fetch unexpected error: {type(e).__name__}: {e} (attempt {failed_fetches}/3)")
+            
+            if failed_fetches >= 3:
+                logging.error("Stream fetch failed 3 times. Restarting radio hardware.")
+                try:
                     disp.clear()
                     disp.reset()
                     disp.close()
-                    subprocess.run(['sudo','systemctl','restart','radio'])
-                    sys.exit(0)
-                pass
+                except:
+                    pass
+                subprocess.run(['sudo','systemctl','restart','radio'])
+                sys.exit(0)
+            
+            time_since_last_update = 0
 
-        if not held and not readied_stream and not screen_dim:
+        if not held and not readied_stream and not screen_dim and screen_on:
             display_everything(0, stream, update=True)
 
-        time_since_last_update = 0
+        time_since_last_update += 5
     
-    time_since_last_update += 5
     threading.Timer(5, periodic_update).start()
 
 def wake_screen():
