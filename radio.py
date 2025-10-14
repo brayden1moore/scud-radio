@@ -977,14 +977,14 @@ def show_volume_overlay(volume):
 
         img_background = img.getpixel((5,5))
         if img_background == (255, 255, 255, 255) or img_background == (255, 255, 255):
-            trim_color = BLACK
+            trim_color = RED
         else:
             trim_color = WHITE
         
         draw = ImageDraw.Draw(img)
         total_bar_height = SCREEN_HEIGHT
         volume_bar_end = total_bar_height * ((150-volume)/150)
-        draw.rectangle([SCREEN_WIDTH-15, 222, SCREEN_WIDTH, SCREEN_WIDTH-15 + 1], fill=BLACK)
+        draw.rectangle([SCREEN_WIDTH-15, 222, SCREEN_WIDTH, SCREEN_WIDTH-15 + 1], fill=RED)
         draw.rectangle([SCREEN_WIDTH-14, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=img_background)
 
         # border
