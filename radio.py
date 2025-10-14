@@ -1203,7 +1203,7 @@ rotor = RotaryEncoder(CLK_PIN, DT_PIN)
 rotor.when_rotated_counter_clockwise = wrapped_action(lambda: handle_rotation(-1), -1)
 rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1), 1)
 
-CLK_PIN = 7
+CLK_PIN = 16
 DT_PIN = 12  
 volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN)
 volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_handle_rotation(-1), -1)
