@@ -1181,13 +1181,15 @@ def wrapped_action(func, direction=0):
 
 
 def restart():
-    backlight_off()
-    run([
-        'sudo',
-        'systemctl',
-        'stop',
-        'radio'
-    ])
+    print("Stopping radio")
+    #backlight_off()
+    #run([
+    #    'sudo',
+    #    'systemctl',
+    #    'stop',
+    #    'radio'
+    #])
+    
 
 from gpiozero import RotaryEncoder, Button
 
