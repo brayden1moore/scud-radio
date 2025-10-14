@@ -1084,6 +1084,7 @@ def toggle_favorite():
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
     rotated = True
+    last_rotation = time.time()
     last_input_time = time.time()
 
     if button_released_time and (time.time() - button_released_time > 0.3):
@@ -1097,6 +1098,7 @@ def volume_handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
     rotated = True
     last_input_time = time.time()
+    last_rotation = time.time()
 
     if direction == 1: 
         if current_volume == 0:
