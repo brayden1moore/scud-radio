@@ -1086,28 +1086,31 @@ def handle_rotation(direction):
     rotated = True
     last_input_time = time.time()
 
-    if click_button.is_pressed:
-        if direction == 1: 
-            if current_volume == 0:
-                backlight_on()
-                screen_on = True
-            current_volume = min(150, current_volume + volume_step)
-        else: 
-            current_volume = max(0, current_volume - volume_step)
-            if current_volume == 0:
-                backlight_off()
-                screen_on = False
+    if button_released_time and (time.time() - button_released_time > 0.3):
+        last_rotation = time.time()
+        if screen_dim:
+            display_one(stream)
+        else:
+            seek_stream(direction)
 
-        show_volume_overlay(current_volume)
-        send_mpv_command({"command": ["set_property", "volume", current_volume]})
+def volume_handle_rotation(direction):
+    global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
+    rotated = True
+    last_input_time = time.time()
 
-    else:
-        if button_released_time and (time.time() - button_released_time > 0.3):
-            last_rotation = time.time()
-            if screen_dim:
-                display_one(stream)
-            else:
-                seek_stream(direction)
+    if direction == 1: 
+        if current_volume == 0:
+            backlight_on()
+            screen_on = True
+        current_volume = min(150, current_volume + volume_step)
+    else: 
+        current_volume = max(0, current_volume - volume_step)
+        if current_volume == 0:
+            backlight_off()
+            screen_on = False
+
+    show_volume_overlay(current_volume)
+    send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
 failed_fetches = 0
 time_since_last_update = 0
@@ -1199,6 +1202,12 @@ DT_PIN = 6
 rotor = RotaryEncoder(CLK_PIN, DT_PIN)
 rotor.when_rotated_counter_clockwise = wrapped_action(lambda: handle_rotation(-1), -1)
 rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1), 1)
+
+CLK_PIN = 7
+DT_PIN = 12  
+volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN)
+volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_handle_rotation(-1), -1)
+volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1)
 
 last_played = read_last_played()
 if last_played in stream_list:
