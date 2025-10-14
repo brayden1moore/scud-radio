@@ -751,7 +751,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         mark_start = tick_locations[name]
         fill = BLACK if name in favorites else BLACK
         draw.rectangle([mark_start, 228, mark_start + bar_width, 235], fill=fill)
-        logging.info(tick_locations)
         safe_display(image)
     
     else:
@@ -1268,7 +1267,6 @@ try:
             readied_stream = None
             volume_overlay_showing = False
             if screen_on and stream and not screen_dim:
-                logging.info('displaying everything now ok?')
                 display_everything(0, stream)
 
         time.sleep(1)
