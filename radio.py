@@ -984,7 +984,7 @@ def show_volume_overlay(volume):
         draw = ImageDraw.Draw(img)
         total_bar_height = SCREEN_HEIGHT
         volume_bar_end = total_bar_height * ((150-volume)/150)
-        draw.rectangle([SCREEN_WIDTH-15, 222, SCREEN_WIDTH, SCREEN_WIDTH-15 + 1], fill=RED)
+        draw.rectangle([SCREEN_WIDTH-15, 222, SCREEN_WIDTH, SCREEN_WIDTH-15 + 1], fill=BLACK) # make small divider on bottom bar
         draw.rectangle([SCREEN_WIDTH-14, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=img_background)
 
         # border
@@ -997,6 +997,7 @@ def show_volume_overlay(volume):
 
         # volume fill
         draw.rectangle([SCREEN_WIDTH-10, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=trim_color)
+        draw.rectangle([SCREEN_WIDTH-10, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], width=1, outline=BLACK)
 
         #draw.rectangle([SCREEN_WIDTH-9, 215, SCREEN_WIDTH, SCREEN_HEIGHT], fill=WHITE)
 
