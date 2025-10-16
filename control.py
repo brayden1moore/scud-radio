@@ -110,6 +110,12 @@ Usage:
     elif command in ['favorite', 'fav']:
         result = send_command('favorite')
         print(f"Favorites: {', '.join(result['favorites'])}")
+
+    elif command == 'off':
+        result = send_command('off')
+
+    elif command == 'on':
+        result = send_command('on')
     
     else:
         print(f"Unknown command: {command}")
