@@ -1302,7 +1302,7 @@ def handle_remote_command(command_data):
         elif cmd == 'on':
             send_mpv_command({"command": ["set_property", "volume", current_volume]})
             set_last_volume(str(current_volume))
-            backlight_on()
+            wake_screen()
         
         else:
             return {'status': 'error', 'message': 'Unknown command'}
