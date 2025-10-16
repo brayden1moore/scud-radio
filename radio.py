@@ -1303,6 +1303,8 @@ def handle_remote_command(command_data):
 
 
 def control_socket_listener():
+    global last_input_time
+    
     if os.path.exists(CONTROL_SOCKET):
         os.remove(CONTROL_SOCKET)
     
@@ -1322,6 +1324,7 @@ def control_socket_listener():
                 command = json.loads(data)
                 response = handle_remote_command(command)
                 conn.sendall((json.dumps(response) + '\n').encode('utf-8'))
+                last_input_time = time.time()
             
             conn.close()
         except Exception as e:
