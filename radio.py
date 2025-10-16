@@ -1202,6 +1202,7 @@ def wake_screen():
         time.sleep(0.2)
         display_one(stream)
         backlight_on()
+        display_one(stream)
         return True
     return False
 
