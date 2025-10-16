@@ -49,6 +49,7 @@ Usage:
         result = send_command('status')
         if result['status'] == 'ok':
             print(f"Station: {result['station']}")
+            print(f"Now Playing: {result['now_playing']}")
             print(f"Volume: {result['volume']}/150 ({round(result['volume']/150*100)}%)")
             print(f"Status: {result['play_status']}")
             print(f"Battery: {result.get('battery', 'N/A')}%")
