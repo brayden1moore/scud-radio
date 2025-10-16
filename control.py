@@ -35,7 +35,7 @@ Usage:
     radio next                Next station
     radio prev                Previous station
     radio play <station>      Play a specific station
-    radio play_random         Play a random station         
+    radio random              Play a random station         
     radio volume <0-150>      Set volume
     radio volume_up           Increase volume
     radio volume_down         Decrease volume
@@ -84,7 +84,7 @@ Usage:
         else:
             print(f"Error: {result['message']}")
     
-    elif command == 'play_random':
+    elif command == 'random':
         result = send_command('play_random')
     
     elif command == 'volume':
