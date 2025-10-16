@@ -1247,7 +1247,7 @@ def handle_remote_command(command_data):
             volume_handle_rotation(-1)
             return {'status': 'ok', 'volume': current_volume}
         
-        elif cmd == 'set_volume':
+        elif cmd == 'volume':
             vol = int(command_data.get('value', 60))
             vol = max(0, min(150, vol))
             current_volume = vol
@@ -1283,7 +1283,7 @@ def handle_remote_command(command_data):
                 'status': 'ok',
                 'station': stream,
                 'now_playing': streams[stream]['oneLiner'],
-                'volume': current_volume,
+                'volume': round(current_volume*100/150),
                 'battery': battery,
                 'charging': charging
             }

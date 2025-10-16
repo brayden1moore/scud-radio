@@ -36,10 +36,13 @@ Usage:
     radio prev                Previous station
     radio play <station>      Play a specific station
     radio random              Play a random station         
-    radio volume <0-150>      Set volume
-    radio volume_up           Increase volume
-    radio volume_down         Decrease volume
+    radio volume <0-100>      Set volume
+    radio up                  Increase volume
+    radio down                Decrease volume
     radio favorite            Toggle favorite on current station
+    radio off                 Put the radio to sleep
+    radio on                  Wake the radio up
+    radio restart             Restart the radio and gather updates
 """)
         sys.exit(1)
     
@@ -50,17 +53,14 @@ Usage:
         if result['status'] == 'ok':
             print(f"Station: {result['station']}")
             print(f"Now Playing: {result['now_playing']}")
-            print(f"Volume: {result['volume']}/150 ({round(result['volume']/150*100)}%)")
+            print(f"Volume: {result['volume']}/100 ({round(result['volume']/100)}%)")
             print(f"Battery: {result.get('battery', 'N/A')}%")
             print(f"Charging: {result.get('charging', False)}")
     
     elif command == 'list':
         result = send_command('list')
         if result['status'] == 'ok':
-            print(f"Favorites ({len(result['favorites'])}):")
-            for fav in result['favorites']:
-                print(f"  ★ {fav}")
-            print(f"\nAll Stations ({len(result['stations'])}):")
+            print(f"\nStations ({len(result['stations'])}):")
             for station in result['stations']:
                 marker = "★" if station in result['favorites'] else " "
                 print(f"  {marker} {station}")
@@ -93,8 +93,9 @@ Usage:
             sys.exit(1)
         try:
             vol = int(sys.argv[2])
+            vol = round(vol*150/100)
             result = send_command('set_volume', value=vol)
-            print(f"Volume set to: {result['volume']}/150 ({round(result['volume']/150*100)}%)")
+            print(f"Volume set to: {result['volume']}/100 ({round(result['volume']/100)}%)")
         except ValueError:
             print("Error: Volume must be a number")
             sys.exit(1)
