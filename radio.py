@@ -1278,6 +1278,7 @@ def handle_remote_command(command_data):
             return {
                 'status': 'ok',
                 'station': stream,
+                'now_playing': streams[stream],
                 'volume': current_volume,
                 'play_status': play_status,
                 'battery': battery,
@@ -1304,7 +1305,7 @@ def handle_remote_command(command_data):
 
 def control_socket_listener():
     global last_input_time
-    
+
     if os.path.exists(CONTROL_SOCKET):
         os.remove(CONTROL_SOCKET)
     
