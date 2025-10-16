@@ -1301,11 +1301,11 @@ def handle_remote_command(command_data):
 
         elif cmd == 'on':
             send_mpv_command({"command": ["set_property", "volume", current_volume]})
-            show_volume_overlay(current_volume)
             set_last_volume(str(current_volume))
             display_everything(stream)
             time.sleep(1)
             backlight_on()
+            display_everything(stream)
         
         else:
             return {'status': 'error', 'message': 'Unknown command'}
