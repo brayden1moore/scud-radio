@@ -307,6 +307,7 @@ def backlight_on():
             safe_display(current_image)
         else:
             display_scud()
+        time.sleep(0.2)
         disp.bl_DutyCycle(100)
 
 def backlight_off():
@@ -1201,8 +1202,9 @@ def wake_screen():
             display_scud()
         time.sleep(0.2)
         display_one(stream)
-        backlight_on()
+        time.sleep(0.2)
         display_one(stream)
+        backlight_on()
         return True
     return False
 
