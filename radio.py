@@ -1230,7 +1230,7 @@ def restart():
 CONTROL_SOCKET = "/tmp/radio_control"
 
 def handle_remote_command(command_data):
-    global current_volume, stream, readied_stream
+    global current_volume, stream, readied_stream, screen_on
     
     try:
         cmd = command_data.get('command')
@@ -1296,6 +1296,7 @@ def handle_remote_command(command_data):
             return {'status': 'ok', 'favorites': favorites}
         
         elif cmd == 'off':
+            screen_on = False
             send_mpv_command({"command": ["set_property", "volume", 0]})
             backlight_off()
 
