@@ -1223,7 +1223,114 @@ def restart():
     #    'stop',
     #    'radio'
     #])
+
+
+## remote controls
+
+CONTROL_SOCKET = "/tmp/radio_control"
+
+def handle_remote_command(command_data):
+    global current_volume, stream, readied_stream
     
+    try:
+        cmd = command_data.get('command')
+        
+        if cmd == 'volume_up':
+            volume_handle_rotation(1)
+            return {'status': 'ok', 'volume': current_volume}
+        
+        elif cmd == 'volume_down':
+            volume_handle_rotation(-1)
+            return {'status': 'ok', 'volume': current_volume}
+        
+        elif cmd == 'set_volume':
+            vol = int(command_data.get('value', 60))
+            vol = max(0, min(150, vol))
+            current_volume = vol
+            send_mpv_command({"command": ["set_property", "volume", current_volume]})
+            show_volume_overlay(current_volume)
+            set_last_volume(str(current_volume))
+            return {'status': 'ok', 'volume': current_volume}
+        
+        elif cmd == 'next':
+            seek_stream(1)
+            confirm_seek()
+            return {'status': 'ok', 'station': stream}
+        
+        elif cmd == 'prev':
+            seek_stream(-1)
+            confirm_seek()
+            return {'status': 'ok', 'station': stream}
+        
+        elif cmd == 'play':
+            station = command_data.get('station')
+            if station and station in stream_list:
+                play(station)
+                display_everything(0, station)
+                return {'status': 'ok', 'station': station}
+            return {'status': 'error', 'message': 'Station not found'}
+        
+        elif cmd == 'play_random':
+            play_random()
+            return {'status': 'ok'}
+        
+        elif cmd == 'status':
+            return {
+                'status': 'ok',
+                'station': stream,
+                'volume': current_volume,
+                'play_status': play_status,
+                'battery': battery,
+                'charging': charging
+            }
+        
+        elif cmd == 'list':
+            return {
+                'status': 'ok',
+                'stations': stream_list,
+                'favorites': favorites
+            }
+        
+        elif cmd == 'favorite':
+            toggle_favorite()
+            return {'status': 'ok', 'favorites': favorites}
+        
+        else:
+            return {'status': 'error', 'message': 'Unknown command'}
+            
+    except Exception as e:
+        return {'status': 'error', 'message': str(e)}
+
+
+def control_socket_listener():
+    if os.path.exists(CONTROL_SOCKET):
+        os.remove(CONTROL_SOCKET)
+    
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    sock.bind(CONTROL_SOCKET)
+    os.chmod(CONTROL_SOCKET, 0o666) 
+    sock.listen(1)
+    
+    logging.info(f"Listening on {CONTROL_SOCKET}")
+    
+    while True:
+        try:
+            conn, _ = sock.accept()
+            data = conn.recv(1024).decode('utf-8').strip()
+            
+            if data:
+                command = json.loads(data)
+                response = handle_remote_command(command)
+                conn.sendall((json.dumps(response) + '\n').encode('utf-8'))
+            
+            conn.close()
+        except Exception as e:
+            logging.error(f"Control socket error: {e}")
+    
+threading.Thread(target=control_socket_listener, daemon=True).start()
+
+
+## physical controls
 
 from gpiozero import RotaryEncoder, Button
 
@@ -1244,6 +1351,9 @@ DT_PIN = 12
 volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN)
 volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_handle_rotation(-1), -1)
 volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1)
+
+
+## main loop
 
 last_played = read_last_played()
 if last_played in stream_list:
