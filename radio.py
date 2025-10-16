@@ -1280,7 +1280,6 @@ def handle_remote_command(command_data):
                 'station': stream,
                 'now_playing': streams[stream]['oneLiner'],
                 'volume': current_volume,
-                'play_status': play_status,
                 'battery': battery,
                 'charging': charging
             }
