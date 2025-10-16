@@ -1200,6 +1200,7 @@ def wake_screen():
         else:
             display_scud()
         time.sleep(0.2)
+        display_one(stream)
         backlight_on()
         return True
     return False
