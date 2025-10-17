@@ -76,7 +76,7 @@ Usage:
             print("Error: Please specify station name")
             sys.exit(1)
         station = ' '.join(sys.argv[2:])
-        result = send_command('play', station=station)
+        result = send_command('play', value=station)
         if result['status'] == 'ok':
             print(f"Now playing: {result['station']}")
         else:
