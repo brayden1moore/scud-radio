@@ -1234,7 +1234,7 @@ def restart():
 CONTROL_SOCKET = "/tmp/radio_control"
 
 def handle_remote_command(command_data):
-    global current_volume, stream, readied_stream, screen_on
+    global current_volume, stream, readied_stream, screen_on, rotated
     
     try:
         cmd = command_data.get('command')
@@ -1307,6 +1307,7 @@ def handle_remote_command(command_data):
             }
         
         elif cmd == 'favorite':
+            rotated = False
             toggle_favorite()
             return {'status': 'ok', 'favorites': favorites}
         
