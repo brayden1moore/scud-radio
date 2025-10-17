@@ -124,6 +124,9 @@ Usage:
     elif command == 'power':
         result = send_command('power')
 
+    elif command == 'toggle':
+        result = send_command('toggle')
+
     else:
         print(f"Unknown command: {command}")
         sys.exit(1)
