@@ -51,11 +51,7 @@ Usage:
     if command == 'status':
         result = send_command('status')
         if result['status'] == 'ok':
-            print(f"Station: {result['station']}")
-            print(f"Now Playing: {result['now_playing']}")
-            print(f"Volume: {result['volume']}/100 ({round(result['volume']/100)}%)")
-            print(f"Battery: {result.get('battery', 'N/A')}%")
-            print(f"Charging: {result.get('charging', False)}")
+            print(f"{result['station']}: {result['now_playing']}")
     
     elif command == 'list':
         result = send_command('list')

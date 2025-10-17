@@ -1257,12 +1257,13 @@ def handle_remote_command(command_data):
             return {'status': 'ok', 'volume': current_volume}
         
         elif cmd == 'next':
-
+            readied_stream = stream
             seek_stream(1)
             confirm_seek()
             return {'status': 'ok', 'station': stream}
         
         elif cmd == 'prev':
+            readied_stream = stream
             seek_stream(-1)
             confirm_seek()
             return {'status': 'ok', 'station': stream}
