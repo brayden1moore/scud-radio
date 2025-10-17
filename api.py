@@ -27,7 +27,10 @@ def control(command):
     try:
         station = request.args.get('station') or request.args.get('', None)
         
-        cmd_list = ['sudo', 'python', '/home/scud/scud-radio/control.py', allowed_commands[command]]
+        if station:
+            cmd_list = ['sudo', 'python', '/home/scud/scud-radio/control.py', allowed_commands[command], station]
+        else:
+            cmd_list = ['sudo', 'python', '/home/scud/scud-radio/control.py', allowed_commands[command]]
         
         if station:
             cmd_list.append(station.replace('+', ' '))
