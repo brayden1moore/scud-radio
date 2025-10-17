@@ -17,7 +17,8 @@ def control(command):
         'status': 'status',
         'random': 'random',
         'up': 'volume_up', 
-        'down': 'volume_down' 
+        'down': 'volume_down',
+        'power':'power'
     }
     
     if command not in allowed_commands:

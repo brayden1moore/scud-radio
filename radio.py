@@ -1257,6 +1257,7 @@ def handle_remote_command(command_data):
             return {'status': 'ok', 'volume': current_volume}
         
         elif cmd == 'next':
+
             seek_stream(1)
             confirm_seek()
             return {'status': 'ok', 'station': stream}
@@ -1308,6 +1309,19 @@ def handle_remote_command(command_data):
             send_mpv_command({"command": ["set_property", "volume", current_volume]})
             set_last_volume(str(current_volume))
             wake_screen()
+
+        elif cmd == 'restart':
+            safe_restart()
+
+        elif cmd == 'power':
+            if screen_on:
+                screen_on = False
+                send_mpv_command({"command": ["set_property", "volume", 0]})
+                backlight_off()
+            else:
+                send_mpv_command({"command": ["set_property", "volume", current_volume]})
+                set_last_volume(str(current_volume))
+                wake_screen()
         
         else:
             return {'status': 'error', 'message': 'Unknown command'}

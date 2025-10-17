@@ -121,6 +121,9 @@ Usage:
     elif command == 'restart':
         result = send_command('restart')
 
+    elif command == 'power':
+        result = send_command('power')
+
     else:
         print(f"Unknown command: {command}")
         sys.exit(1)
