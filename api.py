@@ -34,7 +34,7 @@ def control(command):
         return jsonify({
             'success': True,
             'command': command,
-            'output': result.stdout,
+            'output': str(result.stdout).replace('\n',''),
             'error': result.stderr
         })
     except Exception as e:
