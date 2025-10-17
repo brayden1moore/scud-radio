@@ -1258,6 +1258,16 @@ def handle_remote_command(command_data):
             set_last_volume(str(current_volume))
             return {'status': 'ok', 'volume': current_volume}
         
+        elif cmd == 'play':
+            station_name = command_data.get('value')
+            if station_name in stream_list:
+                play(station_name)
+            return {
+                'status': 'ok',
+                'station': station_name,
+                'now_playing': streams[station_name]['oneLiner'],
+            }
+        
         elif cmd == 'next':
             readied_stream = stream
             seek_stream(1)

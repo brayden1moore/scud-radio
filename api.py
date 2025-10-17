@@ -1,7 +1,6 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import subprocess
 import sys
-
 app = Flask(__name__)
 
 @app.route('/control/<command>', methods=['POST', 'GET'])
@@ -14,27 +13,37 @@ def control(command):
         'volume_down': 'volume_down',
         'prev': 'prev',
         'next': 'next',
+        'play': 'play',
         'status': 'status',
         'random': 'random',
-        'up': 'volume_up', 
+        'up': 'volume_up',
         'down': 'volume_down',
-        'power':'power'
+        'power': 'power'
     }
     
     if command not in allowed_commands:
         return jsonify({'error': 'Invalid command'}), 400
     
     try:
+        station = request.args.get('station') or request.args.get('', None)
+        
+        cmd_list = ['sudo', 'python', '/home/scud/scud-radio/control.py', allowed_commands[command]]
+        
+        if station:
+            cmd_list.append(station.replace('+', ' '))
+        
         result = subprocess.run(
-            ['sudo', 'python', '/home/scud/scud-radio/control.py', allowed_commands[command]], 
-            capture_output=True, 
+            cmd_list,
+            capture_output=True,
             text=True,
             timeout=5
         )
+        
         return jsonify({
             'success': True,
             'command': command,
-            'output': str(result.stdout).replace('\n',''),
+            'station': station.replace('+', ' ') if station else None,
+            'output': str(result.stdout).replace('\n', ''),
             'error': result.stderr
         })
     except Exception as e:
