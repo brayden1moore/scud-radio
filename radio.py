@@ -1234,7 +1234,7 @@ def restart():
 CONTROL_SOCKET = "/tmp/radio_control"
 
 def handle_remote_command(command_data):
-    global current_volume, stream, readied_stream, screen_on, rotated
+    global current_volume, stream, readied_stream, screen_on, rotated, play_status
     
     try:
         cmd = command_data.get('command')
@@ -1346,9 +1346,11 @@ def handle_remote_command(command_data):
                 wake_screen()
 
         elif cmd == 'toggle':
-            if current_volume != 0:
+            if play_status == 'play':
                 send_mpv_command({"command": ["set_property", "volume", 0]})
+                play_status = 'pause'
             else:
+                play_status = 'play'
                 send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
         else:
