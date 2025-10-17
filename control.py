@@ -63,11 +63,13 @@ Usage:
     
     elif command == 'next':
         result = send_command('next')
-        print(f"Now playing: {result.get('station', 'N/A')}")
+        if result['status'] == 'ok':
+            print(f"{result.get('station', 'N/A')}: {result['now_playing']}")
     
     elif command == 'prev':
         result = send_command('prev')
-        print(f"Now playing: {result.get('station', 'N/A')}")
+        if result['status'] == 'ok':
+            print(f"{result.get('station', 'N/A')}: {result['now_playing']}")
     
     elif command == 'play':
         if len(sys.argv) < 3:
@@ -82,6 +84,8 @@ Usage:
     
     elif command == 'random':
         result = send_command('play_random')
+        if result['status'] == 'ok':
+            print(f"{result.get('station', 'N/A')}: {result['now_playing']}")
     
     elif command == 'volume':
         if len(sys.argv) < 3:

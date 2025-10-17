@@ -1262,25 +1262,32 @@ def handle_remote_command(command_data):
             readied_stream = stream
             seek_stream(1)
             confirm_seek()
-            return {'status': 'ok', 'station': stream}
+            return {
+                'status': 'ok',
+                'station': stream,
+                'now_playing': streams[stream]['oneLiner'],
+            }
         
         elif cmd == 'prev':
             readied_stream = stream
             seek_stream(-1)
             confirm_seek()
-            return {'status': 'ok', 'station': stream}
-        
-        elif cmd == 'play':
-            station = command_data.get('station')
-            if station and station in stream_list:
-                play(station)
-                display_everything(0, station)
-                return {'status': 'ok', 'station': station}
-            return {'status': 'error', 'message': 'Station not found'}
+            return {
+                'status': 'ok',
+                'station': stream,
+                'now_playing': streams[stream]['oneLiner'],
+            }
         
         elif cmd == 'play_random':
             play_random()
-            return {'status': 'ok'}
+            return {
+                'status': 'ok',
+                'station': stream,
+                'now_playing': streams[stream]['oneLiner'],
+                'volume': round(current_volume*100/150),
+                'battery': battery,
+                'charging': charging
+            }
         
         elif cmd == 'status':
             return {
