@@ -1241,10 +1241,12 @@ def handle_remote_command(command_data):
         
         if cmd == 'volume_up':
             volume_handle_rotation(1)
+            set_last_volume(current_volume)
             return {'status': 'ok', 'volume': current_volume}
         
         elif cmd == 'volume_down':
             volume_handle_rotation(-1)
+            set_last_volume(current_volume)
             return {'status': 'ok', 'volume': current_volume}
         
         elif cmd == 'volume':
