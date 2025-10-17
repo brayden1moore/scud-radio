@@ -1260,6 +1260,7 @@ def handle_remote_command(command_data):
         
         elif cmd == 'play':
             station_name = command_data.get('value')
+            logging.info(station_name)
             if station_name in stream_list:
                 play(station_name)
             return {
