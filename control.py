@@ -118,6 +118,12 @@ Usage:
     elif command == 'on':
         result = send_command('on')
 
+    elif command == 'pause':
+        result = send_command('pause')
+
+    elif command == 'resume':
+        result = send_command('resume')
+
     elif command == 'restart':
         result = send_command('restart')
 

@@ -1332,6 +1332,12 @@ def handle_remote_command(command_data):
             set_last_volume(str(current_volume))
             wake_screen()
 
+        elif cmd == 'pause':
+            send_mpv_command({"command": ["set_property", "volume", 0]})
+
+        elif cmd == 'resume':
+            send_mpv_command({"command": ["set_property", "volume", current_volume]})
+
         elif cmd == 'restart':
             safe_restart()
 

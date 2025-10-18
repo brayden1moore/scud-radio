@@ -19,7 +19,9 @@ def control(command):
         'up': 'volume_up',
         'down': 'volume_down',
         'power': 'power',
-        'toggle':'toggle'
+        'toggle':'toggle',
+        'pause':'pause',
+        'resume':'resume'
     }
     
     if command not in allowed_commands:
