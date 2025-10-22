@@ -23,8 +23,6 @@ SCREEN_HEIGHT = 240
 
 disp = None
 
-wifi_waiting = False
-
 def display_setup():
     global disp
 
@@ -50,6 +48,21 @@ def display_result(type):
     bg = Image.open(f'assets/{"success" if type=="success" else "failure"}.png') 
     image.paste(bg, (0, 0))
     disp.ShowImage(image)
+
+wifi_waiting = False
+def check_wifi_periodically():
+    global disp
+    while wifi_waiting:
+        time.sleep(5)
+        if internet(retries=1):
+            logging.info("WiFi connection detected! Shutting down setup...")
+            display_result('success')
+            time.sleep(3)
+            disp.clear()
+            disp.reset()
+            disp.close()
+            subprocess.run(['sudo','systemctl','restart','radio'])
+            os._exit(0)
 
 app = Flask(__name__,
             static_folder='assets',
@@ -123,9 +136,13 @@ def submit():
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
 
 connected = internet(retries=5)
-
 if not connected:
     display_setup()
+    wifi_waiting = True
+    
+    wifi_thread = threading.Thread(target=check_wifi_periodically, daemon=True)
+    wifi_thread.start()
+    
     start_hotspot()
     app.run(host='0.0.0.0', port=8888, use_reloader=False)
 else:
