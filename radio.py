@@ -132,7 +132,7 @@ def display_logos():
     for i in small_logos:
         with open(lib_path / i, 'rb') as f:
             logo = pickle.load(f)
-            img.paste(logo, (0 + x_offset, 0 + y_offset))
+            img.paste(logo, (round(x_offset), round(y_offset)))
             y_offset += hyp / len(small_logos)
             x_offset += hyp / len(small_logos)
     
