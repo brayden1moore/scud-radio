@@ -121,97 +121,33 @@ selector_live_overlay = Image.open('assets/selectorliveoverlay.png').convert('RG
 
 LIB_PATH = "/var/lib/scud-radio"
 
-def display_logos(use_sine_wave=False):
-    """
-    Display logos from pickle files along a diagonal line or sine wave path.
-    
-    Parameters:
-    use_sine_wave : bool
-        If True, position logos along a sine wave path.
-        If False, position along a straight diagonal line.
-    """
-    lib_path = Path(LIB_PATH)
-    small_logos = [i for i in os.listdir(lib_path) if '25.pkl' in i]
-    
-    if not small_logos:
-        print("No logo files found")
-        return
-    
-    img = Image.new('RGB', (320, 240), color=WHITE)
-    
-    # Pre-calculate all positions along the path
-    if use_sine_wave:
-        positions = get_sine_wave_positions(len(small_logos))
-    else:
-        positions = [(i * 320 / len(small_logos), i * 240 / len(small_logos)) 
-                     for i in range(len(small_logos))]
-    
-    for idx, logo_file in enumerate(small_logos):
-        try:
-            with open(lib_path / logo_file, 'rb') as f:
-                logo = pickle.load(f)
-            
-            x_offset, y_offset = positions[idx]
-            img.paste(logo, (round(x_offset), round(y_offset)))
-            
-        except Exception as e:
-            print(f"Error loading {logo_file}: {e}")
-            continue
-    
-    disp.ShowImage(img)
-
-
 def angled_sine_wave(x):
-    """
-    Generates y-coordinate for sine wave from (0,0) to (320,240).
-    Amplitude increases to max at x=160, then decreases to 0 at x=320.
-    """
-    import numpy as np
-    
-    # Linear component to angle from (0,0) to (320,240)
     linear = (240 / 320) * x
-    
-    # Variable amplitude: peaks at x=160, returns to 0 at x=320
     amplitude = 60 * np.sin(np.pi * x / 320)
-    
-    # Sine wave component
     wave_frequency = 4
     sine_component = amplitude * np.sin(2 * np.pi * wave_frequency * x / 320)
-    
-    # Combine linear trend with sine wave
     y = linear + sine_component
-    
     return y
 
 
-def get_sine_wave_positions(num_points):
-    """
-    Calculate evenly spaced positions along the sine wave path.
-    Returns list of (x, y) tuples.
-    """
-    import numpy as np
+def display_logos():
+    lib_path = Path(LIB_PATH)
+    small_logos = [i for i in os.listdir(lib_path) if '25.pkl' in i]
+    img = Image.new('RGB', (320, 240), color=WHITE)
+    x_offset = 0
+    y_offset = 0
     
-    # Generate many points along the curve to calculate arc length
-    x_fine = np.linspace(0, 320, 10000)
-    y_fine = angled_sine_wave(x_fine)
+    for idx, i in enumerate(small_logos):
+        with open(lib_path / i, 'rb') as f:
+            logo = pickle.load(f)
+
+        t = idx / len(small_logos)
+        x_offset = t * 320
+        y_offset = angled_sine_wave(x_offset)
+        img.paste(logo, (round(x_offset), round(y_offset)))
+        x_offset += 320 / len(small_logos)
     
-    # Calculate cumulative arc length
-    dx = np.diff(x_fine)
-    dy = np.diff(y_fine)
-    segment_lengths = np.sqrt(dx**2 + dy**2)
-    cumulative_length = np.concatenate([[0], np.cumsum(segment_lengths)])
-    total_length = cumulative_length[-1]
-    
-    # Find positions at evenly spaced arc lengths
-    positions = []
-    for i in range(num_points):
-        target_length = (i / (num_points - 1)) * total_length if num_points > 1 else 0
-        idx = np.searchsorted(cumulative_length, target_length)
-        if idx >= len(x_fine):
-            idx = len(x_fine) - 1
-        positions.append((x_fine[idx], y_fine[idx]))
-    
-    return positions
+        disp.ShowImage(img)
 
 
 def get_favorites():
