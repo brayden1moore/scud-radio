@@ -14,9 +14,10 @@
     <style>
         body {
             background-color: white;
-            font-family: Andale Mono;
+            font-family: "Archivo Light";
             padding: 10vw;
             padding-top: 10px;
+            line-height:0.75em; letter-spacing:-0.06em;
             justify-content: center;
             align-items: center;
             text-align: center;
@@ -24,19 +25,19 @@
         
         h1 {
             margin-top: -47px;
-            line-height: 1em;
             font-size: 24pt;
-            font-family: "Arial Black";
+            line-height:0.82em; letter-spacing:-0.06em;
+            font-family: "Archivo ExtraBold";
         }
         
         @font-face {
-            font-family: "Arial Black";
-            src: url("assets/Arial Black.ttf") format("truetype");
+            font-family: "Archivo ExtraBold";
+            src: url("assets/Archivo-ExtraBold.ttf") format("truetype");
         }
 
         @font-face {
-            font-family: "Andale Mono";
-            src: url("assets/andalemono.ttf") format("truetype");}
+            font-family: "Archivo Light";
+            src: url("assets/Archivo-Light.ttf") format("truetype");}
         
         #main-content {
             max-width: 500px;
@@ -52,13 +53,12 @@
         }
 
         #main-logo {
-            height: 225px;
-            width: 225px;
+            width: 500px;
         }
         
         form {
             margin-top: 25px;
-            background: yellow;
+            background: white;
             border: 1px solid black;
             padding: 20px;
             justify-content: center;
@@ -68,8 +68,11 @@
         label {
             display: block;
             margin-bottom: 5px;
-            font-size: 14px;
+            font-size: 16px;
             background-color: black;
+            padding: 1px;
+            padding-bottom: 0px;
+            padding-left: 0px;
             color: white;
             width: fit-content;
         }
@@ -88,7 +91,7 @@
             background-color: black;
             color: white;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
             width: 100%;
             justify-content: left;
             text-align: center;
@@ -96,7 +99,7 @@
         }
         
         input[type="submit"]:hover {
-            background-color: white;
+            background-color: yellow;
             color: black;
         }
 
@@ -128,15 +131,15 @@
 <body>
     <div id="main-content">
         <div class="logo-container">
-            <img id="main-logo" src="assets/scudradiocenter.gif" alt="Scud Radio Center" width="auto">
+            <img id="main-logo" src="assets/wifi.png" alt="Scud Radio Center" width="auto">
         </div>
         
-        <h1 id="main-text">CONNECT<br>SCUD RADIO<br>TO WIFI</h1>
+        <!--<h1 id="main-text">Connect your<br>Scud Radio<br>to wifi</h1>-->
         
         <form id="form" action="/submit" method="post">
             <div class="input-div">
                 <div class="an-input">
-                    <label for="ssid">NETWORK</label>
+                    <label for="ssid">Network</label>
                     <select name="ssid" id="ssid" required>
                         {% for ssid in wifi_networks %}
                         <option value="{{ ssid }}">{{ ssid }}</option>
@@ -145,7 +148,7 @@
                 </div>
 
                 <div class="an-input">
-                    <label for="password">PASSWORD</label>
+                    <label for="password">Password</label>
                     <input name="password" id="password" placeholder="Enter your password..."/>
                 </div>
 
@@ -166,7 +169,7 @@
     const message = document.getElementById('message');
 
     submitButton.addEventListener('click', () => {
-        mainText.textContent = 'CONNECTING...';
+        mainText.textContent = 'Connecting...';
         form.style.display = 'None';
         message.innerHTML = "Keep an eye on your radio.<br>It will let you know if it connects successfully.<br>If it doesn't, this page will refresh."
     })
