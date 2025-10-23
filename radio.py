@@ -123,6 +123,7 @@ LIB_PATH = "/var/lib/scud-radio"
 
 def angled_sine_wave(x):
     linear = (240 / 320) * x
+    linear = x
     amplitude = 60 * np.sin(np.pi * x / 320)
     wave_frequency = 4
     sine_component = amplitude * np.sin(2 * np.pi * wave_frequency * x / 320)
