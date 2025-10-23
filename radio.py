@@ -136,7 +136,7 @@ def display_logos():
             y_offset += hyp / len(small_logos)
             x_offset += hyp / len(small_logos)
     
-    disp.ShowImage(img)
+        disp.ShowImage(img)
 
 
 def get_favorites():
