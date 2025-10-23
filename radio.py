@@ -121,6 +121,15 @@ selector_live_overlay = Image.open('assets/selectorliveoverlay.png').convert('RG
 
 LIB_PATH = "/var/lib/scud-radio"
 
+def angled_sine_wave(x):
+    linear = (240 / 320) * x
+    amplitude = 60 * np.sin(np.pi * x / 320)
+    wave_frequency = 4
+    sine_component = amplitude * np.sin(2 * np.pi * wave_frequency * x / 320)
+    y = linear + sine_component
+    return y
+
+
 def display_logos():
     lib_path = Path(LIB_PATH)
     small_logos = [i for i in os.listdir(lib_path) if '25.pkl' in i]
@@ -128,12 +137,14 @@ def display_logos():
     x_offset = 0
     y_offset = 0
     
-    for i in small_logos:
+    for idx, i in enumerate(small_logos):
         with open(lib_path / i, 'rb') as f:
             logo = pickle.load(f)
-            img.paste(logo, (round(x_offset), round(y_offset)))
-            y_offset += 240 / len(small_logos)
-            x_offset += 320 / len(small_logos)
+
+        t = idx / len(small_logos)
+        x_offset = t * 320
+        y_offset = angled_sine_wave(x_offset)
+        img.paste(logo, (round(x_offset), round(y_offset)))
     
         disp.ShowImage(img)
 
