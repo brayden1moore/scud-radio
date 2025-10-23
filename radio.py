@@ -143,11 +143,11 @@ def display_logos():
             logo = pickle.load(f)
 
         t = idx / len(small_logos)
-        x_offset = t * 320
+        x_offset = t * 295
         y_offset = angled_sine_wave(x_offset)
         draw.rectangle([round(x_offset), round(y_offset), round(x_offset)+25, round(y_offset)+25], outline=BLACK, width=1)
         img.paste(logo, (round(x_offset), round(y_offset)))
-        x_offset += 320 / len(small_logos)
+        x_offset += 295 / len(small_logos)
     
         disp.ShowImage(img)
 
