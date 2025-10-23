@@ -125,7 +125,7 @@ def angled_sine_wave(x):
     linear = x
     amplitude = 60 * np.sin(np.pi)# * x / 320)
     wave_frequency = 5
-    sine_component = amplitude * np.sin(2 * np.pi * wave_frequency * x / 320)
+    sine_component = amplitude * np.sin(2 * np.pi * wave_frequency)# * x / 320)
     y = 120 + sine_component
     return y
 
