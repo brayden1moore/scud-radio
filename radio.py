@@ -124,7 +124,7 @@ LIB_PATH = "/var/lib/scud-radio"
 def display_logos():
     lib_path = Path(LIB_PATH)
     small_logos = [i for i in os.listdir(lib_path) if '25.pkl' in i]
-    img = Image.new('RGB', (320, 240), color=BLACK)
+    img = Image.new('RGB', (320, 240), color=WHITE)
     x_offset = 0
     y_offset = 0
     
