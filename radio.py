@@ -1418,7 +1418,7 @@ else:
     play_random()
     
 readied_stream = stream
-display_everything(0, stream)
+display_everything(0, stream, readied=True)
 last_input_time = time.time()
 periodic_update()
 
