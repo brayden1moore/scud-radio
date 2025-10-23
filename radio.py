@@ -134,6 +134,7 @@ def display_logos():
     lib_path = Path(LIB_PATH)
     small_logos = [i for i in os.listdir(lib_path) if '25.pkl' in i]
     img = Image.new('RGB', (320, 240), color=WHITE)
+    draw = ImageDraw.Draw(img)
     x_offset = 0
     y_offset = 0
     
@@ -144,6 +145,7 @@ def display_logos():
         t = idx / len(small_logos)
         x_offset = t * 320
         y_offset = angled_sine_wave(x_offset)
+        draw.rectangle([round(x_offset), round(y_offset), round(x_offset)+25, round(y_offset)+25], outline=BLACK, width=1)
         img.paste(logo, (round(x_offset), round(y_offset)))
         x_offset += 320 / len(small_logos)
     
