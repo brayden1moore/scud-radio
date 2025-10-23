@@ -125,7 +125,6 @@ def display_logos():
     lib_path = Path(LIB_PATH)
     small_logos = [i for i in os.listdir(lib_path) if '25.pkl' in i]
     img = Image.new('RGB', (320, 240), color=BLACK)
-    hyp = 400
     x_offset = 0
     y_offset = 0
     
@@ -133,8 +132,8 @@ def display_logos():
         with open(lib_path / i, 'rb') as f:
             logo = pickle.load(f)
             img.paste(logo, (round(x_offset), round(y_offset)))
-            y_offset += hyp / len(small_logos)
-            x_offset += hyp / len(small_logos)
+            y_offset += 240 / len(small_logos)
+            x_offset += 320 / len(small_logos)
     
         disp.ShowImage(img)
 
