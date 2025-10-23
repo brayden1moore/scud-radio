@@ -1417,6 +1417,7 @@ if last_played in stream_list:
 else:
     play_random()
     
+readied_stream = stream
 display_everything(0, stream)
 last_input_time = time.time()
 periodic_update()
