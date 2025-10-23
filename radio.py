@@ -121,6 +121,24 @@ selector_live_overlay = Image.open('assets/selectorliveoverlay.png').convert('RG
 
 LIB_PATH = "/var/lib/scud-radio"
 
+def display_logos():
+    lib_path = Path(LIB_PATH)
+    small_logos = [i for i in os.listdir(lib_path) if '25.pkl' in i]
+    img = Image.new('RGB', (320, 240), color=BLACK)
+    hyp = 400
+    x_offset = 0
+    y_offset = 0
+    
+    for i in small_logos:
+        with open(lib_path / i, 'rb') as f:
+            logo = pickle.load(f)
+            img.paste(logo, (0 + x_offset, 0 + y_offset))
+            y_offset += hyp / len(small_logos)
+            x_offset += hyp / len(small_logos)
+    
+    disp.ShowImage(img)
+
+
 def get_favorites():
     fav_path = Path(LIB_PATH)
     fav_path.mkdir(parents=True, exist_ok=True)
@@ -243,21 +261,7 @@ def display_scud():
     image.paste(bg, (0, 0))
     safe_display(image)  
 
-    '''
-    for i in 'welcome':
-            
-        bg = Image.open(f'assets/scud_{i}.png') 
-        image.paste(bg, (0, 0))
-        safe_display(image)  
-        time.sleep(0.05)
-
-
-    #time.sleep(1)
-    '''
-
-    #bg = Image.open(f'assets/scud_splash_1_black.png') 
-    #image.paste(bg, (0, 0))
-    #safe_display(image)  
+    display_logos()
 
     global user_tz
 
@@ -271,34 +275,6 @@ def display_scud():
     volume = round((get_last_volume()/150)*100)
     get_battery()
 
-    '''
-
-    greeting = 'Hello'
-    size = 192
-    bbox = [64, 120, 64 + size, 120 + size]
-
-    if 5 <= current_hour < 12:
-        greeting = 'Good Morning'
-        bbox = [160, 24, 160 + size, 24 + size]
-        color = RED
-    elif 12 <= current_hour < 17: 
-        greeting = 'Good Afternoon'
-        bbox = [64, -59, 64 + size, -50 + size]
-        color = YELLOW
-    elif 17 <= current_hour < 22:
-        greeting = 'Good Evening'
-        bbox = [-32, 24, -32 + size, 24 + size]
-        color = BLUE
-
-    draw = ImageDraw.Draw(image)
-    draw.text((10, 0), greeting + ",", font=LARGE_FONT, fill=WHITE) 
-    draw.text((10, 23),  "Friend.", font=LARGE_FONT, fill=WHITE) 
-    draw.text((10, 193), f'Last Played: {last_played}', font=SMALL_FONT, fill=WHITE)
-    draw.text((10, 203), f'Internet: Connected', font=SMALL_FONT, fill=WHITE)
-    draw.text((10, 213), f'Battery: {battery}%', font=SMALL_FONT, fill=WHITE)
-    draw.text((10, 223), f'Volume: {volume}%', font=SMALL_FONT, fill=WHITE)
-    safe_display(image)
-    '''
 
 
 def backlight_on():
