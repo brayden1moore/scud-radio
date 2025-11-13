@@ -8,16 +8,11 @@ import threading
 import logging
 import os
 
-subprocess.run(['sudo','iwconfig','wlan0','power','off'])
-subprocess.run(['sudo','iw','dev','wlan0','set','power_save','off'])
+subprocess.run(['sudo','iwconfig','wlan0','power','off'], 
+               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+subprocess.run(['sudo','iw','dev','wlan0','set','power_save','off'],
+               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(sys.stdout)
-    ]
-)
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -61,23 +56,6 @@ def wait_for_wifi_interface(timeout=60):
             pass
         time.sleep(1)
     return False
-
-def display_wifi_waiting():
-    """Display WiFi waiting animation in sequence"""
-    wifi_images = ['scud_wifi_3.png', 'scud_wifi_1.png', 'scud_wifi_2.png']
-    
-    while wifi_waiting:  
-        for img in wifi_images:
-            if not wifi_waiting:  
-                break
-            try:
-                image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-                bg = Image.open(f'assets/{img}')
-                image.paste(bg, (0, 0))
-                disp.ShowImage(image)
-                time.sleep(1)
-            except:
-                pass
 
 display_splash()
 

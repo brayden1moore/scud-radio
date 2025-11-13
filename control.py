@@ -95,7 +95,6 @@ Usage:
             vol = int(sys.argv[2])
             vol = round(vol*150/100)
             result = send_command('set_volume', value=vol)
-            print(f"Volume set to: {result['volume']}/100 ({round(result['volume']/100)}%)")
         except ValueError:
             print("Error: Volume must be a number")
             sys.exit(1)
