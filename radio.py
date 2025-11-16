@@ -1039,6 +1039,20 @@ def on_button_released():
             button_press_times = [] 
             safe_restart()
             return    
+        
+def on_volume_button_pressed():
+    global button_press_times, rotated, held, button_released_time, last_input_time
+    held = False
+    current_time = time.time()
+    last_input_time = time.time()
+    button_released_time = current_time
+    if screen_on:
+        send_mpv_command({"command": ["set_property", "volume", 0]})
+        backlight_off()
+    else:
+        send_mpv_command({"command": ["set_property", "volume", current_volume]})
+        backlight_on()
+    
 
 def toggle_favorite():
     global favorites, stream_list
@@ -1407,7 +1421,7 @@ DT_PIN = 12
 volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN)
 volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_handle_rotation(-1), -1)
 volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1)
-
+volume_rotor.when_pressed = wrapped_action(lambda: on_volume_button_pressed())
 
 ## main loop
 
