@@ -306,7 +306,7 @@ def backlight_off():
     if disp:
         disp.bl_DutyCycle(0)
         disp.clear()
-        screen_on = True
+        screen_on = False
 
 def backlight_dim():
     if disp:
