@@ -291,6 +291,7 @@ def display_scud():
 
 
 def backlight_on():
+    global screen_on
     if disp:
         if current_image:
             safe_display(current_image)
@@ -298,11 +299,14 @@ def backlight_on():
             display_scud()
         time.sleep(0.2)
         disp.bl_DutyCycle(100)
+        screen_on = True
 
 def backlight_off():
+    global screen_on
     if disp:
         disp.bl_DutyCycle(0)
         disp.clear()
+        screen_on = True
 
 def backlight_dim():
     if disp:
@@ -1421,7 +1425,9 @@ DT_PIN = 12
 volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN)
 volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_handle_rotation(-1), -1)
 volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1)
-volume_rotor.when_pressed = wrapped_action(lambda: on_volume_button_pressed())
+
+volume_click_button = Button(17, bounce_time=0.05)
+volume_click_button.when_pressed = wrapped_action(lambda: on_volume_button_pressed())
 
 ## main loop
 
