@@ -702,20 +702,23 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         mark_width = round(total_span / (total_ticks - 1))
         tick_start = padding  
         tick_bar_height = 20
+        tick_bar_start = logo_chunk_start + 87
+        tick_height = 4
+        tick_start_y = (tick_bar_start + tick_bar_height) / 2 - (tick_bar_height / 2)
 
         square_start = padding - 5
         square_end = padding + mark_width * len(favorites) - 1
         if favorites:
             draw.rectangle([square_start, logo_chunk_start + 87, square_end, logo_chunk_start + 87 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
             for i in sorted(favorites, key=str.casefold):
-                draw.rectangle([tick_start, logo_chunk_start + 92, tick_start + tick_width, logo_chunk_start + 93], fill=BLACK)
+                draw.rectangle([tick_start, tick_start_y, tick_start + tick_width, tick_start_y + tick_height], fill=BLACK)
                 tick_locations[i] = tick_start
                 tick_start += mark_width
                 square_end += mark_width
             tick_start += 5
 
         for i in [i for i in stream_list if i not in favorites]:
-            draw.rectangle([tick_start, logo_chunk_start + 92, tick_start + tick_width, logo_chunk_start + 92 + tick_bar_height - 5], fill=WHITE)
+            draw.rectangle([tick_start, tick_start_y, tick_start + tick_width, tick_start_y + tick_height], fill=WHITE)
             tick_locations[i] = tick_start
             tick_start += mark_width
 
