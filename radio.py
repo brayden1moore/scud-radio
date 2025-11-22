@@ -620,7 +620,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw.ellipse([15, name_chunk_start + 3, 15 + 13, name_chunk_start + 3 + 13], fill=circle_fill, outline=WHITE, width=1)
         
         # logos
-        logo_chunk_start = 30
+        logo_chunk_start = 35
         og_logo_position = (111, logo_chunk_start - 14 - 4)
         if pushed:
             logo_position = (129, logo_chunk_start)
