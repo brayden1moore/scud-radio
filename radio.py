@@ -274,7 +274,7 @@ def display_scud():
     image.paste(bg, (0, 0))
     safe_display(image)  
 
-    display_logos()
+    #display_logos()
 
     global user_tz
 
