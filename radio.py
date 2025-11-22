@@ -819,7 +819,7 @@ def display_one(name):
     # time
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
-    formatted_time = current_time.strftime("%a %b %d %I:%M %p").replace(' 0', '  ').lstrip('0')
+    formatted_time = current_time.strftime("%a  %b %d   %I:%M %p").replace(' 0', '  ').lstrip('0')
     
     draw.text((13,224), formatted_time, font=SMALL_FONT, fill=BLACK)
 
