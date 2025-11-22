@@ -602,7 +602,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         name_line = calculate_text(name, LARGE_FONT_THIN, 315, 1)
         draw.rectangle([name_chunk_start_x, name_chunk_start - 2, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
         draw.text((name_chunk_start_x, name_chunk_start - 2), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
-        draw.rectangle([name_chunk_start_x, name_chunk_start + 24, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + 24], fill=WHITE) # ul
+        draw.rectangle([name_chunk_start_x, name_chunk_start + 27, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + 27], fill=WHITE) # ul
 
         # draw info
         y_offset = 0
