@@ -1106,7 +1106,8 @@ def periodic_update():
     if not charging and screen_on == False and current_volume == 0 and (time.time() - last_input_time > 300):
         subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
-    if screen_on and has_displayed_once and stream and (time.time() - last_input_time > 20):
+    #if screen_on and has_displayed_once and stream and (time.time() - last_input_time > 20):
+    if (time.time() - last_input_time > 20):
         display_ambient(stream)
 
     if screen_on and (time.time() - last_input_time > 600):
