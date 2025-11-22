@@ -747,22 +747,7 @@ def display_one(name):
     white_array = np.asarray([255, 255, 255, 255])
     black_array = np.asarray([0, 0, 0, 255])
 
-    #if first_pixel_color == (255, 255, 255 ,255):
-    #    first_pixel_color = (0,0,0,255)
-    #    pixel_array = black_array
-
-    #distance_to_black = np.sum(np.abs(black_array - pixel_array))
-    #distance_to_white = np.sum(np.abs(white_array - pixel_array))
-    #if distance_to_black * 0.9 <= distance_to_white:
-    #    trim_color = WHITE
-    #else:
-    #    trim_color = BLACK
-
-    #if first_pixel_color == (255, 255, 255) or first_pixel_color == (255, 255, 255, 255):
-    #   first_pixel_color = (171, 171, 171)
-    #   trim_color = BLACK
-
-    image = Image.new('RGBA',(320, 240), color=WHITE)
+    image = Image.new('RGBA',(320, 240), color=BLACK)
     draw = ImageDraw.Draw(image)  
 
     draw.rectangle([15, 11, 76, 72], outline=BLACK, width=1)
@@ -771,11 +756,6 @@ def display_one(name):
     if name in favorites:
         image.paste(star_60, logo_position, star_60)
     if name not in reruns:
-        #draw.rectangle([13, 9, 78, 74], outline=RED, width=2)
-        #draw.rectangle([12, 8, 79, 75], outline=BLACK, width=1)
-        #draw.rectangle([logo_position[0] + 30, logo_position[1] + 46, logo_position[0] + 30 + 31, logo_position[1] + 46 + 16], fill=first_pixel_color)
-        #draw.rectangle([logo_position[0] + 31, logo_position[1] + 47, logo_position[0] + 30 + 31, logo_position[1] + 46 + 16], fill=RED)
-        #draw.text((logo_position[0] + 33, logo_position[1] + 49), "LIVE", fill=WHITE, font=SMALL_FONT)
         image.paste(live_60, (16, 12), live_60)
 
     # bottom bar
@@ -824,14 +804,14 @@ def display_one(name):
     avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
 
     for i in title_lines:
-        draw.text((14, anchor), i, font=LARGE_FONT, fill=BLACK)
+        draw.text((14, anchor), i, font=LARGE_FONT, fill=WHITE)
         anchor += avg_title_height + line_gap
 
     anchor += section_gap
 
     if info_lines:
         for i in info_lines:
-            draw.text((14, anchor), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((14, anchor), i, font=MEDIUM_FONT, fill=WHITE)
             anchor += avg_info_height + line_gap
 
     # battery
