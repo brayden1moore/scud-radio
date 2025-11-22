@@ -598,19 +598,20 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw name and underline
         name_chunk_start = 240 - 90
+        name_chunk_start_x = 11
         name_line = calculate_text(name, LARGE_FONT_THIN, 275, 1)
-        draw.rectangle([38, name_chunk_start - 4, 38 + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
-        draw.text((38, name_chunk_start - 4), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
-        draw.rectangle([38, name_chunk_start + 26, 38 + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + 26], fill=BLACK) # ul
+        draw.rectangle([name_chunk_start_x, name_chunk_start - 4, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
+        draw.text((name_chunk_start_x, name_chunk_start - 4), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
+        draw.rectangle([name_chunk_start_x, name_chunk_start + 26, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + 26], fill=BLACK) # ul
 
         # draw location
-        draw.rectangle([38, name_chunk_start + 33, 38 + width(location, MEDIUM_FONT), name_chunk_start + 34 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
-        draw.text((38, name_chunk_start + 31), location, font=MEDIUM_FONT, fill=BLACK)
+        draw.rectangle([name_chunk_start_x, name_chunk_start + 33, name_chunk_start_x + width(location, MEDIUM_FONT), name_chunk_start + 34 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
+        draw.text((name_chunk_start_x, name_chunk_start + 31), location, font=MEDIUM_FONT, fill=BLACK)
 
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((38, name_chunk_start + 54 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
+            draw.text((name_chunk_start_x, name_chunk_start + 54 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
             y_offset += 20
 
         # draw lines
@@ -702,7 +703,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         mark_width = round(total_span / (total_ticks - 1))
         tick_start = padding  
         tick_bar_height = 20
-        tick_bar_start = logo_chunk_start + 87
+        tick_bar_start = logo_chunk_start + 88
         tick_height = 4
         tick_start_y = (tick_bar_start + tick_bar_height / 2) - 2
 
