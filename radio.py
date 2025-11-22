@@ -574,7 +574,8 @@ def draw_angled_text(text, font, angle, image, coords, color):
 def display_everything(direction, name, update=False, readied=False, pushed=False):
     global streams, play_status, first_display, selector
     
-    if readied and not restarting:
+    #if readied and not restarting:
+    if True:
         first_display = False
 
         prev_stream = stream_list[stream_list.index(name)-1]
