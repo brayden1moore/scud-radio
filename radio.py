@@ -724,7 +724,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         bar_width = 2
         mark_start = tick_locations[name]
         fill = WHITE if name not in favorites else BLACK
-        draw.rectangle([mark_start, logo_chunk_start + 89, mark_start + bar_width, logo_chunk_start + tick_bar_height - 2], fill=fill)
+        draw.rectangle([mark_start, logo_chunk_start + 89, mark_start + bar_width, logo_chunk_start + 89 + tick_bar_height - 2], fill=fill)
         safe_display(image)
     
     else:
