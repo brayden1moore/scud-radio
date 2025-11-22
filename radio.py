@@ -698,13 +698,13 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         tick_locations = {}
 
         tick_width = 1
-        padding = 11
+        padding = 12
         total_ticks = len(stream_list)
         total_span = SCREEN_WIDTH - (2 * padding)
         mark_width = round(total_span / (total_ticks - 1))
         tick_start = padding  
         tick_bar_height = 20
-        tick_bar_start = logo_chunk_start + 88
+        tick_bar_start = logo_chunk_start + 92
         tick_height = 4
         tick_start_y = (tick_bar_start + tick_bar_height / 2) - 2
 
