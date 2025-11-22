@@ -715,7 +715,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             tick_start += 5
 
         for i in [i for i in stream_list if i not in favorites]:
-            draw.rectangle([tick_start, logo_chunk_start + 92, tick_start + tick_width, logo_chunk_start + 93], fill=WHITE)
+            draw.rectangle([tick_start, logo_chunk_start + 92, tick_start + tick_width, logo_chunk_start + 92 + tick_bar_height - 5], fill=WHITE)
             tick_locations[i] = tick_start
             tick_start += mark_width
 
@@ -724,7 +724,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         bar_width = 2
         mark_start = tick_locations[name]
         fill = WHITE if name not in favorites else BLACK
-        draw.rectangle([mark_start, logo_chunk_start + 89, mark_start + bar_width, logo_chunk_start + 89 + tick_bar_height - 2], fill=fill)
+        draw.rectangle([mark_start, logo_chunk_start + 89, mark_start + bar_width, logo_chunk_start + 89 + tick_bar_height - 4], fill=fill)
         safe_display(image)
     
     else:
