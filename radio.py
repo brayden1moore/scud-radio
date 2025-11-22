@@ -601,13 +601,13 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         name_chunk_start_x = 6
         name_line = calculate_text(name, LARGE_FONT_THIN, 315, 1)
         draw.rectangle([name_chunk_start_x, name_chunk_start - 2, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
-        draw.text((name_chunk_start_x, name_chunk_start - 2), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
+        draw.text((name_chunk_start_x - 2, name_chunk_start - 2), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
         draw.rectangle([name_chunk_start_x, name_chunk_start + 30, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + 30], fill=WHITE) # ul
 
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((name_chunk_start_x, name_chunk_start + 33 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
+            draw.text((name_chunk_start_x - 2, name_chunk_start + 33 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
             y_offset += 20
 
         # draw location
