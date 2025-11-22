@@ -594,7 +594,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw = ImageDraw.Draw(image)  
 
         location = streams[name]['location']
-        title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 1)
+        title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 315, 1)
 
         # draw name and underline
         name_chunk_start = 240 - 80
