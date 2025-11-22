@@ -621,7 +621,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         
         # logos
         logo_chunk_start = 20
-        og_logo_position = (111, 125 - 4)
+        og_logo_position = (111, logo_chunk_start - 14 - 4)
         if pushed:
             logo_position = (129, logo_chunk_start)
             bg_position = og_logo_position
