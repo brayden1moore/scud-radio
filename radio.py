@@ -594,7 +594,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw = ImageDraw.Draw(image)  
 
         location = streams[name]['location']
-        title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
+        title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 1)
 
         # draw name and underline
         name_chunk_start = 240 - 90
@@ -620,7 +620,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw.ellipse([15, name_chunk_start + 3, 15 + 13, name_chunk_start + 3 + 13], fill=circle_fill, outline=WHITE, width=1)
         
         # logos
-        logo_chunk_start = 25
+        logo_chunk_start = 30
         og_logo_position = (111, logo_chunk_start - 14 - 4)
         if pushed:
             logo_position = (129, logo_chunk_start)
@@ -705,16 +705,16 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         square_start = padding - 5
         square_end = padding + mark_width * len(favorites) - 1
         if favorites:
-            draw.rectangle([square_start, logo_chunk_start + 87, square_end, logo_chunk_start + 98], fill=YELLOW, outline=BLACK, width=1)
+            draw.rectangle([square_start, logo_chunk_start + 87, square_end, logo_chunk_start + 98], fill=YELLOW, outline=WHITE, width=1)
             for i in sorted(favorites, key=str.casefold):
-                draw.rectangle([tick_start, logo_chunk_start + 92, tick_start + tick_width, logo_chunk_start + 93], fill=BLACK)
+                draw.rectangle([tick_start, logo_chunk_start + 92, tick_start + tick_width, logo_chunk_start + 93], fill=WHITE)
                 tick_locations[i] = tick_start
                 tick_start += mark_width
                 square_end += mark_width
             tick_start += 5
 
         for i in [i for i in stream_list if i not in favorites]:
-            draw.rectangle([tick_start, logo_chunk_start + 92, tick_start + tick_width, logo_chunk_start + 93], fill=BLACK)
+            draw.rectangle([tick_start, logo_chunk_start + 92, tick_start + tick_width, logo_chunk_start + 93], fill=WHITE)
             tick_locations[i] = tick_start
             tick_start += mark_width
 
@@ -722,7 +722,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         first_tick_start = padding
         bar_width = 2
         mark_start = tick_locations[name]
-        fill = BLACK if name in favorites else BLACK
+        fill = WHITE
         draw.rectangle([mark_start, logo_chunk_start + 89, mark_start + bar_width, logo_chunk_start + 96], fill=fill)
         safe_display(image)
     
