@@ -597,27 +597,27 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
         # draw name and underline
-        name_chunk_start = 12
+        name_chunk_start = 240 - 70
         name_line = calculate_text(name, LARGE_FONT_THIN, 275, 1)
         draw.rectangle([38, name_chunk_start - 4, 38 + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
         draw.text((38, name_chunk_start - 7), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
-        draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT_THIN), 38], fill=BLACK) # ul
+        draw.rectangle([38, name_chunk_start + 26, 38 + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + 26], fill=BLACK) # ul
 
         # draw location
-        draw.rectangle([38, 43 + 2, 38 + width(location, MEDIUM_FONT), 43 + 3 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
-        draw.text((38, 43), location, font=MEDIUM_FONT, fill=BLACK)
+        draw.rectangle([38, name_chunk_start + 33, 38 + width(location, MEDIUM_FONT), name_chunk_start + 34 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
+        draw.text((38, name_chunk_start + 31), location, font=MEDIUM_FONT, fill=BLACK)
 
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((38, 66 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((38, name_chunk_start + 54 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
             y_offset += 20
 
         # draw lines
-        draw.line([22, 28, 22, 76], fill=BLACK, width=1)
-        draw.line([22, 76, 34, 76], fill=BLACK, width=1)
+        draw.line([22, name_chunk_start + 16, 22, name_chunk_start + 64], fill=BLACK, width=1)
+        draw.line([22, name_chunk_start + 64, 34, name_chunk_start + 64], fill=BLACK, width=1)
         circle_fill = WHITE if name in reruns else RED
-        draw.ellipse([15, 15, 15 + 13, 15 + 13], fill=circle_fill, outline=BLACK, width=1)
+        draw.ellipse([15, name_chunk_start + 3, 15 + 13, name_chunk_start + 3 + 13], fill=circle_fill, outline=BLACK, width=1)
 
         og_logo_position = (111, 125 - 4)
         if pushed:
