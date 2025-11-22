@@ -600,7 +600,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         name_chunk_start = 240 - 90
         name_line = calculate_text(name, LARGE_FONT_THIN, 275, 1)
         draw.rectangle([38, name_chunk_start - 4, 38 + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
-        draw.text((38, name_chunk_start - 7), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
+        draw.text((38, name_chunk_start - 4), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
         draw.rectangle([38, name_chunk_start + 26, 38 + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + 26], fill=BLACK) # ul
 
         # draw location
@@ -696,7 +696,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         tick_locations = {}
 
         tick_width = 1
-        padding = 12
+        padding = 11
         total_ticks = len(stream_list)
         total_span = SCREEN_WIDTH - (2 * padding)
         mark_width = round(total_span / (total_ticks - 1))
