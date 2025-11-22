@@ -833,16 +833,13 @@ def display_one(name):
 
 def display_ambient(name):
     global screen_dim
-
-    # logo
     logo = streams[name]['logo_176']
     first_pixel = logo.getpixel((5,5))
-
+    if first_pixel[0]>200 and first_pixel[1]>200 and first_pixel[2]>200:
+        first_pixel = (0,0,0)
     image = Image.new('RGB',(SCREEN_WIDTH, SCREEN_HEIGHT), color = first_pixel)
     image.paste(logo, (72, 32))
-
     safe_display(image)
-
     screen_dim = True
 
 
