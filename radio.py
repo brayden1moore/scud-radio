@@ -87,7 +87,7 @@ RED = (255,71,71)
 
 SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
 MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
-LARGE_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",36)
+LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",36)
 LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
 LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28)
 
@@ -774,7 +774,6 @@ def display_one(name):
     draw.rectangle([92, 52 + 2, 92 + width(location, MEDIUM_FONT), 52 + 3 + height('S', MEDIUM_FONT)], fill=BLUE)# bg
     draw.text((92, 52), calculate_text(location, font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
 
-
     # now playing
     y_offset = 0
     num_title_lines = 2
@@ -833,19 +832,18 @@ def display_one(name):
 
 def display_ambient(name):
     global screen_dim
-    logo = streams[name]['logo_176'].copy() 
+
+    # logo
+    logo = streams[name]['logo_176']
     first_pixel = logo.getpixel((5,5))
-    if first_pixel[0]>200 and first_pixel[1]>200 and first_pixel[2]>200:
-        pixels = logo.load()
-        for y in range(logo.height):
-            for x in range(logo.width):
-                if pixels[x, y] == first_pixel:
-                    pixels[x, y] = (0, 0, 0)
-        first_pixel = (0,0,0)
+
     image = Image.new('RGB',(SCREEN_WIDTH, SCREEN_HEIGHT), color = first_pixel)
     image.paste(logo, (72, 32))
+
     safe_display(image)
+
     screen_dim = True
+
 
 def get_anchor(title, info, live, line_gap, section_gap):
     size = 0
