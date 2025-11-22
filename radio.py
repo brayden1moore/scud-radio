@@ -781,7 +781,7 @@ def display_one(name):
     info = [i for i in info if i in list(set(info))]
 
     if len(info) == 1:
-        num_title_lines = 4
+        num_title_lines = 3
     elif len(info) == 2:
         num_title_lines = 3
 
