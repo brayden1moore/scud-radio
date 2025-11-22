@@ -597,10 +597,10 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
         # draw name and underline
+        name_chunk_start = 12
         name_line = calculate_text(name, LARGE_FONT_THIN, 275, 1)
-        draw.rectangle([38, 12 - 4, 38 + width(name_line[0], LARGE_FONT_THIN), 12 + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
-        #draw.rectangle([38, 12 - 4, 38 + width(name_line[0], LARGE_FONT_THIN), 12 + height('S', LARGE_FONT_THIN)], outline=BLACK, width=1) # bg border
-        draw.text((38, 12 - 7), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
+        draw.rectangle([38, name_chunk_start - 4, 38 + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
+        draw.text((38, name_chunk_start - 7), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
         draw.rectangle([38, 38, 38 + width(name_line[0], LARGE_FONT_THIN), 38], fill=BLACK) # ul
 
         # draw location
@@ -619,16 +619,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         circle_fill = WHITE if name in reruns else RED
         draw.ellipse([15, 15, 15 + 13, 15 + 13], fill=circle_fill, outline=BLACK, width=1)
 
-        # label
-        #draw.rectangle([label_start, 216, label_end, 233], fill=BLACK)
-        #draw.rectangle([label_start, 217, label_end, 229], fill=WHITE)
-        #draw.text((label_start + 1, 217), name, font=SMALL_FONT, fill=BLACK)
-
-        # draw logo
-        #tick_mark_start = mark_start
-        #mark_start = label_start - 2 #round(mark_start - 67/2)
-        #draw.rectangle([mark_start, 131 + 67, mark_start + 67, 131 + 63], fill=WHITE)
-        #draw.rectangle([mark_start + 1, 131 + 1, mark_start + 67 - 1, 131 + 67 - 1], fill=BLACK)
         og_logo_position = (111, 125 - 4)
         if pushed:
             logo_position = (129, 143 - 4)
@@ -645,25 +635,17 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         if name in favorites:
             this_star = star_96.copy()
             image.paste(this_star, og_logo_position, this_star)
-            #draw.rectangle([107, 121 - 4, 211, 225 - 4], outline=YELLOW, width=4)
-            #draw.rectangle([106, 120 - 4, 212, 226 - 4], outline=BLACK, width=1)
         if name not in reruns:
             this_live = live_96.copy()
             image.paste(this_live, og_logo_position, this_live)
         
         draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLACK, width=1)
 
-        # line
-        #draw.line([tick_mark_start + 1, 216, round(mark_start + 67/2), 131 + 67], fill=WHITE, width=2)
-        
-        # prev and next
-        #prev_position = (mark_start - 40 - 2, 155)
-        #next_position = (mark_start + 68 + 2, 155)
         prev_position = (39, 161 - 4)
         next_position = (219, 161 - 4)
         prev_next_rotation = 0
-        prev = streams[prev_stream]['logo_60']#.rotate(prev_next_rotation, expand=True)
-        next = streams[next_stream]['logo_60']#.rotate(-prev_next_rotation, expand=True)
+        prev = streams[prev_stream]['logo_60']
+        next = streams[next_stream]['logo_60']
         image.paste(prev, prev_position, prev)
         draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + 60, prev_position[1] + 60], outline=BLACK, width=1)
         image.paste(next, next_position, next)
@@ -684,33 +666,28 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(next_live, next_position, next_live)
 
         # double prev and next
-        #double_prev_position = (mark_start - 40 - 25 - 2 - 6, 170)
-        #double_next_position = (mark_start + 68 + 40 + 2 + 6, 170)
         double_prev_position = (7, 196 - 4)
         double_next_position = (286, 196 - 4)
         double_prev_next_rotation = 0
-        double_prev = streams[double_prev_stream]['logo_25']#.rotate(double_prev_next_rotation, expand=True)
-        double_next = streams[double_next_stream]['logo_25']#.rotate(-double_prev_next_rotation, expand=True)
-
-        #draw_angled_text(double_prev_stream, MEDIUM_FONT, -64, image, (27,210), BLACK)
-        #draw_angled_text(double_next_stream, MEDIUM_FONT, -116, image, (264,208), BLACK)
+        double_prev = streams[double_prev_stream]['logo_25']
+        double_next = streams[double_next_stream]['logo_25']
         
         image.paste(double_prev, double_prev_position, double_prev)
         draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + 25, double_prev_position[1] + 25], outline=BLACK, width=1)
         if double_prev_stream in favorites:
-            double_prev_star = star_25.copy()#.rotate(double_prev_next_rotation, expand=True)
+            double_prev_star = star_25.copy()
             image.paste(double_prev_star, double_prev_position, double_prev_star)
         if double_prev_stream not in reruns:
-            double_prev_live = live_25.copy()#.rotate(double_prev_next_rotation, expand=True)
+            double_prev_live = live_25.copy()
             image.paste(double_prev_live, double_prev_position, double_prev_live)
 
         image.paste(double_next, double_next_position, double_next)
         draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + 25, double_next_position[1] + 25], outline=BLACK, width=1)
         if double_next_stream in favorites:
-            double_next_star = star_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
+            double_next_star = star_25.copy()
             image.paste(double_next_star, double_next_position, double_next_star)
         if double_next_stream not in reruns:
-            double_next_live = live_25.copy()#.rotate(-double_prev_next_rotation, expand=True)
+            double_next_live = live_25.copy()
             image.paste(double_next_live, double_next_position, double_next_live)
 
         # draw mark
