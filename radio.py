@@ -704,7 +704,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         tick_bar_height = 20
         tick_bar_start = logo_chunk_start + 87
         tick_height = 4
-        tick_start_y = (tick_bar_start + tick_bar_height) - (tick_bar_height / 2)
+        tick_start_y = (tick_bar_start + tick_bar_height / 2)
 
         square_start = padding - 5
         square_end = padding + mark_width * len(favorites) - 1
