@@ -702,7 +702,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         mark_width = round(total_span / (total_ticks - 1))
         tick_start = padding  
         tick_bar_height = 20
-        tick_bar_start = logo_chunk_start + 89
+        tick_bar_start = logo_chunk_start + 87
         tick_height = 4
         tick_start_y = (tick_bar_start + tick_bar_height / 2) - 2
 
