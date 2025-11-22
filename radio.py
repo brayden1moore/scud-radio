@@ -87,7 +87,7 @@ RED = (255,71,71)
 
 SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
 MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
-LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",36)
+LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",42)
 LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
 LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28)
 
