@@ -597,7 +597,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 250, 2)
 
         # draw name and underline
-        name_chunk_start = 240 - 70
+        name_chunk_start = 240 - 80
         name_line = calculate_text(name, LARGE_FONT_THIN, 275, 1)
         draw.rectangle([38, name_chunk_start - 4, 38 + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
         draw.text((38, name_chunk_start - 7), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
@@ -618,7 +618,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw.line([22, name_chunk_start + 64, 34, name_chunk_start + 64], fill=BLACK, width=1)
         circle_fill = WHITE if name in reruns else RED
         draw.ellipse([15, name_chunk_start + 3, 15 + 13, name_chunk_start + 3 + 13], fill=circle_fill, outline=BLACK, width=1)
-
+        
+        # logos
+        logo_chunk_start = 139
         og_logo_position = (111, 125 - 4)
         if pushed:
             logo_position = (129, 143 - 4)
