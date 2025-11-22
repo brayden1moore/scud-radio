@@ -701,7 +701,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         total_span = SCREEN_WIDTH - (2 * padding)
         mark_width = round(total_span / (total_ticks - 1))
         tick_start = padding  
-        height = 9
+        tick_height = 9
 
         square_start = padding - 5
         square_end = padding + mark_width * len(favorites) - 1
