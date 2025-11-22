@@ -590,7 +590,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
-        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
+        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
         draw = ImageDraw.Draw(image)  
 
         location = streams[name]['location']
@@ -610,7 +610,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((38, name_chunk_start + 54 + y_offset), i, font=MEDIUM_FONT, fill=BLACK)
+            draw.text((38, name_chunk_start + 54 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
             y_offset += 20
 
         # draw lines
