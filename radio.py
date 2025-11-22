@@ -614,10 +614,10 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             y_offset += 20
 
         # draw lines
-        draw.line([22, name_chunk_start + 16, 22, name_chunk_start + 64], fill=BLACK, width=1)
-        draw.line([22, name_chunk_start + 64, 34, name_chunk_start + 64], fill=BLACK, width=1)
+        draw.line([22, name_chunk_start + 16, 22, name_chunk_start + 64], fill=WHITE, width=1)
+        draw.line([22, name_chunk_start + 64, 34, name_chunk_start + 64], fill=WHITE, width=1)
         circle_fill = WHITE if name in reruns else RED
-        draw.ellipse([15, name_chunk_start + 3, 15 + 13, name_chunk_start + 3 + 13], fill=circle_fill, outline=BLACK, width=1)
+        draw.ellipse([15, name_chunk_start + 3, 15 + 13, name_chunk_start + 3 + 13], fill=circle_fill, outline=WHITE, width=1)
         
         # logos
         logo_chunk_start = 25
@@ -641,7 +641,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             this_live = live_96.copy()
             image.paste(this_live, og_logo_position, this_live)
         
-        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLACK, width=1)
+        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=1) # border
 
         prev_position = (39, logo_chunk_start + 22 - 4)
         next_position = (219, logo_chunk_start + 22 - 4)
@@ -649,9 +649,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         prev = streams[prev_stream]['logo_60']
         next = streams[next_stream]['logo_60']
         image.paste(prev, prev_position, prev)
-        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + 60, prev_position[1] + 60], outline=BLACK, width=1)
+        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + 60, prev_position[1] + 60], outline=WHITE, width=1)
         image.paste(next, next_position, next)
-        draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=BLACK, width=1)
+        draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=WHITE, width=1)
 
 
         if prev_stream in favorites:
@@ -675,7 +675,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         double_next = streams[double_next_stream]['logo_25']
         
         image.paste(double_prev, double_prev_position, double_prev)
-        draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + 25, double_prev_position[1] + 25], outline=BLACK, width=1)
+        draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + 25, double_prev_position[1] + 25], outline=WHITE, width=1)
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()
             image.paste(double_prev_star, double_prev_position, double_prev_star)
@@ -684,7 +684,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(double_prev_live, double_prev_position, double_prev_live)
 
         image.paste(double_next, double_next_position, double_next)
-        draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + 25, double_next_position[1] + 25], outline=BLACK, width=1)
+        draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + 25, double_next_position[1] + 25], outline=WHITE, width=1)
         if double_next_stream in favorites:
             double_next_star = star_25.copy()
             image.paste(double_next_star, double_next_position, double_next_star)
