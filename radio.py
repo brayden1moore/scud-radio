@@ -907,7 +907,7 @@ def seek_stream(direction):
     #if (readied_stream == None):
     #    readied_stream = stream
     #else:
-    idx = stream_list.index(readied_stream)
+    idx = stream_list.index(readied_stream if readied_stream else stream)
     if (direction == 1) and (idx==len(stream_list)-1):
         readied_stream = stream_list[0]
     elif (direction == -1) and (idx==0):
