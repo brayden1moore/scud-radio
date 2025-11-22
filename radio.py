@@ -615,10 +615,10 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             y_offset += 20
 
         # draw lines
-        draw.line([22, name_chunk_start + 16, 22, name_chunk_start + 64], fill=WHITE, width=1)
-        draw.line([22, name_chunk_start + 64, 34, name_chunk_start + 64], fill=WHITE, width=1)
-        circle_fill = WHITE if name in reruns else RED
-        draw.ellipse([15, name_chunk_start + 3, 15 + 13, name_chunk_start + 3 + 13], fill=circle_fill, outline=WHITE, width=1)
+        #draw.line([22, name_chunk_start + 16, 22, name_chunk_start + 64], fill=WHITE, width=1)
+        #draw.line([22, name_chunk_start + 64, 34, name_chunk_start + 64], fill=WHITE, width=1)
+        #circle_fill = WHITE if name in reruns else RED
+        #draw.ellipse([15, name_chunk_start + 3, 15 + 13, name_chunk_start + 3 + 13], fill=circle_fill, outline=WHITE, width=1)
         
         # logos
         logo_chunk_start = 35
