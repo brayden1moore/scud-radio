@@ -701,12 +701,12 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         total_span = SCREEN_WIDTH - (2 * padding)
         mark_width = round(total_span / (total_ticks - 1))
         tick_start = padding  
-        tick_height = 9
+        tick_bar_height = 11
 
         square_start = padding - 5
         square_end = padding + mark_width * len(favorites) - 1
         if favorites:
-            draw.rectangle([square_start, logo_chunk_start + 87, square_end, logo_chunk_start + 98], fill=YELLOW, outline=YELLOW, width=1)
+            draw.rectangle([square_start, logo_chunk_start + 87, square_end, logo_chunk_start + 87 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
             for i in sorted(favorites, key=str.casefold):
                 draw.rectangle([tick_start, logo_chunk_start + 92, tick_start + tick_width, logo_chunk_start + 93], fill=BLACK)
                 tick_locations[i] = tick_start
