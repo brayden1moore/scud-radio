@@ -623,7 +623,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         logo_chunk_start = 139
         og_logo_position = (111, 125 - 4)
         if pushed:
-            logo_position = (129, 143 - 4)
+            logo_position = (129, logo_chunk_start)
             bg_position = og_logo_position
             logo = streams[name]['logo_60']    
             first_pixel_color = logo.getpixel((2,2))
@@ -643,8 +643,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         
         draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLACK, width=1)
 
-        prev_position = (39, 161 - 4)
-        next_position = (219, 161 - 4)
+        prev_position = (39, logo_chunk_start + 22 - 4)
+        next_position = (219, logo_chunk_start + 22 - 4)
         prev_next_rotation = 0
         prev = streams[prev_stream]['logo_60']
         next = streams[next_stream]['logo_60']
@@ -668,8 +668,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(next_live, next_position, next_live)
 
         # double prev and next
-        double_prev_position = (7, 196 - 4)
-        double_next_position = (286, 196 - 4)
+        double_prev_position = (7, logo_chunk_start + 57 - 4)
+        double_next_position = (286, logo_chunk_start + 57 - 4)
         double_prev_next_rotation = 0
         double_prev = streams[double_prev_stream]['logo_25']
         double_next = streams[double_next_stream]['logo_25']
@@ -705,16 +705,16 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         square_start = padding - 5
         square_end = padding + mark_width * len(favorites) - 1
         if favorites:
-            draw.rectangle([square_start, 226, square_end, 237], fill=YELLOW, outline=BLACK, width=1)
+            draw.rectangle([square_start, logo_chunk_start + 87, square_end, logo_chunk_start + 98], fill=YELLOW, outline=BLACK, width=1)
             for i in sorted(favorites, key=str.casefold):
-                draw.rectangle([tick_start, 231, tick_start + tick_width, 232], fill=BLACK)
+                draw.rectangle([tick_start, logo_chunk_start + 92, tick_start + tick_width, logo_chunk_start + 93], fill=BLACK)
                 tick_locations[i] = tick_start
                 tick_start += mark_width
                 square_end += mark_width
             tick_start += 5
 
         for i in [i for i in stream_list if i not in favorites]:
-            draw.rectangle([tick_start, 231, tick_start + tick_width, 232], fill=BLACK)
+            draw.rectangle([tick_start, logo_chunk_start + 92, tick_start + tick_width, logo_chunk_start + 93], fill=BLACK)
             tick_locations[i] = tick_start
             tick_start += mark_width
 
@@ -723,7 +723,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         bar_width = 2
         mark_start = tick_locations[name]
         fill = BLACK if name in favorites else BLACK
-        draw.rectangle([mark_start, 228, mark_start + bar_width, 235], fill=fill)
+        draw.rectangle([mark_start, logo_chunk_start + 89, mark_start + bar_width, logo_chunk_start + 96], fill=fill)
         safe_display(image)
     
     else:
