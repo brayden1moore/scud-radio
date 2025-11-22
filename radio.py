@@ -1065,7 +1065,7 @@ def handle_rotation(direction):
     else:
         if button_released_time and (time.time() - button_released_time > 0.3):
             last_rotation = time.time()
-            print('seeking')
+            logging.info('seeking')
             seek_stream(direction)
             #if screen_dim:
             #    display_one(stream)
