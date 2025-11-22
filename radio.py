@@ -750,7 +750,7 @@ def display_one(name):
     image = Image.new('RGBA',(320, 240), color=BLACK)
     draw = ImageDraw.Draw(image)  
 
-    draw.rectangle([15, 11, 76, 72], outline=BLACK, width=1)
+    draw.rectangle([15, 11, 76, 72], outline=WHITE, width=1)
     logo_position = (16, 12)
     image.paste(logo, logo_position)
     if name in favorites:
@@ -767,7 +767,7 @@ def display_one(name):
     draw.rectangle([92, 20 - 4, 92 + width(name_line, LARGE_FONT_THIN), 20 + height('S', LARGE_FONT_THIN)], fill=BLACK)
     draw.text((92, 13), name_line, font=LARGE_FONT_THIN, fill=WHITE)
     draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT_THIN), 47], fill=WHITE) # underline
-    draw.rectangle([15, 72 + 12, SCREEN_WIDTH-15, 72 + 12], outline=WHITE, width=1) # divider
+    #draw.rectangle([15, 72 + 12, SCREEN_WIDTH-15, 72 + 12], outline=WHITE, width=1) # divider
     
     # location
     location = streams[name]['location']
