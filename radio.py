@@ -604,15 +604,16 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw.text((name_chunk_start_x, name_chunk_start - 4), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
         draw.rectangle([name_chunk_start_x, name_chunk_start + 26, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + 26], fill=BLACK) # ul
 
-        # draw location
-        draw.rectangle([name_chunk_start_x, name_chunk_start + 33, name_chunk_start_x + width(location, MEDIUM_FONT), name_chunk_start + 34 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
-        draw.text((name_chunk_start_x, name_chunk_start + 31), location, font=MEDIUM_FONT, fill=BLACK)
-
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((name_chunk_start_x, name_chunk_start + 54 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
+            draw.text((name_chunk_start_x, name_chunk_start + 33 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
             y_offset += 20
+
+        # draw location
+        draw.rectangle([name_chunk_start_x, name_chunk_start + 54, name_chunk_start_x + width(location, MEDIUM_FONT), name_chunk_start + 55 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
+        draw.text((name_chunk_start_x, name_chunk_start + 52), location, font=MEDIUM_FONT, fill=BLACK)
+
 
         # draw lines
         #draw.line([22, name_chunk_start + 16, 22, name_chunk_start + 64], fill=WHITE, width=1)
