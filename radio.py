@@ -709,7 +709,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         square_start = padding - 5
         square_end = padding + mark_width * len(favorites) - 1
         if favorites:
-            draw.rectangle([square_start, logo_chunk_start + 87, square_end, logo_chunk_start + 87 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
+            draw.rectangle([square_start, tick_bar_start, square_end, tick_bar_start + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
             for i in sorted(favorites, key=str.casefold):
                 draw.rectangle([tick_start, tick_start_y, tick_start + tick_width, tick_start_y + tick_height], fill=BLACK)
                 tick_locations[i] = tick_start
@@ -727,7 +727,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         bar_width = 2
         mark_start = tick_locations[name]
         fill = WHITE if name not in favorites else BLACK
-        draw.rectangle([mark_start, logo_chunk_start + 89, mark_start + bar_width, logo_chunk_start + 89 + tick_bar_height - 4], fill=fill)
+        draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=fill)
         safe_display(image)
     
     else:
