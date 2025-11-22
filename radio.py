@@ -730,7 +730,11 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         bar_width = 2
         mark_start = tick_locations[name]
         fill = WHITE if name not in favorites else BLACK
-        draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=fill)
+        if readied:
+            draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=WHITE)
+            mark_start = tick_locations[stream]
+            draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=(150,150,150))
+            
         safe_display(image)
     
     else:
