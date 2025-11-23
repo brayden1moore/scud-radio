@@ -1176,13 +1176,13 @@ def wake_screen():
         screen_on = True
         screen_dim = False
         if stream:
-            display_everything(stream)
+            display_everything(0,stream)
         else:
             display_scud()
         time.sleep(0.2)
-        display_everything(stream)
+        display_everything(0,stream)
         time.sleep(0.2)
-        display_everything(stream)
+        display_everything(0,stream)
         backlight_on()
         return True
     return False
@@ -1241,7 +1241,7 @@ def handle_remote_command(command_data):
             station_name = command_data.get('value')
             if station_name in stream_list:
                 play(station_name)
-                display_everything(station_name)
+                display_everything(0,station_name)
             return {
                 'status': 'ok',
                 'station': station_name,
