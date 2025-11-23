@@ -854,7 +854,7 @@ def display_ambient(name):
         text_color = BLACK
 
     # bottom bar
-    draw.rectangle([0, 222, 320, 222], fill=text_color)
+    draw.rectangle([0, 218, 320, 218], fill=text_color)
     draw.text((13,222), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
     # wifi    
