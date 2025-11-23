@@ -704,7 +704,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         square_start = padding - 5
         square_end = padding + mark_width * len(favorites) - 1
         if favorites:
-            draw.rectangle([square_start, tick_bar_start, square_end, tick_bar_start + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
+            draw.rectangle([square_start, tick_bar_start + 3, square_end, tick_bar_start - 3 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
             for i in sorted(favorites, key=str.casefold):
                 draw.rectangle([tick_start, tick_start_y, tick_start + tick_width, tick_start_y + tick_height], fill=BLACK)
                 tick_locations[i] = tick_start
