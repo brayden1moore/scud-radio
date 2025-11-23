@@ -965,12 +965,12 @@ def show_volume_overlay(volume):
         draw.rectangle([SCREEN_WIDTH-12, 222, SCREEN_WIDTH, SCREEN_WIDTH-12 + 1], fill=BLACK) # make small divider on bottom bar
         draw.rectangle([SCREEN_WIDTH-12 + 1, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=img_background)
 
-        # border
+        # ticks
         tick_gap = round(SCREEN_HEIGHT / (150/ volume_step))
         tick_start = 0
         tick_height = 1
         while tick_start < SCREEN_HEIGHT:
-            draw.rectangle([SCREEN_WIDTH-6, tick_start, SCREEN_WIDTH-4, tick_start + tick_height], fill=WHITE)
+            draw.rectangle([SCREEN_WIDTH-6, tick_start, SCREEN_WIDTH-4, tick_start + tick_height], fill=BLACK)
             tick_start += tick_gap
 
         # volume fill
