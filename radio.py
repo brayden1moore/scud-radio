@@ -40,7 +40,7 @@ DC = 25
 BL = 23
 bus = 0 
 device = 0 
-current_bl = 80
+current_bl = 70
 disp = LCD_2inch.LCD_2inch()
 disp.Init()
 disp.clear()
@@ -298,7 +298,7 @@ def backlight_on():
         else:
             display_scud()
         time.sleep(0.2)
-        disp.bl_DutyCycle(100)
+        disp.bl_DutyCycle(70)
         screen_on = True
 
 def backlight_off():
