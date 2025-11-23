@@ -951,7 +951,6 @@ def show_volume_overlay(volume):
     global current_image, volume_overlay_showing
     if current_image:
         img = current_image.copy()
-        time.sleep(0.008)  
 
         img_background = img.getpixel((5,5))
         if img_background == (255, 255, 255, 255) or img_background == (255, 255, 255):
