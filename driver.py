@@ -137,7 +137,7 @@ class LCD_2inch(lcdconfig.RaspberryPi):
         """Set buffer to value of Python Imaging Library image."""
         """Write display buffer to physical display"""
         imwidth, imheight = Image.size
-        if imwidth == self.height and imheight ==  self.width:
+        if imwidth == self.width and imheight ==  self.height:
             img = self.np.asarray(Image)
             pix = self.np.zeros((self.width, self.height,2), dtype = self.np.uint8)
             #RGB888 >> RGB565
