@@ -699,7 +699,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         tick_start = padding  
         tick_bar_height = 20
         tick_bar_start = logo_chunk_start + 94
-        tick_height = 4
+        tick_height = 3
         tick_start_y = (tick_bar_start + tick_bar_height / 2) - 2
 
         square_start = padding - 5
