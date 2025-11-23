@@ -670,7 +670,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         double_prev = streams[double_prev_stream]['logo_25']
         double_next = streams[double_next_stream]['logo_25']
         
-        image.paste(double_prev, double_prev_position, double_prev)
+        image.paste(double_prev, double_prev_position)
         draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + 25, double_prev_position[1] + 25], outline=WHITE, width=1)
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()
@@ -679,7 +679,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             double_prev_live = live_25.copy()
             image.paste(double_prev_live, double_prev_position, double_prev_live)
 
-        image.paste(double_next, double_next_position, double_next)
+        image.paste(double_next, double_next_position)
         draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + 25, double_next_position[1] + 25], outline=WHITE, width=1)
         if double_next_stream in favorites:
             double_next_star = star_25.copy()
