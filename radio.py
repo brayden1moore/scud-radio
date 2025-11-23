@@ -599,7 +599,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw name and underline
         name_chunk_start = 240 - 80
-        name_chunk_start_x = 6
+        name_chunk_start_x = 12
         name_line = calculate_text(name, LARGE_FONT_THIN, 315, 1)
         draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
         draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
@@ -1015,7 +1015,7 @@ def on_volume_button_pressed():
         send_mpv_command({"command": ["set_property", "volume", 0]})
         set_last_volume(str(current_volume))
         backlight_off()
-    else:
+    else: 
         screen_on = True
         backlight_on()
         current_volume = get_last_volume()
