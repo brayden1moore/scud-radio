@@ -941,13 +941,13 @@ def seek_stream(direction):
 
     display_everything(direction, readied_stream, readied=True)
 
-def confirm_seek():
+def confirm_seek(confirmed_readied_stream):
     global readied_stream, stream
     if readied_stream:
-        display_everything(0, readied_stream)
+        display_everything(0, confirmed_readied_stream)
         if stream != readied_stream:
             #pause()
-            stream = readied_stream
+            stream = confirmed_readied_stream
             play(stream)
         readied_stream = None
 
@@ -1017,8 +1017,8 @@ def on_button_released():
     last_input_time = time.time()
     button_released_time = current_time
     if readied_stream and (button_released_time - button_press_time < 2):
-        display_everything(0, readied_stream, readied=True, pushed=False)
-        confirm_seek()
+        #display_everything(0, readied_stream, readied=True, pushed=False)
+        confirm_seek(readied_stream)
     else:
         set_last_volume(str(current_volume))
 
