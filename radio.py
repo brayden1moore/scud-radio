@@ -382,7 +382,7 @@ def get_streams():
             else:
                 for i in ['25','60','96','176']:
                     with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
-                        image = pickle.load(f).convert('RGBA')
+                        image = pickle.load(f).convert('RGB')
                         
                         active[name][f'logo_{i}'] = image
 
@@ -398,10 +398,10 @@ def get_streams():
             img = Image.open(buf).convert('RGB')
 
             # crop images
-            logo_96 = img.resize((96,  96)).convert('RGBA')#.convert('LA')
-            logo_60 = img.resize((60,  60)).convert('RGBA')#.convert('LA')
-            logo_25 = img.resize((25,  25)).convert('RGBA')#.convert('LA')
-            logo_176 = img.resize((176, 176)).convert('RGBA')
+            logo_96 = img.resize((96,  96)).convert('RGB')#.convert('LA')
+            logo_60 = img.resize((60,  60)).convert('RGB')#.convert('LA')
+            logo_25 = img.resize((25,  25)).convert('RGB')#.convert('LA')
+            logo_176 = img.resize((176, 176)).convert('RGB')
 
             # save images to dict
             active[name]['logo_96'] = logo_96
@@ -570,7 +570,7 @@ def draw_angled_text(text, font, angle, image, coords, color):
     w = txt.rotate(angle, expand=1)
     image.paste(ImageOps.colorize(w, (0,0,0), color), coords, w)
 
-
+base_layer = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
 def display_everything(direction, name, update=False, readied=False, pushed=False):
     global streams, play_status, first_display, selector
     
@@ -591,7 +591,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
-        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
+        image = base_layer.copy()
         draw = ImageDraw.Draw(image)  
 
         location = streams[name]['location']
@@ -645,9 +645,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         prev_next_rotation = 0
         prev = streams[prev_stream]['logo_60']
         next = streams[next_stream]['logo_60']
-        image.paste(prev, prev_position, prev)
+        image.paste(prev, prev_position)
         draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + 60, prev_position[1] + 60], outline=WHITE, width=1)
-        image.paste(next, next_position, next)
+        image.paste(next, next_position)
         draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=WHITE, width=1)
 
         if prev_stream in favorites:
@@ -661,7 +661,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(prev_live, prev_position, prev_live)
         if next_stream not in reruns:
             next_live = live_60.copy().rotate(-prev_next_rotation, expand=True)
-            image.paste(next_live, next_position, next_live)
+            image.paste(next_live, next_position)
 
         # double prev and next
         double_prev_position = (7, logo_chunk_start + 57 - 4)
@@ -686,7 +686,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(double_next_star, double_next_position, double_next_star)
         if double_next_stream not in reruns:
             double_next_live = live_25.copy()
-            image.paste(double_next_live, double_next_position, double_next_live)
+            image.paste(double_next_live, double_next_position)
 
         # draw mark
         tick_locations = {}
