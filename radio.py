@@ -575,7 +575,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
     global streams, play_status, first_display, selector
     
     #if readied and not restarting:
-    if True:
+    if not restarting:
         first_display = False
 
         prev_stream = stream_list[stream_list.index(name)-1]
@@ -731,8 +731,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         safe_display(image)
     
     else:
-        if not restarting:
-            display_one(name)
+       display_one(name)
 
     
 def display_one(name):
@@ -839,8 +838,6 @@ def display_ambient(name):
     image.paste(logo, (72, 32))
     draw = ImageDraw.Draw(image)
 
-    # bottom bar
-    #draw.rectangle([0, 222, 320, 222], fill=BLACK)
     #draw.rectangle([0, 223, 320, 240], fill=YELLOW)
 
     # battery
@@ -855,6 +852,9 @@ def display_ambient(name):
         text_color = WHITE
     else:
         text_color = BLACK
+
+    # bottom bar
+    draw.rectangle([0, 222, 320, 222], fill=text_color)
     draw.text((13,222), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
     # wifi    
