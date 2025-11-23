@@ -111,13 +111,13 @@ live_25 = Image.open('assets/live_25.png').convert('RGBA')
 #for i in selector_list:
 #    selectors[i] = Image.open(f'assets/selector_{i}.png').convert('RGBA')
 
-mainview = Image.open('assets/mainview.png').convert('RGBA')
-logoview = Image.open('assets/logoview.png').convert('RGBA')
-live_overlay_1 = Image.open('assets/liveoverlay1.png').convert('RGBA')
-charging_overlay = Image.open('assets/chargingoverlay.png').convert('RGBA')
+#mainview = Image.open('assets/mainview.png').convert('RGBA')
+#logoview = Image.open('assets/logoview.png').convert('RGBA')
+#live_overlay_1 = Image.open('assets/liveoverlay1.png').convert('RGBA')
+#charging_overlay = Image.open('assets/chargingoverlay.png').convert('RGBA')
 #live_overlay_2 = Image.open('assets/liveoverlay2.png').convert('RGBA')
-selector_bg = Image.open(f'assets/selector.png').convert('RGBA')
-selector_live_overlay = Image.open('assets/selectorliveoverlay.png').convert('RGBA')
+#selector_bg = Image.open(f'assets/selector.png').convert('RGBA')
+#sselector_live_overlay = Image.open('assets/selectorliveoverlay.png').convert('RGBA')
 
 LIB_PATH = "/var/lib/scud-radio"
 
@@ -661,7 +661,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(prev_live, prev_position, prev_live)
         if next_stream not in reruns:
             next_live = live_60.copy().rotate(-prev_next_rotation, expand=True)
-            image.paste(next_live, next_position)
+            image.paste(next_live, next_position, next_live)
 
         # double prev and next
         double_prev_position = (7, logo_chunk_start + 57 - 4)
@@ -686,7 +686,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(double_next_star, double_next_position, double_next_star)
         if double_next_stream not in reruns:
             double_next_live = live_25.copy()
-            image.paste(double_next_live, double_next_position)
+            image.paste(double_next_live, double_next_position, double_next_live)
 
         # draw mark
         tick_locations = {}
