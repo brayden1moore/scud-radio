@@ -947,7 +947,7 @@ def show_volume_overlay(volume):
         tick_start = 0
         tick_height = 1
         while tick_start < SCREEN_HEIGHT:
-            draw.rectangle([SCREEN_WIDTH-10, tick_start, SCREEN_WIDTH-2, tick_start + tick_height], fill=trim_color)
+            draw.rectangle([SCREEN_WIDTH-9, tick_start, SCREEN_WIDTH-1, tick_start + tick_height], fill=trim_color)
             tick_start += tick_gap
 
         # volume fill
