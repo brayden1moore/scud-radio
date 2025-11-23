@@ -1410,8 +1410,8 @@ rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1), 1)
 CLK_PIN = 16
 DT_PIN = 12  
 volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN)
-volume_rotor.when_rotated_counter_clockwise = volume_handle_rotation(-1)
-volume_rotor.when_rotated_clockwise = volume_handle_rotation(1)
+volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_handle_rotation(-1), -1)
+volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1)
 
 volume_click_button = Button(17, bounce_time=0.05)
 volume_click_button.when_pressed = wrapped_action(lambda: on_volume_button_pressed())
