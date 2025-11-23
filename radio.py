@@ -725,7 +725,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill)
         if readied:
             mark_start = tick_locations[name]
-            draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=GREEN)
+            draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=BLUE)
             
         safe_display(image)
     
@@ -933,20 +933,21 @@ def show_volume_overlay(volume):
         if img_background == (255, 255, 255, 255) or img_background == (255, 255, 255):
             trim_color = RED
         else:
-            trim_color = WHITE
+            trim_color = RED
         
         draw = ImageDraw.Draw(img)
         total_bar_height = SCREEN_HEIGHT
         volume_bar_end = total_bar_height * ((150-volume)/150)
-        draw.rectangle([SCREEN_WIDTH-20, 222, SCREEN_WIDTH, SCREEN_WIDTH-20 + 1], fill=BLACK) # make small divider on bottom bar
-        draw.rectangle([SCREEN_WIDTH-19, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=img_background)
+        overlay_width = 12
+        draw.rectangle([SCREEN_WIDTH-12, 222, SCREEN_WIDTH, SCREEN_WIDTH-12 + 1], fill=BLACK) # make small divider on bottom bar
+        draw.rectangle([SCREEN_WIDTH-12 + 1, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=img_background)
 
         # border
         tick_gap = round(SCREEN_HEIGHT / (150/ volume_step))
         tick_start = 0
         tick_height = 1
         while tick_start < SCREEN_HEIGHT:
-            draw.rectangle([313, tick_start, 317, tick_start + tick_height], fill=trim_color)
+            draw.rectangle([SCREEN_WIDTH-12 - 5, tick_start, SCREEN_WIDTH-12 - 1, tick_start + tick_height], fill=trim_color)
             tick_start += tick_gap
 
         # volume fill
