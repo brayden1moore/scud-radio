@@ -1006,7 +1006,7 @@ def on_button_released():
             return    
         
 def on_volume_button_pressed():
-    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume
+    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on
     held = False
     current_time = time.time()
     last_input_time = time.time()
