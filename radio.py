@@ -944,7 +944,7 @@ def seek_stream(direction):
 def confirm_seek():
     global readied_stream, stream
     if readied_stream:
-        display_everything(0, stream)
+        display_everything(0, readied_stream)
         if stream != readied_stream:
             #pause()
             stream = readied_stream
