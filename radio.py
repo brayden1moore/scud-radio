@@ -1006,7 +1006,7 @@ def on_button_released():
             return    
         
 def on_volume_button_pressed():
-    global button_press_times, rotated, held, button_released_time, last_input_time
+    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume
     held = False
     current_time = time.time()
     last_input_time = time.time()
@@ -1016,10 +1016,11 @@ def on_volume_button_pressed():
         backlight_off()
     else:
         backlight_on()
+        current_volume = get_last_volume()
         if current_volume:
             send_mpv_command({"command": ["set_property", "volume", current_volume]})
         else:
-            send_mpv_command({"command": ["set_property", "volume", current_volume]})
+            send_mpv_command({"command": ["set_property", "volume", 50]})
     
 
 def toggle_favorite():
