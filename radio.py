@@ -1013,10 +1013,13 @@ def on_volume_button_pressed():
     button_released_time = current_time
     if screen_on:
         send_mpv_command({"command": ["set_property", "volume", 0]})
+        set_last_volume(current_volume)
         backlight_off()
     else:
+        screen_on = True
         backlight_on()
         current_volume = get_last_volume()
+        logging.info('current vol', current_volume)
         if current_volume:
             send_mpv_command({"command": ["set_property", "volume", current_volume]})
         else:
