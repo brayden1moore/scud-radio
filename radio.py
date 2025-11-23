@@ -617,6 +617,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         
         # logos
         logo_chunk_start = 35
+        logo_chunk_start_x = 12
         og_logo_position = (111, logo_chunk_start - 14 - 4)
         if pushed:
             logo_position = (129, logo_chunk_start)
@@ -691,7 +692,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         tick_locations = {}
 
         tick_width = 1
-        padding = 12
+        padding = 12 + 5
         total_ticks = len(stream_list)
         total_span = SCREEN_WIDTH - (2 * padding)
         mark_width = round(total_span / (total_ticks - 1))
