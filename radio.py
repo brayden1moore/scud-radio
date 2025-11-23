@@ -849,6 +849,7 @@ def display_ambient(name):
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formatted_time = current_time.strftime("%a  %b %d   %I:%M %p").replace(' 0', '  ').lstrip('0')
+    logging.info(first_pixel)
     if first_pixel == (0,0,0):
         text_color = WHITE
     else:
