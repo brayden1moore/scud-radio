@@ -843,7 +843,7 @@ def display_ambient(name):
     #draw.rectangle([0, 223, 320, 240], fill=YELLOW)
 
     # battery
-    display_battery(draw, image)
+    #display_battery(draw, image)
 
     # time
     now = time.time()
@@ -854,7 +854,7 @@ def display_ambient(name):
         text_color = WHITE
     else:
         text_color = BLACK
-    draw.text((13,224), formatted_time, font=SMALL_FONT, fill=text_color)
+    draw.text((13,224), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
     # wifi    
     #display_wifi(image)
