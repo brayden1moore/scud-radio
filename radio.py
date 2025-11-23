@@ -614,13 +614,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # draw location
         draw.rectangle([name_chunk_start_x, name_chunk_start + 54, name_chunk_start_x + width(location, MEDIUM_FONT), name_chunk_start + 55 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
         draw.text((name_chunk_start_x, name_chunk_start + 52), location, font=MEDIUM_FONT, fill=BLACK)
-
-
-        # draw lines
-        #draw.line([22, name_chunk_start + 16, 22, name_chunk_start + 64], fill=WHITE, width=1)
-        #draw.line([22, name_chunk_start + 64, 34, name_chunk_start + 64], fill=WHITE, width=1)
-        #circle_fill = WHITE if name in reruns else RED
-        #draw.ellipse([15, name_chunk_start + 3, 15 + 13, name_chunk_start + 3 + 13], fill=circle_fill, outline=WHITE, width=1)
         
         # logos
         logo_chunk_start = 35
@@ -655,7 +648,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + 60, prev_position[1] + 60], outline=WHITE, width=1)
         image.paste(next, next_position, next)
         draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=WHITE, width=1)
-
 
         if prev_stream in favorites:
             prev_star = star_60.copy().rotate(prev_next_rotation, expand=True)
@@ -1179,9 +1171,7 @@ def wake_screen():
             display_everything(0,stream)
         else:
             display_scud()
-        time.sleep(0.2)
-        display_everything(0,stream)
-        time.sleep(0.2)
+        time.sleep(0.1)
         display_everything(0,stream)
         backlight_on()
         return True
