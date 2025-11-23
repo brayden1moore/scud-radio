@@ -839,8 +839,8 @@ def display_ambient(name):
     draw = ImageDraw.Draw(image)
 
     # bottom bar
-    draw.rectangle([0, 222, 320, 222], fill=BLACK)
-    draw.rectangle([0, 223, 320, 240], fill=YELLOW)
+    #draw.rectangle([0, 222, 320, 222], fill=BLACK)
+    #draw.rectangle([0, 223, 320, 240], fill=YELLOW)
 
     # battery
     display_battery(draw, image)
@@ -849,11 +849,14 @@ def display_ambient(name):
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formatted_time = current_time.strftime("%a  %b %d   %I:%M %p").replace(' 0', '  ').lstrip('0')
-    
-    draw.text((13,224), formatted_time, font=SMALL_FONT, fill=BLACK)
+    if first_pixel == (0,0,0):
+        text_color = WHITE
+    else:
+        text_color = BLACK
+    draw.text((13,224), formatted_time, font=SMALL_FONT, fill=text_color)
 
     # wifi    
-    display_wifi(image)
+    #display_wifi(image)
 
     safe_display(image)
 
