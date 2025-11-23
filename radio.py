@@ -1107,15 +1107,9 @@ def volume_handle_rotation(direction):
     last_rotation = time.time()
 
     if direction == 1: 
-        if current_volume == 0:
-            backlight_on()
-            screen_on = True
         current_volume = min(150, current_volume + volume_step)
     else: 
         current_volume = max(0, current_volume - volume_step)
-        if current_volume == 0:
-            backlight_off()
-            screen_on = False
 
     show_volume_overlay(current_volume)
     send_mpv_command({"command": ["set_property", "volume", current_volume]})
@@ -1417,8 +1411,8 @@ rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1), 1)
 CLK_PIN = 16
 DT_PIN = 12  
 volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN)
-volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_handle_rotation(-1), -1)
-volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1)
+volume_rotor.when_rotated_counter_clockwise = volume_handle_rotation(-1)
+volume_rotor.when_rotated_clockwise = volume_handle_rotation(1)
 
 volume_click_button = Button(17, bounce_time=0.05)
 volume_click_button.when_pressed = wrapped_action(lambda: on_volume_button_pressed())
