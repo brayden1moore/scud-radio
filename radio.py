@@ -1107,11 +1107,13 @@ def volume_handle_rotation(direction):
     last_rotation = time.time()
 
     if direction == 1: 
-        current_volume = min(150, current_volume + volume_step)
+        new_volume = min(150, current_volume + volume_step)
     else: 
-        current_volume = max(0, current_volume - volume_step)
+        new_volume = max(0, current_volume - volume_step)
+    
+    show_volume_overlay(new_volume)
+    current_volume = new_volume
 
-    show_volume_overlay(current_volume)
     send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
 failed_fetches = 0
