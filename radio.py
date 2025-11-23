@@ -1015,8 +1015,11 @@ def on_volume_button_pressed():
         send_mpv_command({"command": ["set_property", "volume", 0]})
         backlight_off()
     else:
-        send_mpv_command({"command": ["set_property", "volume", current_volume]})
         backlight_on()
+        if current_volume:
+            send_mpv_command({"command": ["set_property", "volume", current_volume]})
+        else:
+            send_mpv_command({"command": ["set_property", "volume", current_volume]})
     
 
 def toggle_favorite():
