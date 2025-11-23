@@ -1107,15 +1107,9 @@ def volume_handle_rotation(direction):
     last_rotation = time.time()
 
     if direction == 1: 
-        if current_volume == 0:
-            backlight_on()
-            screen_on = True
         current_volume = min(150, current_volume + volume_step)
     else: 
         current_volume = max(0, current_volume - volume_step)
-        if current_volume == 0:
-            backlight_off()
-            screen_on = False
 
     show_volume_overlay(current_volume)
     send_mpv_command({"command": ["set_property", "volume", current_volume]})
@@ -1210,7 +1204,6 @@ def wake_screen():
     return False
 
 def wrapped_action(func, direction=0):
-    logging.info(func)
     def inner():
         if click_button.is_pressed and current_volume == 0 and direction == -1:
             func()
