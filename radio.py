@@ -726,7 +726,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         first_tick_start = padding
         bar_width = 2
         mark_start = tick_locations[stream]
-        current_fill = WHITE if name not in favorites else BLACK
+        current_fill = WHITE if stream not in favorites else BLACK
         draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill)
         if readied:
             mark_start = tick_locations[name]
@@ -941,14 +941,14 @@ def seek_stream(direction):
 
     display_everything(direction, readied_stream, readied=True)
 
-def confirm_seek(confirmed_readied_stream):
+def confirm_seek():
     global readied_stream, stream
     if readied_stream:
-        display_everything(0, confirmed_readied_stream)
         if stream != readied_stream:
             #pause()
-            stream = confirmed_readied_stream
+            stream = readied_stream
             play(stream)
+        display_everything(0, stream)
         readied_stream = None
 
 def show_volume_overlay(volume):
@@ -1017,8 +1017,8 @@ def on_button_released():
     last_input_time = time.time()
     button_released_time = current_time
     if readied_stream and (button_released_time - button_press_time < 2):
-        #display_everything(0, readied_stream, readied=True, pushed=False)
-        confirm_seek(readied_stream)
+        display_everything(0, readied_stream, readied=True, pushed=False)
+        confirm_seek()
     else:
         set_last_volume(str(current_volume))
 
