@@ -1202,12 +1202,15 @@ def wake_screen():
         return True
     return False
 
-def wrapped_action(func, direction=0):
+def wrapped_action(func, direction=0, volume=False):
     def inner():
         if click_button.is_pressed and current_volume == 0 and direction == -1:
             func()
         else:
-            if not wake_screen():
+            if not volume:
+                if not wake_screen():
+                    func()
+            else:
                 func()
     return inner
 
@@ -1410,8 +1413,8 @@ rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1), 1)
 CLK_PIN = 16
 DT_PIN = 12  
 volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN)
-volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_handle_rotation(-1), -1)
-volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1)
+volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_handle_rotation(-1), -1, True)
+volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1, True)
 
 volume_click_button = Button(17, bounce_time=0.05)
 volume_click_button.when_pressed = wrapped_action(lambda: on_volume_button_pressed())
