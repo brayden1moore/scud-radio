@@ -755,10 +755,6 @@ def display_one(name):
     if name not in reruns:
         image.paste(live_60, (16, 12), live_60)
 
-    # bottom bar
-    draw.rectangle([0, 222, 320, 222], fill=BLACK)
-    draw.rectangle([0, 223, 320, 240], fill=YELLOW)
-
     # name and underline
     name_line = calculate_text(name, font=LARGE_FONT_THIN, max_width=225, lines=1)[0]
     draw.rectangle([92, 20 - 4, 92 + width(name_line, LARGE_FONT_THIN), 20 + height('S', LARGE_FONT_THIN)], fill=BLACK)
@@ -810,6 +806,10 @@ def display_one(name):
             draw.text((14, anchor), i, font=MEDIUM_FONT, fill=WHITE)
             anchor += avg_info_height + line_gap
 
+    # bottom bar
+    draw.rectangle([0, 222, 320, 222], fill=BLACK)
+    draw.rectangle([0, 223, 320, 240], fill=YELLOW)
+
     # battery
     display_battery(draw, image)
 
@@ -836,8 +836,27 @@ def display_ambient(name):
 
     image = Image.new('RGB',(SCREEN_WIDTH, SCREEN_HEIGHT), color = first_pixel)
     image.paste(logo, (72, 32))
+    draw = ImageDraw.Draw(image)
+
+    # bottom bar
+    draw.rectangle([0, 222, 320, 222], fill=BLACK)
+    draw.rectangle([0, 223, 320, 240], fill=YELLOW)
+
+    # battery
+    display_battery(draw, image)
+
+    # time
+    now = time.time()
+    current_time = datetime.fromtimestamp(now, tz=user_tz)
+    formatted_time = current_time.strftime("%a  %b %d   %I:%M %p").replace(' 0', '  ').lstrip('0')
+    
+    draw.text((13,224), formatted_time, font=SMALL_FONT, fill=BLACK)
+
+    # wifi    
+    display_wifi(image)
 
     safe_display(image)
+
 
     screen_dim = True
 
