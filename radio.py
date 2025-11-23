@@ -40,7 +40,7 @@ DC = 25
 BL = 23
 bus = 0 
 device = 0 
-current_bl = 70
+current_bl = 80
 disp = LCD_2inch.LCD_2inch()
 disp.Init()
 disp.clear()
@@ -298,7 +298,7 @@ def backlight_on():
         else:
             display_scud()
         time.sleep(0.2)
-        disp.bl_DutyCycle(70)
+        disp.bl_DutyCycle(80)
         screen_on = True
 
 def backlight_off():
@@ -848,7 +848,7 @@ def display_ambient(name):
     current_time = datetime.fromtimestamp(now, tz=user_tz)
     formatted_time = current_time.strftime("%a  %b %d  %I:%M %p").replace(' 0', '  ').lstrip('0')
     logging.info(first_pixel)
-    if first_pixel == (0,0,0,255):
+    if first_pixel == (0,0,0):
         text_color = WHITE
     else:
         text_color = BLACK
