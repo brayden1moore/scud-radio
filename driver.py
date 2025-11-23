@@ -139,7 +139,7 @@ class LCD_2inch(lcdconfig.RaspberryPi):
         imwidth, imheight = Image.size
         if imwidth == self.height and imheight ==  self.width:
             img = self.np.asarray(Image)
-            pix = self.np.zeros((self.height, self.width,2), dtype = self.np.uint8)
+            pix = self.np.zeros((self.width, self.height,2), dtype = self.np.uint8)
             #RGB888 >> RGB565
             pix[...,[0]] = self.np.add(self.np.bitwise_and(img[...,[0]],0xF8),self.np.right_shift(img[...,[1]],5))
             pix[...,[1]] = self.np.add(self.np.bitwise_and(self.np.left_shift(img[...,[1]],3),0xE0), self.np.right_shift(img[...,[2]],3))
