@@ -963,8 +963,8 @@ def show_volume_overlay(volume):
         total_bar_height = SCREEN_HEIGHT
         volume_bar_end = total_bar_height * ((150-volume)/150)
         overlay_width = 12
-        draw.rectangle([SCREEN_WIDTH-12, 222, SCREEN_WIDTH, SCREEN_WIDTH-12 + 1], fill=BLACK) # make small divider on bottom bar
-        draw.rectangle([SCREEN_WIDTH-12 + 1, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=img_background)
+        #draw.rectangle([SCREEN_WIDTH-12, 222, SCREEN_WIDTH, SCREEN_WIDTH-12 + 1], fill=BLACK) # make small divider on bottom bar
+        #draw.rectangle([SCREEN_WIDTH-12 + 1, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=img_background)
 
         # ticks
         tick_gap = round(SCREEN_HEIGHT / (150/ volume_step))
