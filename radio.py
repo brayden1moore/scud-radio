@@ -1107,9 +1107,14 @@ def volume_handle_rotation(direction):
     last_rotation = time.time()
 
     if direction == 1: 
+        if current_volume == 0:
+            backlight_on()
+            screen_on = True
         current_volume = min(150, current_volume + volume_step)
     else: 
         current_volume = max(0, current_volume - volume_step)
+        if current_volume == 0:
+            screen_on = False
 
     show_volume_overlay(current_volume)
     send_mpv_command({"command": ["set_property", "volume", current_volume]})
