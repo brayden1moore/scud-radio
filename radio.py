@@ -944,11 +944,11 @@ def seek_stream(direction):
 def confirm_seek():
     global readied_stream, stream
     if readied_stream:
+        display_everything(0, stream)
         if stream != readied_stream:
             #pause()
             stream = readied_stream
             play(stream)
-        display_everything(0, stream)
         readied_stream = None
 
 def show_volume_overlay(volume):
@@ -1017,7 +1017,7 @@ def on_button_released():
     last_input_time = time.time()
     button_released_time = current_time
     if readied_stream and (button_released_time - button_press_time < 2):
-        display_everything(0, readied_stream, readied=False, pushed=False)
+        display_everything(0, readied_stream, readied=True, pushed=False)
         confirm_seek()
     else:
         set_last_volume(str(current_volume))
