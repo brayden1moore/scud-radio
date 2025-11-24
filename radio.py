@@ -571,8 +571,9 @@ def draw_angled_text(text, font, angle, image, coords, color):
     image.paste(ImageOps.colorize(w, (0,0,0), color), coords, w)
 
 base_layer = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
+start_x = 0
 def display_everything(direction, name, update=False, readied=False, pushed=False):
-    global streams, play_status, first_display, selector
+    global streams, play_status, first_display, selector, start_x
     
     #if readied and not restarting:
     if not restarting:
