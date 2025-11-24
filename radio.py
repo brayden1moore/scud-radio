@@ -576,6 +576,10 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
     
     #if readied and not restarting:
     if not restarting:
+        now = time.now()
+        if (not readied and (now - button_released_time > 1)) | (readied and (now - last_rotation > 1)):
+            start_x = start_x - 10
+
         first_display = False
 
         prev_stream = stream_list[stream_list.index(name)-1]
@@ -600,7 +604,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # draw name and underline
 
         name_chunk_start = 240 - 80
-        name_chunk_start_x = 12
+        name_chunk_start_x = 12 + start_x
         name_line = calculate_text(name, LARGE_FONT_THIN, 315, 1)
         draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
         draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
@@ -620,7 +624,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         logo_chunk_start = 35
         if not readied:
             logo_chunk_start = logo_chunk_start + 37
-        logo_chunk_start_x = 12
+        logo_chunk_start_x = 12 + start_x
         og_logo_position = (111, logo_chunk_start - 14 - 4)
         if pushed:
             logo_position = (129, logo_chunk_start)
