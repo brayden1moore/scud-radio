@@ -738,7 +738,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 
         else:
             first_pixel = logo.getpixel((5,5))
-            display_bar(y=0, first_pixel=first_pixel)
+            display_bar(y=0, first_pixel=first_pixel, draw=draw)
 
         safe_display(image)
     
@@ -839,7 +839,7 @@ def display_one(name):
     has_displayed_once = True
 
 
-def display_bar(y, first_pixel):
+def display_bar(y, first_pixel, draw):
     # time
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
@@ -873,7 +873,7 @@ def display_ambient(name):
 
     #draw.rectangle([0, 223, 320, 240], fill=YELLOW)
 
-    display_bar(y=218, first_pixel=first_pixel)
+    display_bar(y=218, first_pixel=first_pixel, draw=draw)
 
 
     safe_display(image)
