@@ -691,10 +691,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             double_next_live = live_25.copy()
             image.paste(double_next_live, double_next_position, double_next_live)
 
-        if not readied:
-            first_pixel = logo.getpixel((5,5))
-            logging.info("else happening")
-            display_bar(y=0, first_pixel=(0,0,0,255), draw=draw)
+        logging.info("else happening")
+        display_bar(y=0, first_pixel=(0,0,0,255), draw=draw)
 
         # draw mark
         if readied:
