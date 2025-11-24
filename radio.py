@@ -738,6 +738,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 
         else:
             first_pixel = logo.getpixel((5,5))
+            logging.info("else happening")
             display_bar(y=0, first_pixel=(0,0,0,255), draw=draw)
 
         safe_display(image)
