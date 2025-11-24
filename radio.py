@@ -852,16 +852,18 @@ def display_bar(y, first_pixel, draw):
     formatted_time = current_time.strftime("%a  %b %d  %I:%M %p").replace(' 0', '  ').lstrip('0')
     logging.info(first_pixel)
     if first_pixel in [(0,0,0),(0,0,0,255)]:
-        text_color = YELLOW
+        text_color = BLACK
     else:
         text_color = BLACK
 
     # bottom bar 218 y for bottom
     if y!=4:
         draw.rectangle([0, y, 320, y], fill=YELLOW)
+        draw.rectangle([0, y, 320, y+24], fill=YELLOW)
     if y==4:
         line_y = y + height("S", MEDIUM_FONT) + 14
         draw.rectangle([0, line_y, 320, line_y], fill=YELLOW)
+        draw.rectangle([0, line_y, 320, line_y+24], fill=YELLOW)
     draw.text((13,y+4), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
 
