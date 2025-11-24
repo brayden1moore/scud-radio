@@ -742,7 +742,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill)
             if readied:
                 mark_start = tick_locations[name]
-                draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=BLUE)
+                draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=BLUE, outline=BLACK, width=1)
                 
 
         safe_display(image)
@@ -848,7 +848,8 @@ def display_bar(y, first_pixel, draw):
     # time
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
-    formatted_time = current_time.strftime("%a  %b %d  %I:%M %p").replace(' 0', '  ').lstrip('0')
+    formatted_date = current_time.strftime("%a  %b %d").replace(' 0', '  ').lstrip('0')
+    formatted_time = current_time.strftime("%I:%M %p").replace(' 0', '  ').lstrip('0')
     logging.info(first_pixel)
     if first_pixel in [(0,0,0),(0,0,0,255)]:
         text_color = BLACK
@@ -863,7 +864,8 @@ def display_bar(y, first_pixel, draw):
         line_y = y + height("S", MEDIUM_FONT) + 10
         draw.rectangle([0, line_y, 320, line_y], fill=YELLOW)
         draw.rectangle([0, line_y-24, 320, line_y], fill=YELLOW)
-    draw.text((13,y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
+    draw.text((13,y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
+    draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
 
 
