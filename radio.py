@@ -579,7 +579,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
     if not restarting:
         now = time.time()
         if (not readied and (now - button_released_time > 1)) | (readied and (now - last_rotation > 1)):
-            start_x = start_x - 10
+            start_x = start_x# - 10
 
         first_display = False
 
