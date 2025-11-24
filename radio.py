@@ -598,10 +598,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 315, 1)
 
         # draw name and underline
-        if readied:
-            name_chunk_start = 240 - 110 # 80
-        else:
-            name_chunk_start = 240 - 110
+
+        name_chunk_start = 240 - 80
         name_chunk_start_x = 12
         name_line = calculate_text(name, LARGE_FONT_THIN, 315, 1)
         draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
