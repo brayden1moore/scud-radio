@@ -696,7 +696,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             double_next_live = live_25.copy()
             image.paste(double_next_live, double_next_position, double_next_live)
 
-       #if not readied:
+        #if not readied:
         display_bar(y=4, first_pixel=(0,0,0,255), draw=draw)
 
         # draw mark
