@@ -736,6 +736,10 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 mark_start = tick_locations[name]
                 draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=BLUE)
                 
+        else:
+            first_pixel = logo.getpixel((5,5))
+            display_bar(y=0, first_pixel=first_pixel)
+
         safe_display(image)
     
     else:
@@ -835,6 +839,27 @@ def display_one(name):
     has_displayed_once = True
 
 
+def display_bar(y, first_pixel):
+    # time
+    now = time.time()
+    current_time = datetime.fromtimestamp(now, tz=user_tz)
+    formatted_time = current_time.strftime("%a  %b %d  %I:%M %p").replace(' 0', '  ').lstrip('0')
+    logging.info(first_pixel)
+    if first_pixel == (0,0,0):
+        text_color = WHITE
+    else:
+        text_color = BLACK
+
+    # bottom bar 218 y for bottom
+    if y!=0:
+        draw.rectangle([0, y, 320, y], fill=text_color)
+    if y==0:
+        line_y = y + height("S", MEDIUM_FONT) + 4
+        draw.rectangle([0, line_y, 320, line_y], fill=text_color)
+    draw.text((13,y+4), formatted_time, font=MEDIUM_FONT, fill=text_color)
+
+
+
 def display_ambient(name):
     global screen_dim
 
@@ -848,25 +873,8 @@ def display_ambient(name):
 
     #draw.rectangle([0, 223, 320, 240], fill=YELLOW)
 
-    # battery
-    #display_battery(draw, image)
+    display_bar(y=218, first_pixel=first_pixel)
 
-    # time
-    now = time.time()
-    current_time = datetime.fromtimestamp(now, tz=user_tz)
-    formatted_time = current_time.strftime("%a  %b %d  %I:%M %p").replace(' 0', '  ').lstrip('0')
-    logging.info(first_pixel)
-    if first_pixel == (0,0,0):
-        text_color = WHITE
-    else:
-        text_color = BLACK
-
-    # bottom bar
-    draw.rectangle([0, 218, 320, 218], fill=text_color)
-    draw.text((13,222), formatted_time, font=MEDIUM_FONT, fill=text_color)
-
-    # wifi    
-    #display_wifi(image)
 
     safe_display(image)
 
