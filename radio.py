@@ -583,9 +583,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         first_display = False
 
-        #if not readied:
-        display_bar(y=4, first_pixel=(0,0,0,255), draw=draw)
-
         prev_stream = stream_list[stream_list.index(name)-1]
         double_prev_stream = stream_list[stream_list.index(prev_stream)-1]
         try:
@@ -601,6 +598,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         image = base_layer.copy()
         draw = ImageDraw.Draw(image)  
+
+        #if not readied:
+        display_bar(y=4, first_pixel=(0,0,0,255), draw=draw)
 
         location = streams[name]['location']
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 315, 1)
