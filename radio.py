@@ -847,7 +847,7 @@ def display_bar(y, first_pixel, draw):
     formatted_time = current_time.strftime("%a  %b %d  %I:%M %p").replace(' 0', '  ').lstrip('0')
     logging.info(first_pixel)
     if first_pixel in [(0,0,0),(0,0,0,255)]:
-        text_color = WHITE
+        text_color = YELLOW
     else:
         text_color = BLACK
 
