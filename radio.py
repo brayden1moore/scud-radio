@@ -624,7 +624,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # logos
         logo_chunk_start = 35
         if not readied:
-            logo_chunk_start = logo_chunk_start + 37
+            logo_chunk_start = logo_chunk_start + 25
         logo_chunk_start_x = 12 + start_x
         og_logo_position = (111, logo_chunk_start - 14 - 4)
         if pushed:
@@ -696,7 +696,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             double_next_live = live_25.copy()
             image.paste(double_next_live, double_next_position, double_next_live)
 
-        logging.info("else happening")
         if not readied:
             display_bar(y=4, first_pixel=(0,0,0,255), draw=draw)
 
