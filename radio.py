@@ -598,7 +598,10 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 315, 1)
 
         # draw name and underline
-        name_chunk_start = 240 - 80
+        if readied:
+            name_chunk_start = 240 - 80
+        else:
+            name_chunk_start = 240 - 110
         name_chunk_start_x = 12
         name_line = calculate_text(name, LARGE_FONT_THIN, 315, 1)
         draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
@@ -689,49 +692,50 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(double_next_live, double_next_position, double_next_live)
 
         # draw mark
-        tick_locations = {}
+        if readied:
+            tick_locations = {}
 
-        tick_width = 1
-        padding = 12 + 6
-        total_ticks = len(stream_list)
-        total_span = SCREEN_WIDTH - (2 * padding)
-        mark_width = round(total_span / (total_ticks - 1))
-        tick_start = padding  
-        tick_bar_height = 20
-        tick_bar_start = logo_chunk_start + 94
-        tick_height = 3
-        tick_start_y = (tick_bar_start + tick_bar_height / 2) - 2
+            tick_width = 1
+            padding = 12 + 6
+            total_ticks = len(stream_list)
+            total_span = SCREEN_WIDTH - (2 * padding)
+            mark_width = round(total_span / (total_ticks - 1))
+            tick_start = padding  
+            tick_bar_height = 20
+            tick_bar_start = logo_chunk_start + 94
+            tick_height = 3
+            tick_start_y = (tick_bar_start + tick_bar_height / 2) - 2
 
-        square_start = padding - 5
-        square_end = padding + mark_width * len(favorites) - 1
-        if favorites:
-            draw.rectangle([square_start, tick_bar_start + 5, square_end, tick_bar_start - 5 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
-            for i in sorted(favorites, key=str.casefold):
-                draw.rectangle([tick_start, tick_start_y, tick_start + tick_width, tick_start_y + tick_height], fill=BLACK)
+            square_start = padding - 5
+            square_end = padding + mark_width * len(favorites) - 1
+            if favorites:
+                draw.rectangle([square_start, tick_bar_start + 5, square_end, tick_bar_start - 5 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
+                for i in sorted(favorites, key=str.casefold):
+                    draw.rectangle([tick_start, tick_start_y, tick_start + tick_width, tick_start_y + tick_height], fill=BLACK)
+                    tick_locations[i] = tick_start
+                    tick_start += mark_width
+                    square_end += mark_width
+                tick_start += 5
+
+            if readied:
+                tick_color = BLUE
+            else:
+                tick_color = WHITE
+            for i in [i for i in stream_list if i not in favorites]:
+                draw.rectangle([tick_start, tick_start_y, tick_start + tick_width, tick_start_y + tick_height], fill=tick_color)
                 tick_locations[i] = tick_start
                 tick_start += mark_width
-                square_end += mark_width
-            tick_start += 5
 
-        if readied:
-            tick_color = BLUE
-        else:
-            tick_color = WHITE
-        for i in [i for i in stream_list if i not in favorites]:
-            draw.rectangle([tick_start, tick_start_y, tick_start + tick_width, tick_start_y + tick_height], fill=tick_color)
-            tick_locations[i] = tick_start
-            tick_start += mark_width
-
-        # marker
-        first_tick_start = padding
-        bar_width = 2
-        mark_start = tick_locations[stream]
-        current_fill = WHITE if stream not in favorites else BLACK
-        draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill)
-        if readied:
-            mark_start = tick_locations[name]
-            draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=BLUE)
-            
+            # marker
+            first_tick_start = padding
+            bar_width = 2
+            mark_start = tick_locations[stream]
+            current_fill = WHITE if stream not in favorites else BLACK
+            draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill)
+            if readied:
+                mark_start = tick_locations[name]
+                draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=BLUE)
+                
         safe_display(image)
     
     else:
