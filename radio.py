@@ -865,7 +865,7 @@ def display_bar(y, first_pixel, draw):
         draw.rectangle([0, line_y, 320, line_y], fill=YELLOW)
         draw.rectangle([0, line_y-24, 320, line_y], fill=YELLOW)
     draw.text((13,y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
-    draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13), formatted_time, font=MEDIUM_FONT, fill=text_color)
+    draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
 
 
