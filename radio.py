@@ -620,6 +620,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         
         # logos
         logo_chunk_start = 35
+        if readied:
+            logo_chunk_start = logo_chunk_start + 94
         logo_chunk_start_x = 12
         og_logo_position = (111, logo_chunk_start - 14 - 4)
         if pushed:
@@ -1443,8 +1445,10 @@ time_since_battery_check = 0
 live_overlay_version = 1
 try:
     while True:
-        if time_since_battery_check == 20:
+        if time_since_battery_check == 5:
             get_battery()
+            if not charging:
+                safe_restart
             time_since_battery_check = 0
 
         if (readied_stream or volume_overlay_showing) and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
