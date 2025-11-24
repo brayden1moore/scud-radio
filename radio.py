@@ -624,7 +624,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # logos
         logo_chunk_start = 35
         if not readied:
-            logo_chunk_start = logo_chunk_start + 25
+            logo_chunk_start = logo_chunk_start + 29
         logo_chunk_start_x = 12 + start_x
         og_logo_position = (111, logo_chunk_start - 14 - 4)
         if pushed:
@@ -862,7 +862,7 @@ def display_bar(y, first_pixel, draw):
     if y==4:
         line_y = y + height("S", MEDIUM_FONT) + 14
         draw.rectangle([0, line_y, 320, line_y], fill=YELLOW)
-        draw.rectangle([0, line_y, 320, line_y+24], fill=YELLOW)
+        draw.rectangle([0, line_y-24, 320, line_y], fill=YELLOW)
     draw.text((13,y+4), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
 
