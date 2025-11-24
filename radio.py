@@ -855,7 +855,7 @@ def display_bar(y, first_pixel, draw):
     if y!=4:
         draw.rectangle([0, y, 320, y], fill=text_color)
     if y==4:
-        line_y = y + height("S", MEDIUM_FONT) + 10
+        line_y = y + height("S", MEDIUM_FONT) + 12
         draw.rectangle([0, line_y, 320, line_y], fill=text_color)
     draw.text((13,y+4), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
