@@ -599,7 +599,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw name and underline
         if readied:
-            name_chunk_start = 240 - 80
+            name_chunk_start = 240 - 110 # 80
         else:
             name_chunk_start = 240 - 110
         name_chunk_start_x = 12
@@ -620,7 +620,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         
         # logos
         logo_chunk_start = 35
-        if readied:
+        if not readied:
             logo_chunk_start = logo_chunk_start + 94
         logo_chunk_start_x = 12
         og_logo_position = (111, logo_chunk_start - 14 - 4)
