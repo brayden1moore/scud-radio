@@ -691,6 +691,11 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             double_next_live = live_25.copy()
             image.paste(double_next_live, double_next_position, double_next_live)
 
+        if not readied:
+            first_pixel = logo.getpixel((5,5))
+            logging.info("else happening")
+            display_bar(y=0, first_pixel=(0,0,0,255), draw=draw)
+
         # draw mark
         if readied:
             tick_locations = {}
@@ -736,10 +741,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 mark_start = tick_locations[name]
                 draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=BLUE)
                 
-        else:
-            first_pixel = logo.getpixel((5,5))
-            logging.info("else happening")
-            display_bar(y=0, first_pixel=(0,0,0,255), draw=draw)
 
         safe_display(image)
     
@@ -875,7 +876,6 @@ def display_ambient(name):
     #draw.rectangle([0, 223, 320, 240], fill=YELLOW)
 
     display_bar(y=218, first_pixel=first_pixel, draw=draw)
-
 
     safe_display(image)
 
