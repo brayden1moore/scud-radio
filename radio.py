@@ -597,8 +597,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         image = base_layer.copy()
         draw = ImageDraw.Draw(image)  
 
-        #if not readied:
-        #display_bar(y=4, draw=draw)
+        if not readied:
+            display_bar(y=4, draw=draw)
 
         location = streams[name]['location']
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 315, 1)
