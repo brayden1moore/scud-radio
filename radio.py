@@ -846,7 +846,6 @@ def display_bar(y, draw):
     draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
 
-
 def display_ambient(name, clicked=False):
     global screen_dim, currently_displaying
 
@@ -867,6 +866,18 @@ def display_ambient(name, clicked=False):
     if not clicked:
         screen_dim = True
     currently_displaying = 'ambient'
+
+
+def display_current():
+    if currently_displaying=='everything':
+        display_one(stream)
+
+    elif currently_displaying == 'one':
+        display_ambient(stream, clicked=True)
+
+    elif currently_displaying == 'ambient':
+        display_everything(0, stream, readied=False, pushed=False)
+
 
 def get_anchor(title, info, live, line_gap, section_gap):
     size = 0
@@ -1009,14 +1020,7 @@ def on_button_pressed():
         display_everything(0, readied_stream, readied=True, pushed=True)
 
     else:
-        if currently_displaying=='everything':
-            display_one(stream)
-
-        elif currently_displaying == 'one':
-            display_ambient(stream, clicked=True)
-
-        elif currently_displaying == 'ambient':
-            display_everything(0, stream, readied=False, pushed=False)
+        display_current()
 
 
     held = True
