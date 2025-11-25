@@ -831,7 +831,7 @@ def display_bar(y, draw):
     # time
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
-    formatted_date = current_time.strftime("%b %d").replace(' 0', '  ').lstrip('0')
+    formatted_date = current_time.strftime("%a %b %d").replace(' 0', '  ').lstrip('0')
     formatted_time = current_time.strftime("%I:%M %p").replace(' 0', '  ').lstrip('0')
     text_color = BLACK
 
