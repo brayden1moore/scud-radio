@@ -819,22 +819,7 @@ def display_one(name):
             draw.text((14, anchor), i, font=MEDIUM_FONT, fill=WHITE)
             anchor += avg_info_height + line_gap
 
-    # bottom bar
-    draw.rectangle([0, 222, 320, 222], fill=BLACK)
-    draw.rectangle([0, 223, 320, 240], fill=YELLOW)
-
-    # battery
-    display_battery(draw, image)
-
-    # time
-    now = time.time()
-    current_time = datetime.fromtimestamp(now, tz=user_tz)
-    formatted_time = current_time.strftime("%a  %b %d   %I:%M %p").replace(' 0', '  ').lstrip('0')
-    
-    draw.text((13,224), formatted_time, font=SMALL_FONT, fill=BLACK)
-
-    # wifi    
-    display_wifi(image)
+    display_bar(y=218, draw=draw)
 
     safe_display(image)
     has_displayed_once = True
@@ -1019,17 +1004,19 @@ def on_button_pressed():
 
     logging.info('PRESSED AND CURRENTLY DISPLAYING', currently_displaying)
 
-    if currently_displaying=='everything':
-        display_one(stream)
-
-    elif currently_displaying == 'one':
-        display_ambient(stream)
-
-    elif currently_displaying == 'ambient':
-        display_everything(0, stream, readied=False, pushed=False)
-
     if readied_stream:
         display_everything(0, readied_stream, readied=True, pushed=True)
+
+    else:
+        if currently_displaying=='everything':
+            display_one(stream)
+
+        elif currently_displaying == 'one':
+            display_ambient(stream)
+
+        elif currently_displaying == 'ambient':
+            display_everything(0, stream, readied=False, pushed=False)
+
 
     held = True
     rotated = False
