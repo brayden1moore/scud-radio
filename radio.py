@@ -841,7 +841,7 @@ def display_bar(y, draw):
 
         center_of_section = round((240 + 218) / 2)
         radius = 3
-        draw.ellipse((160-radius, center_of_section-radius, 160+radius, center_of_section+radius), fill=BLACK)
+        draw.ellipse((150-radius, center_of_section-radius, 150+radius, center_of_section+radius), fill=BLACK)
     if y==4:
         line_y = y + height("S", MEDIUM_FONT) + 10
         draw.rectangle([0, line_y, 320, line_y], fill=YELLOW)
