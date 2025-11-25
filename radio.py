@@ -847,7 +847,7 @@ def display_bar(y, draw):
 
 
 
-def display_ambient(name):
+def display_ambient(name, clicked=False):
     global screen_dim, currently_displaying
 
     # logo
@@ -864,7 +864,8 @@ def display_ambient(name):
 
     safe_display(image)
 
-    screen_dim = True
+    if not clicked:
+        screen_dim = True
     currently_displaying = 'ambient'
 
 def get_anchor(title, info, live, line_gap, section_gap):
@@ -1012,7 +1013,7 @@ def on_button_pressed():
             display_one(stream)
 
         elif currently_displaying == 'one':
-            display_ambient(stream)
+            display_ambient(stream, clicked=True)
 
         elif currently_displaying == 'ambient':
             display_everything(0, stream, readied=False, pushed=False)
