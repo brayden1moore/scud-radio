@@ -995,7 +995,7 @@ def show_volume_overlay(volume):
         draw.rectangle([SCREEN_WIDTH-10, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=trim_color)
         draw.rectangle([SCREEN_WIDTH-10, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], width=1, outline=BLACK)
 
-        safe_display(img)
+        disp.ShowImage(img)
         time.sleep(0.005)
         volume_overlay_showing = True
 
