@@ -973,7 +973,7 @@ def show_volume_overlay(volume):
     if current_image:
         img = current_image.copy()
 
-        img_background = img.getpixel((5,25))
+        img_background = img.getpixel((5,45))
         if img_background == (255, 255, 255, 255) or img_background == (255, 255, 255):
             trim_color = RED
         else:
