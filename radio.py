@@ -1014,12 +1014,27 @@ def safe_restart():
 button_released_time = time.time()
 
 def on_button_pressed():
-    global button_press_time, rotated, button_press_times, held, button_released_time, last_input_time
+    global button_press_time, rotated, button_press_times, held, button_released_time, last_input_time, currently_displaying
     last_input_time = time.time()
     button_press_time = time.time()
     button_released_time = None
+
+    if currently_displaying=='everything':
+        display_one(stream)
+        currently_displaying = 'one'
+
+    elif currently_displaying == 'one':
+        display_ambient(stream)
+        currently_displaying = 'ambient'
+
+    elif currently_displaying == 'ambient':
+        display_everything(0, stream, readied=False, pushed=False)
+        currently_displaying == 'everything'
+
     if readied_stream:
         display_everything(0, readied_stream, readied=True, pushed=True)
+        currently_displaying == 'everything'
+
     held = True
     rotated = False
 
@@ -1033,18 +1048,9 @@ def on_button_released():
     last_input_time = time.time()
     button_released_time = current_time
 
-    if (button_released_time - button_press_time < 2):
-        if currently_displaying=='everything':
-            display_one(stream)
-            currently_displaying = 'one'
-
-        elif currently_displaying == 'one':
-            display_ambient(stream)
-            currently_displaying = 'ambient'
-
-        elif currently_displaying == 'ambient' or readied_stream:
-            display_everything(0, readied_stream, readied=True, pushed=False)
-            confirm_seek()
+    if readied_stream and (button_released_time - button_press_time < 2):
+        display_everything(0, readied_stream, readied=True, pushed=False)
+        confirm_seek()
     
     else:
         set_last_volume(str(current_volume))
