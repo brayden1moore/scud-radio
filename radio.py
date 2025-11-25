@@ -848,10 +848,10 @@ def display_bar(y, draw):
     draw.text((13,y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
     draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
-    radius = 3
-    draw.ellipse((148-radius, center_of_section-radius, 148+radius, center_of_section+radius), fill=BLACK if currently_displaying=='everything' else None, outline=BLACK, width=1)
+    radius = 4
+    draw.ellipse((146-radius, center_of_section-radius, 146+radius, center_of_section+radius), fill=BLACK if currently_displaying=='everything' else None, outline=BLACK, width=1)
     draw.ellipse((155-radius, center_of_section-radius, 155+radius, center_of_section+radius), fill=BLACK if currently_displaying=='one' else None, outline=BLACK, width=1)
-    draw.ellipse((162-radius, center_of_section-radius, 162+radius, center_of_section+radius), fill=BLACK if currently_displaying=='ambient' else None, outline=BLACK, width=1)
+    draw.ellipse((164-radius, center_of_section-radius, 164+radius, center_of_section+radius), fill=BLACK if currently_displaying=='ambient' else None, outline=BLACK, width=1)
 
 
 
