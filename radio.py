@@ -838,14 +838,14 @@ def display_bar(y, draw):
     if y!=4:
         draw.rectangle([0, y, 320, y], fill=YELLOW)
         draw.rectangle([0, y, 320, y+24], fill=YELLOW)
+
+        center_of_section = round((240 + 218) / 2)
+        radius = 3
+        draw.ellipse((160-radius, center_of_section-radius, 160+radius, center_of_section+radius), fill=BLACK)
     if y==4:
         line_y = y + height("S", MEDIUM_FONT) + 10
         draw.rectangle([0, line_y, 320, line_y], fill=YELLOW)
         draw.rectangle([0, line_y-24, 320, line_y], fill=YELLOW)
-
-        center_of_section = round((240 + 218) / 2)
-        radius = 3
-        draw.ellipse((160-radius, center_of_section-radius, 160+radius, center_of_section+radius), fill=(0,0,0))
 
     draw.text((13,y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
     draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
