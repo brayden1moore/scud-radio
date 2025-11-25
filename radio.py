@@ -977,7 +977,7 @@ def show_volume_overlay(volume):
 
         draw = ImageDraw.Draw(img)
         total_bar_height = SCREEN_HEIGHT
-        last_volume_bar_end = total_bar_height * ((150-current_volume)/150)
+        last_volume_bar_end = min(SCREEN_HEIGHT, total_bar_height * ((150-current_volume)/150))
         volume_bar_end = total_bar_height * ((150-volume)/150)
         overlay_width = 12
         #draw.rectangle([SCREEN_WIDTH-12, 222, SCREEN_WIDTH, SCREEN_WIDTH-12 + 1], fill=BLACK) # make small divider on bottom bar
