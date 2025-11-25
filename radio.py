@@ -600,7 +600,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw = ImageDraw.Draw(image)  
 
         #if not readied:
-        display_bar(y=4, first_pixel=(0,0,0,255), draw=draw)
+        display_bar(y=4, draw=draw)
 
         location = streams[name]['location']
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 315, 1)
@@ -844,17 +844,13 @@ def display_one(name):
     has_displayed_once = True
 
 
-def display_bar(y, first_pixel, draw):
+def display_bar(y, draw):
     # time
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
-    formatted_date = current_time.strftime("%a  %b %d").replace(' 0', '  ').lstrip('0')
+    formatted_date = current_time.strftime("%b %d").replace(' 0', '  ').lstrip('0')
     formatted_time = current_time.strftime("%I:%M %p").replace(' 0', '  ').lstrip('0')
-    logging.info(first_pixel)
-    if first_pixel in [(0,0,0),(0,0,0,255)]:
-        text_color = BLACK
-    else:
-        text_color = BLACK
+    text_color = BLACK
 
     # bottom bar 218 y for bottom
     if y!=4:
@@ -882,7 +878,7 @@ def display_ambient(name):
 
     #draw.rectangle([0, 223, 320, 240], fill=YELLOW)
 
-    display_bar(y=218, first_pixel=first_pixel, draw=draw)
+    display_bar(y=218,draw=draw)
 
     safe_display(image)
 
