@@ -1044,8 +1044,8 @@ def on_button_released():
 
         elif currently_displaying == 'ambient' or readied_stream:
             display_everything(0, readied_stream, readied=True, pushed=False)
-        
-        confirm_seek()
+            confirm_seek()
+    
     else:
         set_last_volume(str(current_volume))
 
