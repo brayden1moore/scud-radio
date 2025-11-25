@@ -575,8 +575,8 @@ start_x = 0
 def display_everything(direction, name, update=False, readied=False, pushed=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
-    #if readied and not restarting:
-    if not restarting:
+    if readied and not restarting:
+    #if not restarting:
         now = time.time()
 
         first_display = False
@@ -744,6 +744,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 draw.rectangle([mark_start-1, tick_bar_start + 2, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 4], fill=BLUE, outline=BLACK, width=1)
                 
         safe_display(image)
+    else:
+        display_one(name)
 
     
 def display_one(name):
