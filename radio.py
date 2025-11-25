@@ -1463,7 +1463,7 @@ if last_played in stream_list:
 else:
     play_random()
     
-readied_stream = stream
+readied_stream = None
 display_everything(0, stream, readied=False)
 last_input_time = time.time()
 periodic_update()
