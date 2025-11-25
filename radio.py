@@ -595,8 +595,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 double_next_stream = stream_list[1]
 
         image = base_layer.copy()
-        draw = ImageDraw.Draw(image)  
-
+        draw = ImageDraw.Draw(image) 
+        
+        currently_displaying = 'everything'
         if not readied:
             display_bar(y=4, draw=draw)
 
@@ -742,9 +743,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 mark_start = tick_locations[name]
                 draw.rectangle([mark_start-1, tick_bar_start + 2, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 4], fill=BLUE, outline=BLACK, width=1)
                 
-
         safe_display(image)
-        currently_displaying = 'everything'
 
     
 def display_one(name):
@@ -819,11 +818,11 @@ def display_one(name):
             draw.text((14, anchor), i, font=MEDIUM_FONT, fill=WHITE)
             anchor += avg_info_height + line_gap
 
+    currently_displaying = 'one'
     display_bar(y=218, draw=draw)
 
     safe_display(image)
     has_displayed_once = True
-    currently_displaying = 'one'
 
 
 def display_bar(y, draw):
@@ -868,15 +867,13 @@ def display_ambient(name, clicked=False):
     image.paste(logo, (72, 32))
     draw = ImageDraw.Draw(image)
 
-    #draw.rectangle([0, 223, 320, 240], fill=YELLOW)
-
+    currently_displaying = 'ambient'
     display_bar(y=218,draw=draw)
 
     safe_display(image)
 
     if not clicked:
         screen_dim = True
-    currently_displaying = 'ambient'
 
 
 def display_current():
