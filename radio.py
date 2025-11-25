@@ -1203,10 +1203,7 @@ def periodic_update():
             time_since_last_update = 0
 
         if not held and not readied_stream and not screen_dim and screen_on:
-            if currently_displaying == 'one':
-                display_one(stream)
-            else:
-                display_everything(0, stream, update=True)
+            display_current()
 
         time_since_last_update += 5
     
@@ -1472,12 +1469,7 @@ try:
             readied_stream = None
             volume_overlay_showing = False
             if screen_on and stream and not screen_dim:
-                if currently_displaying == 'everything':
-                    display_everything(0, stream)
-                elif currently_displaying == 'one':
-                    display_one(stream)
-                else: 
-                    display_ambient(stream)
+                display_current()
 
         time.sleep(1)
         time_since_battery_check += 1
