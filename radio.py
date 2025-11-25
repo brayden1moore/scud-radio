@@ -573,7 +573,7 @@ def draw_angled_text(text, font, angle, image, coords, color):
 base_layer = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
 start_x = 0
 def display_everything(direction, name, update=False, readied=False, pushed=False):
-    global streams, play_status, first_display, selector, start_x
+    global streams, play_status, first_display, selector, start_x, currently_displaying
     
     #if readied and not restarting:
     if not restarting:
@@ -744,13 +744,11 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 
 
         safe_display(image)
-    
-    else:
-       display_one(name)
+        currently_displaying = 'everything'
 
     
 def display_one(name):
-    global has_displayed_once 
+    global has_displayed_once, currently_displaying
 
     # logo
     logo = streams[name]['logo_60']
@@ -840,6 +838,7 @@ def display_one(name):
 
     safe_display(image)
     has_displayed_once = True
+    currently_displaying = 'one'
 
 
 def display_bar(y, draw):
@@ -864,7 +863,7 @@ def display_bar(y, draw):
 
 
 def display_ambient(name):
-    global screen_dim
+    global screen_dim, currently_displaying
 
     # logo
     logo = streams[name]['logo_176']
@@ -881,7 +880,7 @@ def display_ambient(name):
     safe_display(image)
 
     screen_dim = True
-
+    currently_displaying = 'ambient'
 
 def get_anchor(title, info, live, line_gap, section_gap):
     size = 0
@@ -1022,19 +1021,15 @@ def on_button_pressed():
 
     if currently_displaying=='everything':
         display_one(stream)
-        currently_displaying = 'one'
 
     elif currently_displaying == 'one':
         display_ambient(stream)
-        currently_displaying = 'ambient'
 
     elif currently_displaying == 'ambient':
         display_everything(0, stream, readied=False, pushed=False)
-        currently_displaying == 'everything'
 
     if readied_stream:
         display_everything(0, readied_stream, readied=True, pushed=True)
-        currently_displaying == 'everything'
 
     held = True
     rotated = False
@@ -1225,7 +1220,7 @@ def periodic_update():
 def wake_screen():
     global screen_on, screen_dim, last_input_time, current_image
     last_input_time = time.time()
-    if (not screen_on) or (screen_dim and not currently_displaying=='ambient'):
+    if (not screen_on) or (screen_dim):
         screen_on = True
         screen_dim = False
         if stream:
