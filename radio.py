@@ -843,15 +843,15 @@ def display_bar(y, draw):
         line_y = y + height("S", MEDIUM_FONT) + 10
         draw.rectangle([0, line_y, 320, line_y], fill=YELLOW)
         draw.rectangle([0, line_y-24, 320, line_y], fill=YELLOW)
-        center_of_section = round((0 + line_y) / 2)
+        center_of_section = round((0 + line_y+4) / 2)
 
     draw.text((13,y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
     draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
     radius = 4
-    draw.ellipse((146-radius, center_of_section-radius, 146+radius, center_of_section+radius), fill=BLACK if currently_displaying=='everything' else None, outline=BLACK, width=1)
+    draw.ellipse((144-radius, center_of_section-radius, 144+radius, center_of_section+radius), fill=BLACK if currently_displaying=='everything' else None, outline=BLACK, width=1)
     draw.ellipse((155-radius, center_of_section-radius, 155+radius, center_of_section+radius), fill=BLACK if currently_displaying=='one' else None, outline=BLACK, width=1)
-    draw.ellipse((164-radius, center_of_section-radius, 164+radius, center_of_section+radius), fill=BLACK if currently_displaying=='ambient' else None, outline=BLACK, width=1)
+    draw.ellipse((166-radius, center_of_section-radius, 166+radius, center_of_section+radius), fill=BLACK if currently_displaying=='ambient' else None, outline=BLACK, width=1)
 
 
 
