@@ -870,13 +870,13 @@ def display_ambient(name, clicked=False):
 
 def display_current():
     if currently_displaying=='everything':
-        display_one(stream)
+        display_everything(0, stream, readied=False, pushed=False)
 
     elif currently_displaying == 'one':
-        display_ambient(stream, clicked=True)
+        display_one(stream)
 
     elif currently_displaying == 'ambient':
-        display_everything(0, stream, readied=False, pushed=False)
+        display_ambient(stream, clicked=True)
 
 
 def get_anchor(title, info, live, line_gap, section_gap):
@@ -1020,7 +1020,14 @@ def on_button_pressed():
         display_everything(0, readied_stream, readied=True, pushed=True)
 
     else:
-        display_current()
+        if currently_displaying=='everything':
+            display_one(stream)
+
+        elif currently_displaying == 'one':
+            display_ambient(stream, clicked=True)
+
+        elif currently_displaying == 'ambient':
+            display_everything(0, stream, readied=False, pushed=False)
 
 
     held = True
