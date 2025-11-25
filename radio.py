@@ -880,7 +880,6 @@ def display_ambient(name):
 
     safe_display(image)
 
-
     screen_dim = True
 
 
@@ -1226,7 +1225,7 @@ def periodic_update():
 def wake_screen():
     global screen_on, screen_dim, last_input_time, current_image
     last_input_time = time.time()
-    if (not screen_on) or screen_dim:
+    if (not screen_on) or (screen_dim and not currently_displaying=='ambient'):
         screen_on = True
         screen_dim = False
         if stream:
