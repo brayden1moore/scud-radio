@@ -1211,7 +1211,10 @@ def periodic_update():
             time_since_last_update = 0
 
         if not held and not readied_stream and not screen_dim and screen_on:
-            display_everything(0, stream, update=True)
+            if currently_displaying == 'one':
+                display_one(stream)
+            else:
+                display_everything(0, stream, update=True)
 
         time_since_last_update += 5
     
@@ -1224,11 +1227,11 @@ def wake_screen():
         screen_on = True
         screen_dim = False
         if stream:
-            display_everything(0,stream)
+            display_one(stream)
         else:
             display_scud()
         time.sleep(0.1)
-        display_everything(0,stream)
+        display_one(stream)
         backlight_on()
         return True
     return False
@@ -1477,7 +1480,12 @@ try:
             readied_stream = None
             volume_overlay_showing = False
             if screen_on and stream and not screen_dim:
-                display_everything(0, stream)
+                if currently_displaying == 'everything':
+                    display_everything(0, stream)
+                elif currently_displaying == 'one':
+                    display_one(stream)
+                else: 
+                    display_ambient(stream)
 
         time.sleep(1)
         time_since_battery_check += 1
