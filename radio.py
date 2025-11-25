@@ -850,8 +850,8 @@ def display_bar(y, draw):
 
     radius = 4
     draw.ellipse((144-radius, center_of_section-radius, 144+radius, center_of_section+radius), fill=BLACK if currently_displaying=='everything' else None, outline=BLACK, width=1)
-    draw.ellipse((155-radius, center_of_section-radius, 155+radius, center_of_section+radius), fill=BLACK if currently_displaying=='one' else None, outline=BLACK, width=1)
-    draw.ellipse((166-radius, center_of_section-radius, 166+radius, center_of_section+radius), fill=BLACK if currently_displaying=='ambient' else None, outline=BLACK, width=1)
+    draw.ellipse((157-radius, center_of_section-radius, 157+radius, center_of_section+radius), fill=BLACK if currently_displaying=='one' else None, outline=BLACK, width=1)
+    draw.ellipse((170-radius, center_of_section-radius, 170+radius, center_of_section+radius), fill=BLACK if currently_displaying=='ambient' else None, outline=BLACK, width=1)
 
 
 
