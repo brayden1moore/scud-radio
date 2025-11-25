@@ -1012,12 +1012,14 @@ def safe_restart():
     run(['sudo','systemctl', 'restart','radio'])
 
 button_released_time = time.time()
-
+currently_displaying = 'everything'
 def on_button_pressed():
     global button_press_time, rotated, button_press_times, held, button_released_time, last_input_time, currently_displaying
     last_input_time = time.time()
     button_press_time = time.time()
     button_released_time = None
+
+    logging.info('PRESSED AND CURRENTLY DISPLAYING', currently_displaying)
 
     if currently_displaying=='everything':
         display_one(stream)
@@ -1038,7 +1040,6 @@ def on_button_pressed():
     held = True
     rotated = False
 
-currently_displaying = 'everything'
 button_press_times = []
 def on_button_released():
     global button_press_times, rotated, held, button_released_time, last_input_time, currently_displaying
