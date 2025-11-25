@@ -947,16 +947,16 @@ def seek_stream(direction):
 
     idx = stream_list.index(stream)
     
-    #if (readied_stream == None):
-    #    readied_stream = stream
-    #else:
-    idx = stream_list.index(readied_stream if readied_stream else stream)
-    if (direction == 1) and (idx==len(stream_list)-1):
-        readied_stream = stream_list[0]
-    elif (direction == -1) and (idx==0):
-        readied_stream = stream_list[-1]
+    if (readied_stream == None):
+        readied_stream = stream
     else:
-        readied_stream = stream_list[idx + direction]
+        idx = stream_list.index(readied_stream if readied_stream else stream)
+        if (direction == 1) and (idx==len(stream_list)-1):
+            readied_stream = stream_list[0]
+        elif (direction == -1) and (idx==0):
+            readied_stream = stream_list[-1]
+        else:
+            readied_stream = stream_list[idx + direction]
 
     display_everything(direction, readied_stream, readied=True)
 
