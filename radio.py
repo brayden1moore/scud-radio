@@ -40,7 +40,7 @@ DC = 25
 BL = 23
 bus = 0 
 device = 0 
-current_bl = 80
+current_bl = 100
 disp = LCD_2inch.LCD_2inch()
 disp.Init()
 disp.clear()
@@ -298,7 +298,7 @@ def backlight_on():
         else:
             display_scud()
         time.sleep(0.2)
-        disp.bl_DutyCycle(80)
+        disp.bl_DutyCycle(100)
         screen_on = True
 
 def backlight_off():
@@ -1086,33 +1086,33 @@ def on_volume_button_pressed():
 def toggle_favorite():
     global favorites, stream_list
     now = time.time()
-    if not rotated:
-        chosen_stream = stream if not readied_stream else readied_stream
-        img = current_image.copy().convert('RGBA')
-        
-        if chosen_stream in favorites:
-            favorites = [i for i in favorites if i != chosen_stream]
-            for i in list(reversed(favorite_images)):
-                img.paste(i, (0, 0), i)
-                disp.ShowImage(img)  
-                img = current_image.convert('RGBA')
-            img.paste(unfavorite, (0, 0), unfavorite)
-            disp.ShowImage(img)
-            set_favorites(favorites)
-        else:
-            favorites.append(chosen_stream)
-            favorites = list(set(favorites))
-            set_favorites(favorites)
-            img.paste(unfavorite, (0, 0), unfavorite)
-            disp.ShowImage(img)
-            for i in favorite_images:
-                img.paste(i, (0, 0), i)
-                disp.ShowImage(img)           
 
-        stream_list = get_stream_list(streams)
-        time.sleep(0.3)
-        show_readied = False if not readied_stream else True
-        display_everything(0, chosen_stream, readied=show_readied)
+    chosen_stream = stream if not readied_stream else readied_stream
+    img = current_image.copy().convert('RGBA')
+    
+    if chosen_stream in favorites:
+        favorites = [i for i in favorites if i != chosen_stream]
+        for i in list(reversed(favorite_images)):
+            img.paste(i, (0, 0), i)
+            disp.ShowImage(img)  
+            img = current_image.convert('RGBA')
+        img.paste(unfavorite, (0, 0), unfavorite)
+        disp.ShowImage(img)
+        set_favorites(favorites)
+    else:
+        favorites.append(chosen_stream)
+        favorites = list(set(favorites))
+        set_favorites(favorites)
+        img.paste(unfavorite, (0, 0), unfavorite)
+        disp.ShowImage(img)
+        for i in favorite_images:
+            img.paste(i, (0, 0), i)
+            disp.ShowImage(img)           
+
+    stream_list = get_stream_list(streams)
+    time.sleep(0.3)
+    show_readied = False if not readied_stream else True
+    display_everything(0, chosen_stream, readied=show_readied)
 
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
@@ -1470,7 +1470,7 @@ time_since_battery_check = 0
 live_overlay_version = 1
 try:
     while True:
-        if time_since_battery_check == 5:
+        if time_since_battery_check == 15:
             get_battery()
             if not charging:
                 safe_restart

@@ -29,8 +29,10 @@ def display_goodbye():
     disp.clear()
 
 display_goodbye()
+subprocess.run(['sudo','shutdown','-h','+1'])
 
 def restart():
+    subprocess.run(['sudo','shutdown','-c'])
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg = Image.open(f'assets/scud_splash_1.png') 
     image.paste(bg, (0, 0))
@@ -40,16 +42,23 @@ def restart():
 
 from gpiozero import RotaryEncoder, Button
 
-click_button = Button(26, bounce_time=0.05)
-click_button.when_pressed = restart
-click_button.when_held = restart
-click_button.when_released = restart
-
 CLK_PIN = 5 
 DT_PIN = 6   
 rotor = RotaryEncoder(CLK_PIN, DT_PIN)
 rotor.when_rotated_counter_clockwise = restart
 rotor.when_rotated_clockwise = restart
+
+click_button = Button(26, bounce_time=0.05)
+click_button.when_pressed = restart
+
+CLK_PIN = 16
+DT_PIN = 12  
+volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN)
+volume_rotor.when_pressed = restart
+
+volume_click_button = Button(17, bounce_time=0.05)
+volume_click_button.when_pressed = restart
+
 
 while True:
     time.sleep(0.1)
