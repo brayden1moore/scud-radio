@@ -305,7 +305,7 @@ def backlight_off():
     global screen_on
     if disp:
         disp.bl_DutyCycle(0)
-        disp.clear()
+        #disp.clear()
         screen_on = False
 
 def backlight_dim():
@@ -1227,6 +1227,7 @@ def wake_screen():
     if (not screen_on) or (screen_dim):
         screen_on = True
         screen_dim = False
+        
         display_one(stream)
         time.sleep(0.05)
         display_one(stream)
