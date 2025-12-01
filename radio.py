@@ -435,7 +435,7 @@ def get_stream_list(streams):
     return stream_list
 
 streams = get_streams()
-logging.info('streams', streams)
+logging.info(streams)
 stream_list = get_stream_list(streams)
 
 # hat
