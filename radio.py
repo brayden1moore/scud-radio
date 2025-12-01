@@ -360,7 +360,7 @@ def get_streams():
     global streams
 
     info = requests.get('https://internetradioprotocol.org/info').json()
-    active = {n: v for n, v in info.items() if v['status']=="Online" and v['hidden']!=True}
+    active = {n: v for n, v in info.items() if v['status']!="Offline" and v['hidden']!=True}
     
     # clean text
     for name, _ in active.items():
@@ -424,7 +424,7 @@ reruns = []
 def get_stream_list(streams):
     global reruns 
     stream_list = sorted(list(streams.keys()), key=str.casefold)
-    reruns = [i for i in stream_list if any(j in streams[i]['oneLiner'].lower() for j in ['(r)','re-run','re-wav','restream','playlist','auto dj','night moves', 'night files']) or i=='Monotonic Radio' or ' ARCHIVE' in streams[i]['oneLiner']]
+    reruns = [i for i in stream_list if streams[i]['status'] == 'Re-Run']
     
     if favorites:
         #fav_start_idx = round(len(stream_list) / 2) - round(len(favorites) / 2)
