@@ -1456,7 +1456,7 @@ volume_click_button.when_pressed = wrapped_action(lambda: on_volume_button_press
 ## main loop
 
 last_played = read_last_played()
-if last_played in stream_list:
+if last_played in list(streams.keys()):
     play(last_played)
 else:
     play_random()
