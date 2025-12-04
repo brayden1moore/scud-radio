@@ -749,11 +749,11 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             first_tick_start = padding
             bar_width = 2
             mark_start = tick_locations[stream]
-            current_fill = WHITE if stream not in favorites else BLACK
+            current_fill = BLUE if stream not in favorites else BLACK
             draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill)
             if readied:
                 mark_start = tick_locations[name]
-                draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=BLUE, outline=BLACK, width=1)
+                draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=WHITE, outline=BLACK, width=1)
                 
         safe_display(image)
     else:
