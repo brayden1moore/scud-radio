@@ -54,6 +54,7 @@ def wait_for_wifi_interface(timeout=60):
         time.sleep(1)
     return False
 
+logging.info('SPLASH RUNNING')
 display_splash()
 
 wifi_waiting = True
