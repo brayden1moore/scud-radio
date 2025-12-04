@@ -750,7 +750,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             bar_width = 2
             mark_start = tick_locations[stream]
             current_fill = BLUE if stream not in favorites else BLUE
-            draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill)
+            draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill, outline=BLACK, width=1)
             if readied:
                 mark_start = tick_locations[name]
                 readied_fill = WHITE if name not in favorites else WHITE 
