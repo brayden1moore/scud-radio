@@ -32,8 +32,8 @@
 
 #include "DEV_Config.h"
 
-#define LCD_2IN_WIDTH   240 //LCD width
-#define LCD_2IN_HEIGHT  320 //LCD height
+#define LCD_2IN_WIDTH   320 //LCD width
+#define LCD_2IN_HEIGHT  240 //LCD height
 
 
 #define LCD_2IN_CS_0	LCD_CS_0	 
