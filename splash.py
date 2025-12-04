@@ -35,12 +35,9 @@ disp.bl_DutyCycle(MAX_BL)
 def display_splash():
 
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-
-    # splash one
-    bg = Image.open(f'assets/scud_splash_1.png')
+    bg = Image.open(f'assets/scud_splash_1_black.png')
     image.paste(bg, (0, 0))
     disp.ShowImage(image)
-    time.sleep(2)
 
 def wait_for_wifi_interface(timeout=60):
     """Wait for WiFi interface to be available"""
@@ -61,9 +58,9 @@ display_splash()
 
 wifi_waiting = True
 
-if not wait_for_wifi_interface():
-    wifi_waiting = False
-    logging.error("WiFi interface not available")
-    sys.exit(1)
+#if not wait_for_wifi_interface():
+#    wifi_waiting = False
+#    logging.error("WiFi interface not available")
+#    sys.exit(1)
     
 subprocess.run(['sudo','systemctl','start','radio'])
