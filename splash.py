@@ -58,9 +58,9 @@ display_splash()
 
 wifi_waiting = True
 
-#if not wait_for_wifi_interface():
-#    wifi_waiting = False
-#    logging.error("WiFi interface not available")
-#    sys.exit(1)
+if not wait_for_wifi_interface():
+    wifi_waiting = False
+    logging.error("WiFi interface not available")
+    sys.exit(1)
     
 subprocess.run(['sudo','systemctl','start','radio'])
