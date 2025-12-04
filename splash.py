@@ -48,6 +48,7 @@ def wait_for_wifi_interface(timeout=60):
                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                   text=True, timeout=5)
             if 'wifi' in result.stdout.lower():
+                logging.info(result.stdout.lower())
                 return True
         except subprocess.TimeoutExpired:
             pass
