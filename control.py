@@ -51,7 +51,11 @@ Usage:
     if command == 'status':
         result = send_command('status')
         if result['status'] == 'ok':
-            print(f"{result['station']}: {result['now_playing']}")
+            print(f'''
+                Station: {result['station']} - {result['now_playing']}
+                Volume: {result['volume']}
+                Battery: {result['battery']}  
+                Charging: {result['charging']}''')
     
     elif command == 'list':
         result = send_command('list')
