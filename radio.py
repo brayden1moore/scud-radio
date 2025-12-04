@@ -719,7 +719,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             total_span = SCREEN_WIDTH - (2 * padding)
             mark_width = round(total_span / (total_ticks - 1))
             tick_start = padding  
-            tick_bar_height = 20
+            tick_bar_height = 25
             tick_bar_start = logo_chunk_start + 94
             tick_height = 3
             tick_start_y = (tick_bar_start + tick_bar_height / 2) - 2
@@ -736,7 +736,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 tick_start += 5
 
             if readied:
-                tick_color = BLUE
+                tick_color = WHITE
             else:
                 tick_color = WHITE
             for i in [i for i in stream_list if i not in favorites]:
