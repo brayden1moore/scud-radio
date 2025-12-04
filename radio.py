@@ -616,7 +616,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((name_chunk_start_x - 2, name_chunk_start + 33 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
+            draw.text((name_chunk_start_x, name_chunk_start + 33 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
             y_offset += 20
 
         # draw location
