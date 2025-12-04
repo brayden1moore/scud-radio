@@ -47,7 +47,6 @@ def control(command):
         return jsonify({
             'success': True,
             'command': command,
-            'station': station.replace('+', ' ') if station else None,
             'output': str(result.stdout).replace('\n', ''),
             'error': result.stderr
         })
