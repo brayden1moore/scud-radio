@@ -8,10 +8,10 @@ import threading
 import logging
 import os
 
-subprocess.run(['sudo','iwconfig','wlan0','power','off'], 
-               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-subprocess.run(['sudo','iw','dev','wlan0','set','power_save','off'],
-               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+#subprocess.run(['sudo','iwconfig','wlan0','power','off'], 
+#               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+#subprocess.run(['sudo','iw','dev','wlan0','set','power_save','off'],
+#               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 SCREEN_WIDTH = 320
