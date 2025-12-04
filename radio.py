@@ -623,6 +623,17 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw.rectangle([name_chunk_start_x, name_chunk_start + 54, name_chunk_start_x + width(location, MEDIUM_FONT), name_chunk_start + 55 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
         draw.text((name_chunk_start_x, name_chunk_start + 52), location, font=MEDIUM_FONT, fill=BLACK)
         
+        genre_start = name_chunk_start_x + width(location, MEDIUM_FONT)
+        genres = streams[name]['genres']
+        genre_x_offset = 5
+        if genres:
+            for i in genres:
+                genre_width = width(i, MEDIUM_FONT)
+                draw.rectangle([genre_start + genre_x_offset, name_chunk_start + 54, genre_start + genre_x_offset + genre_width, name_chunk_start + 55 + height('S', MEDIUM_FONT)], fill=GREEN) # bg
+                draw.text((genre_start + genre_x_offset, name_chunk_start + 52), i, font=MEDIUM_FONT, fill=BLACK)
+                genre_x_offset += genre_width
+
+
         # logos
         logo_chunk_start = 35
         if not readied:
