@@ -30,7 +30,7 @@ void LCD_2IN_splash_display(void)
         exit(1);
     }
 	
-    Paint_NewImage(BlackImage, LCD_2IN_WIDTH, LCD_2IN_HEIGHT, 270, WHITE, 16);
+    Paint_NewImage(BlackImage, LCD_2IN_WIDTH, LCD_2IN_HEIGHT, 0, WHITE, 16);
     Paint_Clear(WHITE);
 
 
@@ -41,9 +41,6 @@ void LCD_2IN_splash_display(void)
     // 1. Read the BMP file into the BlackImage buffer
     if (GUI_ReadBmp(SPLASH_IMAGE_PATH) != 0) {
         printf("ERROR: Failed to read BMP file.\r\n");
-        
-        // As a fallback, draw a red box if the image fails to load
-        Paint_DrawRectangle(10, 10, LCD_2IN_WIDTH-10, LCD_2IN_HEIGHT-10, RED, DOT_PIXEL_1X1, DRAW_FILL_FULL);
         
         LCD_2IN_Display((UBYTE *)BlackImage);
         
