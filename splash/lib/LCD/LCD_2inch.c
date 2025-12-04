@@ -10,7 +10,7 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documnetation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
+# in the Software without restriction, including without limitation the rig
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to  whom the Software is
 # furished to do so, subject to the following conditions:
@@ -268,7 +268,7 @@ parameter	:
 void LCD_2IN_Display(UBYTE *image)
 {
 	UWORD i;
-	LCD_2IN_SetWindow(0, 0, LCD_2IN_WIDTH, LCD_2IN_HEIGHT);
+	LCD_2IN_SetWindow(0, 0, LCD_2IN_HEIGHT, LCD_2IN_WIDTH);
 	DEV_Digital_Write(LCD_DC, 1);
 	for(i = 0; i < LCD_2IN_HEIGHT; i++){
 		DEV_SPI_Write_nByte((UBYTE *)image+LCD_2IN_WIDTH*2*i,LCD_2IN_WIDTH*2);
