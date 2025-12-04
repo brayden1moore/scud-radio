@@ -740,7 +740,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             else:
                 tick_color = WHITE
             for i in [i for i in stream_list if i not in favorites]:
-                draw.rectangle([tick_start, tick_start_y, tick_start + tick_width, tick_start_y + tick_height], fill=tick_color)
+                draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
                 tick_locations[i] = tick_start
                 tick_start += mark_width
 
