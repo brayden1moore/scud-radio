@@ -14,6 +14,8 @@ def control(command):
         'prev': 'prev',
         'next': 'next',
         'play': 'play',
+        'play_random':'play_random',
+        'random':'play_random',
         'status': 'status',
         'random': 'random',
         'up': 'volume_up',
