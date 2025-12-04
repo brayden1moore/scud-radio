@@ -837,7 +837,7 @@ def display_bar(y, draw):
 
     # bottom bar 218 y for bottom
     if y!=4:
-        draw.rectangle([0, y, 320, y], fill=YELLOW)
+        draw.rectangle([0, y, 320, y], fill=BLACK)
         draw.rectangle([0, y, 320, y+24], fill=YELLOW)
         center_of_section = round((240 + 218) / 2)
 
