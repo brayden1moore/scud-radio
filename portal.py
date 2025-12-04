@@ -135,7 +135,7 @@ def submit():
     else:
         return redirect(url_for('index', wifi_networks=scan_wifi(), message=""))
 
-connected = internet(retries=5)
+connected = internet(retries=10)
 if not connected:
     display_setup()
     wifi_waiting = True
