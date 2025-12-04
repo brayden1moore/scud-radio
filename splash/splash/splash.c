@@ -32,8 +32,7 @@ void LCD_2IN_splash_display(void)
 	
     Paint_NewImage(BlackImage, LCD_2IN_WIDTH, LCD_2IN_HEIGHT, 90, WHITE, 16);
     Paint_Clear(WHITE);
-    Paint_SetRotate(ROTATE_270);
-    
+
     // --- CORE SPLASH LOGIC ---
     
     printf("Loading splash image: %s\r\n", SPLASH_IMAGE_PATH);
