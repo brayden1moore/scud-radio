@@ -752,7 +752,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill)
             if readied:
                 mark_start = tick_locations[name]
-                draw.rectangle([mark_start-1, tick_bar_start + 2, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 4], fill=BLUE, outline=BLACK, width=1)
+                draw.rectangle([mark_start-1, tick_bar_start + 2, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 4], fill=BLUE)
                 
         safe_display(image)
     else:
