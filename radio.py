@@ -1209,7 +1209,8 @@ def periodic_update():
                     disp.close()
                 except:
                     pass
-                subprocess.run(['sudo','systemctl','restart','radio'])
+                if screen_on:
+                    subprocess.run(['sudo','systemctl','restart','radio'])
                 sys.exit(0)
             
             time_since_last_update = 0
@@ -1473,7 +1474,7 @@ try:
         if time_since_battery_check == 15:
             get_battery()
             if not charging:
-                safe_restart
+                subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
             time_since_battery_check = 0
 
         if (readied_stream or volume_overlay_showing) and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
