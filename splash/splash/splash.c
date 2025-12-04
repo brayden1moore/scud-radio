@@ -30,7 +30,7 @@ void LCD_2IN_splash_display(void)
         exit(1);
     }
 	
-    Paint_NewImage(BlackImage, LCD_2IN_WIDTH, LCD_2IN_HEIGHT, 0, WHITE, 16);
+    Paint_NewImage(BlackImage, LCD_2IN_WIDTH, LCD_2IN_HEIGHT, 270, WHITE, 16);
     Paint_Clear(WHITE);
 
     // --- CORE SPLASH LOGIC ---
