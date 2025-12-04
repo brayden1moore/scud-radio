@@ -101,11 +101,11 @@ Usage:
     
     elif command in ['volume_up', 'vol_up', 'up']:
         result = send_command('volume_up')
-        print(f"Volume: {result['volume']}/150 ({round(result['volume']/150*100)}%)")
+        print(f"Volume up")
     
     elif command in ['volume_down', 'vol_down', 'down']:
         result = send_command('volume_down')
-        print(f"Volume: {result['volume']}/150 ({round(result['volume']/150*100)}%)")
+        print(f"Volume down")
     
     elif command in ['favorite', 'fav']:
         result = send_command('favorite')
