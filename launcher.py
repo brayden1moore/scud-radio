@@ -106,8 +106,9 @@ def submit():
 # --- MAIN ENTRY POINT ---
 if __name__ == '__main__':
     # 1. Check Internet immediately
-    if internet(timeout=5):
-        start_radio_service()
+    for i in range(5):
+        if internet(timeout=5):
+            start_radio_service()
     
     # 2. If no internet, start Portal Mode
     logging.info("No internet. Starting Portal.")
