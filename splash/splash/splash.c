@@ -5,7 +5,7 @@
 #include <stdio.h>		
 #include <stdlib.h>		
 
-#define SPLASH_IMAGE_PATH "./pic/scud_splash_1_black.bmp"
+#define SPLASH_IMAGE_PATH "./pic/scud_splash_1.bmp"
 
 void LCD_2IN_splash_display(void)
 {
