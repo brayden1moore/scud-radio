@@ -65,7 +65,7 @@ void LCD_2IN_test(void)
     // /* show bmp */
 	printf("show bmp\r\n");
 	
-	GUI_ReadBmp("./pic/scud_splash_1_black.bmp");    
+	GUI_ReadBmp("./pic/LCD_2inch.bmp");    
     LCD_2IN_Display((UBYTE *)BlackImage);
     DEV_Delay_ms(2000);
 	
