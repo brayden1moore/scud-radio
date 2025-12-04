@@ -146,5 +146,4 @@ if not connected:
     start_hotspot()
     app.run(host='0.0.0.0', port=8888, use_reloader=False)
 else:
-    subprocess.run(['sudo','python','radio.py'])
-    sys.exit(0)
+    import radio
