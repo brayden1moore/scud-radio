@@ -30,8 +30,9 @@ void LCD_2IN_splash_display(void)
         exit(1);
     }
 	
-    Paint_NewImage(BlackImage, LCD_2IN_HEIGHT, LCD_2IN_WIDTH, 270, WHITE, 16);
+    Paint_NewImage(BlackImage, LCD_2IN_WIDTH, LCD_2IN_HEIGHT, 270, WHITE, 16);
     Paint_Clear(WHITE);
+    Paint_SetRotate(ROTATE_270);
     
     // --- CORE SPLASH LOGIC ---
     
