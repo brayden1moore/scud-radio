@@ -631,7 +631,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 genre_width = width(i, MEDIUM_FONT)
                 draw.rectangle([genre_start + genre_x_offset, name_chunk_start + 54, genre_start + genre_x_offset + genre_width, name_chunk_start + 55 + height('S', MEDIUM_FONT)], fill=GREEN) # bg
                 draw.text((genre_start + genre_x_offset, name_chunk_start + 52), i, font=MEDIUM_FONT, fill=BLACK)
-                genre_x_offset += genre_width
+                genre_x_offset += genre_width + 5
 
 
         # logos
