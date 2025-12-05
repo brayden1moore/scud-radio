@@ -47,7 +47,6 @@ disp = LCD_2inch.LCD_2inch()
 disp.Init()
 disp.clear()
 disp.bl_DutyCycle(current_bl)
-cached_everything_dict = {}
 
 mpv_process = None
 stream = None
@@ -359,13 +358,227 @@ def fetch_logo(name, url):
     resp.raise_for_status()
     return name, BytesIO(resp.content)
 
+def get_streams():
+    global streams
+
+    info = requests.get('https://internetradioprotocol.org/info').json()
+    active = {n: v for n, v in info.items() if v['status']!="Offline" and v['hidden']!=True}
+    
+    # clean text
+    for name, _ in active.items():
+        active[name]['oneLiner'] = html.unescape(active[name]['oneLiner'])
+    
+    # see if cached image exists. if so, read into dict. if not, add to queue.
+    need_imgs = []
+    for name, _ in active.items():
+        full_img_path = Path(LIB_PATH) / f'{name}_logo_176.pkl'
+        if not full_img_path.exists():
+            need_imgs.append(name)
+        else:
+            file_stat = full_img_path.stat()
+            file_age_seconds = time.time() - file_stat.st_mtime
+            file_age_days = file_age_seconds / (24 * 3600) 
+
+            if file_age_days > 7:  # refresh if older than 7 days
+                need_imgs.append(name)
+            else:
+                for i in ['25','60','96','176']:
+                    with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
+                        image = pickle.load(f).convert('RGB')
+                        
+                        active[name][f'logo_{i}'] = image
+
+    with ThreadPoolExecutor(max_workers=8) as exe:
+        futures = [
+            exe.submit(fetch_logo, name, v['logo'])
+            for name, v in active.items() if name in need_imgs
+        ]
+        for f in as_completed(futures):
+            name, buf = f.result()
+            active[name]['logoBytes'] = buf
+
+            img = Image.open(buf).convert('RGB')
+
+            # crop images
+            logo_96 = img.resize((96,  96)).convert('RGB')#.convert('LA')
+            logo_60 = img.resize((60,  60)).convert('RGB')#.convert('LA')
+            logo_25 = img.resize((25,  25)).convert('RGB')#.convert('LA')
+            logo_176 = img.resize((176, 176)).convert('RGB')
+
+            # save images to dict
+            active[name]['logo_96'] = logo_96
+            active[name]['logo_60']  = logo_60
+            active[name]['logo_25'] = logo_25
+            active[name]['logo_176'] = logo_176
+
+            # save images to lib
+            for i in ['96','60','25','176']:
+                entire_path = Path(LIB_PATH) / f'{name}_logo_{i}.pkl'
+                if not entire_path.exists():
+                    entire_path.touch() 
+
+                with open(entire_path, 'wb') as f:
+                    pickle.dump(active[name][f'logo_{i}'], f)
+
+    return active
+
+reruns = []
+def get_stream_list(streams):
+    global reruns 
+    stream_list = sorted(list(streams.keys()), key=str.casefold)
+    reruns = [i for i in stream_list if streams[i]['status'] == 'Re-Run']
+    
+    if favorites:
+        #fav_start_idx = round(len(stream_list) / 2) - round(len(favorites) / 2)
+        #front_half = [i for i in stream_list if i not in favorites][:fav_start_idx]
+        #back_half = [i for i in stream_list if i not in favorites and i not in front_half]
+        stream_list =  sorted(favorites, key=str.casefold) + sorted([i for i in stream_list if i not in favorites], key=str.casefold)
+    
+    return stream_list
+
+streams = get_streams()
+stream_list = get_stream_list(streams)
+
+# hat
+'''
+disp = st7789.ST7789(
+    rotation=180,     # Needed to display the right way up on Pirate Audio
+    port=0,          # SPI port
+    cs=1,            # SPI port Chip-select channel
+    dc=9,            # BCM pin used for data/command
+    backlight=13,  # 13 for Pirate-Audio; 18 for back BG slot, 19 for front BG slot.
+)
+disp.begin()
+'''
+
+def width(string, font):
+    left, top, right, bottom = font.getbbox(string)
+    text_width = right - left
+    return text_width
+
+def height(string, font):
+    left, top, right, bottom = font.getbbox(string)
+    text_height =  bottom - top
+    return text_height
+
+def x(string, font):
+    text_width = width(string,font)
+    return max((SCREEN_WIDTH - text_width) // 2, 5)
+
+def s(number):
+    if number == 1:
+        return ''
+    else:
+        return 's'
+    
+def pause(show_icon=False):
+    global play_status, saved_image_while_paused, current_image
+    #send_mpv_command({"command": ["stop"]})
+    #send_mpv_command({"command": ["set_property", "volume", 0]})
+
+    play_status = 'pause'
+
+def play(name, toggled=False):
+    global play_status, stream, first_boot
+    play_status = 'play'
+    stream = name
+
+    if toggled:
+        safe_display(saved_image_while_paused)
+        send_mpv_command({"command": ["set_property", "volume", current_volume]})
+    else:
+        #logging.info(f'attempting to play {name}')
+        stream_url = streams[name]['streamLink']
+        if first_boot:
+            send_mpv_command({"command": ["loadfile", stream_url]})
+            first_boot = False
+        else:
+            send_mpv_command({"command": ["loadfile", stream_url, 'replace']})
+        send_mpv_command({"command": ["set_property", "volume", current_volume]})
+
+    write_to_tmp_os_path(name)
+
+
+def play_random():
+    global stream, play_status
+    available_streams = [i for i in stream_list if i != stream]
+    chosen = random.choice(available_streams)
+    display_everything(0, chosen)
+    play(chosen)
+    stream = chosen
+    play_status = 'play'
+
+
+def calculate_text(text, font, max_width, lines):
+    text = text.strip()
+
+    if width(text, font) <= max_width:
+        return [text]
+    
+    else:
+        current_width = 0
+        characters = ''
+        line_list = []
+        current_line = 1
+        dots_width = width('...', font)
+        
+        if lines > 1:
+            text = text.split(' ')
+
+        for idx, i in enumerate(text):
+
+            if lines > 1:
+                i = i + ' '
+
+            if current_line == lines:
+                if width(characters + i, font) >= max_width-dots_width: # if width exceeds max - dots, return
+                    characters += '...'
+                    line_list.append(characters)
+                    return line_list
+                else:
+                    characters += i
+                    current_width = width(characters, font)
+            else:
+                if width(characters + i, font) >= max_width: # if current line exceeds max width and is not last line
+                    if i in [')']:
+                        characters += i
+                    else:
+                        current_line += 1
+                        line_list.append(characters)
+                        if i not in [' ','-','/',':']:
+                            characters = i
+                        else:
+                            characters = ''
+                        current_width = 0
+                else:
+                    characters += i
+                    current_width = width(characters, font)
+        if characters:  # if there are remaining characters
+            line_list.append(characters)
+        return line_list
+    
+
+def draw_angled_text(text, font, angle, image, coords, color):
+    temp_img = Image.new('L', (1, 1))
+    temp_draw = ImageDraw.Draw(temp_img)
+    bbox = temp_draw.textbbox((0, 0), text, font=font)
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
+    
+    txt = Image.new('L', (text_width, text_height))
+    d = ImageDraw.Draw(txt)
+    d.text((-bbox[0], -bbox[1]), text, font=font, fill=255)
+    
+    w = txt.rotate(angle, expand=1)
+    image.paste(ImageOps.colorize(w, (0,0,0), color), coords, w)
+
 @lru_cache(maxsize=128)
 def calculate_text_cached(text, font_name, width, lines):
     return calculate_text(text, font_name, width, lines)
 
 base_layer = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
 start_x = 0
-def display_everything(direction, name, update=False, readied=False, pushed=False, silent=False):
+def display_everything(direction, name, update=False, readied=False, pushed=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
     if readied and not restarting:
@@ -549,231 +762,12 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 mark_start = tick_locations[name]
                 readied_fill = WHITE if name not in favorites else WHITE 
                 draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
-            
-        if not silent:
-            disp.ShowImage(image)
+                
+        disp.ShowImage(image)
         return image
         #safe_display(image)
     else:
         display_one(name)
-
-def get_streams():
-    global streams, cached_everything_dict
-
-    info = requests.get('https://internetradioprotocol.org/info').json()
-    active = {n: v for n, v in info.items() if v['status']!="Offline" and v['hidden']!=True}
-    
-    # clean text
-    for name, _ in active.items():
-        active[name]['oneLiner'] = html.unescape(active[name]['oneLiner'])
-    
-    # see if cached image exists. if so, read into dict. if not, add to queue.
-    need_imgs = []
-    for name, _ in active.items():
-        full_img_path = Path(LIB_PATH) / f'{name}_logo_176.pkl'
-        if not full_img_path.exists():
-            need_imgs.append(name)
-        else:
-            file_stat = full_img_path.stat()
-            file_age_seconds = time.time() - file_stat.st_mtime
-            file_age_days = file_age_seconds / (24 * 3600) 
-
-            if file_age_days > 7:  # refresh if older than 7 days
-                need_imgs.append(name)
-            else:
-                for i in ['25','60','96','176']:
-                    with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
-                        image = pickle.load(f).convert('RGB')
-                        
-                        active[name][f'logo_{i}'] = image
-        
-        cached_everything_dict[name] = display_everything(0, name, readied=True, silent=True)
-
-    with ThreadPoolExecutor(max_workers=8) as exe:
-        futures = [
-            exe.submit(fetch_logo, name, v['logo'])
-            for name, v in active.items() if name in need_imgs
-        ]
-        for f in as_completed(futures):
-            name, buf = f.result()
-            active[name]['logoBytes'] = buf
-
-            img = Image.open(buf).convert('RGB')
-
-            # crop images
-            logo_96 = img.resize((96,  96)).convert('RGB')#.convert('LA')
-            logo_60 = img.resize((60,  60)).convert('RGB')#.convert('LA')
-            logo_25 = img.resize((25,  25)).convert('RGB')#.convert('LA')
-            logo_176 = img.resize((176, 176)).convert('RGB')
-
-            # save images to dict
-            active[name]['logo_96'] = logo_96
-            active[name]['logo_60']  = logo_60
-            active[name]['logo_25'] = logo_25
-            active[name]['logo_176'] = logo_176
-
-            cached_everything_dict[name] = display_everything(0, name, readied=True, silent=True)
-
-            # save images to lib
-            for i in ['96','60','25','176']:
-                entire_path = Path(LIB_PATH) / f'{name}_logo_{i}.pkl'
-                if not entire_path.exists():
-                    entire_path.touch() 
-
-                with open(entire_path, 'wb') as f:
-                    pickle.dump(active[name][f'logo_{i}'], f)
-
-    return active
-
-reruns = []
-def get_stream_list(streams):
-    global reruns 
-    stream_list = sorted(list(streams.keys()), key=str.casefold)
-    reruns = [i for i in stream_list if streams[i]['status'] == 'Re-Run']
-    
-    if favorites:
-        #fav_start_idx = round(len(stream_list) / 2) - round(len(favorites) / 2)
-        #front_half = [i for i in stream_list if i not in favorites][:fav_start_idx]
-        #back_half = [i for i in stream_list if i not in favorites and i not in front_half]
-        stream_list =  sorted(favorites, key=str.casefold) + sorted([i for i in stream_list if i not in favorites], key=str.casefold)
-    
-    return stream_list
-
-streams = get_streams()
-stream_list = get_stream_list(streams)
-
-# hat
-'''
-disp = st7789.ST7789(
-    rotation=180,     # Needed to display the right way up on Pirate Audio
-    port=0,          # SPI port
-    cs=1,            # SPI port Chip-select channel
-    dc=9,            # BCM pin used for data/command
-    backlight=13,  # 13 for Pirate-Audio; 18 for back BG slot, 19 for front BG slot.
-)
-disp.begin()
-'''
-
-def width(string, font):
-    left, top, right, bottom = font.getbbox(string)
-    text_width = right - left
-    return text_width
-
-def height(string, font):
-    left, top, right, bottom = font.getbbox(string)
-    text_height =  bottom - top
-    return text_height
-
-def x(string, font):
-    text_width = width(string,font)
-    return max((SCREEN_WIDTH - text_width) // 2, 5)
-
-def s(number):
-    if number == 1:
-        return ''
-    else:
-        return 's'
-    
-def pause(show_icon=False):
-    global play_status, saved_image_while_paused, current_image
-    #send_mpv_command({"command": ["stop"]})
-    #send_mpv_command({"command": ["set_property", "volume", 0]})
-
-    play_status = 'pause'
-
-def play(name, toggled=False):
-    global play_status, stream, first_boot
-    play_status = 'play'
-    stream = name
-
-    if toggled:
-        safe_display(saved_image_while_paused)
-        send_mpv_command({"command": ["set_property", "volume", current_volume]})
-    else:
-        #logging.info(f'attempting to play {name}')
-        stream_url = streams[name]['streamLink']
-        if first_boot:
-            send_mpv_command({"command": ["loadfile", stream_url]})
-            first_boot = False
-        else:
-            send_mpv_command({"command": ["loadfile", stream_url, 'replace']})
-        send_mpv_command({"command": ["set_property", "volume", current_volume]})
-
-    write_to_tmp_os_path(name)
-
-
-def play_random():
-    global stream, play_status
-    available_streams = [i for i in stream_list if i != stream]
-    chosen = random.choice(available_streams)
-    display_everything(0, chosen)
-    play(chosen)
-    stream = chosen
-    play_status = 'play'
-
-
-def calculate_text(text, font, max_width, lines):
-    text = text.strip()
-
-    if width(text, font) <= max_width:
-        return [text]
-    
-    else:
-        current_width = 0
-        characters = ''
-        line_list = []
-        current_line = 1
-        dots_width = width('...', font)
-        
-        if lines > 1:
-            text = text.split(' ')
-
-        for idx, i in enumerate(text):
-
-            if lines > 1:
-                i = i + ' '
-
-            if current_line == lines:
-                if width(characters + i, font) >= max_width-dots_width: # if width exceeds max - dots, return
-                    characters += '...'
-                    line_list.append(characters)
-                    return line_list
-                else:
-                    characters += i
-                    current_width = width(characters, font)
-            else:
-                if width(characters + i, font) >= max_width: # if current line exceeds max width and is not last line
-                    if i in [')']:
-                        characters += i
-                    else:
-                        current_line += 1
-                        line_list.append(characters)
-                        if i not in [' ','-','/',':']:
-                            characters = i
-                        else:
-                            characters = ''
-                        current_width = 0
-                else:
-                    characters += i
-                    current_width = width(characters, font)
-        if characters:  # if there are remaining characters
-            line_list.append(characters)
-        return line_list
-    
-
-def draw_angled_text(text, font, angle, image, coords, color):
-    temp_img = Image.new('L', (1, 1))
-    temp_draw = ImageDraw.Draw(temp_img)
-    bbox = temp_draw.textbbox((0, 0), text, font=font)
-    text_width = bbox[2] - bbox[0]
-    text_height = bbox[3] - bbox[1]
-    
-    txt = Image.new('L', (text_width, text_height))
-    d = ImageDraw.Draw(txt)
-    d.text((-bbox[0], -bbox[1]), text, font=font, fill=255)
-    
-    w = txt.rotate(angle, expand=1)
-    image.paste(ImageOps.colorize(w, (0,0,0), color), coords, w)
 
     
 def display_one(name):
@@ -984,8 +978,7 @@ def seek_stream(direction):
         else:
             readied_stream = stream_list[idx + direction]
 
-    display_readied_cached(readied_stream)
-    #display_everything(direction, readied_stream, readied=True)
+    display_everything(direction, readied_stream, readied=True)
 
 def confirm_seek():
     global readied_stream, stream
@@ -1181,11 +1174,12 @@ failed_fetches = 0
 time_since_last_update = 0
 last_successful_fetch = time.time()
 
+cached_everything_dict = {}
 def display_readied_cached(name):
     disp.ShowImage(cached_everything_dict[name])
 
 def periodic_update():
-    global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict
+    global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list
 
     if not charging and screen_on == False and current_volume == 0 and (time.time() - last_input_time > 300):
         pass
@@ -1214,8 +1208,6 @@ def periodic_update():
                 for name, v in info.items():
                     if name in streams:
                         streams[name].update(v)
-                        cached_everything_dict[name] = display_everything(0, name, readied=True, silent=True)
-
                         updated_count += 1
                 
                 logging.info(f"Successfully updated {updated_count} streams")
