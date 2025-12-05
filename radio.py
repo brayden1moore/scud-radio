@@ -359,7 +359,7 @@ def fetch_logo(name, url):
     return name, BytesIO(resp.content)
 
 def get_streams():
-    global streams
+    global streams, cached_everything_dict
 
     info = requests.get('https://internetradioprotocol.org/info').json()
     active = {n: v for n, v in info.items() if v['status']!="Offline" and v['hidden']!=True}
@@ -1183,7 +1183,7 @@ def display_readied_cached(name):
     disp.ShowImage(cached_everything_dict[name])
 
 def periodic_update():
-    global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list
+    global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict
 
     if not charging and screen_on == False and current_volume == 0 and (time.time() - last_input_time > 300):
         pass
