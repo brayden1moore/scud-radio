@@ -838,7 +838,7 @@ def display_one(name):
         currently_displaying = 'one'
         display_bar(y=218, draw=draw)
 
-        safe_display(image)
+        disp.ShowImage(image)
         has_displayed_once = True
 
 
@@ -894,7 +894,7 @@ def display_ambient(name, clicked=False):
 def display_current():
     print('displaying current')
     print(currently_displaying)
-    if currently_displaying=='everything':
+    if currently_displaying == 'everything':
         #display_readied_cached(stream)
         display_one(stream)
 
