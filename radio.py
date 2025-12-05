@@ -1178,7 +1178,7 @@ def display_readied_cached(name, pushed=False):
             bg_position = og_logo_position
             logo = streams[name]['logo_60']    
             first_pixel_color = logo.getpixel((2,2))
-            draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], fill=first_pixel_color)
+            draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], fill=first_pixel_color, outline=WHITE, width=1)
             image.paste(logo, logo_position)
 
         disp.ShowImage(image)
