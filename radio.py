@@ -761,7 +761,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
 one_cache = {}
 def display_one(name):
-    global has_displayed_once, currently_displaying
+    global has_displayed_once, currently_displaying, current_image
     
     if name in one_cache.keys():
         disp.ShowImage(one_cache[name])
@@ -839,6 +839,7 @@ def display_one(name):
         display_bar(y=218, draw=draw)
 
         disp.ShowImage(image)
+        current_image = image
         has_displayed_once = True
 
 
