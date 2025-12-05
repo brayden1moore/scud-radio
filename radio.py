@@ -1177,7 +1177,8 @@ last_successful_fetch = time.time()
 
 cached_everything_dict = {}
 def display_readied_cached(name):
-    if cached_everything_dict[name]:
+    global cached_everything_dict
+    if name in list(cached_everything_dict.keys()):
         disp.ShowImage(cached_everything_dict[name])
     else:
         cached_everything_dict[name] = display_everything(0, name, readied=True)
