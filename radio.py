@@ -978,7 +978,8 @@ def seek_stream(direction):
         else:
             readied_stream = stream_list[idx + direction]
 
-    display_everything(direction, readied_stream, readied=True)
+    display_readied_cached(readied_stream)
+    #display_everything(direction, readied_stream, readied=True)
 
 def confirm_seek():
     global readied_stream, stream
