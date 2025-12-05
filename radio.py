@@ -47,6 +47,7 @@ disp = LCD_2inch.LCD_2inch()
 disp.Init()
 disp.clear()
 disp.bl_DutyCycle(current_bl)
+cached_everything_dict = {}
 
 mpv_process = None
 stream = None
@@ -1178,7 +1179,6 @@ failed_fetches = 0
 time_since_last_update = 0
 last_successful_fetch = time.time()
 
-cached_everything_dict = {}
 def display_readied_cached(name):
     disp.ShowImage(cached_everything_dict[name])
 
