@@ -578,6 +578,11 @@ def calculate_text_cached(text, font_name, width, lines):
 
 base_layer = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
 start_x = 0
+logo_chunk_start = 35
+logo_chunk_start_x = 12 + start_x
+og_logo_position = (111, logo_chunk_start - 14 - 4)
+logo_position = og_logo_position
+
 def display_everything(direction, name, update=False, readied=False, pushed=False, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
@@ -642,21 +647,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
 
         # logos
-        logo_chunk_start = 35
-        if not readied:
-            logo_chunk_start = logo_chunk_start + 32
-        logo_chunk_start_x = 12 + start_x
-        og_logo_position = (111, logo_chunk_start - 14 - 4)
-        if pushed:
-            logo_position = (129, logo_chunk_start)
-            bg_position = og_logo_position
-            logo = streams[name]['logo_60']    
-            first_pixel_color = logo.getpixel((2,2))
-            draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], fill=first_pixel_color)
-        else:
-            logo_position = og_logo_position
-            logo = streams[name]['logo_96']
-        
+        logo = streams[name]['logo_96']
         image.paste(logo, logo_position)
 
         if name in favorites:
@@ -1175,10 +1166,19 @@ last_successful_fetch = time.time()
 
 cached_everything_dict = {}
 cached_everything_mark_dict = {}
-def display_readied_cached(name):
+def display_readied_cached(name, pushed=False):
     global cached_everything_dict
     if name in list(cached_everything_dict.keys()):
         image = cached_everything_dict[name]
+
+        if pushed:
+            draw = ImageDraw.Draw(image)
+            logo_position = (129, logo_chunk_start)
+            bg_position = og_logo_position
+            logo = streams[name]['logo_60']    
+            first_pixel_color = logo.getpixel((2,2))
+            draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], fill=first_pixel_color)
+
         disp.ShowImage(image)
     else:
         cached_everything_dict[name] = display_everything(0, name, readied=True)
