@@ -759,84 +759,87 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
     else:
         display_one(name)
 
-    
+one_cache = {}
 def display_one(name):
     global has_displayed_once, currently_displaying
-
-    # logo
-    logo = streams[name]['logo_60']
-    first_pixel_color = logo.getpixel((2,2))
-    pixel_array = np.asarray(first_pixel_color)
-    white_array = np.asarray([255, 255, 255, 255])
-    black_array = np.asarray([0, 0, 0, 255])
-
-    image = Image.new('RGBA',(320, 240), color=BLACK)
-    draw = ImageDraw.Draw(image)  
-
-    draw.rectangle([15, 11, 76, 72], outline=WHITE, width=1)
-    logo_position = (16, 12)
-    image.paste(logo, logo_position)
-    if name in favorites:
-        image.paste(star_60, logo_position, star_60)
-    if name not in reruns:
-        image.paste(live_60, (16, 12), live_60)
-
-    # name and underline
-    name_line = calculate_text(name, font=LARGE_FONT_THIN, max_width=225, lines=1)[0]
-    draw.rectangle([92, 20 - 4, 92 + width(name_line, LARGE_FONT_THIN), 20 + height('S', LARGE_FONT_THIN)], fill=BLACK)
-    draw.text((90, 13), name_line, font=LARGE_FONT_THIN, fill=WHITE)
-    draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT_THIN), 47], fill=WHITE) # underline
-    #draw.rectangle([15, 72 + 12, SCREEN_WIDTH-15, 72 + 12], outline=WHITE, width=1) # divider
     
-    # location
-    location = streams[name]['location']
-    draw.rectangle([92, 52 + 2, 92 + width(location, MEDIUM_FONT), 52 + 3 + height('S', MEDIUM_FONT)], fill=BLUE)# bg
-    draw.text((92, 52), calculate_text(location, font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
-
-    # now playing
-    y_offset = 0
-    num_title_lines = 2
-    info = streams[name]['oneLiner'].replace('&amp;','&').split(' - ')
-    info = [i for i in info if i in list(set(info))]
-
-    if len(info) == 1:
-        num_title_lines = 3
-    elif len(info) == 2:
-        num_title_lines = 3
-
-    title_lines = [i for i in calculate_text(info[0], font=LARGE_FONT, max_width=290, lines=num_title_lines) if i != '']
-
-    if len(title_lines) == 3:
-        num_info_lines = 1
-    elif len(title_lines) == 1: 
-        num_info_lines = 4
+    if one_cache[name]:
+        disp.ShowImage(one_cache[name])
     else:
-        num_info_lines = 2
-    
-    info_lines = [i for i in calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines) if i != '']
+        # logo
+        logo = streams[name]['logo_60']
+        first_pixel_color = logo.getpixel((2,2))
+        pixel_array = np.asarray(first_pixel_color)
+        white_array = np.asarray([255, 255, 255, 255])
+        black_array = np.asarray([0, 0, 0, 255])
 
-    line_gap = 3
-    section_gap = 6
-    anchor = get_anchor(title_lines, info_lines, name not in reruns, line_gap, section_gap)
-    avg_title_height = sum(height(i, LARGE_FONT) for i in title_lines) / len(title_lines) if title_lines else 0
-    avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
+        image = Image.new('RGBA',(320, 240), color=BLACK)
+        draw = ImageDraw.Draw(image)  
 
-    for i in title_lines:
-        draw.text((14, anchor), i, font=LARGE_FONT, fill=WHITE)
-        anchor += avg_title_height + line_gap
+        draw.rectangle([15, 11, 76, 72], outline=WHITE, width=1)
+        logo_position = (16, 12)
+        image.paste(logo, logo_position)
+        if name in favorites:
+            image.paste(star_60, logo_position, star_60)
+        if name not in reruns:
+            image.paste(live_60, (16, 12), live_60)
 
-    anchor += section_gap
+        # name and underline
+        name_line = calculate_text(name, font=LARGE_FONT_THIN, max_width=225, lines=1)[0]
+        draw.rectangle([92, 20 - 4, 92 + width(name_line, LARGE_FONT_THIN), 20 + height('S', LARGE_FONT_THIN)], fill=BLACK)
+        draw.text((90, 13), name_line, font=LARGE_FONT_THIN, fill=WHITE)
+        draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT_THIN), 47], fill=WHITE) # underline
+        #draw.rectangle([15, 72 + 12, SCREEN_WIDTH-15, 72 + 12], outline=WHITE, width=1) # divider
+        
+        # location
+        location = streams[name]['location']
+        draw.rectangle([92, 52 + 2, 92 + width(location, MEDIUM_FONT), 52 + 3 + height('S', MEDIUM_FONT)], fill=BLUE)# bg
+        draw.text((92, 52), calculate_text(location, font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
 
-    if info_lines:
-        for i in info_lines:
-            draw.text((14, anchor), i, font=MEDIUM_FONT, fill=WHITE)
-            anchor += avg_info_height + line_gap
+        # now playing
+        y_offset = 0
+        num_title_lines = 2
+        info = streams[name]['oneLiner'].replace('&amp;','&').split(' - ')
+        info = [i for i in info if i in list(set(info))]
 
-    currently_displaying = 'one'
-    display_bar(y=218, draw=draw)
+        if len(info) == 1:
+            num_title_lines = 3
+        elif len(info) == 2:
+            num_title_lines = 3
 
-    safe_display(image)
-    has_displayed_once = True
+        title_lines = [i for i in calculate_text(info[0], font=LARGE_FONT, max_width=290, lines=num_title_lines) if i != '']
+
+        if len(title_lines) == 3:
+            num_info_lines = 1
+        elif len(title_lines) == 1: 
+            num_info_lines = 4
+        else:
+            num_info_lines = 2
+        
+        info_lines = [i for i in calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines) if i != '']
+
+        line_gap = 3
+        section_gap = 6
+        anchor = get_anchor(title_lines, info_lines, name not in reruns, line_gap, section_gap)
+        avg_title_height = sum(height(i, LARGE_FONT) for i in title_lines) / len(title_lines) if title_lines else 0
+        avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
+
+        for i in title_lines:
+            draw.text((14, anchor), i, font=LARGE_FONT, fill=WHITE)
+            anchor += avg_title_height + line_gap
+
+        anchor += section_gap
+
+        if info_lines:
+            for i in info_lines:
+                draw.text((14, anchor), i, font=MEDIUM_FONT, fill=WHITE)
+                anchor += avg_info_height + line_gap
+
+        currently_displaying = 'one'
+        display_bar(y=218, draw=draw)
+
+        safe_display(image)
+        has_displayed_once = True
 
 
 def display_bar(y, draw):
@@ -1097,7 +1100,7 @@ def on_volume_button_pressed():
     
 
 def toggle_favorite():
-    global favorites, stream_list
+    global favorites, stream_list, cached_everything_dict
     now = time.time()
 
     chosen_stream = stream if not readied_stream else readied_stream
@@ -1125,7 +1128,7 @@ def toggle_favorite():
     stream_list = get_stream_list(streams)
     time.sleep(0.3)
     show_readied = False if not readied_stream else True
-    display_readied_cached(chosen_stream)
+    cached_everything_dict[chosen_stream] = display_everything(0, name=chosen_stream, readied=show_readied)
 
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
