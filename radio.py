@@ -1031,7 +1031,7 @@ def on_button_pressed():
     button_press_time = time.time()
     button_released_time = None
 
-    logging.info('PRESSED AND CURRENTLY DISPLAYING', currently_displaying)
+    #logging.info('PRESSED AND CURRENTLY DISPLAYING', currently_displaying)
 
     if readied_stream:
         display_readied_cached(readied_stream, pushed=True)
@@ -1044,7 +1044,7 @@ def on_button_pressed():
             display_ambient(stream, clicked=True)
 
         elif currently_displaying == 'ambient':
-            display_everything(0, stream, readied=False, pushed=False)
+            display_readied_cached(stream)
 
 
     held = True
@@ -1166,6 +1166,7 @@ last_successful_fetch = time.time()
 
 cached_everything_dict = {}
 def display_readied_cached(name, pushed=False):
+    ''' First looks for cached version and if not, rebuilds '''
     global cached_everything_dict, currently_displaying
     currently_displaying = 'everything'
     if name in list(cached_everything_dict.keys()):
