@@ -633,8 +633,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         genres = streams[name]['genres']
         genre_x_offset = 5
         if genres:
-            for i in genres:
-                genre_width = width(i, MEDIUM_FONT)
+            genre_widths = [width(g, MEDIUM_FONT) for g in genres]
+            genre_x_offset = 5
+            for genre, genre_width in zip(genres, genre_widths):
                 draw.rectangle([genre_start + genre_x_offset, name_chunk_start + 54, genre_start + genre_x_offset + genre_width, name_chunk_start + 55 + height('S', MEDIUM_FONT)], fill=GREEN) # bg
                 draw.text((genre_start + genre_x_offset, name_chunk_start + 52), i, font=MEDIUM_FONT, fill=BLACK)
                 genre_x_offset += genre_width + 5
