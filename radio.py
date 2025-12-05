@@ -22,6 +22,8 @@ import sys
 import re
 import os
 
+from functools import lru_cache
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -570,6 +572,10 @@ def draw_angled_text(text, font, angle, image, coords, color):
     w = txt.rotate(angle, expand=1)
     image.paste(ImageOps.colorize(w, (0,0,0), color), coords, w)
 
+@lru_cache(maxsize=128)
+def calculate_text_cached(text, font_name, width, lines):
+    return calculate_text(text, font_name, width, lines)
+
 base_layer = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
 start_x = 0
 def display_everything(direction, name, update=False, readied=False, pushed=False):
@@ -594,7 +600,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 next_stream = stream_list[0]
                 double_next_stream = stream_list[1]
 
-        image = base_layer.copy()
+        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
         draw = ImageDraw.Draw(image) 
         
         currently_displaying = 'everything'
@@ -756,7 +762,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 readied_fill = WHITE if name not in favorites else WHITE 
                 draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
                 
-        safe_display(image)
+        disp.ShowImage(image)
+        #safe_display(image)
     else:
         display_one(name)
 
