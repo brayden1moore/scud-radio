@@ -1166,7 +1166,8 @@ last_successful_fetch = time.time()
 
 cached_everything_dict = {}
 def display_readied_cached(name, pushed=False):
-    global cached_everything_dict
+    global cached_everything_dict, currently_displaying
+    currently_displaying = 'everything'
     if name in list(cached_everything_dict.keys()):
         image = cached_everything_dict[name]
 
