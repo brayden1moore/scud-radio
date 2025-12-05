@@ -389,7 +389,7 @@ def get_streams():
                         
                         active[name][f'logo_{i}'] = image
         
-        cached_everything_dict[name] = display_readied_cached(name, silent=True)
+        cached_everything_dict[name] = display_everything(0, name, readied=True, silent=True)
 
     with ThreadPoolExecutor(max_workers=8) as exe:
         futures = [
@@ -414,7 +414,7 @@ def get_streams():
             active[name]['logo_25'] = logo_25
             active[name]['logo_176'] = logo_176
 
-            cached_everything_dict[name] = display_readied_cached(name, silent=True)
+            cached_everything_dict[name] = display_everything(0, name, readied=True, silent=True)
 
             # save images to lib
             for i in ['96','60','25','176']:
