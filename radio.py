@@ -1184,7 +1184,7 @@ def display_readied_cached(name):
     if name in list(cached_everything_dict.keys()):
         image = cached_everything_dict[name]
         draw = ImageDraw.Draw(image)
-        draw.rectangle(cached_everything_mark_dict[stream])
+        draw.rectangle(cached_everything_mark_dict[stream], fill=BLUE, outline=BLACK, width=1)
         disp.ShowImage(image)
     else:
         cached_everything_dict[name], cached_everything_mark_dict[name] = display_everything(0, name, readied=True)
