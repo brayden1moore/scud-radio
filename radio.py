@@ -359,6 +359,204 @@ def fetch_logo(name, url):
     resp.raise_for_status()
     return name, BytesIO(resp.content)
 
+@lru_cache(maxsize=128)
+def calculate_text_cached(text, font_name, width, lines):
+    return calculate_text(text, font_name, width, lines)
+
+base_layer = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
+start_x = 0
+def display_everything(direction, name, update=False, readied=False, pushed=False, silent=False):
+    global streams, play_status, first_display, selector, start_x, currently_displaying
+    
+    if readied and not restarting:
+    #if not restarting:
+        now = time.time()
+
+        first_display = False
+
+        prev_stream = stream_list[stream_list.index(name)-1]
+        double_prev_stream = stream_list[stream_list.index(prev_stream)-1]
+        try:
+            next_stream = stream_list[stream_list.index(name)+1]
+            double_next_stream = stream_list[stream_list.index(next_stream)+1]
+        except:
+            try: # just wrap around the double next
+                next_stream = stream_list[stream_list.index(name)+1]
+                double_next_stream = stream_list[0]
+            except: # wrap around both
+                next_stream = stream_list[0]
+                double_next_stream = stream_list[1]
+
+        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
+        draw = ImageDraw.Draw(image) 
+        
+        currently_displaying = 'everything'
+        if not readied:
+            display_bar(y=4, draw=draw)
+
+        location = streams[name]['location']
+        title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 315, 1)
+
+        # draw name and underline
+
+        name_chunk_start = 240 - 80
+        name_chunk_start_x = 12 + start_x
+        name_line = calculate_text(name, LARGE_FONT_THIN, 315, 1)
+        draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
+        draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
+        draw.rectangle([name_chunk_start_x, name_chunk_start + 30, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + 30], fill=WHITE) # ul
+
+        # draw info
+        y_offset = 0
+        for i in title_lines:
+            draw.text((name_chunk_start_x, name_chunk_start + 33 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
+            y_offset += 20
+
+        # draw location
+        draw.rectangle([name_chunk_start_x, name_chunk_start + 54, name_chunk_start_x + width(location, MEDIUM_FONT), name_chunk_start + 55 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
+        draw.text((name_chunk_start_x, name_chunk_start + 52), location, font=MEDIUM_FONT, fill=BLACK)
+        
+        genre_start = name_chunk_start_x + width(location, MEDIUM_FONT)
+        genres = streams[name]['genres']
+        genre_x_offset = 5
+        if genres:
+            genre_widths = [width(g, MEDIUM_FONT) for g in genres]
+            genre_x_offset = 5
+            for genre, genre_width in zip(genres, genre_widths):
+                draw.rectangle([genre_start + genre_x_offset, name_chunk_start + 54, genre_start + genre_x_offset + genre_width, name_chunk_start + 55 + height('S', MEDIUM_FONT)], fill=GREEN) # bg
+                draw.text((genre_start + genre_x_offset, name_chunk_start + 52), genre, font=MEDIUM_FONT, fill=BLACK)
+                genre_x_offset += genre_width + 5
+
+
+        # logos
+        logo_chunk_start = 35
+        if not readied:
+            logo_chunk_start = logo_chunk_start + 32
+        logo_chunk_start_x = 12 + start_x
+        og_logo_position = (111, logo_chunk_start - 14 - 4)
+        if pushed:
+            logo_position = (129, logo_chunk_start)
+            bg_position = og_logo_position
+            logo = streams[name]['logo_60']    
+            first_pixel_color = logo.getpixel((2,2))
+            draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], fill=first_pixel_color)
+        else:
+            logo_position = og_logo_position
+            logo = streams[name]['logo_96']
+        
+        image.paste(logo, logo_position)
+
+        if name in favorites:
+            this_star = star_96.copy()
+            image.paste(this_star, og_logo_position, this_star)
+        if name not in reruns:
+            this_live = live_96.copy()
+            image.paste(this_live, og_logo_position, this_live)
+        
+        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=1) # border
+
+        prev_position = (39, logo_chunk_start + 22 - 4)
+        next_position = (219, logo_chunk_start + 22 - 4)
+        prev_next_rotation = 0
+        prev = streams[prev_stream]['logo_60']
+        next = streams[next_stream]['logo_60']
+        image.paste(prev, prev_position)
+        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + 60, prev_position[1] + 60], outline=WHITE, width=1)
+        image.paste(next, next_position)
+        draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=WHITE, width=1)
+
+        if prev_stream in favorites:
+            prev_star = star_60.copy().rotate(prev_next_rotation, expand=True)
+            image.paste(prev_star, prev_position, prev_star)
+        if next_stream in favorites:
+            next_star = star_60.copy().rotate(-prev_next_rotation, expand=True)
+            image.paste(next_star, next_position, next_star)
+        if prev_stream not in reruns:
+            prev_live = live_60.copy().rotate(prev_next_rotation, expand=True)
+            image.paste(prev_live, prev_position, prev_live)
+        if next_stream not in reruns:
+            next_live = live_60.copy().rotate(-prev_next_rotation, expand=True)
+            image.paste(next_live, next_position, next_live)
+
+        # double prev and next
+        double_prev_position = (7, logo_chunk_start + 57 - 4)
+        double_next_position = (286, logo_chunk_start + 57 - 4)
+        double_prev_next_rotation = 0
+        double_prev = streams[double_prev_stream]['logo_25']
+        double_next = streams[double_next_stream]['logo_25']
+        
+        image.paste(double_prev, double_prev_position)
+        draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + 25, double_prev_position[1] + 25], outline=WHITE, width=1)
+        if double_prev_stream in favorites:
+            double_prev_star = star_25.copy()
+            image.paste(double_prev_star, double_prev_position, double_prev_star)
+        if double_prev_stream not in reruns:
+            double_prev_live = live_25.copy()
+            image.paste(double_prev_live, double_prev_position, double_prev_live)
+
+        image.paste(double_next, double_next_position)
+        draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + 25, double_next_position[1] + 25], outline=WHITE, width=1)
+        if double_next_stream in favorites:
+            double_next_star = star_25.copy()
+            image.paste(double_next_star, double_next_position, double_next_star)
+        if double_next_stream not in reruns:
+            double_next_live = live_25.copy()
+            image.paste(double_next_live, double_next_position, double_next_live)
+
+        # draw mark
+        if readied:
+            tick_locations = {}
+
+            tick_width = 1
+            padding = 12 + 6
+            total_ticks = len(stream_list)
+            total_span = SCREEN_WIDTH - (2 * padding)
+            mark_width = round(total_span / (total_ticks))
+            tick_start = padding  
+            tick_bar_height = 25
+            tick_bar_start = logo_chunk_start + 94
+            tick_height = 3
+            tick_start_y = (tick_bar_start + tick_bar_height / 2) - 2
+
+            square_start = padding - 5
+            square_end = padding + mark_width * len(favorites) - 1
+            if favorites:
+                tick_color = BLACK
+                draw.rectangle([square_start, tick_bar_start + 4, square_end, tick_bar_start - 4 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
+                for i in sorted(favorites, key=str.casefold):
+                    draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
+                    tick_locations[i] = tick_start
+                    tick_start += mark_width
+                    square_end += mark_width
+                tick_start += 5
+
+            if readied:
+                tick_color = WHITE
+            else:
+                tick_color = WHITE
+            for i in [i for i in stream_list if i not in favorites]:
+                draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
+                tick_locations[i] = tick_start
+                tick_start += mark_width
+
+            # marker
+            first_tick_start = padding
+            bar_width = 2
+            mark_start = tick_locations[stream]
+            current_fill = BLUE if stream not in favorites else BLUE
+            draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill, outline=BLACK, width=1)
+            if readied:
+                mark_start = tick_locations[name]
+                readied_fill = WHITE if name not in favorites else WHITE 
+                draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
+            
+        if not silent:
+            disp.ShowImage(image)
+        return image
+        #safe_display(image)
+    else:
+        display_one(name)
+
 def get_streams():
     global streams, cached_everything_dict
 
@@ -576,204 +774,6 @@ def draw_angled_text(text, font, angle, image, coords, color):
     
     w = txt.rotate(angle, expand=1)
     image.paste(ImageOps.colorize(w, (0,0,0), color), coords, w)
-
-@lru_cache(maxsize=128)
-def calculate_text_cached(text, font_name, width, lines):
-    return calculate_text(text, font_name, width, lines)
-
-base_layer = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
-start_x = 0
-def display_everything(direction, name, update=False, readied=False, pushed=False, silent=False):
-    global streams, play_status, first_display, selector, start_x, currently_displaying
-    
-    if readied and not restarting:
-    #if not restarting:
-        now = time.time()
-
-        first_display = False
-
-        prev_stream = stream_list[stream_list.index(name)-1]
-        double_prev_stream = stream_list[stream_list.index(prev_stream)-1]
-        try:
-            next_stream = stream_list[stream_list.index(name)+1]
-            double_next_stream = stream_list[stream_list.index(next_stream)+1]
-        except:
-            try: # just wrap around the double next
-                next_stream = stream_list[stream_list.index(name)+1]
-                double_next_stream = stream_list[0]
-            except: # wrap around both
-                next_stream = stream_list[0]
-                double_next_stream = stream_list[1]
-
-        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
-        draw = ImageDraw.Draw(image) 
-        
-        currently_displaying = 'everything'
-        if not readied:
-            display_bar(y=4, draw=draw)
-
-        location = streams[name]['location']
-        title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 315, 1)
-
-        # draw name and underline
-
-        name_chunk_start = 240 - 80
-        name_chunk_start_x = 12 + start_x
-        name_line = calculate_text(name, LARGE_FONT_THIN, 315, 1)
-        draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
-        draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
-        draw.rectangle([name_chunk_start_x, name_chunk_start + 30, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + 30], fill=WHITE) # ul
-
-        # draw info
-        y_offset = 0
-        for i in title_lines:
-            draw.text((name_chunk_start_x, name_chunk_start + 33 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
-            y_offset += 20
-
-        # draw location
-        draw.rectangle([name_chunk_start_x, name_chunk_start + 54, name_chunk_start_x + width(location, MEDIUM_FONT), name_chunk_start + 55 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
-        draw.text((name_chunk_start_x, name_chunk_start + 52), location, font=MEDIUM_FONT, fill=BLACK)
-        
-        genre_start = name_chunk_start_x + width(location, MEDIUM_FONT)
-        genres = streams[name]['genres']
-        genre_x_offset = 5
-        if genres:
-            genre_widths = [width(g, MEDIUM_FONT) for g in genres]
-            genre_x_offset = 5
-            for genre, genre_width in zip(genres, genre_widths):
-                draw.rectangle([genre_start + genre_x_offset, name_chunk_start + 54, genre_start + genre_x_offset + genre_width, name_chunk_start + 55 + height('S', MEDIUM_FONT)], fill=GREEN) # bg
-                draw.text((genre_start + genre_x_offset, name_chunk_start + 52), genre, font=MEDIUM_FONT, fill=BLACK)
-                genre_x_offset += genre_width + 5
-
-
-        # logos
-        logo_chunk_start = 35
-        if not readied:
-            logo_chunk_start = logo_chunk_start + 32
-        logo_chunk_start_x = 12 + start_x
-        og_logo_position = (111, logo_chunk_start - 14 - 4)
-        if pushed:
-            logo_position = (129, logo_chunk_start)
-            bg_position = og_logo_position
-            logo = streams[name]['logo_60']    
-            first_pixel_color = logo.getpixel((2,2))
-            draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], fill=first_pixel_color)
-        else:
-            logo_position = og_logo_position
-            logo = streams[name]['logo_96']
-        
-        image.paste(logo, logo_position)
-
-        if name in favorites:
-            this_star = star_96.copy()
-            image.paste(this_star, og_logo_position, this_star)
-        if name not in reruns:
-            this_live = live_96.copy()
-            image.paste(this_live, og_logo_position, this_live)
-        
-        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=1) # border
-
-        prev_position = (39, logo_chunk_start + 22 - 4)
-        next_position = (219, logo_chunk_start + 22 - 4)
-        prev_next_rotation = 0
-        prev = streams[prev_stream]['logo_60']
-        next = streams[next_stream]['logo_60']
-        image.paste(prev, prev_position)
-        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + 60, prev_position[1] + 60], outline=WHITE, width=1)
-        image.paste(next, next_position)
-        draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=WHITE, width=1)
-
-        if prev_stream in favorites:
-            prev_star = star_60.copy().rotate(prev_next_rotation, expand=True)
-            image.paste(prev_star, prev_position, prev_star)
-        if next_stream in favorites:
-            next_star = star_60.copy().rotate(-prev_next_rotation, expand=True)
-            image.paste(next_star, next_position, next_star)
-        if prev_stream not in reruns:
-            prev_live = live_60.copy().rotate(prev_next_rotation, expand=True)
-            image.paste(prev_live, prev_position, prev_live)
-        if next_stream not in reruns:
-            next_live = live_60.copy().rotate(-prev_next_rotation, expand=True)
-            image.paste(next_live, next_position, next_live)
-
-        # double prev and next
-        double_prev_position = (7, logo_chunk_start + 57 - 4)
-        double_next_position = (286, logo_chunk_start + 57 - 4)
-        double_prev_next_rotation = 0
-        double_prev = streams[double_prev_stream]['logo_25']
-        double_next = streams[double_next_stream]['logo_25']
-        
-        image.paste(double_prev, double_prev_position)
-        draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + 25, double_prev_position[1] + 25], outline=WHITE, width=1)
-        if double_prev_stream in favorites:
-            double_prev_star = star_25.copy()
-            image.paste(double_prev_star, double_prev_position, double_prev_star)
-        if double_prev_stream not in reruns:
-            double_prev_live = live_25.copy()
-            image.paste(double_prev_live, double_prev_position, double_prev_live)
-
-        image.paste(double_next, double_next_position)
-        draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + 25, double_next_position[1] + 25], outline=WHITE, width=1)
-        if double_next_stream in favorites:
-            double_next_star = star_25.copy()
-            image.paste(double_next_star, double_next_position, double_next_star)
-        if double_next_stream not in reruns:
-            double_next_live = live_25.copy()
-            image.paste(double_next_live, double_next_position, double_next_live)
-
-        # draw mark
-        if readied:
-            tick_locations = {}
-
-            tick_width = 1
-            padding = 12 + 6
-            total_ticks = len(stream_list)
-            total_span = SCREEN_WIDTH - (2 * padding)
-            mark_width = round(total_span / (total_ticks))
-            tick_start = padding  
-            tick_bar_height = 25
-            tick_bar_start = logo_chunk_start + 94
-            tick_height = 3
-            tick_start_y = (tick_bar_start + tick_bar_height / 2) - 2
-
-            square_start = padding - 5
-            square_end = padding + mark_width * len(favorites) - 1
-            if favorites:
-                tick_color = BLACK
-                draw.rectangle([square_start, tick_bar_start + 4, square_end, tick_bar_start - 4 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
-                for i in sorted(favorites, key=str.casefold):
-                    draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
-                    tick_locations[i] = tick_start
-                    tick_start += mark_width
-                    square_end += mark_width
-                tick_start += 5
-
-            if readied:
-                tick_color = WHITE
-            else:
-                tick_color = WHITE
-            for i in [i for i in stream_list if i not in favorites]:
-                draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
-                tick_locations[i] = tick_start
-                tick_start += mark_width
-
-            # marker
-            first_tick_start = padding
-            bar_width = 2
-            mark_start = tick_locations[stream]
-            current_fill = BLUE if stream not in favorites else BLUE
-            draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill, outline=BLACK, width=1)
-            if readied:
-                mark_start = tick_locations[name]
-                readied_fill = WHITE if name not in favorites else WHITE 
-                draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
-            
-        if not silent:
-            disp.ShowImage(image)
-        return image
-        #safe_display(image)
-    else:
-        display_one(name)
 
     
 def display_one(name):
