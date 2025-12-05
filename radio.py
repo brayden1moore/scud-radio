@@ -578,7 +578,7 @@ def calculate_text_cached(text, font_name, width, lines):
 
 base_layer = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
 start_x = 0
-def display_everything(direction, name, update=False, readied=False, pushed=False):
+def display_everything(direction, name, update=False, readied=False, pushed=False, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
     if readied and not restarting:
@@ -762,8 +762,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 mark_start = tick_locations[name]
                 readied_fill = WHITE if name not in favorites else WHITE 
                 draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
-                
-        disp.ShowImage(image)
+
+        if not silent:  
+            disp.ShowImage(image)
         return image
         #safe_display(image)
     else:
@@ -1184,13 +1185,12 @@ def display_readied_cached(name):
         cached_everything_dict[name] = display_everything(0, name, readied=True)
 
 def periodic_update():
-    global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list
+    global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict
 
     if not charging and screen_on == False and current_volume == 0 and (time.time() - last_input_time > 300):
         pass
         #subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
-    #if screen_on and has_displayed_once and stream and (time.time() - last_input_time > 20):
     if (time.time() - last_input_time > 20):
         display_ambient(stream)
 
@@ -1199,7 +1199,7 @@ def periodic_update():
         backlight_off()
     else:
         time_since_last_success = time.time() - last_successful_fetch
-        should_fetch = (time_since_last_update >= 15) or (time_since_last_success > 30)
+        should_fetch = (time_since_last_update >= 15) or (time_since_last_success > 30) or len(cached_everything_dict)==0
         
         if should_fetch:
             try:
@@ -1212,8 +1212,10 @@ def periodic_update():
                 updated_count = 0
                 for name, v in info.items():
                     if name in streams:
-                        streams[name].update(v)
-                        updated_count += 1
+                        if (name in list(cached_everything_dict.keys) and v['oneLiner'] != streams[name]['oneLiner']) or (name not in list(cached_everything_dict.keys())): # if stream is updated or hasn't been cached yet
+                            cached_everything_dict[name] = display_everything(0, name, readied=True)
+                            streams[name].update(v)
+                            updated_count += 1
                 
                 logging.info(f"Successfully updated {updated_count} streams")
                 stream_list = get_stream_list(streams)
