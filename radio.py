@@ -1169,7 +1169,8 @@ def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list
 
     if not charging and screen_on == False and current_volume == 0 and (time.time() - last_input_time > 300):
-        subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
+        pass
+        #subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
     #if screen_on and has_displayed_once and stream and (time.time() - last_input_time > 20):
     if (time.time() - last_input_time > 20):
@@ -1486,8 +1487,8 @@ try:
     while True:
         if time_since_battery_check == 15:
             get_battery()
-            if not charging:
-                subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
+            #if not charging:
+                #subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
             time_since_battery_check = 0
 
         if (readied_stream or volume_overlay_showing) and last_rotation and (time.time() - last_rotation > 5) and restarting == False and held == False:
