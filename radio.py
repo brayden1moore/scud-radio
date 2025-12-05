@@ -763,7 +763,7 @@ one_cache = {}
 def display_one(name):
     global has_displayed_once, currently_displaying
     
-    if one_cache[name]:
+    if name in one_cache.keys():
         disp.ShowImage(one_cache[name])
     else:
         # logo
