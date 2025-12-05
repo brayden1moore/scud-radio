@@ -743,10 +743,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                     square_end += mark_width
                 tick_start += 5
 
-            if readied:
-                tick_color = WHITE
-            else:
-                tick_color = WHITE
+            tick_color = WHITE
             for i in [i for i in stream_list if i not in favorites]:
                 draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
                 tick_locations[i] = tick_start
@@ -756,17 +753,16 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             first_tick_start = padding
             bar_width = 2
             mark_start = tick_locations[stream]
-            current_fill = BLUE if stream not in favorites else BLUE
-            current_station_highlight = [mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4]
+            #current_fill = BLUE if stream not in favorites else BLUE
+            #current_station_highlight = [mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4]
             #draw.rectangle(current_station_highlight, fill=current_fill, outline=BLACK, width=1)
-            if readied:
-                mark_start = tick_locations[name]
-                readied_fill = WHITE if name not in favorites else WHITE 
-                draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
+            mark_start = tick_locations[name]
+            readied_fill = WHITE if name not in favorites else WHITE 
+            draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
 
         if not silent:  
             disp.ShowImage(image)
-        return image, current_station_highlight
+        return image
         #safe_display(image)
     else:
         display_one(name)
@@ -1187,7 +1183,7 @@ def display_readied_cached(name):
         draw.rectangle(cached_everything_mark_dict[stream], fill=BLUE, outline=BLACK, width=1)
         disp.ShowImage(image)
     else:
-        cached_everything_dict[name], cached_everything_mark_dict[name] = display_everything(0, name, readied=True)
+        cached_everything_dict[name] = display_everything(0, name, readied=True)
 
 def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict
@@ -1218,7 +1214,7 @@ def periodic_update():
                 for name, v in info.items():
                     if name in streams:
                         if (name in list(cached_everything_dict.keys()) and v['oneLiner'] != streams[name]['oneLiner']) or (name not in list(cached_everything_dict.keys())): # if stream is updated or hasn't been cached yet
-                            cached_everything_dict[name], cached_everything_mark_dict[name] = display_everything(0, name, readied=True, silent=True)
+                            cached_everything_dict[name] = display_everything(0, name, readied=True, silent=True)
                             streams[name].update(v)
                             updated_count += 1
                 
