@@ -1124,7 +1124,7 @@ def toggle_favorite():
     stream_list = get_stream_list(streams)
     time.sleep(0.3)
     show_readied = False if not readied_stream else True
-    display_everything(0, chosen_stream, readied=show_readied)
+    display_readied_cached(chosen_stream)
 
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
@@ -1165,13 +1165,13 @@ time_since_last_update = 0
 last_successful_fetch = time.time()
 
 cached_everything_dict = {}
-cached_everything_mark_dict = {}
 def display_readied_cached(name, pushed=False):
     global cached_everything_dict
     if name in list(cached_everything_dict.keys()):
         image = cached_everything_dict[name]
 
         if pushed:
+            image = image.copy()
             draw = ImageDraw.Draw(image)
             logo_position = (129, logo_chunk_start)
             bg_position = og_logo_position
