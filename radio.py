@@ -411,6 +411,8 @@ def get_streams():
             active[name]['logo_25'] = logo_25
             active[name]['logo_176'] = logo_176
 
+            cached_everything_dict[name] = display_readied_cached(name, silent=True)
+
             # save images to lib
             for i in ['96','60','25','176']:
                 entire_path = Path(LIB_PATH) / f'{name}_logo_{i}.pkl'
