@@ -388,6 +388,8 @@ def get_streams():
                         image = pickle.load(f).convert('RGB')
                         
                         active[name][f'logo_{i}'] = image
+        
+        cached_everything_dict[name] = display_readied_cached(name, silent=True)
 
     with ThreadPoolExecutor(max_workers=8) as exe:
         futures = [
