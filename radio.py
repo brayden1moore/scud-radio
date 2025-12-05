@@ -1260,8 +1260,8 @@ def periodic_update():
             
             time_since_last_update = 0
 
-        if not held and not readied_stream and not screen_dim and screen_on:
-            display_current()
+        #if not held and not readied_stream and not screen_dim and screen_on:
+        #    display_current()
 
         time_since_last_update += 5
     
