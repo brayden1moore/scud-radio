@@ -893,7 +893,7 @@ def display_ambient(name, clicked=False):
 
 def display_current():
     if currently_displaying=='everything':
-        display_everything(0, stream, readied=False, pushed=False)
+        display_readied_cached(stream)
 
     elif currently_displaying == 'one':
         display_one(stream)
