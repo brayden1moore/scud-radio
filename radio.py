@@ -1244,7 +1244,8 @@ def periodic_update():
                 except:
                     pass
                 if screen_on:
-                    subprocess.run(['sudo','systemctl','restart','radio'])
+                    print('failed :(')
+                    #subprocess.run(['sudo','systemctl','restart','radio'])
                 sys.exit(0)
             
             time_since_last_update = 0
