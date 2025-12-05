@@ -1215,10 +1215,8 @@ def periodic_update():
                 updated_count = 0
                 for name, v in info.items():
                     if name in streams:
-                        print('Name',name)
-                        print('CURRENT',cached_everything_dict.keys())
-                        print(name in cached_everything_dict.keys())
                         if ((name in cached_everything_dict.keys()) and (v['oneLiner'] != streams[name]['oneLiner'])) or (name not in list(cached_everything_dict.keys())): # if stream is updated or hasn't been cached yet
+                            print(f'Updating image for {name}')
                             cached_everything_dict[name] = display_everything(0, name, readied=True, silent=True)
                             streams[name].update(v)
                             updated_count += 1
