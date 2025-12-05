@@ -775,7 +775,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             bar_width = 2
             
             # Draw the stream's current position marker
-            stream = selector # Assuming 'selector' holds the currently played stream
             mark_start = tick_locations[stream]
             current_fill = BLUE if stream not in favorites else BLUE # Use the correct blue
             draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill, outline=BLACK, width=1)
