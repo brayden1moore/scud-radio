@@ -757,7 +757,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             bar_width = 2
             mark_start = tick_locations[stream]
             current_fill = BLUE if stream not in favorites else BLUE
-            draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill, outline=BLACK, width=1)
+            current_station_highlight = [mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4]
+            #draw.rectangle(current_station_highlight, fill=current_fill, outline=BLACK, width=1)
             if readied:
                 mark_start = tick_locations[name]
                 readied_fill = WHITE if name not in favorites else WHITE 
@@ -765,7 +766,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         if not silent:  
             disp.ShowImage(image)
-        return image
+        return image, current_station_highlight
         #safe_display(image)
     else:
         display_one(name)
@@ -1177,12 +1178,16 @@ time_since_last_update = 0
 last_successful_fetch = time.time()
 
 cached_everything_dict = {}
+cached_everything_mark_dict = {}
 def display_readied_cached(name):
     global cached_everything_dict
     if name in list(cached_everything_dict.keys()):
-        disp.ShowImage(cached_everything_dict[name])
+        image = cached_everything_dict[name]
+        draw = image.ImageDraw(image)
+        draw.rectangle(cached_everything_mark_dict[stream])
+        disp.ShowImage(image)
     else:
-        cached_everything_dict[name] = display_everything(0, name, readied=True)
+        cached_everything_dict[name], cached_everything_mark_dict[name] = display_everything(0, name, readied=True)
 
 def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict
@@ -1213,7 +1218,7 @@ def periodic_update():
                 for name, v in info.items():
                     if name in streams:
                         if (name in list(cached_everything_dict.keys()) and v['oneLiner'] != streams[name]['oneLiner']) or (name not in list(cached_everything_dict.keys())): # if stream is updated or hasn't been cached yet
-                            cached_everything_dict[name] = display_everything(0, name, readied=True, silent=True)
+                            cached_everything_dict[name], cached_everything_mark_dict[name] = display_everything(0, name, readied=True, silent=True)
                             streams[name].update(v)
                             updated_count += 1
                 
