@@ -1034,7 +1034,7 @@ def on_button_pressed():
     logging.info('PRESSED AND CURRENTLY DISPLAYING', currently_displaying)
 
     if readied_stream:
-        display_everything(0, readied_stream, readied=True, pushed=True)
+        display_readied_cached(readied_stream, pushed=True)
 
     else:
         if currently_displaying=='everything':
