@@ -977,7 +977,7 @@ def confirm_seek():
             #pause()
             stream = readied_stream
             play(stream)
-        display_everything(0, stream)
+        #display_everything(0, stream)
         readied_stream = None
 
 def show_volume_overlay(volume):
