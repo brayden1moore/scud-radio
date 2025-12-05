@@ -892,6 +892,8 @@ def display_ambient(name, clicked=False):
 
 
 def display_current():
+    print('displaying current')
+    print(currently_displaying)
     if currently_displaying=='everything':
         #display_readied_cached(stream)
         display_one(stream)
