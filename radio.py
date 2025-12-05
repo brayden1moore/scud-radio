@@ -424,7 +424,7 @@ def get_streams():
 
 reruns = []
 def get_stream_list(streams):
-    global reruns 
+    global reruns, GLOBAL_TICK_BAR_IMAGE, GLOBAL_TICK_LOCATIONS
     stream_list = sorted(list(streams.keys()), key=str.casefold)
     reruns = [i for i in stream_list if streams[i]['status'] == 'Re-Run']
     
@@ -434,10 +434,14 @@ def get_stream_list(streams):
         #back_half = [i for i in stream_list if i not in favorites and i not in front_half]
         stream_list =  sorted(favorites, key=str.casefold) + sorted([i for i in stream_list if i not in favorites], key=str.casefold)
     
-    return stream_list
+    GLOBAL_TICK_BAR_IMAGE, GLOBAL_TICK_LOCATIONS = pre_render_tick_bar(
+        stream_list, 
+        favorites, 
+        SCREEN_WIDTH, 
+        SCREEN_HEIGHT 
+    )
 
-streams = get_streams()
-stream_list = get_stream_list(streams)
+    return stream_list
 
 # hat
 '''
@@ -572,12 +576,55 @@ def draw_angled_text(text, font, angle, image, coords, color):
     w = txt.rotate(angle, expand=1)
     image.paste(ImageOps.colorize(w, (0,0,0), color), coords, w)
 
+
+def pre_render_tick_bar(stream_list, favorites, width, height):
+    """Generates the static image for the stream selection tick bar."""
+    
+    padding = 12 + 6
+    total_ticks = len(stream_list)
+    total_span = width - (2 * padding)
+    mark_width = round(total_span / total_ticks)
+    tick_bar_height = 25
+    tick_height = 3
+    
+    bar_image = Image.new('RGBA', (width, tick_bar_height + 10), color=(0, 0, 0, 0))
+    draw = ImageDraw.Draw(bar_image)
+    
+    tick_start = padding
+    tick_start_y = (tick_bar_height / 2) - 2
+    
+    # --- Draw Favorites Background (YELLOW rectangle) ---
+    if favorites:
+        square_start = padding - 5
+        num_favorites = len([i for i in stream_list if i in favorites]) 
+        square_end = padding + mark_width * num_favorites - 1
+        
+        draw.rectangle([square_start, 4, square_end, tick_bar_height + 4], fill=YELLOW, outline=YELLOW, width=1)
+        
+    tick_locations = {}
+    tick_width = 1
+    tick_color = BLACK
+    for i in [s for s in stream_list if s in favorites]: # Keep order consistent
+        draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height + 2], fill=tick_color)
+        tick_locations[i] = tick_start
+        tick_start += mark_width
+        
+    tick_color = WHITE
+    for i in [s for s in stream_list if s not in favorites]:
+        draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height + 2], fill=tick_color)
+        tick_locations[i] = tick_start
+        tick_start += mark_width
+
+    return bar_image, tick_locations
+
+
 @lru_cache(maxsize=128)
 def calculate_text_cached(text, font_name, width, lines):
     return calculate_text(text, font_name, width, lines)
 
 base_layer = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
 start_x = 0
+
 def display_everything(direction, name, update=False, readied=False, pushed=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
@@ -670,7 +717,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         prev_position = (39, logo_chunk_start + 22 - 4)
         next_position = (219, logo_chunk_start + 22 - 4)
-        prev_next_rotation = 0
         prev = streams[prev_stream]['logo_60']
         next = streams[next_stream]['logo_60']
         image.paste(prev, prev_position)
@@ -679,16 +725,16 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=WHITE, width=1)
 
         if prev_stream in favorites:
-            prev_star = star_60.copy().rotate(prev_next_rotation, expand=True)
+            prev_star = star_60.copy()
             image.paste(prev_star, prev_position, prev_star)
         if next_stream in favorites:
-            next_star = star_60.copy().rotate(-prev_next_rotation, expand=True)
+            next_star = star_60.copy()
             image.paste(next_star, next_position, next_star)
         if prev_stream not in reruns:
-            prev_live = live_60.copy().rotate(prev_next_rotation, expand=True)
+            prev_live = live_60.copy()
             image.paste(prev_live, prev_position, prev_live)
         if next_stream not in reruns:
-            next_live = live_60.copy().rotate(-prev_next_rotation, expand=True)
+            next_live = live_60.copy()
             image.paste(next_live, next_position, next_live)
 
         # double prev and next
@@ -717,54 +763,29 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(double_next_live, double_next_position, double_next_live)
 
         # draw mark
-        if readied:
-            tick_locations = {}
-
-            tick_width = 1
-            padding = 12 + 6
-            total_ticks = len(stream_list)
-            total_span = SCREEN_WIDTH - (2 * padding)
-            mark_width = round(total_span / (total_ticks))
-            tick_start = padding  
-            tick_bar_height = 25
+        if readied:   
+            # --- Paste the Pre-rendered Tick Bar ---
             tick_bar_start = logo_chunk_start + 94
-            tick_height = 3
-            tick_start_y = (tick_bar_start + tick_bar_height / 2) - 2
-
-            square_start = padding - 5
-            square_end = padding + mark_width * len(favorites) - 1
-            if favorites:
-                tick_color = BLACK
-                draw.rectangle([square_start, tick_bar_start + 4, square_end, tick_bar_start - 4 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
-                for i in sorted(favorites, key=str.casefold):
-                    draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
-                    tick_locations[i] = tick_start
-                    tick_start += mark_width
-                    square_end += mark_width
-                tick_start += 5
-
-            if readied:
-                tick_color = WHITE
-            else:
-                tick_color = WHITE
-            for i in [i for i in stream_list if i not in favorites]:
-                draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
-                tick_locations[i] = tick_start
-                tick_start += mark_width
-
-            # marker
-            first_tick_start = padding
+            image.paste(GLOBAL_TICK_BAR_IMAGE, (0, tick_bar_start - 4), GLOBAL_TICK_BAR_IMAGE) 
+            # Note: Tweak the Y-offset (second arg in paste) to align it correctly
+            
+            # --- Draw the Active Stream Marker on top ---
+            tick_locations = GLOBAL_TICK_LOCATIONS # Use the cached locations
+            tick_bar_height = 25 
             bar_width = 2
+            
+            # Draw the stream's current position marker
+            stream = selector # Assuming 'selector' holds the currently played stream
             mark_start = tick_locations[stream]
-            current_fill = BLUE if stream not in favorites else BLUE
+            current_fill = BLUE if stream not in favorites else BLUE # Use the correct blue
             draw.rectangle([mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4], fill=current_fill, outline=BLACK, width=1)
-            if readied:
-                mark_start = tick_locations[name]
-                readied_fill = WHITE if name not in favorites else WHITE 
-                draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
-                
+            
+            # Draw the readied (selected) stream marker
+            mark_start = tick_locations[name] # 'name' is the stream being selected
+            readied_fill = WHITE if name not in favorites else WHITE 
+            draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
+        
         disp.ShowImage(image)
-        #safe_display(image)
     else:
         display_one(name)
 
@@ -1272,15 +1293,15 @@ def wrapped_action(func, direction=0, volume=False):
     return inner
 
 
-def restart():
-    print("Stopping radio")
-    #backlight_off()
-    #run([
-    #    'sudo',
-    #    'systemctl',
-    #    'stop',
-    #    'radio'
-    #])
+streams = get_streams()
+stream_list = get_stream_list(streams)
+
+GLOBAL_TICK_BAR_IMAGE, GLOBAL_TICK_LOCATIONS = pre_render_tick_bar(
+    stream_list, 
+    favorites, 
+    SCREEN_WIDTH, 
+    SCREEN_HEIGHT 
+)
 
 
 ## remote controls
