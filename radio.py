@@ -1097,7 +1097,6 @@ def on_volume_button_pressed():
             send_mpv_command({"command": ["set_property", "volume", current_volume]})
         else:
             send_mpv_command({"command": ["set_property", "volume", 50]})
-    
 
 def toggle_favorite():
     global favorites, stream_list, cached_everything_dict
@@ -1219,9 +1218,9 @@ def periodic_update():
                 updated_count = 0
                 for name, v in info.items():
                     if name in streams:
-                        if ((name in cached_everything_dict.keys()) and (v['oneLiner'] != streams[name]['oneLiner'])) or (name not in list(cached_everything_dict.keys())): # if stream is updated or hasn't been cached yet
+                        #if ((name in cached_everything_dict.keys()) and (v['oneLiner'] != streams[name]['oneLiner'])) or (name not in list(cached_everything_dict.keys())): # if stream is updated or hasn't been cached yet
                             print(f'Updating image for {name}')
-                            cached_everything_dict[name] = display_everything(0, name, readied=True, silent=True)
+                            cached_everything_dict[name],cached_everything_dict[name]['oneLiner'] = display_everything(0, name, readied=True, silent=True)
                             streams[name].update(v)
                             updated_count += 1
                 
