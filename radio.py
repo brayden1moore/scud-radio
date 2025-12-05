@@ -1262,7 +1262,7 @@ def periodic_update():
 
         time_since_last_update += 5
     
-    threading.Timer(5, periodic_update).start()
+    time.sleep(5)
 
 def wake_screen():
     global screen_on, screen_dim, last_input_time, current_image
@@ -1496,7 +1496,8 @@ else:
 readied_stream = None
 display_everything(0, stream, readied=False)
 last_input_time = time.time()
-periodic_update()
+update_thread = threading.Thread(target=periodic_update, daemon=True)
+update_thread.start()
 
 time_since_battery_check = 0
 live_overlay_version = 1
