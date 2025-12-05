@@ -320,6 +320,7 @@ mpv_process = Popen([
     "mpv",
     "--idle=yes",
     "--no-video",
+    "--quiet",
     f"--volume={current_volume}",
     "--volume-max=150",
     "--input-ipc-server=/tmp/mpvsocket",
