@@ -978,7 +978,8 @@ def seek_stream(direction):
         else:
             readied_stream = stream_list[idx + direction]
 
-    display_everything(direction, readied_stream, readied=True)
+    display_readied_cached(readied_stream)
+    #display_everything(direction, readied_stream, readied=True)
 
 def confirm_seek():
     global readied_stream, stream
@@ -1176,7 +1177,10 @@ last_successful_fetch = time.time()
 
 cached_everything_dict = {}
 def display_readied_cached(name):
-    disp.ShowImage(cached_everything_dict[name])
+    if cached_everything_dict[name]:
+        disp.ShowImage(cached_everything_dict[name])
+    else:
+        cached_everything_dict[name] = display_everything(0, name, readied=True)
 
 def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list
