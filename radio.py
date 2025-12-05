@@ -578,7 +578,7 @@ def calculate_text_cached(text, font_name, width, lines):
 
 base_layer = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
 start_x = 0
-def display_everything(direction, name, update=False, readied=False, pushed=False):
+def display_everything(direction, name, update=False, readied=False, pushed=False, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
     if readied and not restarting:
@@ -762,8 +762,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 mark_start = tick_locations[name]
                 readied_fill = WHITE if name not in favorites else WHITE 
                 draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
-                
-        disp.ShowImage(image)
+            
+        if not silent:
+            disp.ShowImage(image)
         return image
         #safe_display(image)
     else:
@@ -1209,7 +1210,7 @@ def periodic_update():
                 for name, v in info.items():
                     if name in streams:
                         streams[name].update(v)
-                        cached_everything_dict[name] = display_everything(0, name, readied=True)
+                        cached_everything_dict[name] = display_everything(0, name, readied=True, silent=True)
 
                         updated_count += 1
                 
