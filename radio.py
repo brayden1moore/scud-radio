@@ -764,6 +764,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
                 
         disp.ShowImage(image)
+        return image
         #safe_display(image)
     else:
         display_one(name)
@@ -1173,6 +1174,10 @@ failed_fetches = 0
 time_since_last_update = 0
 last_successful_fetch = time.time()
 
+cached_everything_dict = {}
+def display_readied_cached(name):
+    disp.ShowImage(cached_everything_dict[name])
+
 def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list
 
@@ -1203,6 +1208,8 @@ def periodic_update():
                 for name, v in info.items():
                     if name in streams:
                         streams[name].update(v)
+                        cached_everything_dict[name] = display_everything(0, name, readied=True)
+
                         updated_count += 1
                 
                 logging.info(f"Successfully updated {updated_count} streams")
@@ -1270,17 +1277,6 @@ def wrapped_action(func, direction=0, volume=False):
             else:
                 func()
     return inner
-
-
-def restart():
-    print("Stopping radio")
-    #backlight_off()
-    #run([
-    #    'sudo',
-    #    'systemctl',
-    #    'stop',
-    #    'radio'
-    #])
 
 
 ## remote controls
