@@ -1218,7 +1218,7 @@ def periodic_update():
                         print('Name',name)
                         print('CURRENT',cached_everything_dict.keys())
                         print(name in cached_everything_dict.keys())
-                        if (name in list(cached_everything_dict.keys()) and v['oneLiner'] != streams[name]['oneLiner']) or (name not in list(cached_everything_dict.keys())): # if stream is updated or hasn't been cached yet
+                        if ((name in cached_everything_dict.keys()) and (v['oneLiner'] != streams[name]['oneLiner'])) or (name not in list(cached_everything_dict.keys())): # if stream is updated or hasn't been cached yet
                             cached_everything_dict[name] = display_everything(0, name, readied=True, silent=True)
                             streams[name].update(v)
                             updated_count += 1
