@@ -1183,7 +1183,7 @@ def display_readied_cached(name):
     global cached_everything_dict
     if name in list(cached_everything_dict.keys()):
         image = cached_everything_dict[name]
-        draw = image.ImageDraw(image)
+        draw = ImageDraw.Draw(image)
         draw.rectangle(cached_everything_mark_dict[stream])
         disp.ShowImage(image)
     else:
