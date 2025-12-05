@@ -1060,7 +1060,7 @@ def on_button_released():
     button_released_time = current_time
 
     if readied_stream and (button_released_time - button_press_time < 2):
-        display_everything(0, readied_stream, readied=True, pushed=False)
+        display_readied_cached(readied_stream)
         confirm_seek()
     
     else:
