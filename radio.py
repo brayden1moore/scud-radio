@@ -1150,12 +1150,7 @@ def handle_rotation(direction):
     else:
         if button_released_time and (time.time() - button_released_time > 0.3):
             last_rotation = time.time()
-            logging.info('seeking')
             seek_stream(direction)
-            #if screen_dim:
-            #    display_one(stream)
-            #else:
-            #    seek_stream(direction)
 
 def volume_handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
@@ -1462,7 +1457,8 @@ def control_socket_listener():
             
             conn.close()
         except Exception as e:
-            logging.error(f"Control socket error: {e}")
+            if e != 'timed out':
+                logging.error(f"Control socket error: {e}")
     
 threading.Thread(target=control_socket_listener, daemon=True).start()
 
