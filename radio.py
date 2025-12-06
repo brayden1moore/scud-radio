@@ -1193,10 +1193,11 @@ def periodic_update():
                     updated_count = 0
                     updated_streams = []
                     for name, v in info.items():
-                        if name in streams.keys():
-                            updated_streams.append(name)
-                            streams[name].update(v)
-                            updated_count += 1
+                        if (name in streams.keys()):
+                            if (v['oneLiner'] != streams[name]['oneLiner']):
+                                updated_streams.append(name)
+                                streams[name].update(v)
+                                updated_count += 1
                     
                     refresh_everything_cache(updated_streams)
                     logging.info(f"Successfully updated {updated_count} streams")
