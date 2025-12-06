@@ -1135,6 +1135,7 @@ def toggle_favorite():
 
 def refresh_everything_cache():
     global cached_everything_dict
+    logging.info("REFRESHING CACHE")
     cached_everything_dict = {}
     for name, val in streams:
         cached_everything_dict[name] = display_everything(0, name=name, readied=True)
