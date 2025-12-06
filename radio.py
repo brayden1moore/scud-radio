@@ -1054,7 +1054,6 @@ def on_button_pressed():
         elif currently_displaying == 'ambient':
             display_readied_cached(stream)
 
-
     held = True
     rotated = False
 
@@ -1134,6 +1133,12 @@ def toggle_favorite():
     cached_everything_dict = {}
     cached_everything_dict[chosen_stream] = display_everything(0, name=chosen_stream, readied=show_readied)
 
+def refresh_everything_cache():
+    global cached_everything_dict
+    cached_everything_dict = {}
+    for name, val in streams:
+        cached_everything_dict[name] = display_everything(0, name=name, readied=True)
+
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
     rotated = True
@@ -1210,7 +1215,7 @@ def periodic_update():
     else:
         time_since_last_success = time.time() - last_successful_fetch
         should_fetch = (time_since_last_update >= 15) or (time_since_last_success > 30) or len(cached_everything_dict)==0
-        
+        print(should_fetch)
         if should_fetch:
             try:
                 logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
@@ -1222,12 +1227,10 @@ def periodic_update():
                 updated_count = 0
                 for name, v in info.items():
                     if name in streams:
-                        #if ((name in cached_everything_dict.keys()) and (v['oneLiner'] != streams[name]['oneLiner'])) or (name not in list(cached_everything_dict.keys())): # if stream is updated or hasn't been cached yet
-                            print(f'Updating image for {name}')
-                            cached_everything_dict[name] = display_everything(0, name, readied=True, silent=True)
-                            streams[name].update(v)
-                            updated_count += 1
+                        streams[name].update(v)
+                        updated_count += 1
                 
+                refresh_everything_cache()
                 logging.info(f"Successfully updated {updated_count} streams")
                 stream_list = get_stream_list(streams)
                 failed_fetches = 0
