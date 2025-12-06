@@ -1185,14 +1185,11 @@ def periodic_update():
             if should_fetch:
                 try:
                     logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
-                    info = requests.get('https://internetradioprotocol.org/info', timeout=5).json()
-                    
-                    if not info or not isinstance(info, dict):
-                        raise ValueError("Invalid response format from API")
+                    fetched_streams = get_streams()
                     
                     updated_count = 0
                     updated_streams = []
-                    for name, v in info.items():
+                    for name, v in fetched_streams.items():
                         if (name in streams.keys()):
                             if (v['oneLiner'] != streams[name]['oneLiner']) or (len(cached_everything_dict)==0):
                                 updated_streams.append(name)
@@ -1201,6 +1198,7 @@ def periodic_update():
                     
                     refresh_everything_cache(updated_streams)
                     logging.info(f"Successfully updated {updated_count} streams")
+                    streams = fetched_streams
                     stream_list = get_stream_list(streams)
                     failed_fetches = 0
                     last_successful_fetch = time.time()
