@@ -1166,77 +1166,83 @@ def display_readied_cached(name, pushed=False):
 
 def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict
+    while True:
+        logging.info('PERIODIC UPDATE OCCURRING')
 
-    logging.info('PERIODIC UPDATE OCCURRING')
+        if not charging and screen_on == False and current_volume == 0 and (time.time() - last_input_time > 300):
+            pass
+            #subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
 
-    if not charging and screen_on == False and current_volume == 0 and (time.time() - last_input_time > 300):
-        pass
-        #subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
+        if (time.time() - last_input_time > 20):
+            display_ambient(stream)
 
-    if (time.time() - last_input_time > 20):
-        display_ambient(stream)
-
-    if screen_on and (time.time() - last_input_time > 600):
-        screen_on = False
-        backlight_off()
-    else:
-        time_since_last_success = time.time() - last_successful_fetch
-        should_fetch = (time_since_last_update >= 15) or (time_since_last_success > 30) or len(cached_everything_dict)==0
-        print(should_fetch)
-        if should_fetch:
-            try:
-                logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
-                info = requests.get('https://internetradioprotocol.org/info', timeout=5).json()
-                
-                if not info or not isinstance(info, dict):
-                    raise ValueError("Invalid response format from API")
-                
-                updated_count = 0
-                for name, v in info.items():
-                    if name in streams.keys():
-                        streams[name].update(v)
-                        updated_count += 1
-                
-                refresh_everything_cache()
-                logging.info(f"Successfully updated {updated_count} streams")
-                stream_list = get_stream_list(streams)
-                failed_fetches = 0
-                last_successful_fetch = time.time()
-                    
-            except requests.Timeout:
-                failed_fetches += 1
-                logging.error(f"Stream fetch timeout (attempt {failed_fetches}/3)")
-            except requests.RequestException as e:
-                failed_fetches += 1
-                logging.error(f"Stream fetch network error: {e} (attempt {failed_fetches}/3)")
-            except ValueError as e:
-                failed_fetches += 1
-                logging.error(f"Stream fetch invalid response: {e} (attempt {failed_fetches}/3)")
-            except Exception as e:
-                failed_fetches += 1
-                logging.error(f"Stream fetch unexpected error: {type(e).__name__}: {e} (attempt {failed_fetches}/3)")
-            
-            if failed_fetches >= 3:
-                logging.error("Stream fetch failed 3 times. Restarting radio hardware.")
+        if screen_on and (time.time() - last_input_time > 600):
+            screen_on = False
+            backlight_off()
+        else:
+            time_since_last_success = time.time() - last_successful_fetch
+            should_fetch = (time_since_last_update >= 15) or (time_since_last_success > 30) or len(cached_everything_dict)==0
+            if should_fetch:
                 try:
-                    disp.clear()
-                    disp.reset()
-                    disp.close()
-                except:
-                    pass
-                if screen_on:
-                    print('failed :(')
-                    #subprocess.run(['sudo','systemctl','restart','radio'])
-                sys.exit(0)
-            
-            time_since_last_update = 0
+                    logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
+                    info = requests.get('https://internetradioprotocol.org/info', timeout=5).json()
+                    
+                    if not info or not isinstance(info, dict):
+                        raise ValueError("Invalid response format from API")
+                    
+                    updated_count = 0
+                    for name, v in info.items():
+                        if name in streams.keys():
+                            streams[name].update(v)
+                            updated_count += 1
+                    
+                    refresh_everything_cache()
+                    logging.info(f"Successfully updated {updated_count} streams")
+                    stream_list = get_stream_list(streams)
+                    failed_fetches = 0
+                    last_successful_fetch = time.time()
+                        
+                except requests.Timeout:
+                    failed_fetches += 1
+                    logging.error(f"Stream fetch timeout (attempt {failed_fetches}/3)")
+                except requests.RequestException as e:
+                    failed_fetches += 1
+                    logging.error(f"Stream fetch network error: {e} (attempt {failed_fetches}/3)")
+                except ValueError as e:
+                    failed_fetches += 1
+                    logging.error(f"Stream fetch invalid response: {e} (attempt {failed_fetches}/3)")
+                except Exception as e:
+                    failed_fetches += 1
+                    logging.error(f"Stream fetch unexpected error: {type(e).__name__}: {e} (attempt {failed_fetches}/3)")
+                
+                if failed_fetches >= 3:
+                    logging.error("Stream fetch failed 3 times. Restarting radio hardware.")
+                    try:
+                        disp.clear()
+                        disp.reset()
+                        disp.close()
+                    except:
+                        pass
+                    if screen_on:
+                        print('failed :(')
+                        #subprocess.run(['sudo','systemctl','restart','radio'])
+                    sys.exit(0)
+                
+                time_since_last_update = 0
 
-        #if not held and not readied_stream and not screen_dim and screen_on:
-        #    display_current()
+            #if not held and not readied_stream and not screen_dim and screen_on:
+            #    display_current()
 
-        time_since_last_update += 5
-    
-    time.sleep(5)
+            time_since_last_update += 5
+        
+        time.sleep(5)
+
+last_input_time = time.time()
+update_thread = threading.Thread(target=periodic_update, daemon=True)
+update_thread.start()
+
+readied_stream = None
+display_everything(0, stream, readied=False)
 
 def wake_screen():
     global screen_on, screen_dim, last_input_time, current_image
@@ -1469,13 +1475,6 @@ if last_played in list(streams.keys()):
     play(last_played)
 else:
     play_random()
-    
-last_input_time = time.time()
-update_thread = threading.Thread(target=periodic_update, daemon=True)
-update_thread.start()
-
-readied_stream = None
-display_everything(0, stream, readied=False)
 
 time_since_battery_check = 0
 live_overlay_version = 1
