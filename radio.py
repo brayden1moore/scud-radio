@@ -115,7 +115,7 @@ def display_scud():
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg = Image.open(f'assets/scud_splash_1.png') 
     image.paste(bg, (0, 0))
-    safe_display(image)  
+    disp.ShowImage(image)
 
     global user_tz
 
