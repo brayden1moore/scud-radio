@@ -108,20 +108,28 @@ live_60 = Image.open('assets/live_60.png').convert('RGBA')
 live_96 = Image.open('assets/live_96.png').convert('RGBA')
 live_25 = Image.open('assets/live_25.png').convert('RGBA')
 
-#selector_list = ['red','orange','purple','white','green','yellow']
-#selectors = {}
-#for i in selector_list:
-#    selectors[i] = Image.open(f'assets/selector_{i}.png').convert('RGBA')
-
-#mainview = Image.open('assets/mainview.png').convert('RGBA')
-#logoview = Image.open('assets/logoview.png').convert('RGBA')
-#live_overlay_1 = Image.open('assets/liveoverlay1.png').convert('RGBA')
-#charging_overlay = Image.open('assets/chargingoverlay.png').convert('RGBA')
-#live_overlay_2 = Image.open('assets/liveoverlay2.png').convert('RGBA')
-#selector_bg = Image.open(f'assets/selector.png').convert('RGBA')
-#sselector_live_overlay = Image.open('assets/selectorliveoverlay.png').convert('RGBA')
-
 LIB_PATH = "/var/lib/scud-radio"
+
+def display_scud():
+
+    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    bg = Image.open(f'assets/scud_splash_1.png') 
+    image.paste(bg, (0, 0))
+    safe_display(image)  
+
+    global user_tz
+
+    timezone_name = get_timezone_from_ip()
+    user_tz = pytz.timezone(timezone_name)
+    now = time.time()
+    current_time = datetime.fromtimestamp(now, tz=user_tz)
+    current_hour = current_time.hour
+
+    last_played = read_last_played()
+    volume = round((get_last_volume()/150)*100)
+    get_battery()
+
+display_scud()
 
 def angled_sine_wave(x):
     linear = x
@@ -130,7 +138,6 @@ def angled_sine_wave(x):
     sine_component = amplitude * np.sin(2 * np.pi * wave_frequency * x / 320)
     y = 120 + sine_component
     return y
-
 
 def display_logos():
     lib_path = Path(LIB_PATH)
@@ -152,7 +159,6 @@ def display_logos():
         x_offset += 295 / len(small_logos)
     
         disp.ShowImage(img)
-
 
 def get_favorites():
     fav_path = Path(LIB_PATH)
@@ -269,29 +275,6 @@ def get_timezone_from_ip():
     except:
         return 'UTC' 
 
-def display_scud():
-
-    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    bg = Image.open(f'assets/scud_splash_1.png') 
-    image.paste(bg, (0, 0))
-    safe_display(image)  
-
-    #display_logos()
-
-    global user_tz
-
-    timezone_name = get_timezone_from_ip()
-    user_tz = pytz.timezone(timezone_name)
-    now = time.time()
-    current_time = datetime.fromtimestamp(now, tz=user_tz)
-    current_hour = current_time.hour
-
-    last_played = read_last_played()
-    volume = round((get_last_volume()/150)*100)
-    get_battery()
-
-
-
 def backlight_on():
     global screen_on
     if disp:
@@ -313,8 +296,6 @@ def backlight_off():
 def backlight_dim():
     if disp:
         disp.bl_DutyCycle(20)
-
-display_scud()
 
 mpv_process = Popen([
     "mpv",
@@ -439,18 +420,6 @@ def get_stream_list(streams):
 
 streams = get_streams()
 stream_list = get_stream_list(streams)
-
-# hat
-'''
-disp = st7789.ST7789(
-    rotation=180,     # Needed to display the right way up on Pirate Audio
-    port=0,          # SPI port
-    cs=1,            # SPI port Chip-select channel
-    dc=9,            # BCM pin used for data/command
-    backlight=13,  # 13 for Pirate-Audio; 18 for back BG slot, 19 for front BG slot.
-)
-disp.begin()
-'''
 
 def width(string, font):
     left, top, right, bottom = font.getbbox(string)
