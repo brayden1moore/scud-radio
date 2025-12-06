@@ -110,6 +110,54 @@ live_25 = Image.open('assets/live_25.png').convert('RGBA')
 
 LIB_PATH = "/var/lib/scud-radio"
 
+def read_last_played():
+    scud_path = Path(LIB_PATH)
+    scud_path.mkdir(parents=True, exist_ok=True)
+    
+    played_file = scud_path / 'last_played.txt'
+    if not played_file.exists():
+        played_file.touch() 
+        return None
+    try:
+        with open(played_file, 'r') as f:
+            last_played = f.read()
+        return last_played
+    except:
+        return None
+    
+def get_battery():
+    global battery, charging
+
+    try:
+        result = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
+                                input='get battery_charging\nget battery\n', 
+                                stdout=subprocess.PIPE, text=True, timeout=2)
+        
+        lines = result.stdout.strip().split('\n')
+        if 'battery' not in lines[0]:
+            lines = lines[1:]
+
+        #logging.info(lines)
+        
+        charging_line = lines[0].strip().split(': ')[1] 
+        charging = charging_line == 'true'
+        
+        battery_line = lines[1].strip().split(': ')[1] 
+        battery = int(float(battery_line))
+    except Exception as e:
+        #logging.info(e)
+        return battery, charging
+
+    return battery, charging
+
+def get_timezone_from_ip():
+    try:
+        response = requests.get('http://ip-api.com/json/')
+        data = response.json()
+        return data['timezone']
+    except:
+        return 'UTC' 
+
 def display_scud():
 
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -226,54 +274,6 @@ def write_to_tmp_os_path(name):
     with open(played_file, 'w') as file:
         file.write(name)
 
-
-def read_last_played():
-    scud_path = Path(LIB_PATH)
-    scud_path.mkdir(parents=True, exist_ok=True)
-    
-    played_file = scud_path / 'last_played.txt'
-    if not played_file.exists():
-        played_file.touch() 
-        return None
-    try:
-        with open(played_file, 'r') as f:
-            last_played = f.read()
-        return last_played
-    except:
-        return None
-    
-def get_battery():
-    global battery, charging
-
-    try:
-        result = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
-                                input='get battery_charging\nget battery\n', 
-                                stdout=subprocess.PIPE, text=True, timeout=2)
-        
-        lines = result.stdout.strip().split('\n')
-        if 'battery' not in lines[0]:
-            lines = lines[1:]
-
-        #logging.info(lines)
-        
-        charging_line = lines[0].strip().split(': ')[1] 
-        charging = charging_line == 'true'
-        
-        battery_line = lines[1].strip().split(': ')[1] 
-        battery = int(float(battery_line))
-    except Exception as e:
-        #logging.info(e)
-        return battery, charging
-
-    return battery, charging
-
-def get_timezone_from_ip():
-    try:
-        response = requests.get('http://ip-api.com/json/')
-        data = response.json()
-        return data['timezone']
-    except:
-        return 'UTC' 
 
 def backlight_on():
     global screen_on
