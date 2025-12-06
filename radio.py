@@ -1222,12 +1222,13 @@ def periodic_update():
                 logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
                 info = requests.get('https://internetradioprotocol.org/info', timeout=5).json()
                 
+                print(info)
                 if not info or not isinstance(info, dict):
                     raise ValueError("Invalid response format from API")
                 
                 updated_count = 0
                 for name, v in info.items():
-                    if name in streams:
+                    if name in streams.keys():
                         streams[name].update(v)
                         updated_count += 1
                 
