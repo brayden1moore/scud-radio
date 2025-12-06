@@ -1137,7 +1137,7 @@ def refresh_everything_cache():
     global cached_everything_dict
     logging.info("REFRESHING CACHE")
     cached_everything_dict = {}
-    for name, val in streams:
+    for name, val in streams.items():
         cached_everything_dict[name] = display_everything(0, name=name, readied=True)
 
 def handle_rotation(direction):
@@ -1222,7 +1222,6 @@ def periodic_update():
                 logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
                 info = requests.get('https://internetradioprotocol.org/info', timeout=5).json()
                 
-                print(info)
                 if not info or not isinstance(info, dict):
                     raise ValueError("Invalid response format from API")
                 
