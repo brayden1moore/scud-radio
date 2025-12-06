@@ -1167,6 +1167,8 @@ def display_readied_cached(name, pushed=False):
 def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict
 
+    logging.info('PERIODIC UPDATE OCCURRING')
+
     if not charging and screen_on == False and current_volume == 0 and (time.time() - last_input_time > 300):
         pass
         #subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
@@ -1431,7 +1433,7 @@ def control_socket_listener():
         except Exception as e:
             # Only log actual errors
             logging.error(f"Control socket error: {e}")
-            
+
 threading.Thread(target=control_socket_listener, daemon=True).start()
 
 
