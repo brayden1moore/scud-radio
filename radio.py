@@ -158,6 +158,22 @@ def get_timezone_from_ip():
     except:
         return 'UTC' 
 
+def get_last_volume():
+    vol_path = Path(LIB_PATH)
+    vol_path.mkdir(parents=True, exist_ok=True)
+    
+    volume_file = vol_path / 'volume.txt'
+    if not volume_file.exists():
+        volume_file.touch() 
+        return 60
+    
+    try:
+        with open(volume_file, 'r') as f:
+            vol = int(f.read())
+        return vol
+    except:
+        return 60
+
 def display_scud():
 
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -229,22 +245,6 @@ def set_favorites(favorites):
         f.write('\n'.join(favorites))
 
 favorites = get_favorites()
-
-def get_last_volume():
-    vol_path = Path(LIB_PATH)
-    vol_path.mkdir(parents=True, exist_ok=True)
-    
-    volume_file = vol_path / 'volume.txt'
-    if not volume_file.exists():
-        volume_file.touch() 
-        return 60
-    
-    try:
-        with open(volume_file, 'r') as f:
-            vol = int(f.read())
-        return vol
-    except:
-        return 60
 
 def set_last_volume(vol):
     vol_path = Path(LIB_PATH)
