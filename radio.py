@@ -1130,8 +1130,8 @@ def toggle_favorite():
     stream_list = get_stream_list(streams)
     time.sleep(0.3)
     show_readied = False if not readied_stream else True
-    cached_everything_dict = {}
     cached_everything_dict[chosen_stream] = display_everything(0, name=chosen_stream, readied=show_readied)
+    refresh_everything_cache()
 
 def refresh_everything_cache():
     global cached_everything_dict
