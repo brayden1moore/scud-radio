@@ -1104,7 +1104,6 @@ def toggle_favorite():
 
 def refresh_everything_cache(streams=stream_list):
     global cached_everything_dict
-    cached_everything_dict = {}
     for name in streams:
         logging.info(f'Refreshing image for {name}')
         cached_everything_dict[name] = display_everything(0, name=name, readied=True, silent=True)
@@ -1186,7 +1185,7 @@ def periodic_update():
                 try:
                     logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
                     fetched_streams = get_streams()
-                    
+
                     updated_count = 0
                     updated_streams = []
                     for name, v in fetched_streams.items():
