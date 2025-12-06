@@ -1458,6 +1458,7 @@ def control_socket_listener():
             conn.close()
         except Exception as e:
             if e != 'timed out':
+                print(e)
                 logging.error(f"Control socket error: {e}")
     
 threading.Thread(target=control_socket_listener, daemon=True).start()
@@ -1497,8 +1498,9 @@ else:
     play_random()
     
 last_input_time = time.time()
-update_thread = threading.Thread(target=periodic_update)
+update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
+
 readied_stream = None
 display_everything(0, stream, readied=False)
 
