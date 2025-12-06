@@ -734,6 +734,7 @@ def display_one(name):
     
     if name in one_cache.keys():
         disp.ShowImage(one_cache[name])
+        current_image = one_cache[name]
     else:
         # logo
         logo = streams[name]['logo_60']
@@ -810,6 +811,7 @@ def display_one(name):
         disp.ShowImage(image)
         current_image = image
         has_displayed_once = True
+        one_cache[name] = image
 
 
 def display_bar(y, draw):
@@ -1105,6 +1107,8 @@ def toggle_favorite():
 def refresh_everything_cache(streams=stream_list):
     global cached_everything_dict
     for name in streams:
+        if name in one_cache.keys():
+            del one_cache[name]
         logging.info(f'Refreshing image for {name}')
         cached_everything_dict[name] = display_everything(0, name=name, readied=True, silent=True)
 
