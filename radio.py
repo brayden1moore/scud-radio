@@ -1102,10 +1102,10 @@ def toggle_favorite():
     cached_everything_dict[chosen_stream] = display_everything(0, name=chosen_stream, readied=show_readied)
     refresh_everything_cache()
 
-def refresh_everything_cache():
+def refresh_everything_cache(streams=stream_list):
     global cached_everything_dict
     cached_everything_dict = {}
-    for name, val in streams.items():
+    for name in streams:
         logging.info(f'Refreshing image for {name}')
         cached_everything_dict[name] = display_everything(0, name=name, readied=True, silent=True)
 
@@ -1191,12 +1191,14 @@ def periodic_update():
                         raise ValueError("Invalid response format from API")
                     
                     updated_count = 0
+                    updated_streams = []
                     for name, v in info.items():
                         if name in streams.keys():
+                            updated_streams.append(name)
                             streams[name].update(v)
                             updated_count += 1
                     
-                    refresh_everything_cache()
+                    refresh_everything_cache(updated_streams)
                     logging.info(f"Successfully updated {updated_count} streams")
                     stream_list = get_stream_list(streams)
                     failed_fetches = 0
