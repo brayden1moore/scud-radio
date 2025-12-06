@@ -1193,11 +1193,8 @@ def periodic_update():
                     updated_count = 0
                     updated_streams = []
                     for name, v in info.items():
-                        if len(cached_everything_dict)==0:
-                            updated_streams.append(name)
-                            updated_count += 1 
-                        elif (name in streams.keys()):
-                            if (v['oneLiner'] != streams[name]['oneLiner']):
+                        if (name in streams.keys()):
+                            if (v['oneLiner'] != streams[name]['oneLiner']) or (len(cached_everything_dict)==0):
                                 updated_streams.append(name)
                                 streams[name].update(v)
                                 updated_count += 1                              
