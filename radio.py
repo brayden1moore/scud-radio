@@ -1237,13 +1237,6 @@ def periodic_update():
         
         time.sleep(5)
 
-last_input_time = time.time()
-update_thread = threading.Thread(target=periodic_update, daemon=True)
-update_thread.start()
-
-readied_stream = None
-display_everything(0, stream, readied=False)
-
 def wake_screen():
     global screen_on, screen_dim, last_input_time, current_image
     last_input_time = time.time()
@@ -1475,6 +1468,13 @@ if last_played in list(streams.keys()):
     play(last_played)
 else:
     play_random()
+
+last_input_time = time.time()
+update_thread = threading.Thread(target=periodic_update, daemon=True)
+update_thread.start()
+
+readied_stream = None
+display_everything(0, stream, readied=False)
 
 time_since_battery_check = 0
 live_overlay_version = 1
