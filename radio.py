@@ -1135,10 +1135,9 @@ def toggle_favorite():
 
 def refresh_everything_cache():
     global cached_everything_dict
-    logging.info("REFRESHING CACHE")
     cached_everything_dict = {}
     for name, val in streams.items():
-        cached_everything_dict[name] = display_everything(0, name=name, readied=True)
+        cached_everything_dict[name] = display_everything(0, name=name, readied=True, silent=True)
 
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
