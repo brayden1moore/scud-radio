@@ -51,6 +51,8 @@ LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",42)
 LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
 LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28)
 
+LIB_PATH = "/var/lib/scud-radio"
+
 
 ## functions
 
@@ -148,26 +150,6 @@ def angled_sine_wave(x):
     y = 120 + sine_component
     return y
 
-def display_logos():
-    lib_path = Path(LIB_PATH)
-    small_logos = [i for i in os.listdir(lib_path) if '25.pkl' in i]
-    img = Image.new('RGB', (320, 240), color=WHITE)
-    draw = ImageDraw.Draw(img)
-    x_offset = 0
-    y_offset = 0
-    
-    for idx, i in enumerate(small_logos):
-        with open(lib_path / i, 'rb') as f:
-            logo = pickle.load(f)
-
-        t = idx / len(small_logos)
-        x_offset = t * 295
-        y_offset = angled_sine_wave(x_offset)
-        draw.rectangle([round(x_offset), round(y_offset), round(x_offset)+25, round(y_offset)+25], outline=BLACK, width=1)
-        img.paste(logo, (round(x_offset), round(y_offset)))
-        x_offset += 295 / len(small_logos)
-    
-        disp.ShowImage(img)
 
 def get_favorites():
     fav_path = Path(LIB_PATH)
@@ -1263,8 +1245,6 @@ star_25 = Image.open('assets/star_25.png').convert('RGBA')
 live_60 = Image.open('assets/live_60.png').convert('RGBA')
 live_96 = Image.open('assets/live_96.png').convert('RGBA')
 live_25 = Image.open('assets/live_25.png').convert('RGBA')
-
-LIB_PATH = "/var/lib/scud-radio"
 
 favorites = get_favorites()
 current_volume = get_last_volume()
