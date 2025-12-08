@@ -39,7 +39,7 @@ function updateStatus() {
       })
       .then(function(response) { return response.json(); })
       .then(function(json) {
-            status.textContent = json['output'].replace(" | ", '<br>');
+            status.textContent = json['output'].replace(/ | /g, '<br>');
       });
 }
 
