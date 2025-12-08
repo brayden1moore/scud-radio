@@ -58,10 +58,12 @@ function updateFavorites() {
       })
       .then(function(response) { return response.json(); })
       .then(function(json) {
-            favorites.innerHTML = json['output'];
+            const stationsArray = JSON.parse(json['output']);
+            console.log(stationsArray);
+            
+            favorites.innerHTML = stationsArray.join('<br>');
       });
 }
-
 updateStatus();
 updateFavorites();
 
