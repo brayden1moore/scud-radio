@@ -770,8 +770,7 @@ def display_ambient(name, clicked=False):
 
 
 def display_current():
-    print('displaying current')
-    print(currently_displaying)
+
     if currently_displaying == 'everything':
         #display_readied_cached(stream)
         display_one(stream)
@@ -968,7 +967,6 @@ def on_volume_button_pressed():
     if not sleeping:
         send_mpv_command({"command": ["set_property", "volume", 0]})
         set_last_volume(str(current_volume))
-        print(current_volume)
         backlight_off()
         sleeping = True
     else: 
@@ -1062,7 +1060,6 @@ def display_readied_cached(name, pushed=False):
     if name in list(cached_everything_dict.keys()):
         image = cached_everything_dict[name]
         if image:
-            logging.info(f'Displaying everything for {name} from cache.')
             if pushed:
                 image = image.copy()
                 draw = ImageDraw.Draw(image)
