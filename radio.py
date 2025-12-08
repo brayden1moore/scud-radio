@@ -1471,7 +1471,7 @@ volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_hand
 volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1, True)
 
 volume_click_button = Button(17, bounce_time=0.05)
-volume_click_button.when_pressed = wrapped_action(lambda: on_volume_button_pressed(), volume=True)
+volume_click_button.when_pressed = on_volume_button_pressed()
 
 ## main loop
 
