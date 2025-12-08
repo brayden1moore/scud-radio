@@ -56,10 +56,7 @@ Usage:
     elif command == 'list':
         result = send_command('list')
         if result['status'] == 'ok':
-            print(f"\nStations ({len(result['stations'])}):")
-            for station in result['stations']:
-                marker = "★" if station in result['favorites'] else " "
-                print(f"  {marker} {station}")
+            print(f"{result['favorites']}")
     
     elif command == 'next':
         result = send_command('next')
