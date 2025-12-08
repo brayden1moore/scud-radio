@@ -1382,14 +1382,7 @@ def handle_remote_command(command_data):
             safe_restart()
 
         elif cmd == 'power':
-            if screen_on:
-                screen_on = False
-                send_mpv_command({"command": ["set_property", "volume", 0]})
-                backlight_off()
-            else:
-                send_mpv_command({"command": ["set_property", "volume", current_volume]})
-                set_last_volume(str(current_volume))
-                wake_screen()
+            on_volume_button_pressed()
 
         elif cmd == 'toggle':
             if play_status == 'play':

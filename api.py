@@ -1,7 +1,18 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 import subprocess
 import sys
-app = Flask(__name__)
+import os
+
+# --- CONFIGURATION ---
+BASE_DIR = '/home/scud/scud-radio'
+ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
+# ---------------------
+
+app = Flask(__name__, static_folder=ASSETS_DIR, template_folder=os.path.join(BASE_DIR, 'templates'))
+
+@app.route('/', methods=['GET'])
+def home():
+    return render_template('home.html')
 
 @app.route('/control/<command>', methods=['POST', 'GET'])
 def control(command):
