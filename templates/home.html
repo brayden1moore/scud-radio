@@ -6,13 +6,15 @@
 
 <body>
 
-<a onClick="handleCall('/control/up')">Volume Up</a>
-<a onClick="handleCall('/control/down')">Volume Down</a>
-<a onClick="handleCall('/control/next')">Next Channel</a>
-<a onClick="handleCall('/control/prev')">Prev Channel</a>
-<a onClick="handleCall('/control/random')">Random Channel</a>
-<a onClick="handleCall('/control/power')">On/Off</a>
-<a onClick="handleCall('/control/favorite')">Favorite/Unfavorite</a>
+<div id="controls">
+    <div class="control" id="up" onClick="handleCall('/control/up')"></div>
+    <div class="control" id="down" onClick="handleCall('/control/down')"></div>
+    <div class="control" id="next" onClick="handleCall('/control/next')"></div>
+    <div class="control" id="prev" onClick="handleCall('/control/prev')"></div>
+    <div class="control" id="random" onClick="handleCall('/control/random')"></div>
+    <div class="control" id="power" onClick="handleCall('/control/power')"></div>
+    <div class="control" id="favorite" onClick="handleCall('/control/favorite')"></div>
+</div>
 
 </body>
 
@@ -23,5 +25,18 @@ function handleCall(endpoint) {
 }
 
 </script>
+
+<style>
+
+.control {
+    height: 40px;
+    width: 40px;
+}
+
+#power {
+    background-color: #D9D9D9;
+}
+
+</style>
 
 </html>
