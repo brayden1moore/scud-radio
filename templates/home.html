@@ -66,8 +66,9 @@ function updateFavorites() {
                 favorite = document.createElement('img');
                 favorite.classList.add('a-favorite');
                 favorite.src = info[station]['logo'];
+                console.log(`/control/play?${station.replace(/ /g, "+")}`);
                 favorite.addEventListener('click', ()=> {
-                    handleCall(`/control/play?${station.replace(/ /g, "+")}`)
+                    handleCall(`/control/play?${station.replace(/ /g, "+")}`);
                 });
                 favorites.appendChild(favorite);
             });
@@ -95,6 +96,7 @@ updateFavorites();
 #favorites {
     display: flex;
     flex-wrap: wrap;
+    border-left: 1px solid block;
 }
 
 .a-favorite {
@@ -102,6 +104,12 @@ updateFavorites();
     width: 80px;
     border: 1px solid black;
     border-top: none;
+    cursor:pointer;
+    border-left: none;
+}
+
+.a-favorite:hover {
+    opacity: 0.8;
 }
 
 body {
