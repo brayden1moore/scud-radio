@@ -1214,7 +1214,7 @@ selector = 'red'
 has_displayed_once = False
 volume_overlay_showing = False
 
-user_tz = get_timezone_from_ip()
+user_tz = pytz.timezone(get_timezone_from_ip())
 
 mpv_process = Popen([
     "mpv",
