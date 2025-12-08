@@ -48,7 +48,7 @@ function updateStatus() {
       })
       .then(function(response) { return response.json(); })
       .then(function(json) {
-            status.innerHTML = json['output'].replace(" | ", '<br>');
+            status.innerHTML = json['output'].replace(" - ", '<br>');
       });
 }
 
@@ -92,6 +92,10 @@ updateFavorites();
 
 @font-face {font-family: "Archivo Light";src: url("assets/Archivo-Light.ttf") format("truetype");}
 
+#status {
+    padding: 15px;
+}
+
 #favorites {
     display: flex;
     flex-wrap: wrap;
@@ -131,11 +135,10 @@ body {
     background-color: black;
     color: white;
     overflow: scroll;
-    width: calc(88px * 8);
+    width: calc(88px * 8 - 57px);
     justify-items: left;
     text-align: left;
     font-size: 16pt;
-    padding: 15px;
 }
 
 .icon {
