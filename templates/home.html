@@ -52,6 +52,17 @@ function updateStatus() {
       });
 }
 
+function addFavorite(station) {
+    favorite = document.createElement('img');
+    favorite.classList.add('a-favorite');
+    favorite.src = info[station]['logo'];
+    favorite.addEventListener('click', ()=> {
+        handleCall(`/control/play?station=${station.replace(/ /g, "+")}`);
+    });
+    favorites.appendChild(favorite);
+}
+
+let favoriteList = [];
 function updateFavorites() {
     fetch("/control/list", {
           method: 'GET'
@@ -59,17 +70,12 @@ function updateFavorites() {
       .then(function(response) { return response.json(); })
       .then(function(json) {
             const stationsArray = json['output'].split(";");
+            favoriteList = stationsArray;
             console.log(json['output']);
             console.log(stationsArray);
             favorites.innerHTML = "";
             stationsArray.forEach(station => {
-                favorite = document.createElement('img');
-                favorite.classList.add('a-favorite');
-                favorite.src = info[station]['logo'];
-                favorite.addEventListener('click', ()=> {
-                    handleCall(`/control/play?station=${station.replace(/ /g, "+")}`);
-                });
-                favorites.appendChild(favorite);
+                addFavorite(station)
             });
       });
 }
