@@ -1113,12 +1113,13 @@ def refresh_everything_cache(streams=stream_list):
         logging.info(f'Refreshing image for {name}')
         return name, display_everything(0, name=name, readied=True, silent=True)
     
-    with ThreadPoolExecutor(max_workers=min(len(streams), 10)) as executor:
-        future_to_name = {executor.submit(refresh_stream, name): name for name in streams}
-        
-        for future in as_completed(future_to_name):
-            name, result = future.result()
-            cached_everything_dict[name] = result
+    if len(streams) > 0:
+        with ThreadPoolExecutor(max_workers=min(len(streams), 10)) as executor:
+            future_to_name = {executor.submit(refresh_stream, name): name for name in streams}
+            
+            for future in as_completed(future_to_name):
+                name, result = future.result()
+                cached_everything_dict[name] = result
 
         
 def handle_rotation(direction):
