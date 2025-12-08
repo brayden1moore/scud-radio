@@ -32,6 +32,9 @@ logging.basicConfig(
     ]
 )
 
+battery = None
+charging = False
+
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
 
@@ -1205,8 +1208,6 @@ current_volume = 60
 volume_step = 10
 button_press_time = 0
 rotated = False
-battery = None
-charging = False
 restarting = False
 held = False
 wifi_strength = None
