@@ -66,4 +66,4 @@ def control(command):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8887)
+    app.run(host='0.0.0.0', port=7777)
