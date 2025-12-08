@@ -34,6 +34,7 @@ logging.basicConfig(
 
 battery = None
 charging = False
+sleeping = False
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -959,21 +960,21 @@ def on_button_released():
             return    
         
 def on_volume_button_pressed():
-    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on
+    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping
     held = False
     current_time = time.time()
     last_input_time = time.time()
     button_released_time = current_time
-    print(screen_on)
-    if screen_on==True:
+    if not sleeping:
         send_mpv_command({"command": ["set_property", "volume", 0]})
         set_last_volume(str(current_volume))
         print(current_volume)
         backlight_off()
+        sleeping = True
     else: 
-        screen_on = True
         backlight_on()
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
+        sleeping = False
 
 def toggle_favorite():
     global favorites, stream_list, cached_everything_dict
@@ -1167,14 +1168,15 @@ def wake_screen():
 
 def wrapped_action(func, direction=0, volume=False):
     def inner():
-        if click_button.is_pressed and current_volume == 0 and direction == -1:
-            func()
-        else:
-            if not volume:
-                if not wake_screen():
-                    func()
-            else:
+        if not sleeping:
+            if click_button.is_pressed and current_volume == 0 and direction == -1:
                 func()
+            else:
+                if not volume:
+                    if not wake_screen():
+                        func()
+                else:
+                    func()
     return inner
 
 ## upon startup 
