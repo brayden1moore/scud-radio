@@ -6,6 +6,9 @@
 
 <body style="font-family:Archivo Light;">
 
+<div id="info-div">
+    <div id="status"></div>
+</div>
 <div id="controls">
         <div class="control" id="question" onClick="handleCall('/control/status')"><img class="icon" src="assets/question_icon_web.svg"></div>
         <div class="control" id="favorite" onClick="handleCall('/control/favorite')"><img class="icon" src="assets/favorite_icon_web.svg"></div>
@@ -21,9 +24,23 @@
 
 <script>
 
+const status = document.getElementById('status');
+
 function handleCall(endpoint) {
     fetch(endpoint);
 }
+
+function updateStatus() {
+      fetch("/control/status", {
+          method: 'GET'
+      })
+      .then(function(response) { return response.json(); })
+      .then(function(json) {
+            status.textContent = json['output'];
+      });
+}
+
+
 
 </script>
 
@@ -39,6 +56,8 @@ body {
     justify-content: center;
     align-items: center;    
 }
+
+
 
 .icon {
     width: 80px;
