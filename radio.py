@@ -32,83 +32,10 @@ logging.basicConfig(
     ]
 )
 
-## constants and variables
+## functions
 
 import driver as LCD_2inch
 
-# 2 inch
-RST = 27
-DC = 25
-BL = 23
-bus = 0 
-device = 0 
-current_bl = 100
-disp = LCD_2inch.LCD_2inch()
-disp.Init()
-disp.clear()
-disp.bl_DutyCycle(current_bl)
-
-mpv_process = None
-stream = None
-readied_stream = None
-last_rotation = None
-screen_on = True
-screen_dim = False
-current_image = None
-saved_image_while_paused = None
-play_status = 'pause'
-last_input_time = time.time()
-first_display = True
-current_volume = 60
-volume_step = 10
-button_press_time = 0
-rotated = False
-battery = None
-charging = False
-restarting = False
-held = False
-user_tz = 'UTC'
-wifi_strength = None
-first_boot = True
-selector = 'red'
-has_displayed_once = False
-volume_overlay_showing = False
-
-SCREEN_WIDTH = 320
-SCREEN_HEIGHT = 240
-
-WHITE = (255,255,255)
-BLACK = (0,0,0)
-YELLOW = (255,255,0)
-BLUE = (0,187,255)
-GREEN = (0,231,192)
-GREY = (100,100,100)
-ORANGE = (255,128,0)
-PURPLE = (134,97,245)
-RED = (255,71,71)
-
-SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
-MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
-LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",42)
-LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
-LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28)
-
-unfavorite = Image.open('assets/unfavorited.png').convert('RGBA')
-favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'), 
-                   Image.open('assets/favorited2.png').convert('RGBA'), 
-                   Image.open('assets/favorited3.png').convert('RGBA'), 
-                   Image.open('assets/favorited4.png').convert('RGBA'),
-                   Image.open('assets/favorited5.png').convert('RGBA')]
-
-star_60 = Image.open('assets/star_60.png').convert('RGBA')
-star_96 = Image.open('assets/star_96.png').convert('RGBA')
-star_25 = Image.open('assets/star_25.png').convert('RGBA')
-
-live_60 = Image.open('assets/live_60.png').convert('RGBA')
-live_96 = Image.open('assets/live_96.png').convert('RGBA')
-live_25 = Image.open('assets/live_25.png').convert('RGBA')
-
-LIB_PATH = "/var/lib/scud-radio"
 
 def read_last_played():
     scud_path = Path(LIB_PATH)
@@ -193,8 +120,6 @@ def display_scud():
     volume = round((get_last_volume()/150)*100)
     get_battery()
 
-display_scud()
-
 def angled_sine_wave(x):
     linear = x
     amplitude = 40 #* np.sin(np.pi * x / 320)
@@ -244,16 +169,12 @@ def set_favorites(favorites):
     with open(fav_path / 'favorites.txt', 'w') as f:
         f.write('\n'.join(favorites))
 
-favorites = get_favorites()
-
 def set_last_volume(vol):
     vol_path = Path(LIB_PATH)
     vol_path.mkdir(parents=True, exist_ok=True)
 
     with open(vol_path / 'volume.txt', 'w') as f:
         f.write(vol)
-
-current_volume = get_last_volume()
 
 def safe_display(image):
     global current_image
@@ -296,22 +217,6 @@ def backlight_off():
 def backlight_dim():
     if disp:
         disp.bl_DutyCycle(20)
-
-mpv_process = Popen([
-    "mpv",
-    "--idle=yes",
-    "--no-video",
-    "--quiet",
-    f"--volume={current_volume}",
-    "--volume-max=150",
-    "--input-ipc-server=/tmp/mpvsocket",
-    "--msg-level=all=info", 
-    "--msg-level=ipc=no",
-    "--log-file=/tmp/mpv_debug.log" 
-], stdout=None, stderr=None)
-
-while not os.path.exists("/tmp/mpvsocket"):
-    time.sleep(0.1)
 
 from gpiozero import Button
 import socket
@@ -417,9 +322,6 @@ def get_stream_list(streams):
         stream_list =  sorted(favorites, key=str.casefold) + sorted([i for i in stream_list if i not in favorites], key=str.casefold)
     
     return stream_list
-
-streams = get_streams()
-stream_list = get_stream_list(streams)
 
 def width(string, font):
     left, top, right, bottom = font.getbbox(string)
@@ -546,7 +448,6 @@ def draw_angled_text(text, font, angle, image, coords, color):
 def calculate_text_cached(text, font_name, width, lines):
     return calculate_text(text, font_name, width, lines)
 
-base_layer = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
 start_x = 0
 logo_chunk_start = 35
 logo_chunk_start_x = 12 + start_x
@@ -728,7 +629,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
     else:
         display_one(name)
 
-one_cache = {}
 def display_one(name):
     global has_displayed_once, currently_displaying, current_image
     
@@ -1002,8 +902,7 @@ def safe_restart():
     backlight_off()
     run(['sudo','systemctl', 'restart','radio'])
 
-button_released_time = time.time()
-currently_displaying = 'everything'
+
 def on_button_pressed():
     global button_press_time, rotated, button_press_times, held, button_released_time, last_input_time, currently_displaying
     last_input_time = time.time()
@@ -1028,7 +927,6 @@ def on_button_pressed():
     held = True
     rotated = False
 
-button_press_times = []
 def on_button_released():
     global button_press_times, rotated, held, button_released_time, last_input_time, currently_displaying
 
@@ -1151,11 +1049,6 @@ def volume_handle_rotation(direction):
 
     send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
-failed_fetches = 0
-time_since_last_update = 0
-last_successful_fetch = time.time()
-
-cached_everything_dict = {}
 def display_readied_cached(name, pushed=False):
     ''' First looks for cached version and if not, rebuilds '''
     global cached_everything_dict, currently_displaying
@@ -1277,6 +1170,124 @@ def wrapped_action(func, direction=0, volume=False):
             else:
                 func()
     return inner
+
+## upon startup 
+
+# 2 inch
+RST = 27
+DC = 25
+BL = 23
+bus = 0 
+device = 0 
+current_bl = 100
+disp = LCD_2inch.LCD_2inch()
+disp.Init()
+disp.clear()
+disp.bl_DutyCycle(current_bl)
+
+display_scud()
+
+mpv_process = None
+stream = None
+readied_stream = None
+last_rotation = None
+screen_on = True
+screen_dim = False
+current_image = None
+saved_image_while_paused = None
+play_status = 'pause'
+last_input_time = time.time()
+first_display = True
+current_volume = 60
+volume_step = 10
+button_press_time = 0
+rotated = False
+battery = None
+charging = False
+restarting = False
+held = False
+user_tz = 'UTC'
+wifi_strength = None
+first_boot = True
+selector = 'red'
+has_displayed_once = False
+volume_overlay_showing = False
+
+mpv_process = Popen([
+    "mpv",
+    "--idle=yes",
+    "--no-video",
+    "--quiet",
+    f"--volume={current_volume}",
+    "--volume-max=150",
+    "--input-ipc-server=/tmp/mpvsocket",
+    "--msg-level=all=info", 
+    "--msg-level=ipc=no",
+    "--log-file=/tmp/mpv_debug.log" 
+], stdout=None, stderr=None)
+
+while not os.path.exists("/tmp/mpvsocket"):
+    time.sleep(0.1)
+
+SCREEN_WIDTH = 320
+SCREEN_HEIGHT = 240
+
+WHITE = (255,255,255)
+BLACK = (0,0,0)
+YELLOW = (255,255,0)
+BLUE = (0,187,255)
+GREEN = (0,231,192)
+GREY = (100,100,100)
+ORANGE = (255,128,0)
+PURPLE = (134,97,245)
+RED = (255,71,71)
+
+SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
+MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
+LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",42)
+LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
+LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28)
+
+unfavorite = Image.open('assets/unfavorited.png').convert('RGBA')
+favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'), 
+                   Image.open('assets/favorited2.png').convert('RGBA'), 
+                   Image.open('assets/favorited3.png').convert('RGBA'), 
+                   Image.open('assets/favorited4.png').convert('RGBA'),
+                   Image.open('assets/favorited5.png').convert('RGBA')]
+
+star_60 = Image.open('assets/star_60.png').convert('RGBA')
+star_96 = Image.open('assets/star_96.png').convert('RGBA')
+star_25 = Image.open('assets/star_25.png').convert('RGBA')
+
+live_60 = Image.open('assets/live_60.png').convert('RGBA')
+live_96 = Image.open('assets/live_96.png').convert('RGBA')
+live_25 = Image.open('assets/live_25.png').convert('RGBA')
+
+LIB_PATH = "/var/lib/scud-radio"
+
+favorites = get_favorites()
+current_volume = get_last_volume()
+
+button_released_time = time.time()
+currently_displaying = 'everything'
+button_press_times = []
+
+failed_fetches = 0
+time_since_last_update = 0
+
+one_cache = {}
+cached_everything_dict = {}
+
+streams = get_streams()
+last_successful_fetch = time.time()
+stream_list = get_stream_list(streams)
+refresh_everything_cache(streams=stream_list)
+
+last_played = read_last_played()
+if last_played in list(streams.keys()):
+    play(last_played)
+else:
+    play_random()
 
 
 ## remote controls
@@ -1476,12 +1487,6 @@ volume_click_button = Button(17, bounce_time=0.05)
 volume_click_button.when_pressed = wrapped_action(lambda: on_volume_button_pressed())
 
 ## main loop
-
-last_played = read_last_played()
-if last_played in list(streams.keys()):
-    play(last_played)
-else:
-    play_random()
 
 last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
