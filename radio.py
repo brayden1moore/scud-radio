@@ -970,11 +970,7 @@ def on_volume_button_pressed():
     else: 
         screen_on = True
         backlight_on()
-        #current_volume = get_last_volume()
-        logging.info('current vol', current_volume)
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
-        screen_on = False
-
 
 def toggle_favorite():
     global favorites, stream_list, cached_everything_dict
