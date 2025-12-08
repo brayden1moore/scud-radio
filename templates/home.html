@@ -20,6 +20,7 @@
             <div class="control" id="random" onClick="handleCall('/control/random')"><img class="icon" src="assets/random_icon_web.svg"></div>
             <div class="control" id="power" onClick="handleCall('/control/power')"><img class="icon" src="assets/power_icon_web.svg"></div>
     </div>
+    <div id="favorites"></div>
 </div>
 
 
@@ -28,9 +29,17 @@
 <script>
 
 const status = document.getElementById('status');
+const favorites = document.getElementById('favorites');
 
 function handleCall(endpoint) {
-    fetch(endpoint).then(updateStatus);
+    fetch(endpoint).then(() => {
+        if (endpoint=="/control/favorite") {
+            updateFavorites();
+        }
+        else {
+            updateStatus();
+        }
+    });
 }
 
 function updateStatus() {
@@ -40,6 +49,16 @@ function updateStatus() {
       .then(function(response) { return response.json(); })
       .then(function(json) {
             status.innerHTML = json['output'].replace(" | ", '<br>');
+      });
+}
+
+function updateFavorites() {
+    fetch("/control/list", {
+          method: 'GET'
+      })
+      .then(function(response) { return response.json(); })
+      .then(function(json) {
+            favorites.innerHTML = json['output'];
       });
 }
 
