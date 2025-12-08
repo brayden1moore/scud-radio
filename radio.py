@@ -1262,13 +1262,14 @@ cached_everything_dict = {}
 streams = get_streams()
 last_successful_fetch = time.time()
 stream_list = get_stream_list(streams)
-refresh_everything_cache(streams=stream_list)
 
 last_played = read_last_played()
 if last_played in list(streams.keys()):
     play(last_played)
 else:
     play_random()
+
+refresh_everything_cache(streams=stream_list)
 
 
 ## remote controls
