@@ -12,12 +12,12 @@
         <div id="status"></div>
     </div>
     <div id="controls">
-            <div class="control" id="question" onClick="updateStatus()"><img class="icon" src="assets/question_icon_web.svg"></div>
-            <div class="control" id="favorite" onClick="handleCall('/control/favorite')"><img class="icon" src="assets/favorite_icon_web.svg"></div>
             <div class="control" id="prev" onClick="handleCall('/control/prev')"><img class="icon"src="assets/prev_icon_web.svg"></div>
             <div class="control" id="down" onClick="handleCall('/control/down')"><img class="icon"src="assets/down_icon_web.svg"></div>        
             <div class="control" id="up" onClick="handleCall('/control/up')"><img class="icon" src="assets/up_icon_web.svg"></div>
             <div class="control" id="next" onClick="handleCall('/control/next')"><img class="icon"src="assets/next_icon_web.svg"></div>
+            <div class="control" id="question" onClick="updateStatus()"><img class="icon" src="assets/question_icon_web.svg"></div>
+            <div class="control" id="favorite" onClick="handleCall('/control/favorite')"><img class="icon" src="assets/favorite_icon_web.svg"></div>            
             <div class="control" id="random" onClick="handleCall('/control/random')"><img class="icon" src="assets/random_icon_web.svg"></div>
             <div class="control" id="power" onClick="handleCall('/control/power')"><img class="icon" src="assets/power_icon_web.svg"></div>
     </div>
@@ -106,7 +106,7 @@ updateFavorites();
 #favorites {
     display: flex;
     flex-wrap: wrap;
-    width: calc(88px * 8);
+    width: calc(81px * 4);
     border-left: 1px solid black;
 }
 
@@ -142,7 +142,7 @@ body {
     background-color: black;
     color: white;
     overflow: scroll;
-    width: calc(88px * 8 - 57px);
+    width: calc(81px * 4 - 1px);
     justify-items: left;
     text-align: left;
     font-size: 16pt;
@@ -156,7 +156,8 @@ body {
 #controls {
     border: 1px solid black;
     display: flex;
-    width: fit-content;
+    flex-wrap: wrap;
+    width: calc(81px * 4);
     border-right: none;
 }
 
