@@ -4,16 +4,16 @@
  <title>Scud Radio</title>
 </head> 
 
-<body>
+<body style="font-family:Archivo Light; padding:10vw;">
 
 <div id="controls">
-    <div class="control" id="up" onClick="handleCall('/control/up')"></div>
-    <div class="control" id="down" onClick="handleCall('/control/down')"></div>
-    <div class="control" id="next" onClick="handleCall('/control/next')"></div>
-    <div class="control" id="prev" onClick="handleCall('/control/prev')"></div>
-    <div class="control" id="random" onClick="handleCall('/control/random')"></div>
-    <div class="control" id="power" onClick="handleCall('/control/power')"></div>
-    <div class="control" id="favorite" onClick="handleCall('/control/favorite')"></div>
+        <div class="control" id="favorite" onClick="handleCall('/control/favorite')">★</div>
+        <div class="control" id="prev" onClick="handleCall('/control/prev')"><</div>
+        <div class="control" id="down" onClick="handleCall('/control/down')">-</div>        
+        <div class="control" id="up" onClick="handleCall('/control/up')">+</div>
+        <div class="control" id="next" onClick="handleCall('/control/next')">></div>
+        <div class="control" id="random" onClick="handleCall('/control/random')"></div>
+        <div class="control" id="power" onClick="handleCall('/control/power')"></div>
 </div>
 
 </body>
@@ -28,13 +28,41 @@ function handleCall(endpoint) {
 
 <style>
 
+@font-face {font-family: "Archivo Light";src: url("assets/Archivo-Light.ttf") format("truetype");}
+
+#controls {
+    border: 1px solid black;
+    display: flex;
+    width: fit-content;
+    background-color: black;
+    border-right: none;
+}
+
 .control {
     height: 40px;
     width: 40px;
+    cursor: pointer;
+    border-right: 1px solid black;
+}
+
+.control:hover {
+    opacity: 0.9;
 }
 
 #power {
     background-color: #D9D9D9;
+}
+
+#up, #down {
+    background-color: #FF4747;
+}
+
+#next, #prev {
+    background-color: #00BBFF;
+}
+
+#favorite, #random {
+    background-color: #FFFF00;
 }
 
 </style>
