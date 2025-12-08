@@ -58,7 +58,7 @@ function updateFavorites() {
       })
       .then(function(response) { return response.json(); })
       .then(function(json) {
-            const stationsArray = JSON.parse(json['output'].replace(/'/g, '"'));
+            const stationsArray = JSON.parse(json['output'].split(";"));
             favorites.innerHTML = "";
             stationsArray.array.forEach(station => {
                 favorite = document.createElement('img');
