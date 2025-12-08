@@ -1057,20 +1057,21 @@ def display_readied_cached(name, pushed=False):
     currently_displaying = 'everything'
     if name in list(cached_everything_dict.keys()):
         image = cached_everything_dict[name]
+        if image:
 
-        if pushed:
-            image = image.copy()
-            draw = ImageDraw.Draw(image)
-            logo_position = (129, logo_chunk_start)
-            bg_position = og_logo_position
-            logo = streams[name]['logo_60']    
-            first_pixel_color = logo.getpixel((2,2))
-            draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], fill=first_pixel_color, outline=WHITE, width=1)
-            image.paste(logo, logo_position)
+            if pushed:
+                image = image.copy()
+                draw = ImageDraw.Draw(image)
+                logo_position = (129, logo_chunk_start)
+                bg_position = og_logo_position
+                logo = streams[name]['logo_60']    
+                first_pixel_color = logo.getpixel((2,2))
+                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], fill=first_pixel_color, outline=WHITE, width=1)
+                image.paste(logo, logo_position)
 
-        disp.ShowImage(image)
-    else:
-        cached_everything_dict[name] = display_everything(0, name, readied=True)
+            disp.ShowImage(image)
+        else:
+            cached_everything_dict[name] = display_everything(0, name, readied=True)
 
 def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict
