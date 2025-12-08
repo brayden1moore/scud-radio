@@ -56,7 +56,10 @@ Usage:
     elif command == 'list':
         result = send_command('list')
         if result['status'] == 'ok':
-            print(f"{result['favorites']}")
+            if isinstance(result['favorites'],list):
+                print(f"{';'.join(result['favorites'])}")
+            else:
+                print("")
     
     elif command == 'next':
         result = send_command('next')
