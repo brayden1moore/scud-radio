@@ -59,9 +59,24 @@ function updateFavorites() {
       .then(function(response) { return response.json(); })
       .then(function(json) {
             const stationsArray = JSON.parse(json['output'].replace(/'/g, '"'));
-            favorites.innerHTML = stationsArray.join('<br>');
+
+            favorites.innerHTML = "";
+            stationsArray.array.forEach(station => {
+                favorite = document.createElement('img');
+                favorite.classList.add('a-favorite');
+                favorite.src = info[station]['logo'];
+            });
       });
 }
+
+let info;
+fetch("https://internetradioprotocol.org/info", {
+          method: 'GET'
+      })
+      .then(function(response) { return response.json(); })
+      .then(function(json) {
+        info = json;
+})
 
 updateStatus();
 updateFavorites();
@@ -71,6 +86,18 @@ updateFavorites();
 <style>
 
 @font-face {font-family: "Archivo Light";src: url("assets/Archivo-Light.ttf") format("truetype");}
+
+#favorites {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.a-favorite {
+    height: 80px;
+    width: 80px;
+    border: 1px solid black;
+    border-top: none;
+}
 
 body {
     height: 90vh;
