@@ -66,6 +66,10 @@ function updateFavorites() {
                 favorite = document.createElement('img');
                 favorite.classList.add('a-favorite');
                 favorite.src = info[station]['logo'];
+                favorite.addEventListener(()=> {
+                    handleCall(`/control/play?${station.replace(/ /g, "+")}`)
+                });
+                favorites.appendChild(favorite);
             });
       });
 }
