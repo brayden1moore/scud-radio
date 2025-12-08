@@ -923,8 +923,8 @@ def on_button_pressed():
         if currently_displaying=='everything':
             display_one(stream)
 
-        elif currently_displaying == 'one':
-            display_ambient(stream, clicked=True)
+        #elif currently_displaying == 'one':
+        #    display_ambient(stream, clicked=True)
 
         elif currently_displaying == 'ambient':
             display_readied_cached(stream)
@@ -963,7 +963,7 @@ def on_volume_button_pressed():
     button_released_time = current_time
     if screen_on:
         send_mpv_command({"command": ["set_property", "volume", 0]})
-        set_last_volume(str(current_volume))
+        set_last_volume(current_volume)
         backlight_off()
     else: 
         screen_on = True
