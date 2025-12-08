@@ -961,7 +961,8 @@ def on_volume_button_pressed():
     current_time = time.time()
     last_input_time = time.time()
     button_released_time = current_time
-    if screen_on:
+    print(screen_on)
+    if screen_on==True:
         send_mpv_command({"command": ["set_property", "volume", 0]})
         set_last_volume(str(current_volume))
         print(current_volume)
