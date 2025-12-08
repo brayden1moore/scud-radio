@@ -344,7 +344,7 @@ def get_streams():
     global streams
 
     info = requests.get('https://internetradioprotocol.org/info').json()
-    active = {n: v for n, v in info.items() if v['status']!="Offline" and v['hidden']!=True}
+    active = {n: v for n, v in info.items() if v['hidden']!=True}
     
     # clean text
     for name, _ in active.items():
