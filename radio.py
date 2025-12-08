@@ -97,7 +97,7 @@ def get_battery():
         #logging.info(e)
         return battery, charging
 
-    return battery, charging
+    return 0, False
 
 def get_timezone_from_ip():
     try:
