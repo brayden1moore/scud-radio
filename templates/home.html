@@ -7,6 +7,7 @@
 <body style="font-family:Archivo Light; padding:10vw;">
 
 <div id="controls">
+        <div class="control" id="question" onClick="handleCall('/control/status')"><img class="icon" src="assets/question_icon_web.svg"></div>
         <div class="control" id="favorite" onClick="handleCall('/control/favorite')"><img class="icon" src="assets/favorite_icon_web.svg"></div>
         <div class="control" id="prev" onClick="handleCall('/control/prev')"><img class="icon"src="assets/prev_icon_web.svg"></div>
         <div class="control" id="down" onClick="handleCall('/control/down')"><img class="icon"src="assets/down_icon_web.svg"></div>        
@@ -59,7 +60,7 @@ function handleCall(endpoint) {
     background-color: white !important;
 }
 
-#power {
+#power, #question {
     background-color: #D9D9D9;
 }
 
