@@ -1003,12 +1003,8 @@ def toggle_favorite():
     stream_list = get_stream_list(streams)
     time.sleep(0.3)
     show_readied = False if not readied_stream else True
-    cached_everything_dict[chosen_stream] = display_everything(0, name=chosen_stream, readied=show_readied)
-    refresh_everything_cache(stream_list)
-
-def toggle_favorite_async():
-    """Async wrapper that starts toggle_favorite in a background thread"""
-    thread = threading.Thread(target=toggle_favorite, daemon=True)
+        
+    thread = threading.Thread(target=refresh_everything_cache, args=(stream_list,), daemon=True)
     thread.start()
 
 def refresh_everything_cache(streams):
@@ -1364,7 +1360,7 @@ def handle_remote_command(command_data):
         
         elif cmd == 'favorite':
             rotated = False
-            toggle_favorite_async()
+            toggle_favorite()
             return {'status': 'ok', 'favorites': favorites}
         
         elif cmd == 'off':
