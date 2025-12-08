@@ -645,10 +645,10 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         if next_stream in favorites:
             next_star = star_60.copy().rotate(-prev_next_rotation, expand=True)
             image.paste(next_star, next_position, next_star)
-        if prev_stream not in reruns:
+        if streams[prev_stream]['status'] == "Live":
             prev_live = live_60.copy().rotate(prev_next_rotation, expand=True)
             image.paste(prev_live, prev_position, prev_live)
-        if next_stream not in reruns:
+        if streams[next_stream]['status'] == "Live":
             next_live = live_60.copy().rotate(-prev_next_rotation, expand=True)
             image.paste(next_live, next_position, next_live)
 
@@ -664,7 +664,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()
             image.paste(double_prev_star, double_prev_position, double_prev_star)
-        if double_prev_stream not in reruns:
+        if streams[double_prev_stream]['status'] == "Live":
             double_prev_live = live_25.copy()
             image.paste(double_prev_live, double_prev_position, double_prev_live)
 
@@ -673,7 +673,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         if double_next_stream in favorites:
             double_next_star = star_25.copy()
             image.paste(double_next_star, double_next_position, double_next_star)
-        if double_next_stream not in reruns:
+        if streams[double_next_stream]['status'] == "Live":
             double_next_live = live_25.copy()
             image.paste(double_next_live, double_next_position, double_next_live)
 
@@ -751,7 +751,7 @@ def display_one(name):
         image.paste(logo, logo_position)
         if name in favorites:
             image.paste(star_60, logo_position, star_60)
-        if name not in reruns:
+        if streams[name]['status'] == 'Live':
             image.paste(live_60, (16, 12), live_60)
 
         # name and underline
@@ -790,7 +790,7 @@ def display_one(name):
 
         line_gap = 3
         section_gap = 6
-        anchor = get_anchor(title_lines, info_lines, name not in reruns, line_gap, section_gap)
+        anchor = get_anchor(title_lines, info_lines, line_gap, section_gap)
         avg_title_height = sum(height(i, LARGE_FONT) for i in title_lines) / len(title_lines) if title_lines else 0
         avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
 
@@ -877,7 +877,7 @@ def display_current():
         display_ambient(stream, clicked=True)
 
 
-def get_anchor(title, info, live, line_gap, section_gap):
+def get_anchor(title, info, line_gap, section_gap):
     size = 0
     for line in title:
         size += height(line, LARGE_FONT) + line_gap
