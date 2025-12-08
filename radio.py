@@ -623,7 +623,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         if name in favorites:
             this_star = star_96.copy()
             image.paste(this_star, og_logo_position, this_star)
-        if name not in reruns:
+        if streams[name]['status'] == 'Live':
             this_live = live_96.copy()
             image.paste(this_live, og_logo_position, this_live)
         
