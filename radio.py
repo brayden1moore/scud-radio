@@ -1106,12 +1106,21 @@ def toggle_favorite():
 
 def refresh_everything_cache(streams=stream_list):
     global cached_everything_dict
-    for name in streams:
+    
+    def refresh_stream(name):
         if name in one_cache.keys():
             del one_cache[name]
         logging.info(f'Refreshing image for {name}')
-        cached_everything_dict[name] = display_everything(0, name=name, readied=True, silent=True)
+        return name, display_everything(0, name=name, readied=True, silent=True)
+    
+    with ThreadPoolExecutor(max_workers=min(len(streams), 10)) as executor:
+        future_to_name = {executor.submit(refresh_stream, name): name for name in streams}
+        
+        for future in as_completed(future_to_name):
+            name, result = future.result()
+            cached_everything_dict[name] = result
 
+        
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
     rotated = True
