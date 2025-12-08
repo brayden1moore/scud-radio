@@ -867,7 +867,10 @@ def confirm_seek():
 def show_volume_overlay(volume):
     global current_image, volume_overlay_showing
     if current_image:
-        img = current_image.copy()
+        if readied_stream:
+            img = cached_everything_dict[readied_stream].copy()
+        else:
+            img = current_image.copy()
 
         trim_color = RED
 
