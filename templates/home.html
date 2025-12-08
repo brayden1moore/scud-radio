@@ -30,7 +30,7 @@
 const status = document.getElementById('status');
 
 function handleCall(endpoint) {
-    fetch(endpoint).then(updateStatus());
+    fetch(endpoint).then(updateStatus);
 }
 
 function updateStatus() {
