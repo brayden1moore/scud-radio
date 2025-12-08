@@ -7,13 +7,13 @@
 <body style="font-family:Archivo Light; padding:10vw;">
 
 <div id="controls">
-        <div class="control" id="favorite" onClick="handleCall('/control/favorite')">★</div>
-        <div class="control" id="prev" onClick="handleCall('/control/prev')"><</div>
-        <div class="control" id="down" onClick="handleCall('/control/down')">-</div>        
-        <div class="control" id="up" onClick="handleCall('/control/up')">+</div>
-        <div class="control" id="next" onClick="handleCall('/control/next')">></div>
-        <div class="control" id="random" onClick="handleCall('/control/random')"></div>
-        <div class="control" id="power" onClick="handleCall('/control/power')"></div>
+        <div class="control" id="favorite" onClick="handleCall('/control/favorite')"><img src="assets/favorite_icon_web.svg"></div>
+        <div class="control" id="prev" onClick="handleCall('/control/prev')"><img src="assets/prev_icon_web.svg"></div>
+        <div class="control" id="down" onClick="handleCall('/control/down')"><img src="assets/down_icon_web.svg"></div>        
+        <div class="control" id="up" onClick="handleCall('/control/up')"><img src="assets/up_icon_web.svg"></div>
+        <div class="control" id="next" onClick="handleCall('/control/next')"><img src="assets/next_icon_web.svg"></div>
+        <div class="control" id="random" onClick="handleCall('/control/random')"><img src="assets/random_icon_web.svg"></div>
+        <div class="control" id="power" onClick="handleCall('/control/power')"><img src="assets/power_icon_web.svg"></div>
 </div>
 
 </body>
@@ -34,7 +34,6 @@ function handleCall(endpoint) {
     border: 1px solid black;
     display: flex;
     width: fit-content;
-    background-color: black;
     border-right: none;
 }
 
@@ -52,7 +51,7 @@ function handleCall(endpoint) {
 }
 
 .control:hover {
-    opacity: 0.9;
+    background-color: white !important;
 }
 
 #power {
