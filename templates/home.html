@@ -62,7 +62,7 @@ function updateFavorites() {
             console.log(json['output']);
             console.log(stationsArray);
             favorites.innerHTML = "";
-            stationsArray.array.forEach(station => {
+            stationsArray.forEach(station => {
                 favorite = document.createElement('img');
                 favorite.classList.add('a-favorite');
                 favorite.src = info[station]['logo'];
