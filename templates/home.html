@@ -4,7 +4,7 @@
  <title>Scud Radio</title>
 </head> 
 
-<body style="font-family:Archivo Light; padding:10vw;">
+<body style="font-family:Archivo Light;">
 
 <div id="controls">
         <div class="control" id="question" onClick="handleCall('/control/status')"><img class="icon" src="assets/question_icon_web.svg"></div>
@@ -30,6 +30,14 @@ function handleCall(endpoint) {
 <style>
 
 @font-face {font-family: "Archivo Light";src: url("assets/Archivo-Light.ttf") format("truetype");}
+
+body {
+    display: flex;
+    justify-items: center;
+    text-align: center;
+    justify-content: center;
+    align-items: center;    
+}
 
 .icon {
     width: 40px;
