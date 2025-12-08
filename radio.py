@@ -1062,7 +1062,7 @@ def display_readied_cached(name, pushed=False):
     if name in list(cached_everything_dict.keys()):
         image = cached_everything_dict[name]
         if image:
-
+            logging.info(f'Displaying everything for {name} from cache.')
             if pushed:
                 image = image.copy()
                 draw = ImageDraw.Draw(image)
