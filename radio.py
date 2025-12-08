@@ -32,6 +32,26 @@ logging.basicConfig(
     ]
 )
 
+SCREEN_WIDTH = 320
+SCREEN_HEIGHT = 240
+
+WHITE = (255,255,255)
+BLACK = (0,0,0)
+YELLOW = (255,255,0)
+BLUE = (0,187,255)
+GREEN = (0,231,192)
+GREY = (100,100,100)
+ORANGE = (255,128,0)
+PURPLE = (134,97,245)
+RED = (255,71,71)
+
+SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
+MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
+LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",42)
+LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
+LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28)
+
+
 ## functions
 
 import driver as LCD_2inch
@@ -1228,25 +1248,6 @@ mpv_process = Popen([
 
 while not os.path.exists("/tmp/mpvsocket"):
     time.sleep(0.1)
-
-SCREEN_WIDTH = 320
-SCREEN_HEIGHT = 240
-
-WHITE = (255,255,255)
-BLACK = (0,0,0)
-YELLOW = (255,255,0)
-BLUE = (0,187,255)
-GREEN = (0,231,192)
-GREY = (100,100,100)
-ORANGE = (255,128,0)
-PURPLE = (134,97,245)
-RED = (255,71,71)
-
-SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
-MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
-LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",42)
-LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
-LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28)
 
 unfavorite = Image.open('assets/unfavorited.png').convert('RGBA')
 favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'), 
