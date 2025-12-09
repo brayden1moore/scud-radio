@@ -53,8 +53,8 @@ controls.forEach((control) => {
 
 function handleCall(endpoint) {
 
-    controls.forEach(control, ()=> {
-        control.classList.remove = 'hovered';
+    controls.forEach((control) => {
+        control.classList.remove('hovered');
     });
 
     fetch(endpoint).then(() => {
