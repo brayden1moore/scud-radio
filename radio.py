@@ -908,7 +908,8 @@ def safe_restart():
     run(['sudo', '-u','scud','git', 'pull'], cwd='/home/scud/scud-radio')
     time.sleep(4)  
     backlight_off()
-    run(['sudo','systemctl', 'restart','radio'])
+    run(['sudo','systemctl', 'restart','scud-api'])
+    run(['sudo','systemctl', 'restart','launcher'])
 
 
 def on_button_pressed():
