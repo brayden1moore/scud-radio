@@ -42,14 +42,12 @@
 const status = document.getElementById('status');
 const favorites = document.getElementById('favorites');
 const controls = document.querySelectorAll('.control');
-
-controls.forEach(control, ()=> {
-    control.addEventListener('mouseover', ()=> {
-        control.classList.add = 'hovered';
+controls.forEach((control) => { 
+    control.addEventListener('mouseover', () => {
+        control.classList.add('hovered'); 
     })
-
-    control.addEventListener('mouseout', ()=> {
-        control.classList.remove = 'hovered';
+    control.addEventListener('mouseout', () => {
+        control.classList.remove('hovered'); 
     })
 });
 
