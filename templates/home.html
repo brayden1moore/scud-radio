@@ -44,8 +44,12 @@ const favorites = document.getElementById('favorites');
 const controls = document.querySelectorAll('.controls');
 
 controls.forEach(control, ()=> {
-    control.addEventListener('mouseon', ()=> {
+    control.addEventListener('mouseover', ()=> {
         control.classList.add = 'hovered';
+    })
+
+    control.addEventListener('mouseout', ()=> {
+        control.classList.remove = 'hovered';
     })
 });
 
