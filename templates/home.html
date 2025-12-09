@@ -41,8 +41,20 @@
 
 const status = document.getElementById('status');
 const favorites = document.getElementById('favorites');
+const controls = document.querySelectorAll('.controls');
+
+controls.forEach(control, ()=> {
+    control.addEventListener('mouseon', ()=> {
+        control.classList.add = 'hovered';
+    })
+});
 
 function handleCall(endpoint) {
+
+    controls.forEach(control, ()=> {
+        control.classList.remove = 'hovered';
+    });
+
     fetch(endpoint).then(() => {
         if (endpoint=="/control/favorite") {
             updateFavorites();
@@ -108,6 +120,11 @@ updateFavorites();
 <style>
 
 @font-face {font-family: "Archivo Light";src: url("assets/Archivo-Light.ttf") format("truetype");}
+
+
+.hovered {
+    background-color: white !important;
+}
 
 #scud-logo-img {
     height: 60px;
