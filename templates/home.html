@@ -53,10 +53,6 @@ controls.forEach((control) => {
 
 function handleCall(endpoint) {
 
-    controls.forEach((control) => {
-        control.classList.remove('hovered');
-    });
-
     fetch(endpoint).then(() => {
         if (endpoint=="/control/favorite") {
             updateFavorites();
@@ -64,6 +60,10 @@ function handleCall(endpoint) {
         else {
             updateStatus();
         }
+    });
+
+    controls.forEach((control) => {
+        control.classList.remove('hovered');
     });
 }
 
