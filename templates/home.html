@@ -64,6 +64,7 @@ controls.forEach((control) => {
 });
 
 function handleCall(endpoint) {
+    antennaBlip();
     if (endpoint.includes('play?')) {
         const station = document.getElementById(endpoint);
         const name = new URLSearchParams(endpoint.split('?')[1]).get('station');
@@ -100,7 +101,6 @@ function antennaBlip() {
 }
 
 function updateStatus() {
-    antennaBlip();
       fetch("/control/status", {
           method: 'GET'
       })
