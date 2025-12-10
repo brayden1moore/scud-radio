@@ -82,14 +82,15 @@ function handleCall(endpoint) {
 var blips = 0;
 const antennaTop = document.getElementById('antenna-top');
 const antennaFill = document.getElementById('antenna-fill');
+
 function antennaBlip() {
-    antennaBlipELement = antennaTop.cloneNode();
-    antennaFill.appendChild(antennaBlipELement);
-    antennaBlipELement.classList.add('blip');
-    blips ++;
+    const antennaBlipElement = antennaTop.cloneNode(true); // true for deep clone
+    antennaFill.appendChild(antennaBlipElement);
+    antennaBlipElement.classList.add('blip');
+    blips++;
     console.log(blips);
-    antennaBlipELement.style.top = (-10 - (27 * blips)) + "px !important";
-    console.log(antennaBlipELement.style.top);    
+    antennaBlipElement.style.top = (-10 - (27 * blips)) + "px";
+    console.log(antennaBlipElement.style.top);
 }
 
 function updateStatus() {
