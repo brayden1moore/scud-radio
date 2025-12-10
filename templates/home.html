@@ -31,7 +31,10 @@
         <img id="scud-logo-img" src="assets/scudlogo.png">
     </div>
     <div id="info-div">
-        <div id="status"></div>
+        <div id="status">
+            <div id="station-name"></div>
+            <div id="one-liner"></div>
+        </div>
     </div>
     <div id="controls">
             <div class="control" id="prev" onClick="handleCall('/control/prev')"><img class="icon"src="assets/prev_icon_web.svg"></div>
@@ -52,6 +55,8 @@
 <script>
 
 const status = document.getElementById('status');
+const stationName = document.getElementById('station-name');
+const oneLiner = document.getElementById('one-liner');
 const stations = document.getElementById('stations');
 const controls = document.querySelectorAll('.control');
 controls.forEach((control) => { 
@@ -69,21 +74,23 @@ function handleCall(endpoint) {
         const station = document.getElementById(endpoint);
         const name = new URLSearchParams(endpoint.split('?')[1]).get('station');
         status.dataset.station = name;
-        status.innerHTML = name + '<br>' + info[name]['oneLiner'];
+        stationName.textContent = name;
+        oneLiner.textContent = info[name]['oneLiner'];
     }
     else if (endpoint.includes('prev')) {
         const currentIndex = stationList.indexOf(status.dataset.station);
         const prevIndex = (currentIndex - 1 + stationList.length) % stationList.length;
         const prev = stationList[prevIndex];
         status.dataset.station = prev;
-        status.innerHTML = prev + '<br>' + info[prev]['oneLiner'];
+        stationName.textContent = prev;
+        oneLiner.textContent = info[prev]['oneLiner'];
     }
     else if (endpoint.includes('next')) {
         const currentIndex = stationList.indexOf(status.dataset.station);
         const nextIndex = (currentIndex + 1) % stationList.length;
         const next = stationList[nextIndex];
-        status.dataset.station = next;
-        status.innerHTML = next + '<br>' + info[next]['oneLiner'];
+        stationName.textContent = next;
+        oneLiner.textContent = info[next]['oneLiner'];
     }
 
     fetch(endpoint).then(() => {
@@ -123,8 +130,10 @@ function updateStatus(fromHandleCall) {
       })
       .then(function(response) { return response.json(); })
       .then(function(json) {
-            status.dataset.station = json['output'].split(' - ')[0];
-            status.innerHTML = json['output'].replace(" - ", '<br>');
+            name = json['output'].split(' - ')[0];
+            status.dataset.station = name;
+            stationName.textContent = name;
+            oneLiner.textContent = info[name]['oneLiner'];
       });
 }
 
@@ -183,6 +192,14 @@ updateStations();
 <style>
 
 @font-face {font-family: "Archivo Light";src: url("assets/Archivo-Light.ttf") format("truetype");}
+
+#station-name {
+    font-size: 24pt;
+}
+
+#one-liner {
+    font-size: 12pt;
+}
 
 #antenna-container-container {
     display: flex;
