@@ -66,7 +66,7 @@ controls.forEach((control) => {
 function handleCall(endpoint) {
     if (endpoint.includes('play?')) {
         const station = document.getElementById(endpoint);
-        const name = new URLSearchParams(endpoint.split('?')[1]);
+        const name = new URLSearchParams(endpoint.split('?')[1]).get('station');
         console.log(name);
         status.innerHTML = name + '<br>' + info[name]['oneLiner'];
     }
