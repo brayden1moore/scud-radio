@@ -86,7 +86,7 @@ function antennaBlip() {
     antennaFill.appendChild(antennaBlipELement);
     antennaBlipELement.classList.add('blip');
     setTimeout(() => {
-        antennaFill.removeChild(antennaBlipELement);
+        document.querySelectorAll('.blip').forEach(e => e.remove());
     }, 2000);
 }
 
