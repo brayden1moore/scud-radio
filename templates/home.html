@@ -91,7 +91,6 @@ function antennaBlip() {
 }
 
 function updateStatus() {
-    status.innerHTML = "";
     antennaBlip();
       fetch("/control/status", {
           method: 'GET'
@@ -316,7 +315,7 @@ border-bottom: 1px solid black;
 .blip {
   animation-duration: 2s;
   animation-name: blip-anim;
-  top: -30px !important;
+  top: -40px !important;
 }
 
 @keyframes blip-anim {
