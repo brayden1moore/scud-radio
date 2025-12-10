@@ -35,7 +35,8 @@ def control(command):
         'toggle':'toggle',
         'pause':'pause',
         'resume':'resume',
-        'list':'list'
+        'list':'list',
+        'favorites':'favorites'
     }
     
     if command not in allowed_commands:

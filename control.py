@@ -57,11 +57,19 @@ Usage:
     elif command == 'list':
         result = send_command('list')
         if result['status'] == 'ok':
+            if isinstance(result['stations'],list):
+                print(f"{';'.join(result['stations'])}")
+            else:
+                print("")
+    
+    elif command == 'favorites':
+        result = send_command('list')
+        if result['status'] == 'ok':
             if isinstance(result['favorites'],list):
                 print(f"{';'.join(result['favorites'])}")
             else:
                 print("")
-    
+
     elif command == 'next':
         result = send_command('next')
         if result['status'] == 'ok':
