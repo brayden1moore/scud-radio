@@ -72,15 +72,19 @@ function handleCall(endpoint) {
         status.innerHTML = name + '<br>' + info[name]['oneLiner'];
     }
     else if (endpoint.includes('prev')) {
-        const prev = stationList[(stationList.indexOf(status.dataset.station) -1) || stationList.length];
+        const currentIndex = stationList.indexOf(status.dataset.station);
+        const prevIndex = (currentIndex - 1 + stationList.length) % stationList.length;
+        const prev = stationList[prevIndex];
         status.dataset.station = prev;
         status.innerHTML = prev + '<br>' + info[prev]['oneLiner'];
     }
     else if (endpoint.includes('next')) {
-        const next = stationList[(stationList.indexOf(status.dataset.station) + 1) || 0];
+        const currentIndex = stationList.indexOf(status.dataset.station);
+        const nextIndex = (currentIndex + 1) % stationList.length;
+        const next = stationList[nextIndex];
         status.dataset.station = next;
-        status.innerHTML =  next + '<br>' + info[next]['oneLiner'];
-    } 
+        status.innerHTML = next + '<br>' + info[next]['oneLiner'];
+    }
 
     fetch(endpoint).then(() => {
         if (endpoint=="/control/favorite") {
