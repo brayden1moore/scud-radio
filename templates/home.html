@@ -80,6 +80,7 @@ function handleCall(endpoint) {
 }
 
 function updateStatus() {
+    status.innerHTML = "";
       fetch("/control/status", {
           method: 'GET'
       })
