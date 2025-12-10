@@ -79,8 +79,15 @@ function handleCall(endpoint) {
     });
 }
 
+const antennaTop = document.getElementById('antenna-top');
+function antennaBlip() {
+    antennaBlip = antennaTop.cloneNode();
+    antennaBlip.classList.add('blip');
+}
+
 function updateStatus() {
     status.innerHTML = "";
+    antennaBlip();
       fetch("/control/status", {
           method: 'GET'
       })
@@ -299,6 +306,23 @@ border-bottom: 1px solid black;
 
 #random {
         background-color: #00E7C0;
+}
+
+.blip {
+  animation-duration: 2s;
+  animation-name: blip-anim;
+}
+
+@keyframes blip-anim {
+    from {
+        scale: 100%;
+        opacity: 1;
+    }
+    to {
+        scale: 200%;
+        opacity: 0;
+    }
+
 }
 
 </style>
