@@ -40,7 +40,7 @@
             <div class="control" id="next" onClick="handleCall('/control/next')"><img class="icon"src="assets/next_icon_web.svg"></div>
             <div class="control" id="question" onClick="updateStatus()"><img class="icon" src="assets/question_icon_web.svg"></div>
             <div class="control" id="favorite" onClick="handleCall('/control/favorite')"><img class="icon" src="assets/favorite_icon_web.svg"></div>            
-            <div class="control" id="random" onClick="handleCall('/control/random')"><img class="icon" src="assets/random_icon_web.svg"></div>
+            <div class="control" id="random" onClick="playRandon()"><img class="icon" src="assets/random_icon_web.svg"></div>
             <div class="control" id="power" onClick="handleCall('/control/power')"><img class="icon" src="assets/power_icon_web.svg"></div>
     </div>
     <div id="stations"></div>
@@ -106,6 +106,7 @@ function updateStatus() {
       })
       .then(function(response) { return response.json(); })
       .then(function(json) {
+            status.dataset.station = json['output'].split(' - ')[0];
             status.innerHTML = json['output'].replace(" - ", '<br>');
       });
 }
@@ -139,6 +140,10 @@ function updateStations() {
                 addStation(station)
             });
       });
+}
+
+function playRandom() {
+
 }
 
 let info;
