@@ -82,7 +82,12 @@ function handleCall(endpoint) {
 const antennaTop = document.getElementById('antenna-top');
 const antennaFill = document.getElementById('antenna-fill');
 function antennaBlip() {
-    antennaTop.classList.add('blip');
+    antennaBlipELement = antennaTop.cloneNode();
+    antennaFill.appendChild(antennaBlipELement);
+    antennaBlipELement.classList.add('blip');
+    setTimeout(() => {
+        antennaFill.removeChild(antennaBlipELement);
+    }, 2000);
 }
 
 function updateStatus() {
