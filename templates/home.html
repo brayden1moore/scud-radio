@@ -82,9 +82,7 @@ function handleCall(endpoint) {
 const antennaTop = document.getElementById('antenna-top');
 const antennaFill = document.getElementById('antenna-fill');
 function antennaBlip() {
-    antennaBlipELement = antennaTop.cloneNode();
-    antennaFill.appendChild(antennaBlipELement);
-    antennaBlipELement.classList.add('blip');
+    antennaTop.classList.add('blip');
 }
 
 function updateStatus() {
