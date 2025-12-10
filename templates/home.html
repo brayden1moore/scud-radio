@@ -119,7 +119,7 @@ function addStation(name) {
     station.addEventListener('click', ()=> {
         handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
     });
-    station.appendChild(station);
+    stations.appendChild(station);
 }
 
 let stationList = [];
