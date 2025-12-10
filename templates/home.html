@@ -134,11 +134,11 @@ updateFavorites();
 }
 
 #scud-logo {
-    width: calc(81px * 4 - 1);
-    padding-top: 10px;
-    padding-bottom: 10px;
-    border: 1px solid black;
-    border-bottom: none;
+width: calc(81px * 4 - 1);
+padding-top: 10px;
+padding-bottom: 10px;
+/* border: 1px solid black; */
+border-right: 1px solid black;
 }
 
 #status {
@@ -146,10 +146,11 @@ updateFavorites();
 }
 
 #favorites {
-    display: flex;
-    flex-wrap: wrap;
-    width: calc(81px * 4);
-    border-left: 1px solid black;
+display: flex;
+flex-wrap: wrap;
+width: calc((81px * 4) - 1px);
+/* border-left: 1px solid black; */
+border-right: 1px solid black;
 }
 
 .a-favorite {
@@ -176,19 +177,20 @@ body {
 }
 
 #main-div {
-    display: block;
+border: 1px solid black;
+border-right: none;
 }
 
 #info-div {
-    border: 1px solid black;
-    border-bottom: none;
-    background-color: black;
-    color: white;
-    overflow: scroll;
-    width: calc(81px * 4 - 1px);
-    justify-items: left;
-    text-align: left;
-    font-size: 16pt;
+/* border: 1px solid black; */
+border-bottom: none;
+background-color: black;
+color: white;
+/* overflow: scroll; */
+width: calc(1px + (81px * 4));
+justify-items: left;
+text-align: left;
+font-size: 16pt;
 }
 
 .icon {
@@ -197,28 +199,28 @@ body {
 }
 
 #controls {
-    border: 1px solid black;
-    display: flex;
-    flex-wrap: wrap;
-    width: calc(81px * 4);
-    border-right: none;
-    border-bottom: none;
+border: 1px solid black;
+display: flex;
+flex-wrap: wrap;
+width: calc(81px * 4);
+border-right: none;
+border-left: none;
+border-bottom: none;
 }
 
 .control {
-    touch-action: manipulation;
-    display: flex;
-    justify-items: center;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    height: 80px;
-    width: 80px;
-    cursor: pointer;
-    border-right: 1px solid black;
-    border-bottom: 1px solid black;
+touch-action: manipulation;
+display: flex;
+justify-items: center;
+text-align: center;
+justify-content: center;
+align-items: center;
+height: 80px;
+width: 80px;
+cursor: pointer;
+border-right: 1px solid black;
+border-bottom: 1px solid black;
 }
-
 
 #power, #question {
     background-color: #D9D9D9;
@@ -235,6 +237,7 @@ body {
 #favorite, #random {
     background-color: #FFFF00;
 }
+
 
 </style>
 
