@@ -86,8 +86,10 @@ function antennaBlip() {
     antennaBlipELement = antennaTop.cloneNode();
     antennaFill.appendChild(antennaBlipELement);
     antennaBlipELement.classList.add('blip');
-    blips += 1;
+    blips ++;
+    console.log(blips);
     antennaBlipELement.style.top = -10 - (27 * blips) + "px !important";
+    console.log(antennaBlipELement.style.top);    
 }
 
 function updateStatus() {
