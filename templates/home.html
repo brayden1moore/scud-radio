@@ -85,9 +85,8 @@ function antennaBlip() {
     antennaBlipELement = antennaTop.cloneNode();
     antennaFill.appendChild(antennaBlipELement);
     antennaBlipELement.classList.add('blip');
-    antennaBlipELement.id = 
     setTimeout(() => {
-        document.querySelectorAll('.blip').forEach(e => e.remove());
+        antennaBlipELement.remove();
     }, 1000);
 }
 
@@ -317,6 +316,7 @@ border-bottom: 1px solid black;
   animation-duration: 2s;
   animation-name: blip-anim;
   top: -37px !important;
+  position: fixed;
 }
 
 @keyframes blip-anim {
