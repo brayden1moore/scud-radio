@@ -15,6 +15,18 @@
 <body style="font-family:Archivo Light;">
 
 <div id="main-div">
+    <div id="antenna-container-container">
+        <div id="antenna-container">
+                <div id="antenna">
+                <div id="antenna-fill">
+                                <div id="antenna-top"></div>
+                </div>
+                </div>
+                <div id="antenna-base"></div>
+        </div>
+    </div>
+
+
     <div id="scud-logo">
         <img id="scud-logo-img" src="assets/scudlogo.png">
     </div>
@@ -123,6 +135,48 @@ updateFavorites();
 
 @font-face {font-family: "Archivo Light";src: url("assets/Archivo-Light.ttf") format("truetype");}
 
+#antenna-container-container {
+    display: flex;
+    justify-content: end;
+    width:calc(81px * 4 - 1);
+}
+
+#antenna-top {
+    width: 25px;
+    height: 25px;
+    top: -10px;
+    left: -6px;
+    border-radius: 50%;
+    position: relative;
+    background-color: #FF4747;
+    border: 1px solid black;
+}
+
+#antenna-base {
+    width: 40px;
+    height: 25px;
+    background-color: #00BBFF;
+    border: 1px solid black;
+    border-bottom: none;
+    border-left: 1px solid black;
+}
+
+#antenna {
+    width: 40px;
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#antenna-fill {
+    background-color: #00E7C0;
+    width: 15px;
+    height: 90px;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-top: 1px solid black;
+}
 
 .hovered {
     background-color: white !important;
@@ -139,6 +193,8 @@ padding-top: 10px;
 padding-bottom: 10px;
 /* border: 1px solid black; */
 border-right: 1px solid black;
+border-left: 1px solid black;
+border-top: 1px solid black;
 }
 
 #status {
@@ -149,7 +205,7 @@ border-right: 1px solid black;
 display: flex;
 flex-wrap: wrap;
 width: calc((81px * 4) - 1px);
-/* border-left: 1px solid black; */
+border-left: 1px solid black;
 /* border-right: 1px solid black; */
 border-bottom: none;
 }
@@ -178,9 +234,8 @@ body {
 }
 
 #main-div {
-border: 1px solid black;
-border-right: none;
-border-bottom: none;
+    align-items: right;
+    justify-content: end;
 }
 
 #info-div {
@@ -206,7 +261,7 @@ display: flex;
 flex-wrap: wrap;
 width: calc(81px * 4);
 border-right: none;
-border-left: none;
+border-left: 1px solid black;
 border-bottom: none;
 }
 
