@@ -218,9 +218,11 @@ border-top: 1px solid black;
 display: flex;
 flex-wrap: wrap;
 width: calc((81px * 4));
+height: 300px;
 border-left: 1px solid black;
-/* border-right: 1px solid black; */
-border-bottom: none;
+border-right: 1px solid black;
+border-bottom: 1px solid black;
+overflow-y: scroll;
 }
 
 .a-favorite {
@@ -238,7 +240,7 @@ border-bottom: none;
 }
 
 body {
-    height: 90vh;
+    margin-top: 10vh;
     display: flex;
     justify-items: center;
     text-align: center;

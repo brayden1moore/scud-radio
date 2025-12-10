@@ -990,6 +990,7 @@ def toggle_favorite():
             img = current_image.convert('RGBA')
         img.paste(unfavorite, (0, 0), unfavorite)
         disp.ShowImage(img)
+        time.sleep(0.2)
         set_favorites(favorites)
     else:
         favorites.append(chosen_stream)
@@ -999,7 +1000,9 @@ def toggle_favorite():
         disp.ShowImage(img)
         for i in favorite_images:
             img.paste(i, (0, 0), i)
-            disp.ShowImage(img)           
+            disp.ShowImage(img)       
+        time.sleep(0.2)
+        disp.ShowImage(img)    
 
     stream_list = get_stream_list(streams)
     show_readied = False if not readied_stream else True        
