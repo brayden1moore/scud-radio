@@ -68,7 +68,7 @@ function handleCall(endpoint) {
     if (endpoint.includes('play?')) {
         const station = document.getElementById(endpoint);
         const name = new URLSearchParams(endpoint.split('?')[1]).get('station');
-        console.log(name);
+        status.dataset.station = name;
         status.innerHTML = name + '<br>' + info[name]['oneLiner'];
     }
 
@@ -143,7 +143,10 @@ function updateStations() {
 }
 
 function playRandom() {
-
+    let nonCurrentStations = stationList.filter(station => station != status.dataset.station);
+    const randomIndex = Math.floor(Math.random() * nonCurrentStations.length);
+    const name = nonCurrentStations[randomIndex];
+    handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
 }
 
 let info;
