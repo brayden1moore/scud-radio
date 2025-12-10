@@ -71,6 +71,10 @@ function handleCall(endpoint) {
         status.dataset.station = name;
         status.innerHTML = name + '<br>' + info[name]['oneLiner'];
     }
+    else if (endpoint.includes('prev')) {
+        const prev = stationList[stationList.find(status.dataset.station) -1];
+        console.log(prev);
+    }
 
     fetch(endpoint).then(() => {
         if (endpoint=="/control/favorite") {
