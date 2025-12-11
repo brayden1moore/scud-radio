@@ -363,7 +363,6 @@ def play(name, toggled=False):
 
     if toggled:
         safe_display(saved_image_while_paused)
-        send_mpv_command({"command": ["set_property", "volume", current_volume]})
     else:
         #logging.info(f'attempting to play {name}')
         stream_url = streams[name]['streamLink']
@@ -372,6 +371,7 @@ def play(name, toggled=False):
             first_boot = False
         else:
             send_mpv_command({"command": ["loadfile", stream_url, 'replace']})
+    if not sleeping:
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
     write_to_tmp_os_path(name)
