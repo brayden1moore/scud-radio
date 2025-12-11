@@ -147,6 +147,7 @@ function addStation(name) {
     station.dataset.name = name;
     station.dataset.oneLiner = info[name]['oneLiner'];
     station.id = name;
+    station.title = info[name]['oneLiner'];
     station.addEventListener('click', ()=> {
         handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
     });
