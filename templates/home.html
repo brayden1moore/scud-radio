@@ -76,6 +76,7 @@ function handleCall(endpoint) {
         status.dataset.station = name;
         stationName.textContent = name;
         oneLiner.textContent = info[name]['oneLiner'];
+        status.dataset.station = name;
     }
     else if (endpoint.includes('prev')) {
         const currentIndex = stationList.indexOf(status.dataset.station);
@@ -84,6 +85,7 @@ function handleCall(endpoint) {
         status.dataset.station = prev;
         stationName.textContent = prev;
         oneLiner.textContent = info[prev]['oneLiner'];
+        status.dataset.station = prev;
     }
     else if (endpoint.includes('next')) {
         const currentIndex = stationList.indexOf(status.dataset.station);
@@ -91,6 +93,7 @@ function handleCall(endpoint) {
         const next = stationList[nextIndex];
         stationName.textContent = next;
         oneLiner.textContent = info[next]['oneLiner'];
+        status.dataset.station = next;
     }
 
     fetch(endpoint).then(() => {
