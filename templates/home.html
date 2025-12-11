@@ -61,10 +61,10 @@ const stations = document.getElementById('stations');
 const controls = document.querySelectorAll('.control');
 controls.forEach((control) => { 
     control.addEventListener('mousedown', () => {
-        control.classList.add('touched'); 
+       // control.classList.add('touched'); 
     })
     control.addEventListener('mouseup', () => {
-        control.classList.remove('touched'); 
+        //control.classList.remove('touched'); 
     })
 });
 
@@ -290,7 +290,7 @@ overflow-y: scroll;
 }
 
 .a-station:hover {
-    opacity: 0.8 !important;
+    opacity: 0.7 !important;
 }
 
 .touched {
