@@ -60,11 +60,11 @@ const oneLiner = document.getElementById('one-liner');
 const stations = document.getElementById('stations');
 const controls = document.querySelectorAll('.control');
 controls.forEach((control) => { 
-    control.addEventListener('mouseover', () => {
-        control.classList.add('hovered'); 
+    control.addEventListener('mousedown', () => {
+        control.classList.add('touched'); 
     })
-    control.addEventListener('mouseout', () => {
-        control.classList.remove('hovered'); 
+    control.addEventListener('mouseup', () => {
+        control.classList.remove('touched'); 
     })
 });
 
@@ -105,9 +105,9 @@ function handleCall(endpoint) {
         }
     });
 
-    controls.forEach((control) => {
-        control.classList.remove('hovered');
-    });
+    //controls.forEach((control) => {
+    //    control.classList.remove('hovered');
+    //});
 }
 
 var blips = 0;
@@ -245,7 +245,7 @@ updateStations();
     border: 1px solid black;
 }
 
-.hovered {
+.control:hover {
     background-color: white !important;
 }
 
@@ -291,6 +291,10 @@ overflow-y: scroll;
 
 .a-station:hover {
     opacity: 0.8 !important;
+}
+
+.touched {
+    background-color: #4b4b4b;
 }
 
 body {
