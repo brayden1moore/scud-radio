@@ -107,17 +107,17 @@ def submit():
 if __name__ == '__main__':
     # 1. Check Internet with more patience
     logging.info("Checking for internet connection...")
-    for i in range(12):  # Try for ~60 seconds
+    for i in range(6):  # Try for ~60 seconds
         if internet(timeout=5):
             logging.info("Internet detected!")
             start_radio_service()
         logging.info(f"No internet yet, attempt {i+1}/12")
-        time.sleep(5)  # Wait 5 seconds between checks
+        #time.sleep(5)  # Wait 5 seconds between checks
     
     # 2. If no internet, start Portal Mode
-    logging.info("No internet after 60s. Starting Portal.")
+    logging.info("No internet after 30s. Starting Portal.")
     init_display_for_portal()
-    subprocess.run(['sudo', 'nmcli', 'device', 'wifi', 'hotspot', 'ifname', 'wlan0', 'ssid', 'Scud Radio', 'password', 'scudworks'])
+    subprocess.run(['sudo', 'nmcli', 'device', 'wifi', 'hotspot', 'ifname', 'wlan0', 'ssid', 'One-Radio', 'password', 'scudworks'])
     
     t = threading.Thread(target=check_wifi_loop, daemon=True)
     t.start()
