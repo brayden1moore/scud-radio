@@ -23,13 +23,6 @@ app.secret_key = 'sticky-lemon'
 def start_radio_service():
     """Stops the launcher and starts the main radio service"""
     logging.info("Starting Radio Service...")
-    
-    if disp:
-        try:
-            disp.clear()
-            disp.close() 
-        except:
-            pass
 
     subprocess.run(['sudo', 'systemctl', 'start', 'radio'])
     sys.exit(0)
@@ -94,7 +87,7 @@ def submit():
     try:
         subprocess.run(['sudo', 'nmcli', 'dev', 'wifi', 'connect', ssid, 'password', password],
                        check=True)
-        if internet():
+        if internet(timeout=3):
             display_status('success')
             time.sleep(2)
             start_radio_service()
@@ -107,11 +100,11 @@ def submit():
 if __name__ == '__main__':
     # 1. Check Internet with more patience
     logging.info("Checking for internet connection...")
-    '''for i in range(6):  # Try for ~60 seconds
+    for i in range(6):  # Try for ~60 seconds
         if internet(timeout=5):
             logging.info("Internet detected!")
             start_radio_service()
-        logging.info(f"No internet yet, attempt {i+1}/12")
+        logging.info(f"No internet yet, attempt {i+1}/6")
         #time.sleep(5)  # Wait 5 seconds between checks'''
     
     # 2. If no internet, start Portal Mode
