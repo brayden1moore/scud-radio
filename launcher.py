@@ -99,8 +99,8 @@ def submit():
 # --- MAIN ENTRY POINT ---
 if __name__ == '__main__':
     # 1. Check Internet with more patience
+    '''
     logging.info("Checking for internet connection...")
-    internet_found = False
     for i in range(6):  # Try for ~30 seconds
         if internet(timeout=5):
             logging.info("Internet detected!")
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     # If internet found, start radio and exit
     if internet_found:
         start_radio_service()
-        sys.exit(0)  # Extra safety
+        sys.exit(0)  # Extra safety'''
     
     # 2. If no internet, start Portal Mode
     logging.info("No internet after 30s. Starting Portal.")

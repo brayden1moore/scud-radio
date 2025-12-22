@@ -63,6 +63,7 @@ After=multi-user.target
 User=root
 WorkingDirectory=/home/scud/scud-radio
 ExecStart=/usr/bin/python3 /home/scud/scud-radio/launcher.py
+ExecStartPre=/bin/systemctl stop radio.service
 Restart=on-failure
 RestartSec=3
 
@@ -134,11 +135,11 @@ EOF
 # Reload systemd and enable the service
 sudo systemctl daemon-reload
 sudo systemctl enable splash
-sudo systemctl enable launcher
+sudo systemctl enable radio
 sudo systemctl enable api
 
 # Install dependencies
-sudo pip install -r requirements.txt —break-system-packages
+sudo -H pip install --break-system-packages -r requirements.txt
 
 # Install battery
 wget https://cdn.pisugar.com/release/pisugar-power-manager.sh

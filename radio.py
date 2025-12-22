@@ -1135,12 +1135,9 @@ def periodic_update():
                     failed_fetches += 1
                     logging.error(f"Stream fetch unexpected error: {type(e).__name__}: {e} (attempt {failed_fetches}/3)")
                 
-                if failed_fetches >= 3:
-                    logging.error("Stream fetch failed 3 times.")
-
-                    if screen_on:
-                        print('failed :(')
-                        #subprocess.run(['sudo','systemctl','restart','radio'])
+                if failed_fetches >= 5:
+                    logging.error("Stream fetch failed 5 times.")
+                    subprocess.run(['sudo','systemctl','start','launcher'])
                     #sys.exit(0)
                 
                 time_since_last_update = 0
