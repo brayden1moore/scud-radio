@@ -1007,6 +1007,8 @@ def toggle_favorite():
     stream_list = get_stream_list(streams)
     show_readied = False if not readied_stream else True     
     if not show_readied:
+        if chosen_stream in list(one_cache.keys()):
+            del one_cache[chosen_stream]
         display_one(chosen_stream)   
     else:
         display_everything(0,chosen_stream,update=False, readied=True)
