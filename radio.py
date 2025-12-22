@@ -1005,8 +1005,11 @@ def toggle_favorite():
         disp.ShowImage(img)    
 
     stream_list = get_stream_list(streams)
-    display_one(chosen_stream)
-    show_readied = False if not readied_stream else True        
+    show_readied = False if not readied_stream else True     
+    if not show_readied:
+        display_one(chosen_stream)   
+    else:
+        display_everything(0,chosen_stream,update=False, readied=True)
     thread = threading.Thread(target=refresh_everything_cache, args=(stream_list,), daemon=True)
     thread.start()
 
