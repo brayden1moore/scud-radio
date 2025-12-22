@@ -57,7 +57,6 @@ EOF
 sudo tee /etc/systemd/system/launcher.service > /dev/null <<EOF
 [Unit]
 Description=One-Radio Tuner Launcher
-After=multi-user.target
 
 [Service]
 User=root
@@ -75,7 +74,7 @@ EOF
 sudo tee /etc/systemd/system/radio.service > /dev/null <<EOF
 [Unit]
 Description=One-Radio Tuner
-After=network-online.target
+After=multi-user.target
 Conflicts=splash.service launcher.service
 
 [Service]
