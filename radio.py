@@ -39,15 +39,15 @@ sleeping = False
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
 
-WHITE = (230,230,230)
+WHITE = (255 * 0.9,255 * 0.9,255 * 0.9)
 BLACK = (0,0,0)
-YELLOW = (255,255,0)
-BLUE = (0,187,255)
-GREEN = (0,231,192)
-GREY = (100,100,100)
-ORANGE = (255,128,0)
-PURPLE = (134,97,245)
-RED = (255,71,71)
+YELLOW = (255 * 0.9,255 * 0.9,0) 
+BLUE = (0,187 * 0.9,255 * 0.9)
+GREEN = (0,231 * 0.9,192 * 0.9)
+GREY = (100 * 0.9,100 * 0.9,100 * 0.9)
+ORANGE = (255 * 0.9,128 * 0.9,0)
+PURPLE = (134 * 0.9,97 * 0.9,245 * 0.9)
+RED = (255 * 0.9,71 * 0.9,71 * 0.9)
 
 SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
 MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
