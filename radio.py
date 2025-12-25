@@ -39,15 +39,15 @@ sleeping = False
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
 
-WHITE = (255 * 0.9,255 * 0.9,255 * 0.9)
+WHITE = (255,255,255)
 BLACK = (0,0,0)
-YELLOW = (255 * 0.9,255 * 0.9,0) 
-BLUE = (0,187 * 0.9,255 * 0.9)
-GREEN = (0,231 * 0.9,192 * 0.9)
-GREY = (100 * 0.9,100 * 0.9,100 * 0.9)
-ORANGE = (255 * 0.9,128 * 0.9,0)
-PURPLE = (134 * 0.9,97 * 0.9,245 * 0.9)
-RED = (255 * 0.9,71 * 0.9,71 * 0.9)
+YELLOW = (255,255,0)
+BLUE = (0,187,255)
+GREEN = (0,231,192)
+GREY = (100,100,100)
+ORANGE = (255,128,0)
+PURPLE = (134,97,245)
+RED = (255,71,71)
 
 SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
 MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
@@ -268,6 +268,8 @@ def get_streams():
     for name, _ in active.items():
         full_img_path = Path(LIB_PATH) / f'{name}_logo_176.pkl'
 
+        need_imgs.append(name)
+        '''
         if not full_img_path.exists():
             need_imgs.append(name)
         else:
@@ -283,6 +285,7 @@ def get_streams():
                         image = pickle.load(f).convert('RGB')
                         
                         active[name][f'logo_{i}'] = image
+        '''
 
     with ThreadPoolExecutor(max_workers=8) as exe:
         futures = [
@@ -294,9 +297,6 @@ def get_streams():
             active[name]['logoBytes'] = buf
 
             img = Image.open(buf).convert('RGB')
-
-            enhancer = ImageEnhance.Brightness(img)
-            img = enhancer.enhance(0.9)
 
             # crop images
             logo_96 = img.resize((96,  96)).convert('RGB')#.convert('LA')
@@ -768,6 +768,9 @@ def display_ambient(name, clicked=False):
 
     currently_displaying = 'ambient'
     display_bar(y=218,draw=draw)
+
+    enhancer = ImageEnhance.Brightness(image)
+    image = enhancer.enhance(0.7)
 
     safe_display(image)
 
