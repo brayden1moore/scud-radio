@@ -39,6 +39,8 @@ sleeping = False
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
 
+BRIGHTNESS = 0.7
+
 WHITE = (255,255,255)
 BLACK = (0,0,0)
 YELLOW = (255,255,0)
@@ -132,6 +134,8 @@ def display_scud():
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg = Image.open(f'assets/scud_splash_1.png') 
     image.paste(bg, (0, 0))
+    enhancer = ImageEnhance.Brightness(image)
+    image = enhancer.enhance(BRIGHTNESS)
     disp.ShowImage(image)
 
     global user_tz
@@ -633,6 +637,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             mark_start = tick_locations[name]
             readied_fill = WHITE if name not in favorites else WHITE 
             draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
+            enhancer = ImageEnhance.Brightness(image)
+            image = enhancer.enhance(BRIGHTNESS)
 
         if not silent:  
             disp.ShowImage(image)
@@ -719,7 +725,8 @@ def display_one(name):
 
         currently_displaying = 'one'
         display_bar(y=218, draw=draw)
-
+        enhancer = ImageEnhance.Brightness(image)
+        image = enhancer.enhance(BRIGHTNESS)
         disp.ShowImage(image)
         current_image = image
         has_displayed_once = True
@@ -770,7 +777,7 @@ def display_ambient(name, clicked=False):
     display_bar(y=218,draw=draw)
 
     enhancer = ImageEnhance.Brightness(image)
-    image = enhancer.enhance(0.7)
+    image = enhancer.enhance(BRIGHTNESS)
 
     safe_display(image)
 
