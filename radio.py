@@ -1092,7 +1092,9 @@ def display_readied_cached(name, pushed=False):
 def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict
     while True:
+        
         logging.info('PERIODIC UPDATE OCCURRING')
+        print('cache size', len(cached_everything_dict))
 
         if not charging and screen_on == False and current_volume == 0 and (time.time() - last_input_time > 300):
             pass
@@ -1106,7 +1108,7 @@ def periodic_update():
             backlight_off()
         else:
             time_since_last_success = time.time() - last_successful_fetch
-            should_fetch = (time_since_last_update >= 15) or (time_since_last_success > 30) or len(cached_everything_dict)==0
+            should_fetch = (time_since_last_update >= 30) or (time_since_last_success > 30) or len(cached_everything_dict)==0
             if should_fetch:
                 try:
                     logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
