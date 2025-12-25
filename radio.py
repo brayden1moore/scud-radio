@@ -1,5 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from PIL import Image, ImageDraw, ImageFont, ImageSequence, ImageOps
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance, ImageSequence, ImageOps
 from datetime import date, datetime, timezone, timedelta
 from subprocess import Popen, run
 from pathlib import Path
@@ -265,6 +265,8 @@ def get_streams():
     need_imgs = []
     for name, _ in active.items():
         full_img_path = Path(LIB_PATH) / f'{name}_logo_176.pkl'
+        need_imgs.append(name)
+        '''
         if not full_img_path.exists():
             need_imgs.append(name)
         else:
@@ -280,6 +282,7 @@ def get_streams():
                         image = pickle.load(f).convert('RGB')
                         
                         active[name][f'logo_{i}'] = image
+        '''
 
     with ThreadPoolExecutor(max_workers=8) as exe:
         futures = [
@@ -291,6 +294,10 @@ def get_streams():
             active[name]['logoBytes'] = buf
 
             img = Image.open(buf).convert('RGB')
+
+            img = Image.open("image.jpg")
+            enhancer = ImageEnhance.Brightness(img)
+            img = enhancer.enhance(0.5)
 
             # crop images
             logo_96 = img.resize((96,  96)).convert('RGB')#.convert('LA')
