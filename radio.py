@@ -1123,6 +1123,7 @@ def periodic_update():
                                 streams[name].update(v)
                                 updated_count += 1                              
                     
+                    print('Updated',updated_streams)
                     refresh_everything_cache(updated_streams)
                     logging.info(f"Successfully updated {updated_count} streams")
                     streams = fetched_streams
