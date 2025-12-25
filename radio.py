@@ -296,7 +296,7 @@ def get_streams():
             img = Image.open(buf).convert('RGB')
 
             enhancer = ImageEnhance.Brightness(img)
-            img = enhancer.enhance(0.5)
+            img = enhancer.enhance(0.8)
 
             # crop images
             logo_96 = img.resize((96,  96)).convert('RGB')#.convert('LA')
