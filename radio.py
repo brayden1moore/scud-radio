@@ -260,13 +260,14 @@ def get_streams():
     # clean text
     for name, _ in active.items():
         active[name]['oneLiner'] = html.unescape(active[name]['oneLiner'])
+        if active[name]['status'] == 'Offline':
+            active[name]['oneLiner'] = 'Offline'
     
     # see if cached image exists. if so, read into dict. if not, add to queue.
     need_imgs = []
     for name, _ in active.items():
         full_img_path = Path(LIB_PATH) / f'{name}_logo_176.pkl'
-        need_imgs.append(name)
-        '''
+
         if not full_img_path.exists():
             need_imgs.append(name)
         else:
@@ -282,7 +283,6 @@ def get_streams():
                         image = pickle.load(f).convert('RGB')
                         
                         active[name][f'logo_{i}'] = image
-        '''
 
     with ThreadPoolExecutor(max_workers=8) as exe:
         futures = [
