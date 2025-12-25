@@ -295,7 +295,6 @@ def get_streams():
 
             img = Image.open(buf).convert('RGB')
 
-            img = Image.open("image.jpg")
             enhancer = ImageEnhance.Brightness(img)
             img = enhancer.enhance(0.5)
 
