@@ -97,11 +97,11 @@ def submit():
         return redirect(url_for('index', message="Connection failed. Try again."))
 
 # --- MAIN ENTRY POINT ---
+internet_found = False
 if __name__ == '__main__':
     # 1. Check Internet with more patience
-    
     logging.info("Checking for internet connection...")
-    for i in range(6):  # Try for ~30 seconds
+    for i in range(3):  # Try for ~15 seconds
         if internet(timeout=5):
             logging.info("Internet detected!")
             internet_found = True
@@ -115,7 +115,7 @@ if __name__ == '__main__':
         sys.exit(0)  # Extra safety'''
     
     # 2. If no internet, start Portal Mode
-    logging.info("No internet after 30s. Starting Portal.")
+    logging.info("No internet after 15s. Starting Portal.")
     init_display_for_portal()
     subprocess.run(['sudo', 'nmcli', 'device', 'wifi', 'hotspot', 'ifname', 'wlan0', 'ssid', 'One-Radio', 'password', 'scudworks'])
     
