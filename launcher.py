@@ -23,7 +23,7 @@ app.secret_key = 'sticky-lemon'
 def start_radio_service():
     """Stops the launcher and starts the main radio service"""
     logging.info("Starting Radio Service...")
-
+    subprocess.run(['sudo', 'iptables', '-t', 'nat', '-A', 'PREROUTING', '-p', 'tcp', '--dport', '80', '-j', 'REDIRECT', '--to-ports', '7777'])
     subprocess.run(['sudo', 'systemctl', 'start', 'radio'])
     sys.exit(0)
 
@@ -85,6 +85,7 @@ def submit():
     password = request.form.get('password')
     
     try:
+        subprocess.run(['sudo', 'iptables', '-t', 'nat', '-A', 'PREROUTING', '-p', 'tcp', '--dport', '80', '-j', 'REDIRECT', '--to-ports', '8888'])
         subprocess.run(['sudo', 'nmcli', 'dev', 'wifi', 'connect', ssid, 'password', password],
                        check=True)
         if internet(timeout=3):

@@ -136,6 +136,7 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl enable splash
 sudo systemctl enable radio
+sudo systemctl enable launcher
 sudo systemctl enable api
 
 # Install dependencies
@@ -145,6 +146,9 @@ sudo -H pip install --break-system-packages -r requirements.txt
 wget https://cdn.pisugar.com/release/pisugar-power-manager.sh
 bash pisugar-power-manager.sh -c release
 sudo apt install netcat-traditional
+
+# Networking
+sudo apt install iptables -y
 
 # Other settings
 sudo systemctl stop cups
