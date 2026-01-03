@@ -135,7 +135,6 @@ EOF
 # Reload systemd and enable the service
 sudo systemctl daemon-reload
 sudo systemctl enable splash
-sudo systemctl enable radio
 sudo systemctl enable launcher
 sudo systemctl enable api
 
