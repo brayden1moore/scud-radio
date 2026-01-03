@@ -57,6 +57,7 @@ EOF
 sudo tee /etc/systemd/system/launcher.service > /dev/null <<EOF
 [Unit]
 Description=One-Radio Tuner Launcher
+After=local-fs.target
 
 [Service]
 User=root
