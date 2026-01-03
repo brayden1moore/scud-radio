@@ -99,7 +99,7 @@ def submit():
 # --- MAIN ENTRY POINT ---
 if __name__ == '__main__':
     # 1. Check Internet with more patience
-    '''
+    
     logging.info("Checking for internet connection...")
     for i in range(6):  # Try for ~30 seconds
         if internet(timeout=5):
