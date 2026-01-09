@@ -143,7 +143,7 @@ if __name__ == '__main__':
     subprocess.run(['sudo', 'nmcli', 'connection', 'modify', 'One-Radio', 'wlan0', 'ssid', 'One-Radio', 'wifi-sec.key-mgmt', 'none'])
     subprocess.run(['sudo', 'nmcli', 'connection', 'up', 'One-Radio'])
     
-    t = threading.Thread(target=check_wifi_loop, daemon=True)
-    t.start()
+    #t = threading.Thread(target=check_wifi_loop, daemon=True)
+    #t.start()
     
     app.run(host='0.0.0.0', port=8888, use_reloader=False)
