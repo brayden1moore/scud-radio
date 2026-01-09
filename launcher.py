@@ -117,10 +117,12 @@ if __name__ == '__main__':
     status = subprocess.run(["nmcli", "dev", "status"],
                                 stdout=subprocess.PIPE, text=True)
     statuses = status.stdout.strip().split('\n')
-    for i in statuses:
-        if 'wlan0' in i:
+    for i in statuses: # for each line in the stdout
+        if 'wlan0' in i: # if the line has wlan0
             wlan_status = i.split(' ')
-            logging.info(wlan_status)
+            if wlan_status[0] == 'wlan0': # if the line IS wlan0
+                if 'connected' in wlan_status: # if status is connected
+                    logging.info('Wifi is connected')
 
     logging.info("Checking for internet connection...")
     for i in range(3):  # Try for ~15 seconds
