@@ -291,7 +291,7 @@ def get_streams():
             name, logo_dict = f.result()
             
             # save images to lib
-            for key, val in fetch_logos.items():
+            for key, val in logo_dict.items():
                 active[name][f'logo_{key}'] = val
                 entire_path = Path(LIB_PATH) / f'{name.replace(' ','_')}_{key}.pkl'
 
