@@ -246,7 +246,7 @@ def fetch_logos(name):
     for i in ['25','60','96','176']:
         resp = requests.get(f'https://internetradioprotocol.org/logos/{name.replace(' ','_')}_{i}.pkl', timeout=5)
         resp.raise_for_status()
-        logos[i] = resp.content
+        logos[i] = Image.open(BytesIO(resp.content))
     return name, logos
 
 def get_streams():
@@ -290,14 +290,15 @@ def get_streams():
             name, logo_dict = f.result()
             
             # save images to lib
-            for i in ['96','60','25','176']:
-                active[name][f'logo_{i}'] =  Image.open(BytesIO(logo_dict[i])).convert('RGB')
-                entire_path = Path(LIB_PATH) / f'{name}_{i}.pkl'
+            for key, val in fetch_logos.items():
+                active[name][f'logo_{key}'] = val
+                entire_path = Path(LIB_PATH) / f'{name}_{key}.pkl'
+                
                 if not entire_path.exists():
                     entire_path.touch() 
 
                 with open(entire_path, 'wb') as f:
-                    pickle.dump(active[name][f'logo_{i}'], f)
+                    pickle.dump(val, f)
 
     return active
 
