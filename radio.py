@@ -246,7 +246,8 @@ def fetch_logos(name):
     for i in ['25','60','96','176']:
         resp = requests.get(f'https://internetradioprotocol.org/logos/{name.replace(' ','_')}_{i}.pkl', timeout=5, stream=True)
         resp.raise_for_status()
-        logos[i] = Image.open(pickle.load(BytesIO(resp.content)))
+        data = pickle.load(BytesIO(resp.content))
+        logos[i] = Image.open(data)
     return name, logos
 
 def get_streams():
