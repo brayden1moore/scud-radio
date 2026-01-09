@@ -46,18 +46,10 @@ def display_status(status_type):
     image.paste(bg, (0, 0))
     disp.ShowImage(image)
 
-def internet(host="8.8.8.8", port=53, timeout=3):
-    try:
-        socket.setdefaulttimeout(timeout)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        return True
-    except socket.error:
-        return False
-
 def check_wifi_loop():
     while True:
         time.sleep(5)
-        if internet():
+        if currently_connected():
             display_status('success')
             time.sleep(2)
             start_radio_service()
@@ -75,6 +67,10 @@ def scan_wifi():
         logging.error(f"Scan failed: {e}")
     return options
 
+def connect_to_wifi(ssid, password):
+    subprocess.run(['sudo', 'nmcli', 'dev', 'wifi', 'connect', ssid, 'password', password],
+            check=True)
+
 @app.route('/')
 def index():
     return render_template('index.html', wifi_networks=scan_wifi(), message="")
@@ -86,9 +82,8 @@ def submit():
     
     try:
         subprocess.run(['sudo', 'iptables', '-t', 'nat', '-A', 'PREROUTING', '-p', 'tcp', '--dport', '80', '-j', 'REDIRECT', '--to-ports', '8888'])
-        subprocess.run(['sudo', 'nmcli', 'dev', 'wifi', 'connect', ssid, 'password', password],
-                       check=True)
-        if internet(timeout=3):
+        connect_to_wifi(ssid, password)
+        if currently_connected():
             display_status('success')
             time.sleep(2)
             start_radio_service()
@@ -112,8 +107,7 @@ else:
     with open(wifi_file, 'r') as f:
         networks = json.load(f)
 
-if __name__ == '__main__':
-    # 1. Check Internet with more patience
+def currently_connected():
     status = subprocess.run(["nmcli", "dev", "status"],
                                 stdout=subprocess.PIPE, text=True)
     statuses = status.stdout.strip().split('\n')
@@ -123,23 +117,26 @@ if __name__ == '__main__':
             if wlan_status[0] == 'wlan0': # if the line IS wlan0
                 if 'connected' in wlan_status: # if status is connected
                     logging.info('Wifi is connected')
+                    return True
+                else:
+                    return False
 
-    logging.info("Checking for internet connection...")
-    for i in range(3):  # Try for ~15 seconds
-        if internet(timeout=5):
-            logging.info("Internet detected!")
-            internet_found = True
-            break
-        logging.info(f"No internet yet, attempt {i+1}/6")
-        time.sleep(5)  # Wait 5 seconds between checks
-    
+if __name__ == '__main__':
+    # 1. Check Internet with more patience
+    internet_found = currently_connected()
+
     # If internet found, start radio and exit
     if internet_found:
         start_radio_service()
         sys.exit(0)  # Extra safety'''
     
+    # if not, try known networks
+    if (not internet_found) and networks: # try connecting to other known
+        for ssid, password in networks.items():
+            connect_to_wifi(ssid, password)
+
     # 2. If no internet, start Portal Mode
-    logging.info("No internet after 15s. Starting Portal.")
+    logging.info("Starting Portal.")
     init_display_for_portal()
     subprocess.run(['sudo', 'nmcli', 'device', 'wifi', 'hotspot', 'ifname', 'wlan0', 'ssid', 'One-Radio', 'ifname', '$WIFI_INTERFACE', 'ip4-method shared'])
     subprocess.run(['sudo', 'nmcli', 'connection', 'modify', 'One-Radio', 'wlan0', 'ssid', 'One-Radio', 'wifi-sec.key-mgmt', 'none'])
