@@ -41,7 +41,6 @@ Description=One-Radio Tuner Splash
 DefaultDependencies=no
 Before=sysinit.target shutdown.target
 Conflicts=shutdown.target
-After=local-fs.target
 
 [Service]
 Type=simple

@@ -70,6 +70,7 @@ def check_wifi_loop():
 def scan_wifi():
     options = []
     try:
+        subprocess.run(["sudo", "nmcli", "dev", "wifi", "rescan"])
         result = subprocess.run(["nmcli", "--fields", "SSID", "device", "wifi", "list"],
                                 stdout=subprocess.PIPE, text=True)
         for line in result.stdout.strip().split('\n')[1:]:
