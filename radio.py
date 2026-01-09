@@ -244,7 +244,7 @@ def send_mpv_command(cmd, max_retries=10, retry_delay=1):
 def fetch_logos(name):
     logos = {}
     for i in ['25','60','96','176']:
-        resp = requests.get(f'https://internetradioprotocol.org/logos/{name.replace(' ','_')}_{i}.pkl', timeout=5, stream=True)
+        resp = requests.get(f'https://internetradioprotocol.org/logos/{name.replace(' ','_')}_{i}.pkl', timeout=5)
         resp.raise_for_status()
         data = pickle.load(BytesIO(resp.content))
         logos[i] = Image.open(data)
