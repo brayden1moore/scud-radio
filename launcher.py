@@ -119,7 +119,7 @@ if __name__ == '__main__':
     statuses = status.stdout.strip().split('\n')
     for i in statuses:
         if 'wlan0' in i:
-            wlan_status = i.split('\t')
+            wlan_status = i.split(' ')
             logging.info(wlan_status)
 
     logging.info("Checking for internet connection...")
