@@ -150,15 +150,6 @@ def display_scud():
     volume = round((get_last_volume()/150)*100)
     get_battery()
 
-def angled_sine_wave(x):
-    linear = x
-    amplitude = 40 #* np.sin(np.pi * x / 320)
-    wave_frequency = 5
-    sine_component = amplitude * np.sin(2 * np.pi * wave_frequency * x / 320)
-    y = 120 + sine_component
-    return y
-
-
 def get_favorites():
     fav_path = Path(LIB_PATH)
     fav_path.mkdir(parents=True, exist_ok=True)
@@ -250,10 +241,13 @@ def send_mpv_command(cmd, max_retries=10, retry_delay=1):
                 return False
     return False
 
-def fetch_logo(name, url):
-    resp = requests.get(url, timeout=5)
-    resp.raise_for_status()
-    return name, BytesIO(resp.content)
+def fetch_logos(name):
+    logos = {}
+    for i in ['25','60','96','176']:
+        resp = requests.get(f'https://internetradioprotocol.org/{name}_{i}.pkl', timeout=5)
+        resp.raise_for_status()
+        logos[i] = BytesIO(resp.content)
+    return name, logos
 
 def get_streams():
     global streams
@@ -270,7 +264,7 @@ def get_streams():
     # see if cached image exists. if so, read into dict. if not, add to queue.
     need_imgs = []
     for name, _ in active.items():
-        full_img_path = Path(LIB_PATH) / f'{name}_logo_176.pkl'
+        full_img_path = Path(LIB_PATH) / f'{name}_176.pkl'
 
         if not full_img_path.exists():
             need_imgs.append(name)
@@ -283,37 +277,22 @@ def get_streams():
                 need_imgs.append(name)
             else:
                 for i in ['25','60','96','176']:
-                    with open(Path(LIB_PATH) / f'{name}_logo_{i}.pkl', 'rb') as f:
+                    with open(Path(LIB_PATH) / f'{name}_{i}.pkl', 'rb') as f:
                         image = pickle.load(f).convert('RGB')
-                        
                         active[name][f'logo_{i}'] = image
 
     with ThreadPoolExecutor(max_workers=8) as exe:
         futures = [
-            exe.submit(fetch_logo, name, v['logo'])
+            exe.submit(fetch_logos, name)
             for name, v in active.items() if name in need_imgs
         ]
         for f in as_completed(futures):
-            name, buf = f.result()
-            active[name]['logoBytes'] = buf
-
-            img = Image.open(buf).convert('RGB')
-
-            # crop images
-            logo_96 = img.resize((96,  96)).convert('RGB')#.convert('LA')
-            logo_60 = img.resize((60,  60)).convert('RGB')#.convert('LA')
-            logo_25 = img.resize((25,  25)).convert('RGB')#.convert('LA')
-            logo_176 = img.resize((176, 176)).convert('RGB')
-
-            # save images to dict
-            active[name]['logo_96'] = logo_96
-            active[name]['logo_60']  = logo_60
-            active[name]['logo_25'] = logo_25
-            active[name]['logo_176'] = logo_176
-
+            name, logo_dict = f.result()
+            
             # save images to lib
             for i in ['96','60','25','176']:
-                entire_path = Path(LIB_PATH) / f'{name}_logo_{i}.pkl'
+                active[name][f'logo_{i}'] =  Image.open(logo_dict[i]).convert('RGB')
+                entire_path = Path(LIB_PATH) / f'{name}_{i}.pkl'
                 if not entire_path.exists():
                     entire_path.touch() 
 
