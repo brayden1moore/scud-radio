@@ -87,6 +87,7 @@ def connect_to_wifi(ssid, password):
 
 @app.route('/')
 def index():
+    subprocess.run(['sudo', 'iptables', '-t', 'nat', '-A', 'PREROUTING', '-p', 'tcp', '--dport', '80', '-j', 'REDIRECT', '--to-ports', '7777'])
     return render_template('index.html', wifi_networks=scan_wifi(), message="", known_networks=networks)
 
 @app.route('/submit', methods=['POST'])
@@ -95,7 +96,6 @@ def submit():
     password = request.form.get('password')
     
     try:
-        subprocess.run(['sudo', 'iptables', '-t', 'nat', '-A', 'PREROUTING', '-p', 'tcp', '--dport', '80', '-j', 'REDIRECT', '--to-ports', '8888'])
         connect_to_wifi(ssid, password)
         if currently_connected():
             display_status('success')
