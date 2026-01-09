@@ -120,7 +120,7 @@ if __name__ == '__main__':
     for i in statuses:
         if 'wlan0' in i:
             wlan_status = i.split('\t')
-            print(wlan_status)
+            logging.info(wlan_status)
 
     logging.info("Checking for internet connection...")
     for i in range(3):  # Try for ~15 seconds
