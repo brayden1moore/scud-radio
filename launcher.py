@@ -9,6 +9,19 @@ import threading
 import logging
 import os
 
+# get known networks file
+from pathlib import Path
+import json
+LIB_PATH = "/var/lib/scud-radio"
+wifi_path = Path(LIB_PATH)
+wifi_path.mkdir(parents=True, exist_ok=True)
+wifi_file = wifi_path / 'known_networks.json'
+if not wifi_file.exists():
+    networks = {}
+else:
+    with open(wifi_file, 'r') as f:
+        networks = json.load(f)
+
 # --- CONFIGURATION ---
 BASE_DIR = '/home/scud/scud-radio'
 ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
@@ -73,7 +86,7 @@ def connect_to_wifi(ssid, password):
 
 @app.route('/')
 def index():
-    return render_template('index.html', wifi_networks=scan_wifi(), message="")
+    return render_template('index.html', wifi_networks=scan_wifi(), message="", known_networks=networks)
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -95,18 +108,6 @@ def submit():
 # --- MAIN ENTRY POINT ---
 internet_found = False
 
-from pathlib import Path
-import json
-LIB_PATH = "/var/lib/scud-radio"
-wifi_path = Path(LIB_PATH)
-wifi_path.mkdir(parents=True, exist_ok=True)
-wifi_file = wifi_path / 'known_networks.json'
-if not wifi_file.exists():
-    networks = {}
-else:
-    with open(wifi_file, 'r') as f:
-        networks = json.load(f)
-
 def currently_connected():
     status = subprocess.run(["nmcli", "dev", "status"],
                                 stdout=subprocess.PIPE, text=True)
@@ -126,9 +127,9 @@ if __name__ == '__main__':
     internet_found = currently_connected()
 
     # If internet found, start radio and exit
-    if internet_found:
-        start_radio_service()
-        sys.exit(0)  # Extra safety'''
+    #if internet_found:
+    #    start_radio_service()
+    #    sys.exit(0)  # Extra safety'''
     
     # if not, try known networks
     if (not internet_found) and networks: # try connecting to other known
