@@ -33,8 +33,6 @@ disp = None
 app = Flask(__name__, static_folder=ASSETS_DIR, template_folder=os.path.join(BASE_DIR, 'templates'))
 app.secret_key = 'sticky-lemon'
 
-subprocess.run(['sudo', 'iptables', '-t', 'nat', '-A', 'PREROUTING', '-p', 'tcp', '--dport', '80', '-j', 'REDIRECT', '--to-ports', '8888'])
-
 def start_radio_service():
     """Stops the launcher and starts the main radio service"""
     logging.info("Starting Radio Service...")
@@ -126,6 +124,8 @@ def currently_connected():
                     return False
 
 if __name__ == '__main__':
+    subprocess.run(['sudo', 'iptables', '-t', 'nat', '-A', 'PREROUTING', '-p', 'tcp', '--dport', '80', '-j', 'REDIRECT', '--to-ports', '8888'])
+
     # 1. Check Internet with more patience
     internet_found = currently_connected()
 
