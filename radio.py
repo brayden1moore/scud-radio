@@ -246,7 +246,7 @@ def fetch_logos(name):
     for i in ['25','60','96','176']:
         resp = requests.get(f'https://internetradioprotocol.org/logos/{name.replace(' ','_')}_{i}.pkl', timeout=5, stream=True)
         resp.raise_for_status()
-        logos[i] = Image.open(BytesIO(resp.content))
+        logos[i] = Image.open(pickle.load(BytesIO(resp.content)))
     return name, logos
 
 def get_streams():
@@ -264,7 +264,7 @@ def get_streams():
     # see if cached image exists. if so, read into dict. if not, add to queue.
     need_imgs = []
     for name, _ in active.items():
-        full_img_path = Path(LIB_PATH) / f'{name}_176.pkl'
+        full_img_path = Path(LIB_PATH) / f'{name.replace(' ','_')}_176.pkl'
 
         if not full_img_path.exists():
             need_imgs.append(name)
@@ -277,7 +277,7 @@ def get_streams():
                 need_imgs.append(name)
             else:
                 for i in ['25','60','96','176']:
-                    with open(Path(LIB_PATH) / f'{name}_{i}.pkl', 'rb') as f:
+                    with open(Path(LIB_PATH) / f'{name.replace(' ','_')}_{i}.pkl', 'rb') as f:
                         image = pickle.load(f).convert('RGB')
                         active[name][f'logo_{i}'] = image
 
@@ -292,7 +292,7 @@ def get_streams():
             # save images to lib
             for key, val in fetch_logos.items():
                 active[name][f'logo_{key}'] = val
-                entire_path = Path(LIB_PATH) / f'{name}_{key}.pkl'
+                entire_path = Path(LIB_PATH) / f'{name.replace(' ','_')}_{key}.pkl'
 
                 if not entire_path.exists():
                     entire_path.touch() 
