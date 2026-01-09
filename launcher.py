@@ -33,6 +33,8 @@ disp = None
 app = Flask(__name__, static_folder=ASSETS_DIR, template_folder=os.path.join(BASE_DIR, 'templates'))
 app.secret_key = 'sticky-lemon'
 
+subprocess.run(['sudo', 'iptables', '-t', 'nat', '-A', 'PREROUTING', '-p', 'tcp', '--dport', '80', '-j', 'REDIRECT', '--to-ports', '8888'])
+
 def start_radio_service():
     """Stops the launcher and starts the main radio service"""
     logging.info("Starting Radio Service...")
@@ -87,7 +89,6 @@ def connect_to_wifi(ssid, password):
 
 @app.route('/')
 def index():
-    subprocess.run(['sudo', 'iptables', '-t', 'nat', '-A', 'PREROUTING', '-p', 'tcp', '--dport', '80', '-j', 'REDIRECT', '--to-ports', '8888'])
     return render_template('index.html', wifi_networks=scan_wifi(), message="", known_networks=networks)
 
 @app.route('/submit', methods=['POST'])
