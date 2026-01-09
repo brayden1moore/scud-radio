@@ -116,7 +116,11 @@ if __name__ == '__main__':
     # 1. Check Internet with more patience
     status = subprocess.run(["nmcli", "dev", "status"],
                                 stdout=subprocess.PIPE, text=True)
-    logging.info(status.stdout.strip().split('\n')[1])
+    statuses = status.stdout.strip().split('\n')
+    for i in statuses:
+        if 'wlan0' in i:
+            wlan_status = i.split('\t')
+            print(wlan_status)
 
     logging.info("Checking for internet connection...")
     for i in range(3):  # Try for ~15 seconds
