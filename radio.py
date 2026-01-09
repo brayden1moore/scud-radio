@@ -548,12 +548,12 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(next_live, next_position, next_live)
 
         # double prev and next
-        #double_prev_position = (7, logo_chunk_start + 57 - 4)
-        #double_next_position = (286, logo_chunk_start + 57 - 4)
-        double_prev_position = (0 - (60-25), logo_chunk_start + 22 - 4)
-        double_next_position = (286 + 7, logo_chunk_start + 22 - 4)        
-        double_prev = streams[double_prev_stream]['logo_60']
-        double_next = streams[double_next_stream]['logo_60']
+        double_prev_position = (7, logo_chunk_start + 57 - 4)
+        double_next_position = (286, logo_chunk_start + 57 - 4)
+        #double_prev_position = (0 - (60-25), logo_chunk_start + 22 - 4)
+        #double_next_position = (286 + 7, logo_chunk_start + 22 - 4)        
+        double_prev = streams[double_prev_stream]['logo_25']
+        double_next = streams[double_next_stream]['logo_25']
         
         image.paste(double_prev, double_prev_position)
         double_size = 60
@@ -1244,11 +1244,11 @@ favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'),
 
 star_60 = Image.open('assets/star_60.png').convert('RGBA')
 star_96 = Image.open('assets/star_96.png').convert('RGBA')
-star_25 = Image.open('assets/star_60.png').convert('RGBA')
+star_25 = Image.open('assets/star_25.png').convert('RGBA')
 
 live_60 = Image.open('assets/live_60.png').convert('RGBA')
 live_96 = Image.open('assets/live_96.png').convert('RGBA')
-live_25 = Image.open('assets/live_60.png').convert('RGBA')
+live_25 = Image.open('assets/live_25.png').convert('RGBA')
 
 favorites = get_favorites()
 current_volume = get_last_volume()
