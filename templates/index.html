@@ -160,6 +160,7 @@
         </form>
 
         <p id="message">{{message}}</p>
+
     </div>
 </body>
 <script>
@@ -173,5 +174,8 @@
         form.style.display = 'None';
         message.innerHTML = "Keep an eye on your radio.<br>It will let you know if it connects successfully.<br>If it doesn't, this page will refresh."
     })
+
+    const knownNetworks = {{known_networks}};
+    console.log(knownNetworks);
 </script>
 </html>
