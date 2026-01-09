@@ -548,14 +548,16 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(next_live, next_position, next_live)
 
         # double prev and next
-        double_prev_position = (7 - (60-25), logo_chunk_start + 57 - 4)
-        double_next_position = (286, logo_chunk_start + 57 - 4)
-        double_prev_next_rotation = 0
+        #double_prev_position = (7, logo_chunk_start + 57 - 4)
+        #double_next_position = (286, logo_chunk_start + 57 - 4)
+        double_prev_position = (7 - (60-25), logo_chunk_start + 22 - 4)
+        double_next_position = (286, logo_chunk_start + 22 - 4)        
         double_prev = streams[double_prev_stream]['logo_60']
         double_next = streams[double_next_stream]['logo_60']
         
         image.paste(double_prev, double_prev_position)
-        draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + 25, double_prev_position[1] + 25], outline=WHITE, width=1)
+        double_size = 60
+        draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + double_size, double_prev_position[1] + double_size], outline=WHITE, width=1)
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()
             image.paste(double_prev_star, double_prev_position, double_prev_star)
@@ -564,7 +566,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(double_prev_live, double_prev_position, double_prev_live)
 
         image.paste(double_next, double_next_position)
-        draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + 25, double_next_position[1] + 25], outline=WHITE, width=1)
+        draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + double_size, double_next_position[1] + double_size], outline=WHITE, width=1)
         if double_next_stream in favorites:
             double_next_star = star_25.copy()
             image.paste(double_next_star, double_next_position, double_next_star)
