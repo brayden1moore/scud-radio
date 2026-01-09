@@ -99,8 +99,25 @@ def submit():
 
 # --- MAIN ENTRY POINT ---
 internet_found = False
+
+from pathlib import Path
+import json
+LIB_PATH = "/var/lib/scud-radio"
+wifi_path = Path(LIB_PATH)
+wifi_path.mkdir(parents=True, exist_ok=True)
+wifi_file = wifi_path / 'known_networks.json'
+if not wifi_file.exists():
+    networks = {}
+else:
+    with open(wifi_file, 'r') as f:
+        networks = json.load(f)
+
 if __name__ == '__main__':
     # 1. Check Internet with more patience
+    status = subprocess.run(["nmcli", "dev", "status"],
+                                stdout=subprocess.PIPE, text=True)
+    print(status)
+
     logging.info("Checking for internet connection...")
     for i in range(3):  # Try for ~15 seconds
         if internet(timeout=5):
