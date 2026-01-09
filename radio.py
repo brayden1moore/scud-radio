@@ -723,14 +723,14 @@ def display_bar(y, draw):
 
     # bottom bar 218 y for bottom
     if y!=4:
-        draw.rectangle([0, y, 320, y+24], fill=WHITE)
+        draw.rectangle([0, y, 320, y+24], fill=YELLOW)
         draw.rectangle([0, y, 320, y], fill=BLACK)
         center_of_section = round((240 + 218) / 2)
 
     if y==4:
         line_y = y + height("S", MEDIUM_FONT) + 10
-        draw.rectangle([0, line_y, 320, line_y], fill=WHITE)
-        draw.rectangle([0, line_y-24, 320, line_y], fill=WHITE)
+        draw.rectangle([0, line_y, 320, line_y], fill=YELLOW)
+        draw.rectangle([0, line_y-24, 320, line_y], fill=YELLOW)
         center_of_section = round((0 + line_y+4) / 2)
 
     draw.text((13,y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
