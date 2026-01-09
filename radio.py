@@ -246,7 +246,7 @@ def fetch_logos(name):
     for i in ['25','60','96','176']:
         resp = requests.get(f'https://internetradioprotocol.org/{name}_{i}.pkl', timeout=5)
         resp.raise_for_status()
-        logos[i] = BytesIO(resp.content)
+        logos[i] = resp.content
     return name, logos
 
 def get_streams():
@@ -291,7 +291,7 @@ def get_streams():
             
             # save images to lib
             for i in ['96','60','25','176']:
-                active[name][f'logo_{i}'] =  Image.open(logo_dict[i]).convert('RGB')
+                active[name][f'logo_{i}'] =  Image.open(BytesIO(logo_dict[i])).convert('RGB')
                 entire_path = Path(LIB_PATH) / f'{name}_{i}.pkl'
                 if not entire_path.exists():
                     entire_path.touch() 
