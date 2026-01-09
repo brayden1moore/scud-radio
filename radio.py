@@ -244,7 +244,7 @@ def send_mpv_command(cmd, max_retries=10, retry_delay=1):
 def fetch_logos(name):
     logos = {}
     for i in ['25','60','96','176']:
-        resp = requests.get(f'https://internetradioprotocol.org/logos/{name.replace(' ','_')}_{i}.pkl', timeout=5)
+        resp = requests.get(f'https://internetradioprotocol.org/logos/{name.replace(' ','_')}_{i}.pkl', timeout=5, stream=True)
         resp.raise_for_status()
         logos[i] = Image.open(BytesIO(resp.content))
     return name, logos
@@ -293,7 +293,7 @@ def get_streams():
             for key, val in fetch_logos.items():
                 active[name][f'logo_{key}'] = val
                 entire_path = Path(LIB_PATH) / f'{name}_{key}.pkl'
-                
+
                 if not entire_path.exists():
                     entire_path.touch() 
 
