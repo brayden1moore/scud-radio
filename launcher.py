@@ -12,7 +12,7 @@ import os
 # get known networks file
 from pathlib import Path
 import json
-LIB_PATH = "/var/lib/scud-radio"
+LIB_PATH = "/home/scud/scud-radio"
 wifi_path = Path(LIB_PATH)
 wifi_path.mkdir(parents=True, exist_ok=True)
 wifi_file = wifi_path / 'known_networks.json'
