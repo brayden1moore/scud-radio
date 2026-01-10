@@ -206,9 +206,10 @@ updateStations();
 }
 
 #antenna-container-container {
-    display: flex;
-    justify-content: end;
-    width:calc(81px * 4 - 1);
+position: relative;
+display: flex;
+justify-content: end;
+left: -19px !important;
 }
 
 #antenna-top {
@@ -256,13 +257,18 @@ updateStations();
 }
 
 #scud-logo {
-width: calc(81px * 4 - 1);
 padding-top: 20px;
 padding-bottom: 20px;
-/* border: 1px solid black; */
-border-right: 1px solid black;
-border-left: 1px solid black;
-border-top: 1px solid black;
+border-right-width: 5px;
+border-right-style: solid;
+border-right-color: black;
+border-left-width: 5px;
+border-left-style: solid;
+border-left-color: black;
+border-top-width: 5px;
+border-top-style: solid;
+border-top-color: black;
+border-radius: 20px 20px 0px 0px;
 }
 
 #status {
