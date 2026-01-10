@@ -30,7 +30,7 @@ ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
 def setup_redirect(port):
-    for i in range(4):
+    for i in range(10):
         try:
             subprocess.run(['sudo', 'iptables','-t', 'nat','-D', 'PREROUTING', '1'])
         except:
