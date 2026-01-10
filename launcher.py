@@ -135,9 +135,9 @@ if __name__ == '__main__':
     internet_found = currently_connected()
 
     # If internet found, start radio and exit
-    #if internet_found:
-    #    start_radio_service()
-    #    sys.exit(0)  # Extra safety'''
+    if internet_found:
+        start_radio_service()
+        sys.exit(0)  # Extra safety'''
     
     # if not, try known networks
     if (not internet_found) and networks: # try connecting to other known
@@ -151,7 +151,7 @@ if __name__ == '__main__':
     subprocess.run(['sudo', 'nmcli', 'connection', 'modify', 'One-Radio', 'wlan0', 'ssid', 'One-Radio', 'wifi-sec.key-mgmt', 'none'])
     subprocess.run(['sudo', 'nmcli', 'connection', 'up', 'One-Radio'])
     
-    #t = threading.Thread(target=check_wifi_loop, daemon=True)
-    #t.start()
+    t = threading.Thread(target=check_wifi_loop, daemon=True)
+    t.start()
     
     app.run(host='0.0.0.0', port=8888, use_reloader=False)
