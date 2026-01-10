@@ -138,9 +138,9 @@ if __name__ == '__main__':
     internet_found = currently_connected()
 
     # If internet found, start radio and exit
-    if internet_found:
-        start_radio_service()
-        sys.exit(0)  # Extra safety'''
+    #if internet_found:
+    #    start_radio_service()
+    #    sys.exit(0)  # Extra safety'''
     
     # if not, try known networks
     if (not internet_found) and networks: # try connecting to other known
