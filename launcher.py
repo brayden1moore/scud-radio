@@ -31,10 +31,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
 def setup_redirect(port):
     for i in range(10):
-        try:
-            subprocess.run(['sudo', 'iptables','-t', 'nat','-D', 'PREROUTING', '1'])
-        except:
-            pass
+        subprocess.run(['sudo', 'iptables','-t', 'nat','-D', 'PREROUTING', '1'])
     subprocess.run(['sudo', 'iptables', '-t', 'nat', '-A', 'PREROUTING', '-p', 'tcp', '--dport', '80', '-j', 'REDIRECT', '--to-ports', port])
 
 disp = None
