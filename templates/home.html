@@ -209,7 +209,7 @@ updateStations();
 position: relative;
 display: flex;
 justify-content: end;
-left: -19px !important;
+left: -36px !important;
 }
 
 #antenna-top {
@@ -276,14 +276,15 @@ border-radius: 20px 20px 0px 0px;
 }
 
 #stations {
-display: flex;
-flex-wrap: wrap;
-width: calc((81px * 4));
-height: 300px;
-border-left: 1px solid black;
-border-right: none;
-border-bottom: 1px solid black;
-overflow-y: scroll;
+    display: flex;
+    flex-wrap: wrap;
+    width: calc((81px * 4));
+    height: 300px;
+    border-left: 5px solid black;
+    border-right: 5px solid black;
+    border-bottom: 5px solid black;
+    overflow-y: scroll;
+    border-radius: 0px 0px 40px 40px;
 }
 
 .a-station {
@@ -319,16 +320,17 @@ body {
 }
 
 #info-div {
-border-right: 1px solid black;
-border-bottom: none;
-background-color: black;
-color: white;
-/* overflow: scroll; */
-width: calc((81px * 4));
-justify-items: left;
-text-align: left;
-font-size: 16pt;
-transition: 0.2s ease;
+    border-left: 5px solid black;
+    border-right: 5px solid black;
+    border-bottom: none;
+    background-color: black;
+    color: white;
+    /* overflow: scroll; */
+    width: calc((81px * 4));
+    justify-items: left;
+    text-align: left;
+    font-size: 16pt;
+    transition: 0.2s ease;
 }
 
 .icon {
@@ -337,13 +339,13 @@ transition: 0.2s ease;
 }
 
 #controls {
-border: 1px solid black;
-display: flex;
-flex-wrap: wrap;
-width: calc(81px * 4);
-border-right: none;
-border-left: 1px solid black;
-border-bottom: none;
+    border: 1px solid black;
+    display: flex;
+    flex-wrap: wrap;
+    width: calc(81px * 4);
+    border-right: 5px solid black;
+    border-left: 5px solid black;
+    border-bottom: none;
 }
 
 .control {
