@@ -556,7 +556,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         double_next = streams[double_next_stream]['logo_25']
         
         image.paste(double_prev, double_prev_position)
-        double_size = 60
+        double_size = 25
         draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + double_size, double_prev_position[1] + double_size], outline=WHITE, width=1)
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()
