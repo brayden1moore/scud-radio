@@ -904,7 +904,7 @@ def safe_restart():
     run(['sudo', '-u','scud','git', 'pull'], cwd='/home/scud/scud-radio')
     time.sleep(4)  
     backlight_off()
-    run(['sudo','systemctl', 'restart','scud-api'])
+    run(['sudo','systemctl', 'restart','api'])
     run(['sudo','systemctl', 'restart','launcher'])
 
 
@@ -1138,7 +1138,7 @@ def periodic_update():
                 
                 if failed_fetches >= 5:
                     logging.error("Stream fetch failed 5 times.")
-                    subprocess.run(['sudo','systemctl','start','launcher'])
+                    #subprocess.run(['sudo','systemctl','start','launcher'])
                     #sys.exit(0)
                 
                 time_since_last_update = 0
@@ -1384,9 +1384,6 @@ def handle_remote_command(command_data):
 
         elif cmd == 'resume':
             send_mpv_command({"command": ["set_property", "volume", current_volume]})
-
-        elif cmd == 'restart':
-            safe_restart()
 
         elif cmd == 'power':
             on_volume_button_pressed()
