@@ -801,6 +801,7 @@ def display_battery(draw, image):
 
         fill = BLACK if not charging else GREEN
         inner_sq = draw.rectangle([282, 229, 282 + round(15*battery/100), 235], fill=fill) 
+    
 
 def get_wifi_strength():
     global wifi_strength, wifi_ssid
@@ -1018,7 +1019,11 @@ def refresh_everything_cache(streams):
         if name in one_cache.keys():
             del one_cache[name]
         logging.info(f'Refreshing image for {name}')
-        return name, display_everything(0, name=name, readied=True, silent=True)
+        if name in streams.keys():
+            result = display_everything(0, name=name, readied=True, silent=True)
+        else:
+            result = None
+        return name, result 
     
     if len(streams) > 0:
         with ThreadPoolExecutor(max_workers=min(len(streams), 10)) as executor:
