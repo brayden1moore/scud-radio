@@ -1013,22 +1013,22 @@ def toggle_favorite():
     thread = threading.Thread(target=refresh_everything_cache, args=(stream_list,), daemon=True)
     thread.start()
 
-def refresh_everything_cache(stream_list):
+def refresh_everything_cache(refresh_stream_list):
     global cached_everything_dict
     
     def refresh_stream(name):
         if name in one_cache.keys():
             del one_cache[name]
-        logging.info(f'Refreshing image for {name}')
-        if name in streams.keys():
+        if name in refresh_stream_list:
+            logging.info(f'Refreshing image for {name}')
             result = display_everything(0, name=name, readied=True, silent=True)
         else:
             result = None
         return name, result 
     
-    if len(stream_list) > 0:
-        with ThreadPoolExecutor(max_workers=min(len(stream_list), 10)) as executor:
-            future_to_name = {executor.submit(refresh_stream, name): name for name in stream_list}
+    if len(refresh_stream_list) > 0:
+        with ThreadPoolExecutor(max_workers=min(len(refresh_stream_list), 10)) as executor:
+            future_to_name = {executor.submit(refresh_stream, name): name for name in refresh_stream_list}
             
             for future in as_completed(future_to_name):
                 name, result = future.result()
