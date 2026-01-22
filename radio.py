@@ -251,7 +251,6 @@ def fetch_logos(name):
     return name, logos
 
 def get_streams():
-    global streams
 
     info = requests.get('https://internetradioprotocol.org/info').json()
     active = {n: v for n, v in info.items() if v['hidden']!=True}
