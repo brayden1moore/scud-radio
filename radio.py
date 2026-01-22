@@ -455,7 +455,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         now = time.time()
 
         first_display = False
-
+        print('-------')
+        print('TRYING TO DISPLAY')
+        print(name)
         prev_stream = stream_list[stream_list.index(name)-1]
         double_prev_stream = stream_list[stream_list.index(prev_stream)-1]
         try:
