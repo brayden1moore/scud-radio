@@ -252,7 +252,7 @@ def fetch_logos(name):
 
 def get_streams():
 
-    info = requests.get('https://internetradioprotocol.org/info').json()
+    info = requests.get(f'https://internetradioprotocol.org/info?cacheBuster={random.randint(0,10000)}').json()
     active = {n: v for n, v in info.items() if v['hidden']!=True}
     print("'Shared Frequencies' in active.keys()")
     print('Shared Frequencies' in active.keys())
