@@ -1279,6 +1279,9 @@ if last_played in list(streams.keys()):
 else:
     play_random()
 
+print('-----------------------')
+print(stream_list)
+print('-----------------------')
 refresh_everything_cache(stream_list)
 
 
