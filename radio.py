@@ -255,6 +255,8 @@ def get_streams():
 
     info = requests.get('https://internetradioprotocol.org/info').json()
     active = {n: v for n, v in info.items() if v['hidden']!=True}
+    print("'Shared Frequencies' in active.keys()")
+    print('Shared Frequencies' in active.keys())
     
     # clean text
     for name, _ in active.items():
