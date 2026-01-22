@@ -1012,7 +1012,7 @@ def toggle_favorite():
     thread = threading.Thread(target=refresh_everything_cache, args=(stream_list,), daemon=True)
     thread.start()
 
-def refresh_everything_cache(streams):
+def refresh_everything_cache(stream_list):
     global cached_everything_dict
     
     def refresh_stream(name):
@@ -1025,9 +1025,9 @@ def refresh_everything_cache(streams):
             result = None
         return name, result 
     
-    if len(streams) > 0:
-        with ThreadPoolExecutor(max_workers=min(len(streams), 10)) as executor:
-            future_to_name = {executor.submit(refresh_stream, name): name for name in streams}
+    if len(stream_list) > 0:
+        with ThreadPoolExecutor(max_workers=min(len(stream_list), 10)) as executor:
+            future_to_name = {executor.submit(refresh_stream, name): name for name in stream_list}
             
             for future in as_completed(future_to_name):
                 name, result = future.result()
@@ -1278,7 +1278,7 @@ if last_played in list(streams.keys()):
 else:
     play_random()
 
-refresh_everything_cache(streams=stream_list)
+refresh_everything_cache(stream_list)
 
 
 ## remote controls
