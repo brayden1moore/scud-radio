@@ -1282,7 +1282,7 @@ else:
     play_random()
 
 print('-----------------------')
-print(stream_list)
+print(streams)
 print('-----------------------')
 refresh_everything_cache(stream_list)
 
