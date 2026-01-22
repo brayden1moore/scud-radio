@@ -301,7 +301,7 @@ def get_streams():
                 with open(entire_path, 'wb') as f:
                     pickle.dump(val, f)
 
-    print(active)
+    print(active.get('Shared Frequencies'))
     return active
 
 reruns = []
