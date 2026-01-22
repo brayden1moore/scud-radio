@@ -254,8 +254,6 @@ def get_streams():
 
     info = requests.get(f'https://internetradioprotocol.org/info?cacheBuster={random.randint(0,10000)}').json()
     active = {n: v for n, v in info.items() if v['hidden']!=True}
-    print("'Shared Frequencies' in active.keys()")
-    print('Shared Frequencies' in active.keys())
     
     # clean text
     for name, _ in active.items():
@@ -302,14 +300,13 @@ def get_streams():
                 with open(entire_path, 'wb') as f:
                     pickle.dump(val, f)
 
-    print(active.get('Shared Frequencies'))
     return active
 
 reruns = []
-def get_stream_list(streams):
+def get_stream_list(stream_dict):
     global reruns 
-    stream_list = sorted(list(streams.keys()), key=str.casefold)
-    reruns = [i for i in stream_list if streams[i]['status'] == 'Re-Run']
+    stream_list = sorted(list(stream_dict.keys()), key=str.casefold)
+    reruns = [i for i in stream_list if stream_dict[i]['status'] == 'Re-Run']
     
     if favorites:
         #fav_start_idx = round(len(stream_list) / 2) - round(len(favorites) / 2)
@@ -1020,7 +1017,7 @@ def refresh_everything_cache(refresh_stream_list):
     def refresh_stream(name):
         if name in one_cache.keys():
             del one_cache[name]
-        if name in refresh_stream_list:
+        if name in streams.keys():
             logging.info(f'Refreshing image for {name}')
             result = display_everything(0, name=name, readied=True, silent=True)
         else:
