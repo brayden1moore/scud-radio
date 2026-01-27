@@ -12,7 +12,7 @@ disp.clear()
 disp.bl_DutyCycle(100)
 
 image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-bg = Image.open('assets/wifi_splash.png')
+bg = Image.open('assets/scud_splash_1.png')
 image.paste(bg, (0, 0))
 disp.ShowImage(image)
 

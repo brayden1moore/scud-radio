@@ -33,6 +33,10 @@ disp = None
 app = Flask(__name__, static_folder=ASSETS_DIR, template_folder=os.path.join(BASE_DIR, 'templates'))
 app.secret_key = 'sticky-lemon'
 
+disp = LCD_2inch.LCD_2inch()
+disp.Init()
+disp.bl_DutyCycle(100)
+
 def start_radio_service():
     """Stops the launcher and starts the main radio service"""
     logging.info("Starting Radio Service...")
@@ -40,10 +44,6 @@ def start_radio_service():
     sys.exit(0)
 
 def init_display_for_portal():
-    global disp
-    disp = LCD_2inch.LCD_2inch()
-    disp.Init()
-    disp.bl_DutyCycle(100)
     
     image = Image.new('RGB', (320, 240))
     bg = Image.open(os.path.join(ASSETS_DIR, 'hello.png')) 
@@ -107,6 +107,14 @@ def submit():
 # --- MAIN ENTRY POINT ---
 internet_found = False
 
+def display_splash():
+    SCREEN_WIDTH = 320
+    SCREEN_HEIGHT = 240
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    bg = Image.open('assets/wifi_splash.png')
+    image.paste(bg, (0, 0))
+    disp.ShowImage(image)
+
 def currently_connected():
     status = subprocess.run(["nmcli", "dev", "status"],
                                 stdout=subprocess.PIPE, text=True)
@@ -122,6 +130,8 @@ def currently_connected():
                     return False
 
 if __name__ == '__main__':
+    display_splash()
+    
     logging.info("Starting laumcher.")
     start_time = time.time()
 
