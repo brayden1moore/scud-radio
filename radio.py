@@ -1013,6 +1013,15 @@ def toggle_favorite():
 def refresh_everything_cache(refresh_stream_list):
     global cached_everything_dict
     
+    if stream:
+        ordered_refresh_list = []
+        stream_idx = stream_list.index(stream)
+        forwards = stream_list[stream_idx:]
+        backwards = stream_list[:stream_idx].reverse()
+
+        print('FORWARDS', forwards)
+        print('BACKWARDS', backwards)
+            
     def refresh_stream(name):
         if name in one_cache.keys():
             del one_cache[name]
