@@ -92,7 +92,7 @@ def get_battery():
         if 'battery' not in lines[0]:
             lines = lines[1:]
 
-        #logging.info(lines)
+        logging.info(lines)
         
         charging_line = lines[0].strip().split(': ')[1] 
         charging = charging_line == 'true'
@@ -1040,7 +1040,7 @@ def toggle_favorite():
             disp.ShowImage(img)    
 
         if action == 'unfavorite':
-                readied_stream = stream_list[prior_idx]
+            readied_stream = stream_list[prior_idx]
 
         thread.start()
         time.sleep(0.5)
