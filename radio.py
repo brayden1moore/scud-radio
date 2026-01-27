@@ -250,7 +250,7 @@ def fetch_logos(name):
 
 def get_streams():
 
-    info = requests.get(f'https://internetradioprotocol.org/info?cacheBuster={random.randint(0,10000)}').json()
+    info = requests.get(f'https://internetradioprotocol.org/info?cacheBuster={random.randint(0,10000)}', timeout=10).json()
     active = {n: v for n, v in info.items() if v['hidden']!=True}
     
     # clean text

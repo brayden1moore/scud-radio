@@ -69,6 +69,7 @@ WorkingDirectory=/home/scud/scud-radio
 ExecStart=/usr/bin/python3 /home/scud/scud-radio/launcher.py
 ExecStartPre=/bin/systemctl stop radio.service
 ExecStartPre=/bin/systemctl stop splash.service
+ExecStartPre=/bin/systemctl stop api.service
 Restart=no
 
 [Install]
@@ -79,7 +80,8 @@ EOF
 sudo tee /etc/systemd/system/radio.service > /dev/null <<EOF
 [Unit]
 Description=One-Radio Tuner
-After=multi-user.target
+After=network-online.target
+Wants=network-online.target
 Conflicts=splash.service launcher.service
 
 [Service]
@@ -87,7 +89,6 @@ Type=simple
 User=root
 WorkingDirectory=/home/scud/scud-radio
 ExecStart=/usr/bin/python3 /home/scud/scud-radio/radio.py
-
 ExecStartPre=/bin/systemctl start api.service
 ExecStartPre=/bin/systemctl stop shutdown.service
 ExecStartPre=/bin/systemctl stop launcher.service
@@ -141,7 +142,6 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl enable splash
 sudo systemctl enable launcher
-sudo systemctl enable api
 
 # Install dependencies
 sudo -H  pip install gunicorn eventlet --break-system-packages
