@@ -445,6 +445,48 @@ logo_chunk_start_x = 12 + start_x
 og_logo_position = (111, logo_chunk_start - 14 - 4)
 logo_position = og_logo_position
 
+tick_width = 1
+padding = 12 + 6
+total_span = SCREEN_WIDTH - (2 * padding)
+tick_start = padding  
+tick_bar_height = 25
+tick_bar_start = logo_chunk_start + 94
+tick_height = 3
+tick_start_y = (tick_bar_start + tick_bar_height / 2) - 2
+
+tick_image = None
+tick_locations = {}
+def calculate_ticks():
+    global tick_locations, tick_image
+
+    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    draw = ImageDraw.Draw(image) 
+
+    tick_locations = {}
+    total_ticks = len(stream_list)
+    mark_width = round(total_span / (total_ticks))
+
+    square_start = padding - 5
+    square_end = padding + mark_width * len(favorites) - 1
+    if favorites:
+        tick_color = BLACK
+        draw.rectangle([square_start, tick_bar_start + 4, square_end, tick_bar_start - 4 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
+        for i in sorted(favorites, key=str.casefold):
+            draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
+            tick_locations[i] = tick_start
+            tick_start += mark_width
+            square_end += mark_width
+        tick_start += 5
+
+    tick_color = WHITE
+    for i in [i for i in stream_list if i not in favorites]:
+        draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
+        tick_locations[i] = tick_start
+        tick_start += mark_width
+    
+    tick_image = image
+
+
 def display_everything(direction, name, update=False, readied=False, pushed=False, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
@@ -570,51 +612,17 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             double_next_live = live_25.copy()
             image.paste(double_next_live, double_next_position, double_next_live)
 
-        # draw mark
-        if readied:
-            tick_locations = {}
+        # draw marks
+        image.paste(tick_image, (0,0))
 
-            tick_width = 1
-            padding = 12 + 6
-            total_ticks = len(stream_list)
-            total_span = SCREEN_WIDTH - (2 * padding)
-            mark_width = round(total_span / (total_ticks))
-            tick_start = padding  
-            tick_bar_height = 25
-            tick_bar_start = logo_chunk_start + 94
-            tick_height = 3
-            tick_start_y = (tick_bar_start + tick_bar_height / 2) - 2
-
-            square_start = padding - 5
-            square_end = padding + mark_width * len(favorites) - 1
-            if favorites:
-                tick_color = BLACK
-                draw.rectangle([square_start, tick_bar_start + 4, square_end, tick_bar_start - 4 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
-                for i in sorted(favorites, key=str.casefold):
-                    draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
-                    tick_locations[i] = tick_start
-                    tick_start += mark_width
-                    square_end += mark_width
-                tick_start += 5
-
-            tick_color = WHITE
-            for i in [i for i in stream_list if i not in favorites]:
-                draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
-                tick_locations[i] = tick_start
-                tick_start += mark_width
-
-            # marker
-            first_tick_start = padding
-            bar_width = 2
-            mark_start = tick_locations[stream]
-            #current_fill = BLUE if stream not in favorites else BLUE
-            #current_station_highlight = [mark_start, tick_bar_start + 2, mark_start + bar_width, tick_bar_start + 2 + tick_bar_height - 4]
-            #draw.rectangle(current_station_highlight, fill=current_fill, outline=BLACK, width=1)
-            mark_start = tick_locations[name]
-            readied_fill = WHITE if name not in favorites else WHITE 
-            draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
-            enhancer = ImageEnhance.Brightness(image)
-            image = enhancer.enhance(BRIGHTNESS)
+        # marker
+        bar_width = 2
+        mark_start = tick_locations[stream]
+        mark_start = tick_locations[name]
+        readied_fill = WHITE if name not in favorites else WHITE 
+        draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
+        enhancer = ImageEnhance.Brightness(image)
+        image = enhancer.enhance(BRIGHTNESS)
 
         if not silent:  
             disp.ShowImage(image)
@@ -975,10 +983,15 @@ def toggle_favorite():
     now = time.time()
 
     chosen_stream = stream if not readied_stream else readied_stream
+
     img = current_image.copy().convert('RGBA')
     
     if chosen_stream in favorites:
         favorites = [i for i in favorites if i != chosen_stream]
+        stream_list = get_stream_list(streams)
+        thread = threading.Thread(target=refresh_everything_cache, args=(stream_list,), daemon=True)
+        thread.start()
+
         for i in list(reversed(favorite_images)):
             img.paste(i, (0, 0), i)
             disp.ShowImage(img)  
@@ -990,7 +1003,12 @@ def toggle_favorite():
     else:
         favorites.append(chosen_stream)
         favorites = list(set(favorites))
+        stream_list = get_stream_list(streams)
+        thread = threading.Thread(target=refresh_everything_cache, args=(stream_list,), daemon=True)
+        thread.start()
+
         set_favorites(favorites)
+
         img.paste(unfavorite, (0, 0), unfavorite)
         disp.ShowImage(img)
         for i in favorite_images:
@@ -999,7 +1017,6 @@ def toggle_favorite():
         time.sleep(0.2)
         disp.ShowImage(img)    
 
-    stream_list = get_stream_list(streams)
     show_readied = False if not readied_stream else True     
     if not show_readied:
         if chosen_stream in list(one_cache.keys()):
@@ -1007,8 +1024,6 @@ def toggle_favorite():
         display_one(chosen_stream)   
     else:
         display_everything(0,chosen_stream,update=False, readied=True)
-    thread = threading.Thread(target=refresh_everything_cache, args=(stream_list,), daemon=True)
-    thread.start()
 
 def refresh_everything_cache(refresh_stream_list):
     global cached_everything_dict
@@ -1041,6 +1056,7 @@ def refresh_everything_cache(refresh_stream_list):
         return name, result 
     
     if len(refresh_stream_list) > 0:
+        calculate_ticks()
         with ThreadPoolExecutor(max_workers=min(len(refresh_stream_list), 10)) as executor:
             future_to_name = {executor.submit(refresh_stream, name): name for name in refresh_stream_list}
             
