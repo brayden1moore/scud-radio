@@ -462,7 +462,7 @@ def calculate_ticks():
     draw = ImageDraw.Draw(image) 
     tick_locations = {}
 
-    draw.rectangle([0, tick_start_y-4, SCREEN_WIDTH, tick_start_y+tick_bar_height], fill=BLACK)
+    draw.rectangle([0, tick_start_y-6, SCREEN_WIDTH, tick_start_y+tick_bar_height], fill=BLACK)
     
     total_ticks = len(stream_list)
     mark_width = round(total_span / (total_ticks))
