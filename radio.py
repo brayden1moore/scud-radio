@@ -1013,10 +1013,11 @@ def toggle_favorite():
                         new_idx-2,
                         new_idx+1,
                         new_idx+2]
-        streams_needing_refresh = []
+        streams_needing_refresh = [chosen_stream]
         for i in indexes_needing_refresh:
             streams_needing_refresh.append(stream_list[i % len(stream_list)])
-
+        streams_needing_refresh = list(set(streams_needing_refresh))
+        
         print('TOGGLED. REFRESHING, ', streams_needing_refresh)
         thread = threading.Thread(target=refresh_everything_cache, args=(streams_needing_refresh,), daemon=True)
         thread.start()
