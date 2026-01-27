@@ -985,7 +985,7 @@ def on_volume_button_pressed():
 
 
 def toggle_favorite():
-    global favorites, stream_list, cached_everything_dict, last_input_time
+    global favorites, stream_list, cached_everything_dict, last_input_time, readied_stream
 
     chosen_stream = stream if not readied_stream else readied_stream
     if chosen_stream in stream_list:
@@ -1052,7 +1052,8 @@ def toggle_favorite():
         if readied_stream:
             calculate_ticks()
             if action == 'unfavorite':
-                display_everything(0, stream_list[prior_idx], update=False, readied=True)
+                readied_stream = stream_list[prior_idx]
+                display_everything(0, readied_stream, update=False, readied=True)
             else:
                 display_everything(0, chosen_stream, update=False, readied=True) 
         else:
