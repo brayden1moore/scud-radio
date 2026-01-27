@@ -990,8 +990,11 @@ def toggle_favorite():
     chosen_stream = stream if not readied_stream else readied_stream
     if chosen_stream in stream_list:
         prior_idx = stream_list.index(chosen_stream)
-        img = current_image.copy().convert('RGBA')
-        
+        if readied_stream:
+            img = cached_everything_dict[chosen_stream].copy().convert('RGBA')
+        else:
+            img = one_cache[chosen_stream].copy().convert('RGBA')
+
         action = None
         if chosen_stream in favorites:
             action = 'unfavorite'
@@ -1048,13 +1051,12 @@ def toggle_favorite():
             time.sleep(0.2)
             #disp.ShowImage(img)    
 
-        show_readied = False if not readied_stream else True     
-        if not show_readied:
+        if readied_stream:
             if chosen_stream in list(one_cache.keys()):
                 del one_cache[chosen_stream]
             display_one(chosen_stream)   
         else:
-            display_everything(0,chosen_stream,update=False, readied=True)
+            display_everything(0, chosen_stream, update=False, readied=True)
 
 def refresh_everything_cache(refresh_stream_list):
     global cached_everything_dict
