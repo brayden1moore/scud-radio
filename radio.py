@@ -1069,10 +1069,11 @@ def refresh_everything_cache(refresh_stream_list):
         print('BACKWARDS', backwards)        
         curr_idx = 0
         while len(ordered_refresh_list) < len(refresh_stream_list):
-            if forwards[curr_idx] in refresh_stream_list:
-                ordered_refresh_list.append(forwards[curr_idx])
-            if backwards[curr_idx] in refresh_stream_list:
-                ordered_refresh_list.append(backwards[curr_idx])
+            if forwards[curr_idx % len(forwards)] in refresh_stream_list:
+                ordered_refresh_list.append(forwards[curr_idx % len(forwards)])
+            if backwards[curr_idx % len(backwards)] in refresh_stream_list:
+                ordered_refresh_list.append(backwards[curr_idx  % len(backwards)])
+
             curr_idx += 1
             
         print('ORDERED', ordered_refresh_list)
