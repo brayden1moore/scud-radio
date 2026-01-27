@@ -462,7 +462,7 @@ def calculate_ticks():
     draw = ImageDraw.Draw(image) 
     tick_locations = {}
 
-    draw.rectangle([0, tick_start_y-1, SCREEN_WIDTH, tick_start_y+tick_bar_height+2], fill=BLACK)
+    draw.rectangle([0, tick_start_y, SCREEN_WIDTH, tick_start_y+tick_bar_height], fill=BLACK)
     
     total_ticks = len(stream_list)
     mark_width = round(total_span / (total_ticks))
@@ -1019,7 +1019,7 @@ def toggle_favorite():
                         new_idx+1,
                         new_idx+2,
                         new_idx+3]
-        streams_needing_refresh = [chosen_stream]
+        streams_needing_refresh = [favorites] + [chosen_stream]
         for i in indexes_needing_refresh:
             streams_needing_refresh.append(stream_list[i % len(stream_list)])
         streams_needing_refresh = list(set(streams_needing_refresh))
@@ -1029,24 +1029,24 @@ def toggle_favorite():
         thread.start()
 
         if action == 'unfavorite':
-            for i in list(reversed(favorite_images)):
-                img.paste(i, (0, 0), i)
-                disp.ShowImage(img)  
-                img = current_image.convert('RGBA')
+            #for i in [list(reversed(favorite_images))[0]]:
+            #    img.paste(i, (0, 0), i)
+            #    disp.ShowImage(img)  
+            #    img = current_image.convert('RGBA')
 
             img.paste(unfavorite, (0, 0), unfavorite)
             disp.ShowImage(img)
             time.sleep(0.2)
         else:
 
-            img.paste(unfavorite, (0, 0), unfavorite)
+            img.paste(favorite_images[0], (0, 0), favorite_images[0])
             disp.ShowImage(img)
-            for i in favorite_images:
-                img.paste(i, (0, 0), i)
-                disp.ShowImage(img)    
+            #for i in favorite_images:
+            #    img.paste(i, (0, 0), i)
+            #    disp.ShowImage(img)    
 
             time.sleep(0.2)
-            disp.ShowImage(img)    
+            #disp.ShowImage(img)    
 
         show_readied = False if not readied_stream else True     
         if not show_readied:
