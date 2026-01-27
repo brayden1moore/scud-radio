@@ -29,11 +29,6 @@ ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
-def setup_redirect(port):
-    for i in range(10):
-        subprocess.run(['sudo', 'iptables','-t', 'nat','-D', 'PREROUTING', '1'])
-    subprocess.run(['sudo', 'iptables', '-t', 'nat', '-A', 'PREROUTING', '-p', 'tcp', '--dport', '80', '-j', 'REDIRECT', '--to-ports', port])
-
 disp = None
 app = Flask(__name__, static_folder=ASSETS_DIR, template_folder=os.path.join(BASE_DIR, 'templates'))
 app.secret_key = 'sticky-lemon'
@@ -41,7 +36,6 @@ app.secret_key = 'sticky-lemon'
 def start_radio_service():
     """Stops the launcher and starts the main radio service"""
     logging.info("Starting Radio Service...")
-    setup_redirect("7777")
     subprocess.run(['sudo', 'systemctl', 'start', 'radio'])
     sys.exit(0)
 
@@ -92,7 +86,6 @@ def connect_to_wifi(ssid, password):
 
 @app.route('/')
 def index():
-    setup_redirect("8888")
     return render_template('index.html', wifi_networks=scan_wifi(), message="", known_networks=networks)
 
 @app.route('/submit', methods=['POST'])

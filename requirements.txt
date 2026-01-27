@@ -6,3 +6,4 @@ pytz
 spidev
 gunicorn
 numpy==2.2.2
+eventlet

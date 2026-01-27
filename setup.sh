@@ -123,8 +123,8 @@ Description=One-Radio Tuner API
 After=network.target 
 
 [Service] 
-#ExecStart=/usr/bin/python3 /home/scud/scud-radio/api.py 
-ExecStart=/usr/bin/python3 -m gunicorn --worker-class eventlet --workers 2 --timeout 0 --bind 127.0.0.1:7777 api:app
+ExecStart=/usr/bin/python3 /home/scud/scud-radio/api.py 
+#ExecStart=/usr/bin/python3 -m gunicorn --worker-class eventlet --workers 1 --timeout 0 --bind 127.0.0.1:7777 api:app
 WorkingDirectory=/home/scud/scud-radio 
 User=root 
 Restart=always 
@@ -140,6 +140,7 @@ sudo systemctl enable launcher
 sudo systemctl enable api
 
 # Install dependencies
+sudo -H  pip install gunicorn eventlet --break-system-packages
 sudo -H pip install --break-system-packages -r requirements.txt
 
 # Install battery
@@ -159,3 +160,4 @@ sudo systemctl disable cloud-init-main.service
 sudo systemctl disable NetworkManager-wait-online.service
 sudo systemctl disable apt-daily.service apt-daily-upgrade.service apt-daily.timer apt-daily-upgrade.timer
 echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8888
