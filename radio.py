@@ -1017,7 +1017,7 @@ def refresh_everything_cache(refresh_stream_list):
         ordered_refresh_list = []
         stream_idx = stream_list.index(stream)
         forwards = stream_list[stream_idx:]
-        backwards = stream_list[stream_idx+1:].reverse()
+        backwards = list(reversed(stream_list[stream_idx+1:]))
 
         print('FORWARDS', forwards)
         print('BACKWARDS', backwards)
