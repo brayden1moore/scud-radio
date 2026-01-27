@@ -122,9 +122,13 @@ def currently_connected():
                     return False
 
 if __name__ == '__main__':
+    logging.info("Starting laumcher.")
+    start_time = time.time()
 
     # 1. Check Internet with more patience
     internet_found = currently_connected()
+
+    logging.info(f'Ran currently_connected in {time.time() - start_time} seconds')
 
     # If internet found, start radio and exit
     if internet_found:

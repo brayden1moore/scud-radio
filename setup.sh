@@ -38,17 +38,18 @@ amixer -D pulse sset Master 100%
 # Create the splash service file
 sudo tee /etc/systemd/system/splash.service > /dev/null <<EOF
 [Unit]
-Description=One-Radio Tuner Splash
+Description=One-Radio Tuner Splash Screen
 DefaultDependencies=no
-After=local-fs.target
-Before=sysinit.target shutdown.target
+After=systemd-udevd.service
+Before=basic.target shutdown.target
 Conflicts=shutdown.target
 
 [Service]
-Type=simple
+Type=idle
 User=root
 WorkingDirectory=/home/scud/scud-radio
-ExecStart=/usr/bin/python3 /home/scud/scud-radio/splash.py
+ExecStart=/usr/bin/python3 -u /home/scud/scud-radio/splash.py
+Restart=no
 
 [Install]
 WantedBy=sysinit.target
