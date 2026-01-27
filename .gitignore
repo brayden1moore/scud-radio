@@ -1,1 +1,4 @@
 ios
+*_old.py
+known_networks.json
+.DS_Store
