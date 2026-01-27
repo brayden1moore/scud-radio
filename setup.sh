@@ -157,6 +157,8 @@ sudo apt install iptables -y
 
 # Other settings
 sudo systemctl stop cups
+sudo apt install comitup -y
+sudo systemctl enable comitup
 sudo systemctl disable man-db.service
 sudo systemctl disable e2scrub_reap.service
 sudo systemctl disable ModemManager.service
@@ -165,3 +167,40 @@ sudo systemctl disable NetworkManager-wait-online.service
 sudo systemctl disable apt-daily.service apt-daily-upgrade.service apt-daily.timer apt-daily-upgrade.timer
 echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8888
+
+# Battery config
+sudo rm -f /etc/pisugar-server/config.json
+sudo tee /etc/pisugar-server/config.json > /dev/null <<EOF
+{
+  "auth_user": "scud",
+  "auth_password": "scud",
+  "session_timeout": 3600,
+  "i2c_bus": 1,
+  "i2c_addr": null,
+  "auto_wake_time": null,
+  "auto_wake_repeat": 0,
+  "single_tap_enable": false,
+  "single_tap_shell": "",
+  "double_tap_enable": false,
+  "double_tap_shell": "",
+  "long_tap_enable": false,
+  "long_tap_shell": "",
+  "auto_shutdown_level": null,
+  "auto_shutdown_delay": null,
+  "auto_charging_range": null,
+  "full_charge_duration": null,
+  "auto_power_on": true,
+  "soft_poweroff": true,
+  "soft_poweroff_shell": "sudo systemctl start shutdown",
+  "auto_rtc_sync": null,
+  "adj_comm": null,
+  "adj_diff": null,
+  "rtc_adj_ppm": null,
+  "anti_mistouch": true,
+  "bat_protect": null,
+  "battery_curve": null
+}
+EOF
+
+# Restart PiSugar service to apply changes
+sudo systemctl restart pisugar-server
