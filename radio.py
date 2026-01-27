@@ -492,6 +492,11 @@ def calculate_ticks():
     
     tick_image = image
 
+def draw_tick(draw, name):
+    bar_width = 2
+    mark_start = tick_locations[name]
+    readied_fill = WHITE if name not in favorites else WHITE 
+    draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
 
 def display_everything(direction, name, update=False, readied=False, pushed=False, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
@@ -620,13 +625,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw marks
         image.paste(tick_image, (0,0), mask=tick_image)
-
-        # marker
-        bar_width = 2
-        mark_start = tick_locations[stream]
-        mark_start = tick_locations[name]
-        readied_fill = WHITE if name not in favorites else WHITE 
-        draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
+        draw_tick(draw, name)
+        
         enhancer = ImageEnhance.Brightness(image)
         image = enhancer.enhance(BRIGHTNESS)
 
@@ -1137,6 +1137,8 @@ def display_readied_cached(name, pushed=False):
     if name in list(cached_everything_dict.keys()):
         image = cached_everything_dict[name]
         image.paste(tick_image, (0,0), mask=tick_image)
+        draw = ImageDraw.Draw(image)
+        draw_tick(draw, name)
         
         if image:
             if pushed:
