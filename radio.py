@@ -1102,7 +1102,7 @@ def display_readied_cached(name, pushed=False):
             cached_everything_dict[name] = display_everything(0, name, readied=True)
 
 def periodic_update():
-    global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict
+    global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict, sleeping
     while True:
         
         logging.info('PERIODIC UPDATE OCCURRING')
@@ -1116,6 +1116,7 @@ def periodic_update():
             display_ambient(stream)
 
         if screen_on and (time.time() - last_input_time > 600):
+            sleeping = True
             screen_on = False
             backlight_off()
         else:
