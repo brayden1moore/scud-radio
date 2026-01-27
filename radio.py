@@ -1018,9 +1018,17 @@ def refresh_everything_cache(refresh_stream_list):
         stream_idx = stream_list.index(stream)
         forwards = stream_list[stream_idx:]
         backwards = list(reversed(stream_list[stream_idx+1:]))
+        curr_idx = 0
+        while len(ordered_refresh_list) < refresh_stream_list:
+            if forwards[curr_idx] in refresh_stream_list:
+                ordered_refresh_list.append(forwards[curr_idx])
+            if backwards[curr_idx] in refresh_stream_list:
+                ordered_refresh_list.append(backwards[curr_idx])
+            curr_idx += 1
 
         print('FORWARDS', forwards)
         print('BACKWARDS', backwards)
+        print('ORDERED', ordered_refresh_list)
             
     def refresh_stream(name):
         if name in one_cache.keys():
