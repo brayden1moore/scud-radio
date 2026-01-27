@@ -502,35 +502,23 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
     if readied and not restarting:
-    #if not restarting:
-        now = time.time()
 
         first_display = False
-        prev_stream = stream_list[stream_list.index(name)-1]
-        double_prev_stream = stream_list[stream_list.index(prev_stream)-1]
-        try:
-            next_stream = stream_list[stream_list.index(name)+1]
-            double_next_stream = stream_list[stream_list.index(next_stream)+1]
-        except:
-            try: # just wrap around the double next
-                next_stream = stream_list[stream_list.index(name)+1]
-                double_next_stream = stream_list[0]
-            except: # wrap around both
-                next_stream = stream_list[0]
-                double_next_stream = stream_list[1]
+        len_stream_list = len(stream_list)
+        prev_stream = stream_list[(stream_list.index(name) - 1) % len_stream_list]
+        double_prev_stream = stream_list[(stream_list.index(prev_stream) - 1) % len_stream_list]
+        next_stream = stream_list[(stream_list.index(name) + 1) % len_stream_list]
+        double_next_stream = stream_list[(stream_list.index(next_stream) + 1) % len_stream_list]
 
         image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
         draw = ImageDraw.Draw(image) 
         
         currently_displaying = 'everything'
-        if not readied:
-            display_bar(y=4, draw=draw)
 
         location = streams[name]['location']
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 315, 1)
 
         # draw name and underline
-
         name_chunk_start = 240 - 80
         name_chunk_start_x = 12 + start_x
         name_line = calculate_text(name, LARGE_FONT_THIN, 315, 1)
@@ -558,7 +546,6 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
                 draw.rectangle([genre_start + genre_x_offset, name_chunk_start + 54, genre_start + genre_x_offset + genre_width, name_chunk_start + 55 + height('S', MEDIUM_FONT)], fill=GREEN) # bg
                 draw.text((genre_start + genre_x_offset, name_chunk_start + 52), genre, font=MEDIUM_FONT, fill=BLACK)
                 genre_x_offset += genre_width + 5
-
 
         # logos
         logo = streams[name]['logo_96']
@@ -1071,7 +1058,7 @@ def refresh_everything_cache(refresh_stream_list):
         ordered_refresh_list = []
         stream_idx = stream_list.index(origin_stream)
         forwards = stream_list[stream_idx:]
-        backwards = list(reversed(stream_list[stream_idx+1:]))
+        backwards = list(reversed(stream_list[stream_idx:]))
         
         print('FORWARDS', forwards)
         print('BACKWARDS', backwards)        
