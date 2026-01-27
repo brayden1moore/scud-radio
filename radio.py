@@ -1050,11 +1050,11 @@ def toggle_favorite():
             disp.ShowImage(img)    
 
         if readied_stream:
+            display_everything(0, chosen_stream, update=False, readied=True) 
+        else:
             if chosen_stream in list(one_cache.keys()):
                 del one_cache[chosen_stream]
-            display_one(chosen_stream)   
-        else:
-            display_everything(0, chosen_stream, update=False, readied=True)
+            display_one(chosen_stream)  
 
         thread.start()
         last_input_time = time.time()
