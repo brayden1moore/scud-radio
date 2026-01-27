@@ -122,7 +122,6 @@ def currently_connected():
                     return False
 
 if __name__ == '__main__':
-    subprocess.run(['sudo', 'iptables', '-t', 'nat', '-A', 'PREROUTING', '-p', 'tcp', '--dport', '80', '-j', 'REDIRECT', '--to-ports', '8888'])
 
     # 1. Check Internet with more patience
     internet_found = currently_connected()
