@@ -112,18 +112,45 @@ def display_splash():
     disp.ShowImage(image)
 
 def currently_connected():
+    """Check if WiFi is connected AND has internet access"""
+    
+    # First check WiFi status
     status = subprocess.run(["nmcli", "dev", "status"],
-                                stdout=subprocess.PIPE, text=True)
+                           stdout=subprocess.PIPE, text=True)
     statuses = status.stdout.strip().split('\n')
-    for i in statuses: # for each line in the stdout
-        if 'wlan0' in i: # if the line has wlan0
-            wlan_status = i.split(' ')
-            if wlan_status[0] == 'wlan0': # if the line IS wlan0
-                if 'connected' in wlan_status: # if status is connected
-                    logging.info('Wifi is connected')
-                    return True
-                else:
-                    return False
+    wifi_connected = False
+    
+    for i in statuses:
+        if 'wlan0' in i:
+            wlan_status = i.split()
+            if len(wlan_status) > 0 and wlan_status[0] == 'wlan0':
+                if 'connected' in wlan_status:
+                    wifi_connected = True
+                    break
+    
+    if not wifi_connected:
+        logging.info('WiFi not connected')
+        return False
+    
+    # WiFi connected - now verify internet connectivity
+    try:
+        result = subprocess.run(
+            ["nmcli", "networking", "connectivity", "check"],
+            stdout=subprocess.PIPE,
+            text=True,
+            timeout=5
+        )
+        connectivity = result.stdout.strip()
+        
+        if connectivity == 'full':
+            logging.info('WiFi connected with full internet access')
+            return True
+        else:
+            logging.info(f'WiFi connected but connectivity is: {connectivity}')
+            return False
+    except Exception as e:
+        logging.error(f'Connectivity check failed: {e}')
+        return False
 
 def connect_to_wifi(ssid, password):
     result = subprocess.run(['sudo', 'nmcli', 'dev', 'wifi', 'connect', ssid, 'password', password],
@@ -134,25 +161,32 @@ if __name__ == '__main__':
     display_splash()
     logging.info("Starting launcher.")
 
-    # 1. Check if already connected
-    internet_found = currently_connected()
-
-    # If internet found, start radio and exit
-    if internet_found:
-        logging.info("Already connected, starting radio service")
-        start_radio_service()
-        sys.exit(0)
+    # 1. Check if already connected (with retries for network to stabilize)
+    max_checks = 6  # 6 checks * 2 seconds = 12 seconds max wait
+    for attempt in range(max_checks):
+        internet_found = currently_connected()
+        if internet_found:
+            logging.info(f"Connected after {attempt * 2}s, starting radio service")
+            start_radio_service()
+            sys.exit(0)
+        if attempt < max_checks - 1:
+            logging.info(f"No connection yet, waiting... (attempt {attempt + 1}/{max_checks})")
+            time.sleep(2)
+    
+    logging.info("No existing connection found after checks")
     
     # 2. Try known networks
     if networks:
         for ssid, password in networks.items():
             logging.info(f"Trying known network: {ssid}")
             if connect_to_wifi(ssid, password):
-                time.sleep(3)  # Brief wait for connection to establish
-                if currently_connected():
-                    logging.info(f"Connected to {ssid}, starting radio service")
-                    start_radio_service()
-                    sys.exit(0)
+                # Wait for connection to fully establish
+                for attempt in range(5):
+                    time.sleep(2)
+                    if currently_connected():
+                        logging.info(f"Connected to {ssid}, starting radio service")
+                        start_radio_service()
+                        sys.exit(0)
             logging.info(f"Failed to connect to {ssid}")
 
     # 3. No internet, start Portal Mode - this runs forever
