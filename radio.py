@@ -1017,7 +1017,7 @@ def toggle_favorite():
         for i in indexes_needing_refresh:
             streams_needing_refresh.append(stream_list[i % len(stream_list)])
 
-        logging.info('TOGGLED. REFRESHING, ', streams_needing_refresh)
+        print('TOGGLED. REFRESHING, ', streams_needing_refresh)
         thread = threading.Thread(target=refresh_everything_cache, args=(streams_needing_refresh,), daemon=True)
         thread.start()
 
