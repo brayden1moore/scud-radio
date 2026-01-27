@@ -5,3 +5,4 @@ numpy==2.2.2
 gpiozero
 pytz
 spidev
+gunicorn

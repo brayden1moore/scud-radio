@@ -123,7 +123,8 @@ Description=One-Radio Tuner API
 After=network.target 
 
 [Service] 
-ExecStart=/usr/bin/python3 /home/scud/scud-radio/api.py 
+#ExecStart=/usr/bin/python3 /home/scud/scud-radio/api.py 
+ExecStart=/usr/bin/python3 -m gunicorn --worker-class eventlet --workers 2 --timeout 0 --bind 127.0.0.1:7777 api:app
 WorkingDirectory=/home/scud/scud-radio 
 User=root 
 Restart=always 
