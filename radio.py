@@ -1049,8 +1049,6 @@ def toggle_favorite():
             time.sleep(0.2)
             disp.ShowImage(img)    
 
-        thread.start()
-
         if readied_stream:
             if chosen_stream in list(one_cache.keys()):
                 del one_cache[chosen_stream]
@@ -1058,6 +1056,7 @@ def toggle_favorite():
         else:
             display_everything(0, chosen_stream, update=False, readied=True)
 
+        thread.start()
         last_input_time = time.time()
 
 def refresh_everything_cache(refresh_stream_list):
