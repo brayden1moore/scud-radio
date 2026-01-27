@@ -1040,7 +1040,6 @@ def toggle_favorite():
         time.sleep(0.5)
 
         if readied_stream:
-            calculate_ticks()
             if action == 'unfavorite':
                 readied_stream = stream_list[prior_idx]
                 display_everything(0, readied_stream, update=False, readied=True)
