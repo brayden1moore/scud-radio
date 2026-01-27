@@ -1038,6 +1038,7 @@ def toggle_favorite():
 
         thread.start()
         time.sleep(0.5)
+        last_input_time = time.time()
 
         if readied_stream:
             if action == 'unfavorite':
@@ -1050,7 +1051,7 @@ def toggle_favorite():
                 del one_cache[chosen_stream]
             display_one(chosen_stream)  
 
-        last_input_time = time.time()
+    
 
 def refresh_everything_cache(refresh_stream_list):
     global cached_everything_dict
@@ -1550,7 +1551,7 @@ try:
                 #subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
             time_since_battery_check = 0
 
-        if (readied_stream or volume_overlay_showing) and last_rotation and ((time.time() - last_rotation > 5) or (time.time() - last_input_time > 5)) and restarting == False and held == False:
+        if (readied_stream or volume_overlay_showing) and last_rotation and ((time.time() - last_rotation > 5) or (time.time() - last_input_time > 8)) and restarting == False and held == False:
             readied_stream = None
             volume_overlay_showing = False
             if screen_on and stream and not screen_dim:
