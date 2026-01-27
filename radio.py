@@ -1066,10 +1066,10 @@ def toggle_favorite():
 
 def refresh_everything_cache(refresh_stream_list):
     global cached_everything_dict
-    
-    if stream:
+    origin_stream = readied_stream if readied_stream else stream
+    if origin_stream:
         ordered_refresh_list = []
-        stream_idx = stream_list.index(stream)
+        stream_idx = stream_list.index(origin_stream)
         forwards = stream_list[stream_idx:]
         backwards = list(reversed(stream_list[stream_idx+1:]))
         
