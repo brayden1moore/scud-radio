@@ -617,7 +617,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(double_next_live, double_next_position, double_next_live)
 
         # draw marks
-        image.paste(tick_image, (0,0))
+        image.paste(tick_image, (0,0), mask=tick_image)
 
         # marker
         bar_width = 2
