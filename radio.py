@@ -1050,7 +1050,11 @@ def toggle_favorite():
             disp.ShowImage(img)    
 
         if readied_stream:
-            display_everything(0, chosen_stream, update=False, readied=True) 
+            calculate_ticks()
+            if action == 'unfavorite':
+                display_everything(0, stream_list[prior_idx], update=False, readied=True)
+            else:
+                display_everything(0, chosen_stream, update=False, readied=True) 
         else:
             if chosen_stream in list(one_cache.keys()):
                 del one_cache[chosen_stream]
