@@ -458,31 +458,35 @@ tick_image = None
 tick_locations = {}
 def calculate_ticks():
     global tick_locations, tick_image
-
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
     draw = ImageDraw.Draw(image) 
-
     tick_locations = {}
+    
     total_ticks = len(stream_list)
     mark_width = round(total_span / (total_ticks))
-
+    
+    tick_start_local = tick_start 
+    
     square_start = padding - 5
     square_end = padding + mark_width * len(favorites) - 1
+    
     if favorites:
         tick_color = BLACK
         draw.rectangle([square_start, tick_bar_start + 4, square_end, tick_bar_start - 4 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
+        
         for i in sorted(favorites, key=str.casefold):
-            draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
-            tick_locations[i] = tick_start
-            tick_start += mark_width
-            square_end += mark_width
-        tick_start += 5
-
+            draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height+2], fill=tick_color)
+            tick_locations[i] = tick_start_local
+            tick_start_local += mark_width
+        
+        square_end += mark_width
+        tick_start_local += 5
+    
     tick_color = WHITE
     for i in [i for i in stream_list if i not in favorites]:
-        draw.rectangle([tick_start, tick_start_y - 2, tick_start + tick_width, tick_start_y + tick_height+2], fill=tick_color)
-        tick_locations[i] = tick_start
-        tick_start += mark_width
+        draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height+2], fill=tick_color)
+        tick_locations[i] = tick_start_local
+        tick_start_local += mark_width
     
     tick_image = image
 
