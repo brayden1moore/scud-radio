@@ -829,24 +829,25 @@ def toggle_stream(name):
         else:
             play(name, toggled=True)
 
+freeze_for_task = False
 def seek_stream(direction):
     global readied_stream 
 
-    idx = stream_list.index(stream)
-    
-    if (readied_stream == None):
-        readied_stream = stream
-    else:
-        idx = stream_list.index(readied_stream if readied_stream else stream)
-        if (direction == 1) and (idx==len(stream_list)-1):
-            readied_stream = stream_list[0]
-        elif (direction == -1) and (idx==0):
-            readied_stream = stream_list[-1]
+    if not freeze_for_task:
+        idx = stream_list.index(stream)
+        
+        if (readied_stream == None):
+            readied_stream = stream
         else:
-            readied_stream = stream_list[idx + direction]
+            idx = stream_list.index(readied_stream if readied_stream else stream)
+            if (direction == 1) and (idx==len(stream_list)-1):
+                readied_stream = stream_list[0]
+            elif (direction == -1) and (idx==0):
+                readied_stream = stream_list[-1]
+            else:
+                readied_stream = stream_list[idx + direction]
 
-    display_readied_cached(readied_stream)
-    #display_everything(direction, readied_stream, readied=True)
+        display_readied_cached(readied_stream)
 
 def confirm_seek():
     global readied_stream, stream
@@ -972,7 +973,9 @@ def on_volume_button_pressed():
 
 
 def toggle_favorite():
-    global favorites, stream_list, cached_everything_dict, last_input_time, readied_stream
+    global favorites, stream_list, cached_everything_dict, last_input_time, readied_stream, freeze_for_task
+
+    freeze_for_task = True
 
     chosen_stream = stream if not readied_stream else readied_stream
     if chosen_stream in stream_list:
@@ -1049,6 +1052,8 @@ def toggle_favorite():
             if chosen_stream in list(one_cache.keys()):
                 del one_cache[chosen_stream]
             display_one(chosen_stream)  
+
+        freeze_for_task = False
 
     
 
