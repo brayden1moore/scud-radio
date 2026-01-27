@@ -1025,7 +1025,7 @@ def toggle_favorite():
 
             img.paste(unfavorite, (0, 0), unfavorite)
             disp.ShowImage(img)
-            time.sleep(0.3)
+            time.sleep(0.1)
         else:
 
             img.paste(favorite_images[0], (0, 0), favorite_images[0])
@@ -1033,8 +1033,11 @@ def toggle_favorite():
             for i in favorite_images:
                 img.paste(i, (0, 0), i)
                 disp.ShowImage(img)    
-            time.sleep(0.3)
+            time.sleep(0.1)
             disp.ShowImage(img)    
+
+        thread.start()
+        time.sleep(0.5)
 
         if readied_stream:
             calculate_ticks()
@@ -1048,7 +1051,6 @@ def toggle_favorite():
                 del one_cache[chosen_stream]
             display_one(chosen_stream)  
 
-        thread.start()
         last_input_time = time.time()
 
 def refresh_everything_cache(refresh_stream_list):
