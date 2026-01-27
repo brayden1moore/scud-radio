@@ -1038,7 +1038,7 @@ def toggle_favorite():
 
             img.paste(unfavorite, (0, 0), unfavorite)
             disp.ShowImage(img)
-            time.sleep(0.2)
+            time.sleep(0.3)
         else:
 
             img.paste(favorite_images[0], (0, 0), favorite_images[0])
@@ -1046,7 +1046,7 @@ def toggle_favorite():
             for i in favorite_images:
                 img.paste(i, (0, 0), i)
                 disp.ShowImage(img)    
-            time.sleep(0.2)
+            time.sleep(0.3)
             disp.ShowImage(img)    
 
         if readied_stream:
