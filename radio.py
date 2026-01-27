@@ -1126,6 +1126,8 @@ def display_readied_cached(name, pushed=False):
     currently_displaying = 'everything'
     if name in list(cached_everything_dict.keys()):
         image = cached_everything_dict[name]
+        image.paste(tick_image, (0,0), mask=tick_image)
+        
         if image:
             if pushed:
                 image = image.copy()
