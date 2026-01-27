@@ -1029,13 +1029,12 @@ def toggle_favorite():
 
         print('TOGGLED. REFRESHING, ', streams_needing_refresh)
         thread = threading.Thread(target=refresh_everything_cache, args=(streams_needing_refresh,), daemon=True)
-        thread.start()
 
         if action == 'unfavorite':
-            #for i in [list(reversed(favorite_images))[0]]:
-            #    img.paste(i, (0, 0), i)
-            #    disp.ShowImage(img)  
-            #    img = current_image.convert('RGBA')
+            for i in [list(reversed(favorite_images))[0]]:
+                img.paste(i, (0, 0), i)
+                disp.ShowImage(img)  
+                img = current_image.convert('RGBA')
 
             img.paste(unfavorite, (0, 0), unfavorite)
             disp.ShowImage(img)
@@ -1044,12 +1043,13 @@ def toggle_favorite():
 
             img.paste(favorite_images[0], (0, 0), favorite_images[0])
             disp.ShowImage(img)
-            #for i in favorite_images:
-            #    img.paste(i, (0, 0), i)
-            #    disp.ShowImage(img)    
-
+            for i in favorite_images:
+                img.paste(i, (0, 0), i)
+                disp.ShowImage(img)    
             time.sleep(0.2)
-            #disp.ShowImage(img)    
+            disp.ShowImage(img)    
+
+        thread.start()
 
         if readied_stream:
             if chosen_stream in list(one_cache.keys()):
