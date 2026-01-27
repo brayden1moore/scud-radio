@@ -461,6 +461,8 @@ def calculate_ticks():
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0,0,0,0))
     draw = ImageDraw.Draw(image) 
     tick_locations = {}
+
+    draw.rectangle([0, tick_start_y-1, SCREEN_WIDTH, tick_bar_height+2], fill=BLACK)
     
     total_ticks = len(stream_list)
     mark_width = round(total_span / (total_ticks))
