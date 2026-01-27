@@ -1083,10 +1083,10 @@ def refresh_everything_cache(refresh_stream_list):
             result = None
         return name, result 
     
-    if len(refresh_stream_list) > 0:
+    if len(ordered_refresh_list) > 0:
         calculate_ticks()
-        with ThreadPoolExecutor(max_workers=min(len(refresh_stream_list), 10)) as executor:
-            future_to_name = {executor.submit(refresh_stream, name): name for name in refresh_stream_list}
+        with ThreadPoolExecutor(max_workers=min(len(ordered_refresh_list), 10)) as executor:
+            future_to_name = {executor.submit(refresh_stream, name): name for name in ordered_refresh_list}
             
             for future in as_completed(future_to_name):
                 name, result = future.result()
