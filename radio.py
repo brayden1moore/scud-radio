@@ -953,7 +953,8 @@ def on_button_released():
             button_press_times = [] 
             safe_restart()
             return    
-        
+
+'''
 def on_volume_button_pressed():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping
     held = False
@@ -969,6 +970,10 @@ def on_volume_button_pressed():
         backlight_on()
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
         sleeping = False
+'''       
+
+def on_volume_button_pressed():
+    subprocess.run(['sudo', 'systemctl', 'suspend'])
 
 def toggle_favorite():
     global favorites, stream_list, cached_everything_dict

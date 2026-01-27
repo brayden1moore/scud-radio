@@ -28,6 +28,7 @@ otg_mode=1
 dtoverlay=dwc2,dr_mode=host
 
 [all]
+dtoverlay=gpio-shutdown,gpio_pin=17,active_low=1,gpio_pull=up
 EOF
 
 
