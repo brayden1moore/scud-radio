@@ -1247,7 +1247,6 @@ saved_image_while_paused = None
 play_status = 'pause'
 last_input_time = time.time()
 first_display = True
-current_volume = 60
 volume_step = 10
 button_press_time = 0
 rotated = False
@@ -1260,6 +1259,8 @@ has_displayed_once = False
 volume_overlay_showing = False
 
 user_tz = pytz.timezone(get_timezone_from_ip())
+
+current_volume = get_last_volume()
 
 mpv_process = Popen([
     "mpv",
@@ -1293,7 +1294,6 @@ live_96 = Image.open('assets/live_96.png').convert('RGBA')
 live_25 = Image.open('assets/live_25.png').convert('RGBA')
 
 favorites = get_favorites()
-current_volume = get_last_volume()
 
 button_released_time = time.time()
 currently_displaying = 'everything'
