@@ -458,7 +458,7 @@ tick_image = None
 tick_locations = {}
 def calculate_ticks():
     global tick_locations, tick_image
-    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0,0,0,0))
     draw = ImageDraw.Draw(image) 
     tick_locations = {}
     
