@@ -40,6 +40,7 @@ sudo tee /etc/systemd/system/splash.service > /dev/null <<EOF
 [Unit]
 Description=One-Radio Tuner Splash
 DefaultDependencies=no
+After=local-fs.target
 Before=sysinit.target shutdown.target
 Conflicts=shutdown.target
 
@@ -57,7 +58,9 @@ EOF
 sudo tee /etc/systemd/system/launcher.service > /dev/null <<EOF
 [Unit]
 Description=One-Radio Tuner Launcher
-After=local-fs.target
+After=NetworkManager.service
+Wants=NetworkManager.service
+Before=network-online.target
 
 [Service]
 User=root
