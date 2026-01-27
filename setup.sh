@@ -68,8 +68,8 @@ User=root
 WorkingDirectory=/home/scud/scud-radio
 ExecStart=/usr/bin/python3 /home/scud/scud-radio/launcher.py
 ExecStartPre=/bin/systemctl stop radio.service
-Restart=on-failure
-RestartSec=3
+ExecStartPre=/bin/systemctl stop splash.service
+Restart=no
 
 [Install]
 WantedBy=multi-user.target

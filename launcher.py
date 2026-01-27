@@ -80,10 +80,6 @@ def scan_wifi():
         logging.error(f"Scan failed: {e}")
     return options
 
-def connect_to_wifi(ssid, password):
-    subprocess.run(['sudo', 'nmcli', 'dev', 'wifi', 'connect', ssid, 'password', password],
-            check=True)
-
 @app.route('/')
 def index():
     return render_template('index.html', wifi_networks=scan_wifi(), message="", known_networks=networks)
@@ -129,33 +125,40 @@ def currently_connected():
                 else:
                     return False
 
+def connect_to_wifi(ssid, password):
+    result = subprocess.run(['sudo', 'nmcli', 'dev', 'wifi', 'connect', ssid, 'password', password],
+                           capture_output=True, text=True)
+    return result.returncode == 0
+
 if __name__ == '__main__':
     display_splash()
-    
-    logging.info("Starting laumcher.")
-    start_time = time.time()
+    logging.info("Starting launcher.")
 
-    # 1. Check Internet with more patience
+    # 1. Check if already connected
     internet_found = currently_connected()
-
-    logging.info(f'Ran currently_connected in {time.time() - start_time} seconds')
 
     # If internet found, start radio and exit
     if internet_found:
+        logging.info("Already connected, starting radio service")
         start_radio_service()
-        sys.exit(0)  # Extra safety'''
+        sys.exit(0)
     
-    # if not, try known networks
-    if (not internet_found) and networks: # try connecting to other known
+    # 2. Try known networks
+    if networks:
         for ssid, password in networks.items():
-            connect_to_wifi(ssid, password)
+            logging.info(f"Trying known network: {ssid}")
+            if connect_to_wifi(ssid, password):
+                time.sleep(3)  # Brief wait for connection to establish
+                if currently_connected():
+                    logging.info(f"Connected to {ssid}, starting radio service")
+                    start_radio_service()
+                    sys.exit(0)
+            logging.info(f"Failed to connect to {ssid}")
 
-    # 2. If no internet, start Portal Mode
-    logging.info("Starting Portal.")
+    # 3. No internet, start Portal Mode - this runs forever
+    logging.info("No connection available. Starting Portal Mode.")
     init_display_for_portal()
-    subprocess.run(['sudo', 'nmcli', 'device', 'wifi', 'hotspot', 'ifname', 'wlan0', 'ssid', 'One-Radio', 'ifname', '$WIFI_INTERFACE', 'ip4-method shared'])
-    subprocess.run(['sudo', 'nmcli', 'connection', 'modify', 'One-Radio', 'wlan0', 'ssid', 'One-Radio', 'wifi-sec.key-mgmt', 'none'])
-    subprocess.run(['sudo', 'nmcli', 'connection', 'up', 'One-Radio'])
+    subprocess.run(['sudo', 'nmcli', 'device', 'wifi', 'hotspot', 'ifname', 'wlan0', 'ssid', 'One-Radio', 'password', ''])
     
     t = threading.Thread(target=check_wifi_loop, daemon=True)
     t.start()
