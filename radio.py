@@ -132,7 +132,7 @@ def get_last_volume():
 def display_scud():
 
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    bg = Image.open(f'assets/scud_splash_1.png') 
+    bg = Image.open(f'assets/one_radio_splash.png') 
     image.paste(bg, (0, 0))
     enhancer = ImageEnhance.Brightness(image)
     image = enhancer.enhance(BRIGHTNESS)
