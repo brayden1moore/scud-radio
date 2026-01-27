@@ -192,7 +192,7 @@ if __name__ == '__main__':
     # 3. No internet, start Portal Mode - this runs forever
     logging.info("No connection available. Starting Portal Mode.")
     init_display_for_portal()
-    subprocess.run(['sudo', 'nmcli', 'device', 'wifi', 'hotspot', 'ifname', 'wlan0', 'ssid', 'One-Radio', 'password', ''])
+    subprocess.run(['sudo', 'nmcli', 'device', 'wifi', 'hotspot', 'ifname', 'wlan0', 'ssid', 'One-Radio'])
     
     t = threading.Thread(target=check_wifi_loop, daemon=True)
     t.start()
