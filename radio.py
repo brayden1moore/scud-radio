@@ -984,50 +984,70 @@ def on_volume_button_pressed():
 
 def toggle_favorite():
     global favorites, stream_list, cached_everything_dict
-    now = time.time()
 
     chosen_stream = stream if not readied_stream else readied_stream
+    if chosen_stream in stream_list:
+        prior_idx = stream_list.index(chosen_stream)
+        img = current_image.copy().convert('RGBA')
+        
+        action = None
+        if chosen_stream in favorites:
+            action = 'unfavorite'
+            favorites = [i for i in favorites if i != chosen_stream]
+        else:
+            action = 'favorite'
+            favorites.append(chosen_stream)
+            favorites = list(set(favorites))
 
-    img = current_image.copy().convert('RGBA')
-    
-    if chosen_stream in favorites:
-        favorites = [i for i in favorites if i != chosen_stream]
         stream_list = get_stream_list(streams)
-        thread = threading.Thread(target=refresh_everything_cache, args=(stream_list,), daemon=True)
-        thread.start()
-
-        for i in list(reversed(favorite_images)):
-            img.paste(i, (0, 0), i)
-            disp.ShowImage(img)  
-            img = current_image.convert('RGBA')
-        img.paste(unfavorite, (0, 0), unfavorite)
-        disp.ShowImage(img)
-        time.sleep(0.2)
-        set_favorites(favorites)
-    else:
-        favorites.append(chosen_stream)
-        favorites = list(set(favorites))
-        stream_list = get_stream_list(streams)
-        thread = threading.Thread(target=refresh_everything_cache, args=(stream_list,), daemon=True)
-        thread.start()
-
+        new_idx = stream_list.index(chosen_stream)
         set_favorites(favorites)
 
-        img.paste(unfavorite, (0, 0), unfavorite)
-        disp.ShowImage(img)
-        for i in favorite_images:
-            img.paste(i, (0, 0), i)
-            disp.ShowImage(img)       
-        time.sleep(0.2)
-        disp.ShowImage(img)    
+        indexes_needing_refresh = [prior_idx, 
+                        prior_idx-1, 
+                        prior_idx-2,
+                        prior_idx+1,
+                        prior_idx+2,
+                        new_idx,
+                        new_idx-1,
+                        new_idx-2,
+                        new_idx+1,
+                        new_idx+2]
+        streams_needing_refresh = []
+        for i in indexes_needing_refresh:
+            streams_needing_refresh.append(stream_list[i % len(stream_list)])
 
-    show_readied = False if not readied_stream else True     
-    if not show_readied:
-        if chosen_stream in list(one_cache.keys()):
-            del one_cache[chosen_stream]
-        display_one(chosen_stream)   
-    else:
-        display_everything(0,chosen_stream,update=False, readied=True)
+        logging.info('TOGGLED. REFRESHING, ', streams_needing_refresh)
+        thread = threading.Thread(target=refresh_everything_cache, args=(streams_needing_refresh,), daemon=True)
+        thread.start()
+
+        if action == 'unfavorite':
+            for i in list(reversed(favorite_images)):
+                img.paste(i, (0, 0), i)
+                disp.ShowImage(img)  
+                img = current_image.convert('RGBA')
+
+            img.paste(unfavorite, (0, 0), unfavorite)
+            disp.ShowImage(img)
+            time.sleep(0.2)
+        else:
+
+            img.paste(unfavorite, (0, 0), unfavorite)
+            disp.ShowImage(img)
+            for i in favorite_images:
+                img.paste(i, (0, 0), i)
+                disp.ShowImage(img)    
+
+            time.sleep(0.2)
+            disp.ShowImage(img)    
+
+        show_readied = False if not readied_stream else True     
+        if not show_readied:
+            if chosen_stream in list(one_cache.keys()):
+                del one_cache[chosen_stream]
+            display_one(chosen_stream)   
+        else:
+            display_everything(0,chosen_stream,update=False, readied=True)
 
 def refresh_everything_cache(refresh_stream_list):
     global cached_everything_dict
