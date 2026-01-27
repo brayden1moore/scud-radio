@@ -1036,16 +1036,15 @@ def toggle_favorite():
             time.sleep(0.1)
             disp.ShowImage(img)    
 
+        if action == 'unfavorite':
+                readied_stream = stream_list[prior_idx]
+
         thread.start()
         time.sleep(0.5)
         last_input_time = time.time()
 
         if readied_stream:
-            if action == 'unfavorite':
-                readied_stream = stream_list[prior_idx]
-                display_everything(0, readied_stream, update=False, readied=True)
-            else:
-                display_everything(0, chosen_stream, update=False, readied=True) 
+            display_everything(0, readied_stream, update=False, readied=True)
         else:
             if chosen_stream in list(one_cache.keys()):
                 del one_cache[chosen_stream]
