@@ -1031,7 +1031,7 @@ def toggle_favorite():
         thread = threading.Thread(target=refresh_everything_cache, args=(streams_needing_refresh,), daemon=True)
 
         if action == 'unfavorite':
-            for i in [list(reversed(favorite_images))[0]]:
+            for i in list(reversed(favorite_images)):
                 img.paste(i, (0, 0), i)
                 disp.ShowImage(img)  
                 img = current_image.convert('RGBA')
