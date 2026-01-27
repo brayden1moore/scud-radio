@@ -202,8 +202,6 @@ def backlight_on():
     if disp:
         if current_image:
             safe_display(current_image)
-        else:
-            display_scud()
         time.sleep(0.2)
         disp.bl_DutyCycle(100)
         screen_on = True
@@ -954,7 +952,7 @@ def on_button_released():
             safe_restart()
             return    
 
-'''
+
 def on_volume_button_pressed():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping
     held = False
@@ -970,10 +968,7 @@ def on_volume_button_pressed():
         backlight_on()
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
         sleeping = False
-'''       
 
-def on_volume_button_pressed():
-    subprocess.run(['sudo', 'systemctl', 'suspend'])
 
 def toggle_favorite():
     global favorites, stream_list, cached_everything_dict
@@ -1200,7 +1195,7 @@ disp.Init()
 disp.clear()
 disp.bl_DutyCycle(current_bl)
 
-display_scud()
+#display_scud()
 
 mpv_process = None
 stream = None
