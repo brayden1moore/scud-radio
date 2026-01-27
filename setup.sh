@@ -154,5 +154,6 @@ sudo systemctl stop cups
 sudo systemctl disable man-db.service
 sudo systemctl disable e2scrub_reap.service
 sudo systemctl disable ModemManager.service
+sudo systemctl disable cloud-init-main.service
 sudo systemctl disable apt-daily.service apt-daily-upgrade.service apt-daily.timer apt-daily-upgrade.timer
 echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor

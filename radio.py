@@ -1195,7 +1195,7 @@ disp.Init()
 disp.clear()
 disp.bl_DutyCycle(current_bl)
 
-#display_scud()
+display_scud()
 
 mpv_process = None
 stream = None
