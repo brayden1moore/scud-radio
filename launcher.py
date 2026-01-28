@@ -1,6 +1,20 @@
-from flask import Flask, request, render_template, redirect, url_for
 from PIL import Image
 import driver as LCD_2inch
+
+disp = LCD_2inch.LCD_2inch()
+disp.Init()
+disp.bl_DutyCycle(100)
+
+def display_splash():
+    SCREEN_WIDTH = 320
+    SCREEN_HEIGHT = 240
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    bg = Image.open('assets/hello.png')
+    image.paste(bg, (0, 0))
+    disp.ShowImage(image)
+
+'''
+from flask import Flask, request, render_template, redirect, url_for
 import subprocess
 import socket
 import sys
@@ -29,13 +43,8 @@ ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
-disp = None
 app = Flask(__name__, static_folder=ASSETS_DIR, template_folder=os.path.join(BASE_DIR, 'templates'))
 app.secret_key = 'sticky-lemon'
-
-disp = LCD_2inch.LCD_2inch()
-disp.Init()
-disp.bl_DutyCycle(100)
 
 def start_radio_service():
     """Stops the launcher and starts the main radio service"""
@@ -102,14 +111,6 @@ def submit():
 
 # --- MAIN ENTRY POINT ---
 internet_found = False
-
-def display_splash():
-    SCREEN_WIDTH = 320
-    SCREEN_HEIGHT = 240
-    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    bg = Image.open('assets/wifi_splash.png')
-    image.paste(bg, (0, 0))
-    disp.ShowImage(image)
 
 def currently_connected():
     """Check if WiFi is connected AND has internet access"""
@@ -198,3 +199,5 @@ if __name__ == '__main__':
     t.start()
     
     app.run(host='0.0.0.0', port=8888, use_reloader=False)
+
+'''

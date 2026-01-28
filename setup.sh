@@ -210,4 +210,24 @@ sudo systemctl disable pisugar-server
 sudo cp -a ~/scud-radio/comitup-templates/. /usr/share/comitup/web/templates/
 
 # add Comitup config
+sudo rm -f /etc/comitup.conf
+sudo tee /etc/comitup.conf > /dev/null <<EOF
+ap_name: One-Radio
+web_service: radio.service
+external_callback: /home/scud/scud-radio/comitup-callback.sh
+EOF
+
 # add NM config
+sudo rm -f /etc/NetworkManager/NetworkManager.conf
+sudo tee /etc/NetworkManager/NetworkManager.conf > /dev/null <<EOF
+[main]
+plugins=ifupdown,keyfile
+
+[ifupdown]
+managed=false
+
+[connectivity]
+uri=http://connectivity-check.ubuntu.com/
+interval=300
+enabled=true
+EOF
