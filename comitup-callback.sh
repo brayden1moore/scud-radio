@@ -11,6 +11,6 @@ case "$1" in
     HOTSPOT)
         echo "In hotspot mode - radio.service stopped"
         # Optional: Update LCD display to show "portal mode"
-        sudo systemctl start launcher
+        sudo /bin/systemctl start launcher.service
         ;;
 esac

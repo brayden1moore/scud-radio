@@ -231,3 +231,5 @@ uri=http://connectivity-check.ubuntu.com/
 interval=300
 enabled=true
 EOF
+
+chmod -x comitup-callback.sh
