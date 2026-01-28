@@ -1,5 +1,6 @@
 from PIL import Image
 import driver as LCD_2inch
+import time
 
 disp = LCD_2inch.LCD_2inch()
 disp.Init()
@@ -13,12 +14,16 @@ def display_splash():
     image.paste(bg, (0, 0))
     disp.ShowImage(image)
 
+display_splash()
+while True:
+    time.sleep(0.1)
+    pass
+
 '''
 from flask import Flask, request, render_template, redirect, url_for
 import subprocess
 import socket
 import sys
-import time
 import threading
 import logging
 import os
