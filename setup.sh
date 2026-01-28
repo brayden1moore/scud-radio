@@ -31,7 +31,6 @@ dtoverlay=dwc2,dr_mode=host
 dtoverlay=gpio-shutdown,gpio_pin=17,active_low=1,gpio_pull=up
 EOF
 
-
 sudo apt install mpv
 amixer -D pulse sset Master 100%
 
@@ -204,7 +203,8 @@ sudo tee /etc/pisugar-server/config.json > /dev/null <<EOF
 EOF
 
 # Restart PiSugar service to apply changes
-sudo systemctl restart pisugar-server
+sudo systemctl stop pisugar-server
+sudo systemctl disable pisugar-server
 
 # Copy comitup templates
 sudo cp -a ~/scud-radio/comitup-templates/. /usr/share/comitup/web/templates/
