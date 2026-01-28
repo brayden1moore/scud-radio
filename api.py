@@ -10,6 +10,9 @@ ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
 
 app = Flask(__name__, static_folder=ASSETS_DIR, template_folder=os.path.join(BASE_DIR, 'templates'))
 
+redirect_string = 'sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8888'
+subprocess.run(redirect_string.split(' '),timeout=5)
+
 @app.route('/', methods=['GET'])
 def home():
     return render_template('home.html')

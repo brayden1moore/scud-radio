@@ -75,7 +75,6 @@ Restart=no
 WantedBy=multi-user.target
 EOF
 
-# Create the radio service file
 sudo tee /etc/systemd/system/radio.service > /dev/null <<EOF
 [Unit]
 Description=One-Radio Tuner
@@ -87,11 +86,12 @@ Conflicts=splash.service launcher.service
 Type=simple
 User=root
 WorkingDirectory=/home/scud/scud-radio
-ExecStart=/usr/bin/python3 /home/scud/scud-radio/radio.py
 ExecStartPre=/bin/systemctl start api.service
 ExecStartPre=/bin/systemctl stop shutdown.service
 ExecStartPre=/bin/systemctl stop launcher.service
 ExecStartPre=/bin/systemctl stop splash.service
+ExecStartPre=/bin/sh -c 'until ping -c1 internetradioprotocol.org >/dev/null 2>&1; do sleep 1; done'
+ExecStart=/usr/bin/python3 /home/scud/scud-radio/radio.py
 Restart=always
 RestartSec=3
 StandardOutput=journal
@@ -100,6 +100,8 @@ StandardError=journal
 [Install]
 WantedBy=multi-user.target
 EOF
+
+sudo systemctl daemon-reload
 
 # Create the shutdown service file
 sudo tee /etc/systemd/system/shutdown.service > /dev/null <<EOF
