@@ -192,7 +192,7 @@ sudo tee /etc/pisugar-server/config.json > /dev/null <<EOF
   "full_charge_duration": null,
   "auto_power_on": true,
   "soft_poweroff": true,
-  "soft_poweroff_shell": "sudo systemctl start shutdown",
+  "soft_poweroff_shell": "sudo shutdown now,
   "auto_rtc_sync": null,
   "adj_comm": null,
   "adj_diff": null,
@@ -205,3 +205,9 @@ EOF
 
 # Restart PiSugar service to apply changes
 sudo systemctl restart pisugar-server
+
+# Copy comitup templates
+sudo cp -a ~/scud-radio/comitup-templates/. /usr/share/comitup/web/templates/
+
+# add Comitup config
+# add NM config
