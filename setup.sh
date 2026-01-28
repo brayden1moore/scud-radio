@@ -192,7 +192,7 @@ sudo tee /etc/pisugar-server/config.json > /dev/null <<EOF
   "full_charge_duration": null,
   "auto_power_on": true,
   "soft_poweroff": true,
-  "soft_poweroff_shell": "sudo shutdown now,
+  "soft_poweroff_shell": "sudo shutdown now",
   "auto_rtc_sync": null,
   "adj_comm": null,
   "adj_diff": null,
