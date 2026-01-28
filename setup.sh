@@ -167,6 +167,7 @@ sudo systemctl disable NetworkManager-wait-online.service
 sudo systemctl disable apt-daily.service apt-daily-upgrade.service apt-daily.timer apt-daily-upgrade.timer
 echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8888
+sudo systemctl enable pisugar-server
 
 # Battery config
 sudo rm -f /etc/pisugar-server/config.json
@@ -185,7 +186,7 @@ sudo tee /etc/pisugar-server/config.json > /dev/null <<EOF
   "double_tap_shell": "",
   "long_tap_enable": false,
   "long_tap_shell": "",
-  "auto_shutdown_level": null,
+  "auto_shutdown_level": 100,
   "auto_shutdown_delay": null,
   "auto_charging_range": null,
   "full_charge_duration": null,
@@ -196,7 +197,7 @@ sudo tee /etc/pisugar-server/config.json > /dev/null <<EOF
   "adj_comm": null,
   "adj_diff": null,
   "rtc_adj_ppm": null,
-  "anti_mistouch": true,
+  "anti_mistouch": false,
   "bat_protect": null,
   "battery_curve": null
 }
