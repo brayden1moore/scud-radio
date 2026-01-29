@@ -129,7 +129,7 @@ def get_last_volume():
 
 def display_scud():
 
-    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
     bg = Image.open(f'assets/one_radio_splash.png') 
     image.paste(bg, (0, 0))
     enhancer = ImageEnhance.Brightness(image)
@@ -1265,7 +1265,6 @@ disp = LCD_2inch.LCD_2inch()
 disp.Init()
 disp.clear()
 disp.bl_DutyCycle(current_bl)
-
 display_scud()
 
 mpv_process = None
