@@ -135,6 +135,8 @@ function updateStatus(fromHandleCall) {
             name = json['output'].split(' - ')[0];
             status.dataset.station = name;
             stationName.textContent = name;
+            stationName.classList.add('fade-in-element');
+            oneLiner.classList.add('fade-in-element');
             oneLiner.textContent = info[name]['oneLiner'];
       });
 }
@@ -344,7 +346,7 @@ body {
 
 .fade-in-element {
   animation-name: fadeIn;
-  animation-duration: 1s;
+  animation-duration: 0.5s;
   animation-timing-function: ease-in; 
   animation-fill-mode: forwards; 
 }
