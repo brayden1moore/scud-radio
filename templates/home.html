@@ -151,6 +151,7 @@ function addStation(name) {
         handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
     });
     stations.appendChild(station);
+    station.classList.add('fade-in-element');
 }
 
 let stationList = [];
@@ -330,6 +331,22 @@ body {
 #main-div {
     align-items: right;
     justify-content: end;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.fade-in-element {
+  animation-name: fadeIn;
+  animation-duration: 1s;
+  animation-timing-function: ease-in; 
+  animation-fill-mode: forwards; 
 }
 
 #info-div {
