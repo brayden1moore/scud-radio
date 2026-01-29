@@ -66,6 +66,7 @@ Before=network-online.target
 User=root
 WorkingDirectory=/home/scud/scud-radio
 ExecStart=/usr/bin/python3 /home/scud/scud-radio/launcher.py
+ExecStartPre=/bin/bash -c 'while sudo iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8888 2>/dev/null; do :; done'
 ExecStartPre=/bin/systemctl stop radio.service
 ExecStartPre=/bin/systemctl stop splash.service
 ExecStartPre=/bin/systemctl stop api.service
@@ -75,6 +76,7 @@ Restart=no
 WantedBy=multi-user.target
 EOF
 
+# Create the radio service file
 sudo tee /etc/systemd/system/radio.service > /dev/null <<EOF
 [Unit]
 Description=One-Radio Tuner
@@ -131,6 +133,7 @@ After=network.target
 [Service] 
 ExecStart=/usr/bin/python3 /home/scud/scud-radio/api.py 
 #ExecStart=/usr/bin/python3 -m gunicorn --worker-class eventlet --workers 1 --timeout 0 --bind 127.0.0.1:7777 api:app
+ExecStartPre=/usr/bin/sudo /usr/sbin/iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8888
 WorkingDirectory=/home/scud/scud-radio 
 User=root 
 Restart=always 
@@ -235,3 +238,8 @@ enabled=true
 EOF
 
 chmod -x comitup-callback.sh
+
+if ! grep -q 'subprocess.run(\["sudo","systemctl","start","launcher"\])' /usr/share/comitup/web/comitupweb.py; then
+    sudo sed -i '1i import subprocess\nsubprocess.run(["sudo","systemctl","start","launcher"])' /usr/share/comitup/web/comitupweb.py
+fi
+
