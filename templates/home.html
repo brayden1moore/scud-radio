@@ -243,7 +243,16 @@ left: -36px !important;
     height: 70px;
     border: 1px solid grey;
     border-bottom: none;
-    background-color: #dfdfdf
+    background: linear-gradient(
+    90deg,
+    #aaa 5%,
+    #ccc 10%,
+    #ddd 30%,
+    #fff 50%,
+    #ddd 70%,
+    #ccc 80%,
+    #aaa 95%
+    );
 }
 
 .control:hover {
@@ -278,16 +287,7 @@ left: -36px !important;
 }
 
 #stations {
-    background: linear-gradient(
-        90deg,
-        #999 5%,
-        #fff 10%,
-        #ccc 30%,
-        #ddd 50%,
-        #ccc 70%,
-        #fff 80%,
-        #999 95%
-    );
+    background-color: #DFDFDF;
     display: flex;
     flex-wrap: wrap;
     width: calc((81px * 4));
