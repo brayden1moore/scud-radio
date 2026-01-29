@@ -4,7 +4,7 @@
 sudo rm /boot/firmware/config.txt
 sudo tee /boot/firmware/config.txt > /dev/null <<EOF
 dtoverlay=hifiberry-dac
-dtoverlay=disable-bt
+#dtoverlay=disable-bt
 disable_splash=1
 
 dtparam=i2c_arm=on
@@ -28,7 +28,6 @@ otg_mode=1
 dtoverlay=dwc2,dr_mode=host
 
 [all]
-dtoverlay=gpio-shutdown,gpio_pin=17,active_low=1,gpio_pull=up
 EOF
 
 sudo apt install mpv
@@ -80,7 +79,7 @@ EOF
 sudo tee /etc/systemd/system/radio.service > /dev/null <<EOF
 [Unit]
 Description=One-Radio Tuner
-After=network-online.target
+After=network-online.target api.service
 Wants=network-online.target
 Conflicts=splash.service launcher.service
 
@@ -88,8 +87,6 @@ Conflicts=splash.service launcher.service
 Type=simple
 User=root
 WorkingDirectory=/home/scud/scud-radio
-ExecStartPre=/bin/systemctl start api.service
-ExecStartPre=/bin/systemctl stop shutdown.service
 ExecStartPre=/bin/systemctl stop launcher.service
 ExecStartPre=/bin/systemctl stop splash.service
 ExecStartPre=/bin/sh -c 'until ping -c1 internetradioprotocol.org >/dev/null 2>&1; do sleep 1; done'
@@ -242,4 +239,3 @@ chmod -x comitup-callback.sh
 if ! grep -q 'subprocess.run(\["sudo","systemctl","start","launcher"\])' /usr/share/comitup/web/comitupweb.py; then
     sudo sed -i '1i import subprocess\nsubprocess.run(["sudo","systemctl","start","launcher"])' /usr/share/comitup/web/comitupweb.py
 fi
-
