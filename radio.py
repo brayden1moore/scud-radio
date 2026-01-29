@@ -1296,7 +1296,7 @@ current_volume = get_last_volume()
 
 mpv_process = Popen([
     "mpv",
-    "--audio-device=pipewire/bluez_output.F0_D3_1F_34_36_13.1",
+    "--audio-device=alsa/bluealsa:DEV=F0:D3:1F:34:36:13",
     "--audio-buffer=1.0",     
     "--audio-samplerate=48000",
     "--idle=yes",
