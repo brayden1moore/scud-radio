@@ -91,8 +91,6 @@ def get_battery():
         lines = result.stdout.strip().split('\n')
         if 'battery' not in lines[0]:
             lines = lines[1:]
-
-        logging.info(lines)
         
         charging_line = lines[0].strip().split(': ')[1] 
         charging = charging_line == 'true'
@@ -148,7 +146,7 @@ def display_scud():
 
     last_played = read_last_played()
     volume = round((get_last_volume()/150)*100)
-    get_battery()
+    #get_battery()
 
 def get_favorites():
     fav_path = Path(LIB_PATH)
@@ -1550,7 +1548,7 @@ live_overlay_version = 1
 try:
     while True:
         if time_since_battery_check == 15:
-            get_battery()
+            #get_battery()
             #if not charging:
                 #subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
             time_since_battery_check = 0
