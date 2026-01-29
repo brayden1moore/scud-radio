@@ -150,8 +150,8 @@ function addStation(name) {
     station.addEventListener('click', ()=> {
         handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
     });
-    stations.appendChild(station);
     station.classList.add('fade-in-element');
+    stations.appendChild(station);
 }
 
 let stationList = [];
