@@ -87,6 +87,7 @@ Conflicts=splash.service launcher.service
 Type=simple
 User=root
 WorkingDirectory=/home/scud/scud-radio
+ExecStartPre=/bin/systemctl start api.service
 ExecStartPre=/bin/systemctl stop launcher.service
 ExecStartPre=/bin/systemctl stop splash.service
 ExecStartPre=/bin/sh -c 'until ping -c1 internetradioprotocol.org >/dev/null 2>&1; do sleep 1; done'

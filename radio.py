@@ -902,7 +902,7 @@ def safe_restart():
     time.sleep(4)  
     backlight_off()
     run(['sudo','systemctl', 'restart','api'])
-    run(['sudo','systemctl', 'restart','launcher'])
+    run(['sudo','systemctl', 'restart','radio'])
 
 
 def on_button_pressed():
@@ -1460,6 +1460,9 @@ def handle_remote_command(command_data):
 
         elif cmd == 'power':
             on_volume_button_pressed()
+
+        elif cmd == 'restart':
+            safe_restart()
 
         elif cmd == 'toggle':
             if play_status == 'play':
