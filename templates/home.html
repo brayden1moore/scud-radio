@@ -152,7 +152,7 @@ function addStation(name) {
     station.addEventListener('click', ()=> {
         handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
     });
-    station.classList.add('grow-in-element');
+    station.classList.add('fade-in-element');
     stations.appendChild(station);
 }
 
@@ -344,25 +344,10 @@ body {
   }
 }
 
-@keyframes growIn {
-  0% {
-    height: 0px;
-  }
-  100% {
-    height: 80px;
-  }
-}
-
 .fade-in-element {
   animation-name: fadeIn;
-  animation-duration: 0.3s;
-  animation-timing-function: ease-in; 
-  animation-fill-mode: forwards; 
-}
-.grow-in-element {
-  animation-name: growIn;
   animation-duration: 0.5s;
-  animation-timing-function: ease-in; 
+  animation-timing-function: ease-out; 
   animation-fill-mode: forwards; 
 }
 
