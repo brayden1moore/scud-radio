@@ -1263,7 +1263,7 @@ device = 0
 current_bl = 100
 disp = LCD_2inch.LCD_2inch()
 disp.Init()
-disp.clear()
+#disp.clear()
 disp.bl_DutyCycle(current_bl)
 display_scud()
 
