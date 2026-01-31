@@ -31,6 +31,7 @@ dtoverlay=dwc2,dr_mode=host
 EOF
 
 if [$1 = "hat"]; then
+    cd ~/
     git clone https://github.com/waveshare/WM8960-Audio-HAT
     cd WM8960-Audio-HAT
     sudo chmod +x install.sh
@@ -155,11 +156,6 @@ sudo systemctl enable launcher
 sudo -H  pip install gunicorn eventlet --break-system-packages
 sudo -H pip install --break-system-packages -r requirements.txt
 
-# Install battery
-wget https://cdn.pisugar.com/release/pisugar-power-manager.sh
-bash pisugar-power-manager.sh -c release
-sudo apt install netcat-traditional
-
 # Networking
 sudo apt install iptables -y
 
@@ -210,10 +206,6 @@ sudo tee /etc/pisugar-server/config.json > /dev/null <<EOF
   "battery_curve": null
 }
 EOF
-
-# Restart PiSugar service to apply changes
-sudo systemctl stop pisugar-server
-sudo systemctl disable pisugar-server
 
 # Copy comitup templates
 sudo cp -a ~/scud-radio/comitup-templates/. /usr/share/comitup/web/templates/
