@@ -30,12 +30,13 @@ dtoverlay=dwc2,dr_mode=host
 [all]
 EOF
 
-if [$1 = "hat"]; then
+if [ "$1" = "hat" ]; then
     cd ~/
     git clone https://github.com/waveshare/WM8960-Audio-HAT
     cd WM8960-Audio-HAT
     sudo chmod +x install.sh
     sudo ./install.sh 
+fi
 
 sudo apt install mpv
 amixer -D pulse sset Master 100%
