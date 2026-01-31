@@ -35,7 +35,7 @@ if [ "$1" = "hat" ]; then
     git clone https://github.com/waveshare/WM8960-Audio-HAT
     cd WM8960-Audio-HAT
     sudo chmod +x install.sh
-    sudo ./install.sh 
+    sudo ./install.sh -y
 fi
 
 sudo apt install mpv
@@ -172,7 +172,6 @@ sudo systemctl disable NetworkManager-wait-online.service
 sudo systemctl disable apt-daily.service apt-daily-upgrade.service apt-daily.timer apt-daily-upgrade.timer
 echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8888
-sudo systemctl enable pisugar-server
 
 # Battery config
 sudo rm -f /etc/pisugar-server/config.json
@@ -258,3 +257,5 @@ sudo autoreconf -fi
 make
 sudo make install
 sudo systemctl enable shairport-sync
+
+sudo reboot
