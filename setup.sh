@@ -30,6 +30,12 @@ dtoverlay=dwc2,dr_mode=host
 [all]
 EOF
 
+if [$1 = "hat"]; then
+    git clone https://github.com/waveshare/WM8960-Audio-HAT
+    cd WM8960-Audio-HAT
+    sudo chmod +x install.sh
+    sudo ./install.sh 
+
 sudo apt install mpv
 amixer -D pulse sset Master 100%
 
@@ -240,3 +246,22 @@ chmod -x comitup-callback.sh
 if ! grep -q 'subprocess.run(\["sudo","systemctl","start","launcher"\])' /usr/share/comitup/web/comitupweb.py; then
     sudo sed -i '1i import subprocess\nsubprocess.run(["sudo","systemctl","start","launcher"])' /usr/share/comitup/web/comitupweb.py
 fi
+
+# shairport
+sudo apt install --no-install-recommends build-essential git autoconf automake libtool     libpopt-dev libconfig-dev libasound2-dev avahi-daemon libavahi-client-dev libssl-dev libsoxr-dev     libplist-dev libsodium-dev libavutil-dev libavcodec-dev libavformat-dev uuid-dev libgcrypt-dev xxd -y
+cd ~/
+git clone https://github.com/mikebrady/nqptp.git
+cd nqptp
+autoreconf -fi
+./configure --with-systemd-startup
+sudo make
+sudo make install
+cd ~/
+git clone https://github.com/mikebrady/shairport-sync.git
+cd shairport-sync
+sudo autoreconf -fi
+./configure --sysconfdir=/etc --with-alsa \
+    --with-soxr --with-avahi --with-ssl=openssl --with-systemd --with-airplay-2
+make
+sudo make install
+sudo systemctl enable shairport-sync
