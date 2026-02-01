@@ -38,7 +38,7 @@ if [ "$1" = "hat" ]; then
     sudo ./install.sh -y
 fi
 
-sudo apt install mpv
+sudo apt install mpv -y
 amixer -D pulse sset Master 100%
 
 # Create the splash service file
@@ -154,7 +154,9 @@ sudo systemctl enable splash
 sudo systemctl enable launcher
 
 # Install dependencies
-sudo -H  pip install gunicorn eventlet --break-system-packages
+sudo apt install pip -y
+sudo -H  pip install gunicorn eventlet Flask --break-system-packages
+cd scud-radio
 sudo -H pip install --break-system-packages -r requirements.txt
 
 # Networking
@@ -171,7 +173,7 @@ sudo systemctl disable cloud-init-main.service
 sudo systemctl disable NetworkManager-wait-online.service
 sudo systemctl disable apt-daily.service apt-daily-upgrade.service apt-daily.timer apt-daily-upgrade.timer
 echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
-sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8888
+sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 888
 
 # Battery config
 sudo rm -f /etc/pisugar-server/config.json
