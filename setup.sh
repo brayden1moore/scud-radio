@@ -47,16 +47,14 @@ sudo tee /etc/systemd/system/splash.service > /dev/null <<EOF
 Description=One-Radio Tuner Splash Screen
 DefaultDependencies=no
 After=local-fs.target
-Before=basic.target
-Conflicts=shutdown.target
 
 [Service]
 Type=simple
 User=root
 WorkingDirectory=/home/scud/scud-radio
 ExecStart=/usr/bin/python3 -u /home/scud/scud-radio/splash.py
-StandardOutput=null
-StandardError=null
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=sysinit.target
@@ -69,6 +67,7 @@ Description=One-Radio Tuner Launcher
 After=NetworkManager.service
 Wants=NetworkManager.service
 Before=network-online.target
+After=comitup.service
 
 [Service]
 User=root
@@ -152,7 +151,6 @@ EOF
 # Reload systemd and enable the service
 sudo systemctl daemon-reload
 sudo systemctl enable splash
-sudo systemctl enable launcher
 
 # Install dependencies
 sudo apt install pip -y
