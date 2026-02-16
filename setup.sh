@@ -46,16 +46,17 @@ sudo tee /etc/systemd/system/splash.service > /dev/null <<EOF
 [Unit]
 Description=One-Radio Tuner Splash Screen
 DefaultDependencies=no
-After=systemd-udevd.service
-Before=basic.target shutdown.target
+After=local-fs.target
+Before=basic.target
 Conflicts=shutdown.target
 
 [Service]
-Type=idle
+Type=simple
 User=root
 WorkingDirectory=/home/scud/scud-radio
 ExecStart=/usr/bin/python3 -u /home/scud/scud-radio/splash.py
-Restart=no
+StandardOutput=null
+StandardError=null
 
 [Install]
 WantedBy=sysinit.target
@@ -163,8 +164,9 @@ sudo -H pip install --break-system-packages -r requirements.txt
 sudo apt install iptables -y
 
 # Other settings
-sudo systemctl stop cups
-sudo apt install comitup -y
+sudo apt update
+sudo apt install comitup -y --fix-missing
+sudo apt install --fix-broken
 sudo systemctl enable comitup
 sudo systemctl disable man-db.service
 sudo systemctl disable e2scrub_reap.service
