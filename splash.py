@@ -23,13 +23,13 @@ image.paste(bg, (0, 0))
 disp.ShowImage(image)
 
 with open('/tmp/splash-boot.log', 'a') as f:
-    f.write(f"[{time.time()-start:.2f}s] First display\n")
+    f.write(f"[{time.time()-boot_start:.2f}s] First display\n")
 
 for i in range(20):
     time.sleep(1)
     disp.ShowImage(image)
     with open('/tmp/splash-boot.log', 'a') as f:
-        f.write(f"[{time.time()-start:.2f}s] Redraw {i}\n")
+        f.write(f"[{time.time()-boot_start:.2f}s] Redraw {i}\n")
 
 while True:
     time.sleep(1)
