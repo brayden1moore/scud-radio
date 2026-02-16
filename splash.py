@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 import time
-start = time.time()
+boot_start = time.monotonic()
 
 with open('/tmp/splash-boot.log', 'w') as f:
-    f.write(f"Script started at boot time: {time.time()}\n")
+    f.write(f"Script started at boot time: {boot_start:.2f}\n")
 
 from PIL import Image
 import driver as LCD_2inch
