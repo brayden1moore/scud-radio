@@ -1160,10 +1160,6 @@ def periodic_update():
         logging.info('PERIODIC UPDATE OCCURRING')
         print('cache size', len(cached_everything_dict))
 
-        if not charging and screen_on == False and current_volume == 0 and (time.time() - last_input_time > 300):
-            pass
-            #subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
-
         if (time.time() - last_input_time > 20):
             display_ambient(stream)
 
@@ -1545,7 +1541,6 @@ update_thread.start()
 
 readied_stream = None
 display_everything(0, stream, readied=False)
-
 time_since_last_display = 0
 try:
     while True:
@@ -1556,11 +1551,11 @@ try:
             if screen_on and stream and not screen_dim:
                 display_current()
 
-        if not screen_on and time_since_last_display == 30:
-            display_current()
+        if time_since_last_display >= 30 and currently_displaying == 'ambient' and screen_on == False:
+            display_ambient(stream)
 
-        time.sleep(1)
         time_since_last_display += 1
+        time.sleep(1)
 
 except KeyboardInterrupt:
     if mpv_process:
