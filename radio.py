@@ -736,7 +736,6 @@ def display_bar(y, draw):
     #draw.ellipse((157-radius, center_of_section-radius, 157+radius, center_of_section+radius), fill=BLACK if currently_displaying=='one' else None, outline=BLACK, width=1)
     #draw.ellipse((170-radius, center_of_section-radius, 170+radius, center_of_section+radius), fill=BLACK if currently_displaying=='ambient' else None, outline=BLACK, width=1)
 
-
 def display_ambient(name, clicked=False):
     global screen_dim, currently_displaying
 
@@ -1547,15 +1546,9 @@ update_thread.start()
 readied_stream = None
 display_everything(0, stream, readied=False)
 
-time_since_battery_check = 0
-live_overlay_version = 1
+time_since_last_display = 0
 try:
     while True:
-        if time_since_battery_check == 15:
-            #get_battery()
-            #if not charging:
-                #subprocess.run(['sudo','systemctl', 'start', 'shutdown'])
-            time_since_battery_check = 0
 
         if (readied_stream or volume_overlay_showing) and last_rotation and ((time.time() - last_rotation > 5) and (time.time() - last_input_time > 8)) and restarting == False and held == False:
             readied_stream = None
@@ -1563,8 +1556,11 @@ try:
             if screen_on and stream and not screen_dim:
                 display_current()
 
+        if not screen_on and time_since_last_display == 30:
+            display_current()
+
         time.sleep(1)
-        time_since_battery_check += 1
+        time_since_last_display += 1
 
 except KeyboardInterrupt:
     if mpv_process:
