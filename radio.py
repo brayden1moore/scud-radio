@@ -1163,62 +1163,54 @@ def periodic_update():
         logging.info('PERIODIC UPDATE OCCURRING')
         print('cache size', len(cached_everything_dict))
 
-        if (time.time() - last_input_time > 20):
-            display_ambient(stream)
+        time_since_last_success = time.time() - last_successful_fetch
+        should_fetch = (time_since_last_update >= 30) or (time_since_last_success > 30) or len(cached_everything_dict)==0
+        if should_fetch:
+            try:
+                logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
+                fetched_streams = get_streams()
 
-        if screen_on and (time.time() - last_input_time > 600):
-            sleeping = True
-            screen_on = False
-            backlight_off()
-        else:
-            time_since_last_success = time.time() - last_successful_fetch
-            should_fetch = (time_since_last_update >= 30) or (time_since_last_success > 30) or len(cached_everything_dict)==0
-            if should_fetch:
-                try:
-                    logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
-                    fetched_streams = get_streams()
-
-                    updated_count = 0
-                    updated_streams = []
-                    for name, v in fetched_streams.items():
-                        if (name in streams.keys()):
-                            if (v['oneLiner'] != streams[name]['oneLiner']) or (len(cached_everything_dict)==0):
-                                updated_streams.append(name)
-                                streams[name].update(v)
-                                updated_count += 1                              
+                updated_count = 0
+                updated_streams = []
+                for name, v in fetched_streams.items():
+                    if (name in streams.keys()):
+                        if (v['oneLiner'] != streams[name]['oneLiner']) or (len(cached_everything_dict)==0):
+                            updated_streams.append(name)
+                            streams[name].update(v)
+                            updated_count += 1                              
+                
+                print('Updated',updated_streams)
+                refresh_everything_cache(updated_streams)
+                logging.info(f"Successfully updated {updated_count} streams")
+                streams = fetched_streams
+                stream_list = get_stream_list(streams)
+                failed_fetches = 0
+                last_successful_fetch = time.time()
                     
-                    print('Updated',updated_streams)
-                    refresh_everything_cache(updated_streams)
-                    logging.info(f"Successfully updated {updated_count} streams")
-                    streams = fetched_streams
-                    stream_list = get_stream_list(streams)
-                    failed_fetches = 0
-                    last_successful_fetch = time.time()
-                        
-                except requests.Timeout:
-                    failed_fetches += 1
-                    logging.error(f"Stream fetch timeout (attempt {failed_fetches}/3)")
-                except requests.RequestException as e:
-                    failed_fetches += 1
-                    logging.error(f"Stream fetch network error: {e} (attempt {failed_fetches}/3)")
-                except ValueError as e:
-                    failed_fetches += 1
-                    logging.error(f"Stream fetch invalid response: {e} (attempt {failed_fetches}/3)")
-                except Exception as e:
-                    failed_fetches += 1
-                    logging.error(f"Stream fetch unexpected error: {type(e).__name__}: {e} (attempt {failed_fetches}/3)")
-                
-                if failed_fetches >= 5:
-                    logging.error("Stream fetch failed 5 times.")
-                    #subprocess.run(['sudo','systemctl','start','launcher'])
-                    #sys.exit(0)
-                
-                time_since_last_update = 0
+            except requests.Timeout:
+                failed_fetches += 1
+                logging.error(f"Stream fetch timeout (attempt {failed_fetches}/3)")
+            except requests.RequestException as e:
+                failed_fetches += 1
+                logging.error(f"Stream fetch network error: {e} (attempt {failed_fetches}/3)")
+            except ValueError as e:
+                failed_fetches += 1
+                logging.error(f"Stream fetch invalid response: {e} (attempt {failed_fetches}/3)")
+            except Exception as e:
+                failed_fetches += 1
+                logging.error(f"Stream fetch unexpected error: {type(e).__name__}: {e} (attempt {failed_fetches}/3)")
+            
+            if failed_fetches >= 5:
+                logging.error("Stream fetch failed 5 times.")
+                #subprocess.run(['sudo','systemctl','start','launcher'])
+                #sys.exit(0)
+            
+            time_since_last_update = 0
 
-            #if not held and not readied_stream and not screen_dim and screen_on:
-            #    display_current()
+        #if not held and not readied_stream and not screen_dim and screen_on:
+        #    display_current()
 
-            time_since_last_update += 5
+        time_since_last_update += 5
         
         time.sleep(5)
 
@@ -1547,6 +1539,13 @@ display_everything(0, stream, readied=False)
 time_since_last_display = 0
 try:
     while True:
+        if (time.time() - last_input_time > 20):
+            display_ambient(stream)
+
+        if screen_on and (time.time() - last_input_time > 600):
+            sleeping = True
+            screen_on = False
+            backlight_off()
 
         if (readied_stream or volume_overlay_showing) and last_rotation and ((time.time() - last_rotation > 5) and (time.time() - last_input_time > 8)) and restarting == False and held == False:
             readied_stream = None
@@ -1554,7 +1553,7 @@ try:
             if screen_on and stream and not screen_dim:
                 display_current()
 
-        if time_since_last_display >= 30 and currently_displaying == 'ambient' and screen_on == False:
+        if time_since_last_display >= 30 and (currently_displaying == 'ambient') and (screen_on == False):
             display_ambient(stream)
 
         time_since_last_display += 1
