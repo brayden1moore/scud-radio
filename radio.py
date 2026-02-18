@@ -720,7 +720,7 @@ def display_bar(draw):
     formatted_date = current_time.strftime("%a %b %d").replace(' 0', '  ').lstrip('0')
     formatted_time = current_time.strftime("%I:%M %p").replace(' 0', '  ').lstrip('0')
     text_color = BLACK
-    logging.info('CURRENT TIME: ', formatted_time)
+    logging.info(f'CURRENT TIME: {formatted_time}')
 
     # bottom bar 218 y for bottom
     y = 218
