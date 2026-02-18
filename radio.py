@@ -733,7 +733,7 @@ def display_bar(draw):
 
 
 def display_ambient(name, clicked=False):
-    global screen_dim, currently_displaying
+    global screen_dim, currently_displaying, last_ambient_display
 
     # logo
     logo = streams[name]['logo_176']
@@ -750,6 +750,8 @@ def display_ambient(name, clicked=False):
     image = enhancer.enhance(BRIGHTNESS)
 
     safe_display(image)
+
+    last_ambient_display = time.time()
 
     if not clicked:
         screen_dim = True
@@ -1273,6 +1275,7 @@ first_boot = True
 selector = 'red'
 has_displayed_once = False
 volume_overlay_showing = False
+last_ambient_display = time.time()
 
 user_tz = pytz.timezone(get_timezone_from_ip())
 
@@ -1533,7 +1536,7 @@ readied_stream = None
 display_everything(0, stream, readied=False)
 try:
     while True:
-        if (time.time() - last_input_time > 20):
+        if (time.time() - last_input_time > 20) & (time.time() - last_ambient_display > 30):
             logging.info('DISPLAYING AMBIENT VIA MAIN LOOP')
             display_ambient(stream)
 
