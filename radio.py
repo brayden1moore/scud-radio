@@ -1536,7 +1536,6 @@ update_thread.start()
 
 readied_stream = None
 display_everything(0, stream, readied=False)
-time_since_last_display = 0
 try:
     while True:
         if (time.time() - last_input_time > 20):
@@ -1553,10 +1552,6 @@ try:
             if screen_on and stream and not screen_dim:
                 display_current()
 
-        if time_since_last_display >= 30 and (currently_displaying == 'ambient') and (screen_on == False):
-            display_ambient(stream)
-
-        time_since_last_display += 1
         time.sleep(1)
 
 except KeyboardInterrupt:
