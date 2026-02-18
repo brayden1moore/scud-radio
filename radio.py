@@ -1544,8 +1544,8 @@ try:
         if (readied_stream or volume_overlay_showing) and last_rotation and ((time.time() - last_rotation > 5) and (time.time() - last_input_time > 8)) and restarting == False and held == False:
             readied_stream = None
             volume_overlay_showing = False
-            if screen_on and stream and not screen_dim:
-                display_current()
+            #if screen_on and stream and not screen_dim:
+            display_current()
 
         time.sleep(1)
 
