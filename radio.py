@@ -182,7 +182,6 @@ def safe_display(image):
         disp.ShowImage(image)
     current_image = image.copy()
     
-
 def write_to_tmp_os_path(name):
     scud_path = Path(LIB_PATH)
     scud_path.mkdir(parents=True, exist_ok=True)
@@ -199,8 +198,8 @@ def write_to_tmp_os_path(name):
 def backlight_on():
     global screen_on
     if disp:
-        #if current_image:
-        #    safe_display(current_image)
+        if current_image:
+            safe_display(current_image)
         time.sleep(0.2)
         disp.bl_DutyCycle(100)
         screen_on = True
@@ -630,7 +629,7 @@ def display_one(name):
         cached_one = one_cache[name]
         draw = ImageDraw.Draw(cached_one)
         display_bar(draw)
-        disp.ShowImage(cached_one)
+        safe_display(cached_one)
         one_cache[name] = cached_one
         current_image = cached_one
     else:
@@ -707,7 +706,7 @@ def display_one(name):
         display_bar(draw=draw)
         enhancer = ImageEnhance.Brightness(image)
         image = enhancer.enhance(BRIGHTNESS)
-        disp.ShowImage(image)
+        safe_display(image)
         current_image = image
         has_displayed_once = True
         one_cache[name] = image
@@ -760,7 +759,6 @@ def display_ambient(name, clicked=False):
 def display_current():
 
     if currently_displaying == 'everything':
-        #display_readied_cached(stream)
         display_one(stream)
 
     elif currently_displaying == 'one':
@@ -1549,7 +1547,6 @@ try:
             logging.info('DISPLAYING CURRENT VIA MAIN LOOP')
             readied_stream = None
             volume_overlay_showing = False
-            #if screen_on and stream and not screen_dim:
             display_current()
 
         time.sleep(5)
