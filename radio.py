@@ -627,8 +627,12 @@ def display_one(name):
     global has_displayed_once, currently_displaying, current_image
     
     if name in one_cache.keys():
-        disp.ShowImage(one_cache[name])
-        current_image = one_cache[name]
+        cached_one = one_cache[name]
+        draw = ImageDraw.Draw(cached_one)
+        display_bar(draw)
+        disp.ShowImage(cached_one)
+        one_cache[name] = cached_one
+        current_image = cached_one
     else:
         # logo
         logo = streams[name]['logo_60']
@@ -700,7 +704,7 @@ def display_one(name):
                 anchor += avg_info_height + line_gap
 
         currently_displaying = 'one'
-        display_bar(y=218, draw=draw)
+        display_bar(draw=draw)
         enhancer = ImageEnhance.Brightness(image)
         image = enhancer.enhance(BRIGHTNESS)
         disp.ShowImage(image)
@@ -709,7 +713,7 @@ def display_one(name):
         one_cache[name] = image
 
 
-def display_bar(y, draw):
+def display_bar(draw):
     # time
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
@@ -718,24 +722,15 @@ def display_bar(y, draw):
     text_color = BLACK
 
     # bottom bar 218 y for bottom
-    if y!=4:
-        draw.rectangle([0, y, 320, y+24], fill=YELLOW)
-        draw.rectangle([0, y, 320, y], fill=BLACK)
-        center_of_section = round((240 + 218) / 2)
+    y = 218
+    draw.rectangle([0, y, 320, y+24], fill=YELLOW)
+    draw.rectangle([0, y, 320, y], fill=BLACK)
+    center_of_section = round((240 + 218) / 2)
 
-    if y==4:
-        line_y = y + height("S", MEDIUM_FONT) + 10
-        draw.rectangle([0, line_y, 320, line_y], fill=YELLOW)
-        draw.rectangle([0, line_y-24, 320, line_y], fill=YELLOW)
-        center_of_section = round((0 + line_y+4) / 2)
 
     draw.text((13,y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
     draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
-    #radius = 4
-    #draw.ellipse((144-radius, center_of_section-radius, 144+radius, center_of_section+radius), fill=BLACK if currently_displaying=='everything' else None, outline=BLACK, width=1)
-    #draw.ellipse((157-radius, center_of_section-radius, 157+radius, center_of_section+radius), fill=BLACK if currently_displaying=='one' else None, outline=BLACK, width=1)
-    #draw.ellipse((170-radius, center_of_section-radius, 170+radius, center_of_section+radius), fill=BLACK if currently_displaying=='ambient' else None, outline=BLACK, width=1)
 
 def display_ambient(name, clicked=False):
     global screen_dim, currently_displaying
@@ -749,7 +744,7 @@ def display_ambient(name, clicked=False):
     draw = ImageDraw.Draw(image)
 
     currently_displaying = 'ambient'
-    display_bar(y=218,draw=draw)
+    display_bar(draw=draw)
 
     enhancer = ImageEnhance.Brightness(image)
     image = enhancer.enhance(BRIGHTNESS)
