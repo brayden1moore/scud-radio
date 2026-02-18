@@ -1160,7 +1160,10 @@ def periodic_update():
         print('cache size', len(cached_everything_dict))
 
         time_since_last_success = time.time() - last_successful_fetch
-        should_fetch = (time_since_last_update >= 30) or (time_since_last_success > 30) or len(cached_everything_dict)==0
+        if sleeping:
+            should_fetch = (time_since_last_update >= 120) or (time_since_last_success > 120) or len(cached_everything_dict)==0
+        else:
+            should_fetch = (time_since_last_update >= 30) or (time_since_last_success > 30) or len(cached_everything_dict)==0
         if should_fetch:
             try:
                 logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
@@ -1203,11 +1206,7 @@ def periodic_update():
             
             time_since_last_update = 0
 
-        #if not held and not readied_stream and not screen_dim and screen_on:
-        #    display_current()
-
         time_since_last_update += 5
-        
         time.sleep(5)
 
 def wake_screen():
