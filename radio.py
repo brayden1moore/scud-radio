@@ -199,8 +199,8 @@ def write_to_tmp_os_path(name):
 def backlight_on():
     global screen_on
     if disp:
-        if current_image:
-            safe_display(current_image)
+        #if current_image:
+        #    safe_display(current_image)
         time.sleep(0.2)
         disp.bl_DutyCycle(100)
         screen_on = True
