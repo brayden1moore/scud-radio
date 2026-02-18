@@ -727,7 +727,6 @@ def display_bar(draw):
     draw.rectangle([0, y, 320, y], fill=BLACK)
     center_of_section = round((240 + 218) / 2)
 
-
     draw.text((13,y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
     draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
