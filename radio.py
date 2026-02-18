@@ -1061,8 +1061,8 @@ def refresh_everything_cache(refresh_stream_list):
         forwards = stream_list[stream_idx:] + stream_list[:stream_idx]
         backwards = list(reversed(forwards))
         
-        print('FORWARDS', forwards)
-        print('BACKWARDS', backwards)        
+        #print('FORWARDS', forwards)
+        #print('BACKWARDS', backwards)        
         curr_idx = 0
         while len(ordered_refresh_list) < len(refresh_stream_list):
             if forwards[curr_idx % len(forwards)] in refresh_stream_list:
@@ -1072,7 +1072,7 @@ def refresh_everything_cache(refresh_stream_list):
 
             curr_idx += 1
             
-        print('ORDERED', ordered_refresh_list)
+        #print('ORDERED', ordered_refresh_list)
     
     def refresh_stream(name):
         if name in one_cache.keys():
@@ -1534,14 +1534,17 @@ display_everything(0, stream, readied=False)
 try:
     while True:
         if (time.time() - last_input_time > 20):
+            logging.info('DISPLAYING AMBIENT VIA MAIN LOOP')
             display_ambient(stream)
 
         if screen_on and (time.time() - last_input_time > 600):
+            logging.info('TURNING SCREEN OFF VIA MAIN LOOP')
             sleeping = True
             screen_on = False
             backlight_off()
 
         if (readied_stream or volume_overlay_showing) and last_rotation and ((time.time() - last_rotation > 5) and (time.time() - last_input_time > 8)) and restarting == False and held == False:
+            logging.info('DISPLAYING CURRENT VIA MAIN LOOP')
             readied_stream = None
             volume_overlay_showing = False
             #if screen_on and stream and not screen_dim:
