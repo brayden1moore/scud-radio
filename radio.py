@@ -936,6 +936,7 @@ def on_button_released():
         if readied_stream:
             display_one(readied_stream)
             if readied_stream != stream:
+                print('READIED IS NEW', readied_stream, stream)
                 confirm_seek()
     else:
         set_last_volume(str(current_volume))
