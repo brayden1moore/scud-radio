@@ -1,3 +1,4 @@
+
 import time
 import lcdconfig
 
@@ -171,10 +172,8 @@ class LCD_2inch(lcdconfig.RaspberryPi):
     def clear(self):
         """Clear contents of image buffer"""
         _buffer = [0xff]*(self.width * self.height * 2)
-        self.SetWindows ( 0, 0, self.width, self.height)
+        self.SetWindows ( 0, 0, self.height, self.width)
         self.digital_write(self.DC_PIN,True)
         for i in range(0,len(_buffer),4096):
             self.spi_writebyte(_buffer[i:i+4096])	
-
-    def close(self):
-        self.module_exit()
+        
