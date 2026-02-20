@@ -200,6 +200,8 @@ def backlight_on():
     if disp:
         if current_image:
             safe_display(current_image)
+        if currently_displaying == 'ambient':
+            display_ambient(stream)
         time.sleep(0.2)
         disp.bl_DutyCycle(100)
         screen_on = True
