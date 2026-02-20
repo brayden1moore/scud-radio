@@ -113,7 +113,7 @@ class LCD_2inch(lcdconfig.RaspberryPi):
         self.command(0x21)
 
         self.command(0x11)
-
+        time.sleep(0.150)
         self.command(0x29)
 
   
