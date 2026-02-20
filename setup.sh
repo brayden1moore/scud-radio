@@ -12,7 +12,7 @@ dtparam=i2c_arm=on
 dtparam=spi=on
 #dtparam=audio=on
 camera_auto_detect=1
-display_auto_detect=1
+display_auto_detect=0
 auto_initramfs=1
 #dtoverlay=vc4-kms-v3d
 #max_framebuffers=2
@@ -36,6 +36,7 @@ if [ "$1" = "hat" ]; then
     cd WM8960-Audio-HAT
     sudo chmod +x install.sh
     sudo ./install.sh -y
+    cd ~/
 fi
 
 sudo apt install mpv -y

@@ -36,7 +36,7 @@ import numpy as np
 from gpiozero import *
 
 class RaspberryPi:
-    def __init__(self,spi=spidev.SpiDev(0,0),spi_freq=10000000,rst = 27,dc = 25,bl = 24,bl_freq=800,i2c=None,i2c_freq=100000):
+    def __init__(self,spi=spidev.SpiDev(0,0),spi_freq=10000000,rst = 27,dc = 25,bl = 9,bl_freq=800,i2c=None,i2c_freq=100000):
         self.np=np
         self.INPUT = False
         self.OUTPUT = True
