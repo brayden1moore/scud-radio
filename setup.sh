@@ -73,7 +73,7 @@ After=comitup.service
 User=root
 WorkingDirectory=/home/scud/scud-radio
 ExecStart=/usr/bin/python3 /home/scud/scud-radio/launcher.py
-ExecStartPre=/bin/bash -c 'while sudo iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8888 2>/dev/null; do :; done'
+ExecStartPre=/bin/bash -c 'while sudo iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 888 2>/dev/null; do :; done'
 ExecStartPre=/bin/systemctl stop radio.service
 ExecStartPre=/bin/systemctl stop splash.service
 ExecStartPre=/bin/systemctl stop api.service
@@ -139,7 +139,7 @@ After=network.target
 [Service] 
 ExecStart=/usr/bin/python3 /home/scud/scud-radio/api.py 
 #ExecStart=/usr/bin/python3 -m gunicorn --worker-class eventlet --workers 1 --timeout 0 --bind 127.0.0.1:7777 api:app
-ExecStartPre=/usr/bin/sudo /usr/sbin/iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8888
+ExecStartPre=/usr/bin/sudo /usr/sbin/iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 888
 WorkingDirectory=/home/scud/scud-radio 
 User=root 
 Restart=always 
@@ -173,7 +173,6 @@ sudo systemctl disable cloud-init-main.service
 sudo systemctl disable NetworkManager-wait-online.service
 sudo systemctl disable apt-daily.service apt-daily-upgrade.service apt-daily.timer apt-daily-upgrade.timer
 echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
-sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 888
 
 # Battery config
 sudo rm -f /etc/pisugar-server/config.json
