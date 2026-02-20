@@ -630,8 +630,9 @@ def display_one(name):
         cached_one = one_cache[name]
         draw = ImageDraw.Draw(cached_one)
         display_bar(draw)
-        safe_display(cached_one)
-        one_cache[name] = cached_one
+        disp.ShowImage(cached_one)
+        #safe_display(cached_one)
+        #one_cache[name] = cached_one
 
     else:
         print("IS NOT CACHED")
