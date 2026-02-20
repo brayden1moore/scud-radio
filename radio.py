@@ -623,16 +623,18 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         display_one(name)
 
 def display_one(name):
-    global has_displayed_once, currently_displaying, current_image
+    global has_displayed_once, currently_displaying
     
     if name in one_cache.keys():
+        print("IS CACHED")
         cached_one = one_cache[name]
         draw = ImageDraw.Draw(cached_one)
         display_bar(draw)
         safe_display(cached_one)
         one_cache[name] = cached_one
-        current_image = cached_one
+
     else:
+        print("IS NOT CACHED")
         # logo
         logo = streams[name]['logo_60']
         first_pixel_color = logo.getpixel((2,2))
