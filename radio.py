@@ -704,14 +704,14 @@ def display_one(name):
                 draw.text((14, anchor), i, font=MEDIUM_FONT, fill=WHITE)
                 anchor += avg_info_height + line_gap
 
-        currently_displaying = 'one'
         display_bar(draw=draw)
         enhancer = ImageEnhance.Brightness(image)
         image = enhancer.enhance(BRIGHTNESS)
         safe_display(image)
-        current_image = image
         has_displayed_once = True
         one_cache[name] = image
+    
+    currently_displaying = 'one'
 
 
 def display_bar(draw):
