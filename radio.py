@@ -933,13 +933,10 @@ def on_button_released():
     button_released_time = current_time
 
     if (button_released_time - button_press_time < 2):
-        print('READIED - ', readied_stream)
         if readied_stream:
             display_one(readied_stream)
-            confirm_seek()
-        else:
-            display_one(stream)
-
+            if readied_stream != stream:
+                confirm_seek()
     else:
         set_last_volume(str(current_volume))
 
