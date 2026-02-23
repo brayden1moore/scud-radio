@@ -1541,6 +1541,7 @@ try:
         if (time.time() - last_input_time > 20) & (time.time() - last_ambient_display > 30):
             logging.info('DISPLAYING AMBIENT VIA MAIN LOOP')
             display_ambient(stream)
+            last_ambient_display = time.time()
 
         if screen_on and (time.time() - last_input_time > 600):
             logging.info('TURNING SCREEN OFF VIA MAIN LOOP')
