@@ -178,8 +178,8 @@ def set_last_volume(vol):
 
 def safe_display(image):
     global current_image
-    if screen_on & (image != current_image):
-        disp.ShowImage(image)
+    #if screen_on & (image != current_image):
+    disp.ShowImage(image)
     current_image = image.copy()
     
 def write_to_tmp_os_path(name):
