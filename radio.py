@@ -961,7 +961,7 @@ def on_volume_button_pressed():
     button_released_time = current_time
     if not muted:
         send_mpv_command({"command": ["set_property", "volume", 0]})
-        set_last_volume(str(current_volume))
+        current_volume = 0
         #backlight_off()
         muted = True
         #put_to_sleep = True
