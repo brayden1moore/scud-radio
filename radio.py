@@ -961,7 +961,6 @@ def on_volume_button_pressed():
     button_released_time = current_time
     if not muted:
         send_mpv_command({"command": ["set_property", "volume", 0]})
-        current_volume = 0
         #backlight_off()
         muted = True
         #put_to_sleep = True
@@ -991,7 +990,8 @@ def switch_on():
     last_input_time = time.time()
     button_released_time = current_time
     backlight_on()
-    send_mpv_command({"command": ["set_property", "volume", current_volume]})
+    if not muted:
+        send_mpv_command({"command": ["set_property", "volume", current_volume]})
     sleeping = False
     put_to_sleep = False
 
@@ -1549,7 +1549,7 @@ volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_hand
 volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1, True)
 
 volume_click_button = Button(17, bounce_time=0.05)
-volume_click_button.when_pressed = on_volume_button_pressed
+volume_click_button.when_pressed =  wrapped_action(lambda: on_volume_button_pressed())
 
 switch = Button(23, pull_up=False, bounce_time=0.05)
 switch.when_pressed  = switch_on
