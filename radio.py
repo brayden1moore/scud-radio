@@ -35,6 +35,7 @@ logging.basicConfig(
 battery = None
 charging = False
 sleeping = False
+muted = False
 put_to_sleep = False
 
 SCREEN_WIDTH = 320
@@ -952,25 +953,47 @@ def on_button_released():
             safe_restart()
             return    
 
-
 def on_volume_button_pressed():
+    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, muted
+    held = False
+    current_time = time.time()
+    last_input_time = time.time()
+    button_released_time = current_time
+    if not muted:
+        send_mpv_command({"command": ["set_property", "volume", 0]})
+        set_last_volume(str(current_volume))
+        #backlight_off()
+        muted = True
+        #put_to_sleep = True
+    else: 
+        #backlight_on()
+        send_mpv_command({"command": ["set_property", "volume", current_volume]})
+        muted = False
+        #sleeping = False
+        #put_to_sleep = False
+
+def switch_off():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep
     held = False
     current_time = time.time()
     last_input_time = time.time()
     button_released_time = current_time
-    if not sleeping:
-        send_mpv_command({"command": ["set_property", "volume", 0]})
-        set_last_volume(str(current_volume))
-        backlight_off()
-        sleeping = True
-        put_to_sleep = True
-    else: 
-        backlight_on()
-        send_mpv_command({"command": ["set_property", "volume", current_volume]})
-        sleeping = False
-        put_to_sleep = False
+    send_mpv_command({"command": ["set_property", "volume", 0]})
+    set_last_volume(str(current_volume))
+    backlight_off()
+    sleeping = True
+    put_to_sleep = True
 
+def switch_on():
+    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep
+    held = False
+    current_time = time.time()
+    last_input_time = time.time()
+    button_released_time = current_time
+    backlight_on()
+    send_mpv_command({"command": ["set_property", "volume", current_volume]})
+    sleeping = False
+    put_to_sleep = False
 
 def toggle_favorite():
     global favorites, stream_list, cached_everything_dict, last_input_time, readied_stream, freeze_for_task
@@ -1527,6 +1550,14 @@ volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotat
 
 volume_click_button = Button(17, bounce_time=0.05)
 volume_click_button.when_pressed = on_volume_button_pressed
+
+switch = Button(23, pull_up=False)
+switch.when_pressed  = switch_on
+switch.when_released = switch_off
+if switch.is_pressed: # sync initial state
+    switch_on()
+else:
+    switch_off()
 
 ## main loop
 
