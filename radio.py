@@ -633,7 +633,7 @@ def display_one(name):
         cached_one = one_cache[name]
         draw = ImageDraw.Draw(cached_one)
         display_bar(draw)
-        disp.ShowImage(cached_one)
+        safe_display(cached_one)
         #safe_display(cached_one)
         one_cache[name] = cached_one
 
