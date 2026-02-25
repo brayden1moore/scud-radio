@@ -1551,7 +1551,7 @@ volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotat
 volume_click_button = Button(17, bounce_time=0.05)
 volume_click_button.when_pressed = on_volume_button_pressed
 
-switch = Button(23, pull_up=False)
+switch = Button(23, pull_up=False, bounce_time=0.05)
 switch.when_pressed  = switch_on
 switch.when_released = switch_off
 if switch.is_pressed: # sync initial state
