@@ -840,6 +840,9 @@ def seek_stream(direction):
             readied_stream = stream
 
         else:
+            if readied_stream == None:
+                readied_stream = stream
+                
             idx = stream_list.index(readied_stream if readied_stream else stream)
             if (direction == 1) and (idx==len(stream_list)-1):
                 readied_stream = stream_list[0]
