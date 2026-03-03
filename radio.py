@@ -835,10 +835,10 @@ def seek_stream(direction):
     
         logging.info(f"SEEK STREAM {direction}")
 
-        if (readied_stream == None):
+        if (readied_stream == None) and currently_displaying == 'ambient':
             display_one(stream)
             readied_stream = stream
-            
+
         else:
             idx = stream_list.index(readied_stream if readied_stream else stream)
             if (direction == 1) and (idx==len(stream_list)-1):
