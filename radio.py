@@ -835,23 +835,24 @@ def seek_stream(direction):
     
         #logging.info(f"SEEK STREAM {direction}")
 
-        if (readied_stream == None) and currently_displaying == 'ambient':
+        if (readied_stream == None) and currently_displaying == 'ambient': # show ONE if currently displaying AMBIENT
             display_one(stream)
             readied_stream = stream
 
         else:
             if readied_stream == None:
-                readied_stream = stream
+                readied_stream = stream # show EVERYTHING (STREAM) if currently displaying ONE
                 
-            idx = stream_list.index(readied_stream if readied_stream else stream)
-            if (direction == 1) and (idx==len(stream_list)-1):
-                readied_stream = stream_list[0]
-            elif (direction == -1) and (idx==0):
-                readied_stream = stream_list[-1]
             else:
-                readied_stream = stream_list[idx + direction]
+                idx = stream_list.index(readied_stream if readied_stream else stream) 
+                if (direction == 1) and (idx==len(stream_list)-1):
+                    readied_stream = stream_list[0]
+                elif (direction == -1) and (idx==0):
+                    readied_stream = stream_list[-1]
+                else:
+                    readied_stream = stream_list[idx + direction]
 
-            display_readied_cached(readied_stream)
+            display_readied_cached(readied_stream) # otherwise show EVERYTHING (READIED)
 
 def confirm_seek():
     global readied_stream, stream
