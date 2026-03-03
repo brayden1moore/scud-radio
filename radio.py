@@ -738,7 +738,7 @@ def display_bar(draw):
 
 
 def display_ambient(name, clicked=False):
-    global screen_dim, currently_displaying, last_ambient_display
+    global currently_displaying, last_ambient_display
 
     # logo
     logo = streams[name]['logo_176']
@@ -758,9 +758,6 @@ def display_ambient(name, clicked=False):
     safe_display(image)
 
     last_ambient_display = time.time()
-
-    if not clicked:
-        screen_dim = True
 
 
 def display_current():
@@ -1126,7 +1123,7 @@ def refresh_everything_cache(refresh_stream_list):
 
         
 def handle_rotation(direction):
-    global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
+    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
     rotated = True
     last_rotation = time.time()
     last_input_time = time.time()
@@ -1140,7 +1137,7 @@ def handle_rotation(direction):
         seek_stream(direction)
 
 def volume_handle_rotation(direction):
-    global rotated, current_volume, button_press_time, last_rotation, screen_on, screen_dim, last_input_time
+    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
     rotated = True
     last_input_time = time.time()
     last_rotation = time.time()
@@ -1241,12 +1238,11 @@ def periodic_update():
         time.sleep(5)
 
 def wake_screen():
-    global screen_on, screen_dim, last_input_time, current_image
+    global screen_on, last_input_time, current_image
     last_input_time = time.time()
-    if (not screen_on) or (screen_dim):
+    if (not screen_on):
         screen_on = True
-        screen_dim = False
-    
+
         display_current()
         time.sleep(0.05)
         display_current
@@ -1288,7 +1284,6 @@ stream = None
 readied_stream = None
 last_rotation = None
 screen_on = True
-screen_dim = False
 current_image = None
 saved_image_while_paused = None
 play_status = 'pause'
