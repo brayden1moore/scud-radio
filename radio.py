@@ -833,7 +833,7 @@ def seek_stream(direction):
     if not freeze_for_task:
         idx = stream_list.index(stream)
     
-        logging.info(f"SEEK STREAM {direction}")
+        #logging.info(f"SEEK STREAM {direction}")
 
         if (readied_stream == None) and currently_displaying == 'ambient':
             display_one(stream)
@@ -1130,12 +1130,11 @@ def handle_rotation(direction):
     last_rotation = time.time()
     last_input_time = time.time()
 
-    logging.info(f'HANDLE ROTATION {direction}')
+    #logging.info(f'HANDLE ROTATION {direction}')
 
     if held:
         volume_handle_rotation(direction)
     else:
-        last_rotation = time.time()
         seek_stream(direction)
 
 def volume_handle_rotation(direction):
