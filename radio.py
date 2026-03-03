@@ -838,6 +838,7 @@ def seek_stream(direction):
         if (readied_stream == None):
             display_one(stream)
             readied_stream = stream
+            
         else:
             idx = stream_list.index(readied_stream if readied_stream else stream)
             if (direction == 1) and (idx==len(stream_list)-1):
@@ -847,7 +848,7 @@ def seek_stream(direction):
             else:
                 readied_stream = stream_list[idx + direction]
 
-        display_readied_cached(readied_stream)
+            display_readied_cached(readied_stream)
 
 def confirm_seek():
     global readied_stream, stream
