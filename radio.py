@@ -749,6 +749,7 @@ def display_ambient(name, clicked=False):
     draw = ImageDraw.Draw(image)
 
     currently_displaying = 'ambient'
+    logging.info(f'DISPLAY AMBIENT BEING CALLED')
     display_bar(draw=draw)
 
     enhancer = ImageEnhance.Brightness(image)
@@ -1129,6 +1130,8 @@ def handle_rotation(direction):
     rotated = True
     last_rotation = time.time()
     last_input_time = time.time()
+
+    logging.info(f'HANDLE ROTATION {direction}')
 
     if held:
         volume_handle_rotation(direction)
