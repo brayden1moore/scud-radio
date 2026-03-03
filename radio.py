@@ -834,7 +834,9 @@ def seek_stream(direction):
 
     if not freeze_for_task:
         idx = stream_list.index(stream)
-        
+    
+        logging.info(f"SEEK STREAM {direction}")
+
         if (readied_stream == None):
             readied_stream = stream
         else:
