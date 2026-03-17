@@ -58,12 +58,11 @@ Usage:
     elif command == 'list':
         result = send_command('list')
         if result['status'] == 'ok':
-            if isinstance(result['stations'],list):
-                result = f"{';'.join(result['stations'])}"
-                if isinstance(result['hidden'],list):
-                    if len(result['hidden']) > 0:
-                        result += f"|{';'.join(result['hidden'])}"
-                print(result)
+            if isinstance(result['stations'], list):
+                output = ';'.join(result['stations'])
+                if isinstance(result['hidden'], list) and result['hidden']:
+                    output += f"|{';'.join(result['hidden'])}"
+                print(output)
             else:
                 print("")
     
