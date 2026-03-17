@@ -60,8 +60,8 @@ Usage:
         if result['status'] == 'ok':
             if isinstance(result['stations'],list):
                 result = f"{';'.join(result['stations'])}"
-                if isinstance(result['hidden'],list):
-                    result += f"|{';'.join(result['hidden'])}"
+                #if isinstance(result['hidden'],list):
+                #    result += f"|{';'.join(result['hidden'])}"
                 print(result)
             else:
                 print("")
