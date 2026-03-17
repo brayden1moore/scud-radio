@@ -1229,9 +1229,8 @@ def handle_rotation(direction):
 
     #logging.info(f'HANDLE ROTATION {direction}')
 
-    if volume_held:
-        pass
-        #toggle_hidden(readied_stream)
+    if volume_held and readied_stream != stream:
+        toggle_hidden(readied_stream)
     else:
         seek_stream(direction)
 
@@ -1592,7 +1591,10 @@ def handle_remote_command(command_data):
             send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
         elif cmd == 'power':
-            on_volume_button_pressed()
+            if screen_on:
+                backlight_off()
+            else:
+                backlight_on()
 
         elif cmd == 'restart':
             safe_restart()
