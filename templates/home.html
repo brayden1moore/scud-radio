@@ -141,7 +141,7 @@ function updateStatus(fromHandleCall) {
       });
 }
 
-function addStation(name) {
+function addStation(name, hidden) {
     station = document.createElement('img');
     station.classList.add('a-station');
     station.src = info[name]['logo'];
@@ -163,14 +163,22 @@ function updateStations() {
       })
       .then(function(response) { return response.json(); })
       .then(function(json) {
-            const stationsArray = json['output'].split(";");
-            stationList = stationsArray;
-            console.log(json['output']);
-            console.log(stationsArray);
+            const shown = json['output'].split("|")[0].split(";");
+
             stations.innerHTML = "";
-            stationsArray.forEach(station => {
-                addStation(station)
+            shown.forEach(station => {
+                addStation(station, hidden=false)
             });
+
+            if (json['output'].contains("|")) {
+                const hidden = json['output'].split(";");
+                hidden.forEach(station => {
+                addStation(station, hidden=true)
+            });
+            }
+
+
+
       });
 }
 

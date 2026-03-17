@@ -170,6 +170,26 @@ def set_favorites(favorites):
     with open(fav_path / 'favorites.txt', 'w') as f:
         f.write('\n'.join(favorites))
 
+def get_hidden():
+    hidden_path = Path(LIB_PATH)
+    hidden_path.mkdir(parents=True, exist_ok=True)
+    
+    hidden_file = hidden_path / 'hidden.txt'
+    if not hidden_file.exists():
+        hidden_file.touch() 
+        return []
+    
+    with open(hidden_file, 'r') as f:
+        hidden = f.readlines()
+    return [hid.strip() for hid in hidden]
+
+def set_hidden(hidden):
+    hidden_path = Path(LIB_PATH)
+    hidden_path.mkdir(parents=True, exist_ok=True)
+    
+    with open(hidden_path / 'hidden.txt', 'w') as f:
+        f.write('\n'.join(hidden))
+
 def set_last_volume(vol):
     vol_path = Path(LIB_PATH)
     vol_path.mkdir(parents=True, exist_ok=True)
@@ -313,6 +333,9 @@ def get_stream_list(stream_dict):
         #back_half = [i for i in stream_list if i not in favorites and i not in front_half]
         stream_list =  sorted([i for i in favorites if i in stream_list], key=str.casefold) + sorted([i for i in stream_list if i not in favorites], key=str.casefold)
     
+    if hidden:
+        stream_list = [i for i in stream_list if i not in hidden]
+
     return stream_list
 
 def width(string, font):
@@ -1100,6 +1123,58 @@ def toggle_favorite():
 
         freeze_for_task = False
 
+
+def toggle_hidden(station):
+    global hidden, stream_list, cached_everything_dict, last_input_time, readied_stream, freeze_for_task
+
+    freeze_for_task = True
+
+    chosen_stream = station
+    if chosen_stream in stream_list:
+        prior_idx = stream_list.index(chosen_stream)
+        if readied_stream:
+            img = cached_everything_dict[chosen_stream].copy().convert('RGBA')
+        else:
+            img = one_cache[chosen_stream].copy().convert('RGBA')
+
+        action = None
+        if chosen_stream in hidden:
+            action = 'unhide'
+            hidden = [i for i in hidden if i != chosen_stream]
+        else:
+            action = 'hide'
+            hidden.append(chosen_stream)
+            hidden = list(set(hidden))
+
+        set_hidden(hidden)
+        stream_list = get_stream_list(streams)
+
+        print('TOGGLED HIDDEN. REFRESHING, ', stream_list)
+        thread = threading.Thread(target=refresh_everything_cache, args=(stream_list,), daemon=True)
+
+        if action == 'unhide':
+            img = current_image.convert('RGBA')
+            img.paste(unhide_img, (0, 0), unhide_img)
+            disp.ShowImage(img)
+            time.sleep(0.1)
+        else:
+            img = current_image.convert('RGBA')
+            img.paste(hide_img, (0, 0), hide_img)
+            disp.ShowImage(img)
+            time.sleep(0.1)  
+
+        if action == 'unhide':
+            readied_stream = chosen_stream
+        else:
+            readied_stream = stream_list[prior_idx % len(stream_list)]
+
+        thread.start()
+        time.sleep(0.5)
+        last_input_time = time.time()
+
+        display_everything(0, readied_stream, update=False, readied=True)
+
+        freeze_for_task = False
     
 
 def refresh_everything_cache(refresh_stream_list):
@@ -1152,8 +1227,8 @@ def handle_rotation(direction):
 
     #logging.info(f'HANDLE ROTATION {direction}')
 
-    if held:
-        volume_handle_rotation(direction)
+    if volume_held:
+        toggle_hidden(readied_stream)
     else:
         seek_stream(direction)
 
@@ -1352,6 +1427,9 @@ favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'),
                    Image.open('assets/favorited4.png').convert('RGBA'),
                    Image.open('assets/favorited5.png').convert('RGBA')]
 
+hide_img = Image.open('assets/hide_img.png').convert('RGBA')
+unhide_img = Image.open('assets/unhide_img.png').convert('RGBA')
+
 star_60 = Image.open('assets/star_60.png').convert('RGBA')
 star_96 = Image.open('assets/star_96.png').convert('RGBA')
 star_25 = Image.open('assets/star_25.png').convert('RGBA')
@@ -1370,6 +1448,7 @@ else:
     switch_off()
 
 favorites = get_favorites()
+hidden = get_hidden()
 
 button_released_time = time.time()
 currently_displaying = 'everything'
@@ -1476,7 +1555,8 @@ def handle_remote_command(command_data):
             return {
                 'status': 'ok',
                 'stations': stream_list,
-                'favorites': favorites
+                'favorites': favorites,
+                'hidden': hidden
             }
         
         elif cmd == 'favorite':
@@ -1484,6 +1564,14 @@ def handle_remote_command(command_data):
             toggle_favorite()
             return {'status': 'ok', 'favorites': favorites}
         
+        elif cmd == 'hide':
+            station_name = command_data.get('value')
+            try:
+                toggle_hidden(station_name)
+                return {'status': 'ok', 'hidden': hidden}        
+            except Exception as e:
+                return {'status': 'not ok', 'message': e}        
+
         elif cmd == 'off':
             screen_on = False
             send_mpv_command({"command": ["set_property", "volume", 0]})

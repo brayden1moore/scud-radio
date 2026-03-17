@@ -20,6 +20,7 @@ def home():
 def control(command):
     allowed_commands = {
         'favorite': 'favorite',
+        'hide': 'hide',
         'off': 'off',
         'on': 'on',
         'volume_up': 'volume_up',

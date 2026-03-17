@@ -43,6 +43,7 @@ Usage:
     radio off                 Put the radio to sleep
     radio on                  Wake the radio up
     radio restart             Restart the radio and gather updates
+    radio hide <station>      Toggle hidden/shown for specific station
 """)
         sys.exit(1)
     
@@ -58,7 +59,10 @@ Usage:
         result = send_command('list')
         if result['status'] == 'ok':
             if isinstance(result['stations'],list):
-                print(f"{';'.join(result['stations'])}")
+                result = f"{';'.join(result['stations'])}"
+                if isinstance(result['hidden'],list):
+                    result += f"|{';'.join(result['hidden'])}"
+                print(result)
             else:
                 print("")
     
@@ -88,6 +92,17 @@ Usage:
         result = send_command('play', value=station)
         if result['status'] == 'ok':
             print(f"Now playing: {result['station']}")
+        else:
+            print(f"Error: {result['message']}")
+
+    elif command == 'hide':
+        if len(sys.argv) < 3:
+            print("Error: Please specify station name")
+            sys.exit(1)
+        station = ' '.join(sys.argv[2:])
+        result = send_command('hide', value=station)
+        if result['status'] == 'ok':
+            print(f"Hidden: {result['hidden']}")
         else:
             print(f"Error: {result['message']}")
     
