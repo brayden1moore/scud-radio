@@ -143,6 +143,7 @@ function updateStatus(fromHandleCall) {
 
 function addStation(name, hidden) {
     container = document.createElement('div'); 
+    container.classList.add('a-station-and-overlay');
     station = document.createElement('img');
     station.classList.add('a-station');
     console.log('Adding Station')
