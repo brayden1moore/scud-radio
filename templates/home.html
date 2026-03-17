@@ -165,6 +165,7 @@ function updateStations() {
       })
       .then(function(response) { return response.json(); })
       .then(function(json) {
+            console.log(json['output'])
             const shown = json['output'].split("|")[0].split(";");
 
             stations.innerHTML = "";
