@@ -1172,7 +1172,7 @@ def toggle_hidden(station):
         time.sleep(0.5)
         last_input_time = time.time()
 
-        display_everything(0, readied_stream, update=False, readied=True)
+        play(readied_stream)
 
         freeze_for_task = False
     
