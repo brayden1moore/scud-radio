@@ -918,20 +918,22 @@ def on_button_pressed():
     button_press_time = time.time()
     button_released_time = None
 
-    #logging.info('PRESSED AND CURRENTLY DISPLAYING', currently_displaying)
-
-    if readied_stream:
-        display_readied_cached(readied_stream, pushed=True)
+    if volume_held:
+        play_random()
 
     else:
-        if currently_displaying=='everything':
-            display_one(stream)
+        if readied_stream:
+            display_readied_cached(readied_stream, pushed=True)
 
-        #elif currently_displaying == 'one':
-        #    display_ambient(stream, clicked=True)
+        else:
+            if currently_displaying=='everything':
+                display_one(stream)
 
-        elif currently_displaying == 'ambient':
-            display_readied_cached(stream)
+            #elif currently_displaying == 'one':
+            #    display_ambient(stream, clicked=True)
+
+            elif currently_displaying == 'ambient':
+                display_readied_cached(stream)
 
     held = True
     rotated = False
@@ -942,7 +944,7 @@ def on_button_released():
     held = False
     current_time = time.time()
     last_input_time = time.time()
-    button_released_time = current_time
+    button_released_time = current_time    
 
     if (button_released_time - button_press_time < 2):
         if readied_stream:
@@ -960,11 +962,15 @@ def on_button_released():
             return    
 
 def on_volume_button_pressed():
-    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, muted
+    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, muted, volume_held
     held = False
     current_time = time.time()
     last_input_time = time.time()
     button_released_time = current_time
+    volume_held = True
+
+    '''
+
     if not muted:
         send_mpv_command({"command": ["set_property", "volume", 0]})
         #backlight_off()
@@ -976,6 +982,16 @@ def on_volume_button_pressed():
         muted = False
         #sleeping = False
         #put_to_sleep = False
+    
+    '''
+
+def on_volume_button_released():
+    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, muted, volume_held
+    held = False
+    current_time = time.time()
+    last_input_time = time.time()
+    button_released_time = current_time
+    volume_held = False
 
 def switch_off():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep
@@ -1299,6 +1315,7 @@ button_press_time = 0
 rotated = False
 restarting = False
 held = False
+volume_held = False
 wifi_strength = None
 first_boot = True
 selector = 'red'
@@ -1554,6 +1571,8 @@ volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotat
 
 volume_click_button = Button(17, bounce_time=0.05)
 volume_click_button.when_pressed =  wrapped_action(lambda: on_volume_button_pressed())
+volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
+
 
 # switch
 switch = Button(23, pull_up=False, bounce_time=0.05)
