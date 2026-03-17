@@ -173,10 +173,10 @@ function updateStations() {
             });
 
             if (json['output'].contains("|")) {
-                const hidden = json['output'].split(";");
+                const hidden = json['output'].split("|")[1].split(";");
                 hidden.forEach(station => {
-                addStation(station, hidden=true)
-            });
+                    addStation(station, hidden=true)
+                });
             }
 
 
