@@ -144,6 +144,8 @@ function updateStatus(fromHandleCall) {
 function addStation(name, hidden) {
     station = document.createElement('img');
     station.classList.add('a-station');
+    console.log('Adding Station')
+    console.log(name)
     station.src = info[name]['logo'];
     station.dataset.name = name;
     station.dataset.oneLiner = info[name]['oneLiner'];
