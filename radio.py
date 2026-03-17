@@ -1591,10 +1591,10 @@ def handle_remote_command(command_data):
             send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
         elif cmd == 'power':
-            if screen_on:
-                backlight_off()
-            else:
+            if screen_on == False and put_to_sleep == False:
                 backlight_on()
+            else:
+                backlight_off()
 
         elif cmd == 'restart':
             safe_restart()
