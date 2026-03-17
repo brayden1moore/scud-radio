@@ -153,9 +153,6 @@ function addStation(name, hidden) {
     station.dataset.oneLiner = info[name]['oneLiner'];
     station.id = name;
     station.title = info[name]['oneLiner'];
-    station.addEventListener('click', ()=> {
-        handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
-    });
     station.classList.add('fade-in-element');
     container.appendChild(station);
 
@@ -166,6 +163,9 @@ function addStation(name, hidden) {
             <polygon points="30,20 30,80 75,50" fill="white" stroke="black" stroke-width="2"></polygon>
         </svg>
     `;
+    overlay.addEventListener('click', ()=> {
+        handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
+    });
     container.appendChild(overlay);
 
     stations.appendChild(container)
