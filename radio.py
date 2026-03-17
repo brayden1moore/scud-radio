@@ -1230,7 +1230,8 @@ def handle_rotation(direction):
     #logging.info(f'HANDLE ROTATION {direction}')
 
     if volume_held:
-        toggle_hidden(readied_stream)
+        pass
+        #toggle_hidden(readied_stream)
     else:
         seek_stream(direction)
 
