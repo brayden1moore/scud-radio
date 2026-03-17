@@ -66,6 +66,8 @@ LIB_PATH = "/var/lib/scud-radio"
 
 import driver as LCD_2inch
 
+currently_displaying = 'everything'
+
 
 def read_last_played():
     scud_path = Path(LIB_PATH)
