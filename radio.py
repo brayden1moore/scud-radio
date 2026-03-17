@@ -1360,6 +1360,15 @@ live_60 = Image.open('assets/live_60.png').convert('RGBA')
 live_96 = Image.open('assets/live_96.png').convert('RGBA')
 live_25 = Image.open('assets/live_25.png').convert('RGBA')
 
+# switch
+switch = Button(23, pull_up=False, bounce_time=0.05)
+switch.when_pressed  = switch_on
+switch.when_released = switch_off
+if switch.is_pressed: # sync initial state
+    switch_on()
+else:
+    switch_off()
+
 favorites = get_favorites()
 
 button_released_time = time.time()
@@ -1383,7 +1392,6 @@ else:
     play_random()
 
 refresh_everything_cache(stream_list)
-
 
 ## remote controls
 
@@ -1572,16 +1580,6 @@ volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotat
 volume_click_button = Button(17, bounce_time=0.05)
 volume_click_button.when_pressed =  wrapped_action(lambda: on_volume_button_pressed())
 volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
-
-
-# switch
-switch = Button(23, pull_up=False, bounce_time=0.05)
-switch.when_pressed  = switch_on
-switch.when_released = switch_off
-if switch.is_pressed: # sync initial state
-    switch_on()
-else:
-    switch_off()
     
 ## main loop
 
