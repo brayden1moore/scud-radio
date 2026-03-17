@@ -142,6 +142,7 @@ function updateStatus(fromHandleCall) {
 }
 
 function addStation(name, hidden) {
+    container = document.createElement('div'); 
     station = document.createElement('img');
     station.classList.add('a-station');
     console.log('Adding Station')
@@ -155,7 +156,18 @@ function addStation(name, hidden) {
         handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
     });
     station.classList.add('fade-in-element');
-    stations.appendChild(station);
+    container.appendChild(station);
+
+    overlay = document.createElement('div'); 
+    overlay.classList.add('play-overlay');
+    overlay.innerHTML = `
+        <svg viewBox="0 0 100 100" width="60%" height="60%">
+            <polygon points="30,20 30,80 75,50" fill="white" stroke="black" stroke-width="2"></polygon>
+        </svg>
+    `;
+    container.appendChild(overlay);
+
+    stations.appendChild(container)
 }
 
 let stationList = [];
@@ -315,6 +327,19 @@ left: -36px !important;
     border-radius: 0px 0px 40px 40px;
 }
 
+.play-overlay {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.a-station-and-overlay:hover .play-overlay {
+    display: block;
+}
+
 .a-station {
     touch-action: manipulation;
     height: 80px;
@@ -322,13 +347,6 @@ left: -36px !important;
     border: 1px solid black;
     border-top: none;
     cursor:pointer;
-    border-left: none;
-}
-
-.a-station:hover {
-    filter: invert(100%);
-    border: 1px solid white;
-    border-top: none !important;
     border-left: none;
 }
 
