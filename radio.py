@@ -1259,7 +1259,11 @@ def display_readied_cached(name, pushed=False):
         image = cached_everything_dict[name]
         image.paste(tick_image, (0,0), mask=tick_image)
         draw = ImageDraw.Draw(image)
-        draw_tick(draw, name)
+        if name in tick_locations.keys():
+            draw_tick(draw, name)
+        else:
+            calculate_ticks()
+            draw_tick(draw, name)
         
         if image:
             if pushed:
