@@ -1701,8 +1701,8 @@ last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
 
-readied_stream = None
 display_everything(0, stream, readied=False)
+readied_stream = stream
 refresh_everything_cache(stream_list)
 try:
     while True:
