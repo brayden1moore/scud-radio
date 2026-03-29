@@ -696,10 +696,11 @@ def display_one(name):
             image.paste(live_60, (16, 12), live_60)
 
         # name and underline
-        name_line = calculate_text(name, font=LARGE_FONT_THIN, max_width=225, lines=1)[0]
-        draw.rectangle([92, 20 - 4, 92 + width(name_line, LARGE_FONT_THIN), 20 + height('S', LARGE_FONT_THIN)], fill=BLACK)
-        draw.text((90, 13), name_line, font=LARGE_FONT_THIN, fill=WHITE)
-        draw.rectangle([92, 47, 92 + width(name_line, LARGE_FONT_THIN), 47], fill=WHITE) # underline
+        name_font = LARGE_ISH_FONT
+        name_line = calculate_text(name, font=name_font, max_width=225, lines=1)[0]
+        draw.rectangle([92, 20 - 4, 92 + width(name_line, name_font), 20 + height('S', name_font)], fill=BLACK)
+        draw.text((90, 13), name_line, font=name_font, fill=WHITE)
+        draw.rectangle([92, 47, 92 + width(name_line, name_font), 47], fill=WHITE) # underline
         #draw.rectangle([15, 72 + 12, SCREEN_WIDTH-15, 72 + 12], outline=WHITE, width=1) # divider
         
         # location
