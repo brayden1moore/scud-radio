@@ -468,7 +468,7 @@ def calculate_text_cached(text, font_name, width, lines):
 start_x = 0
 logo_chunk_start = 35
 logo_chunk_start_x = 12 + start_x
-og_logo_position = (115, logo_chunk_start - 14 - 4)
+og_logo_position = (116, logo_chunk_start - 14 - 4)
 logo_position = og_logo_position
 
 tick_width = 1
