@@ -890,6 +890,7 @@ def seek_stream(direction):
                 else:
                     readied_stream = stream_list[idx + direction]
 
+            print('TURNED TO....', readied_stream)
             display_readied_cached(readied_stream) # otherwise show EVERYTHING (READIED)
 
 def confirm_seek():
