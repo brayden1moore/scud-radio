@@ -1309,6 +1309,8 @@ def display_readied_cached(name, pushed=False):
             disp.ShowImage(image)
         else:
             cached_everything_dict[name] = display_everything(0, name, readied=True)
+    else:
+        cached_everything_dict[name] = display_everything(0, name, readied=True)
 
 def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict, sleeping
