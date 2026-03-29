@@ -402,7 +402,7 @@ def calculate_text(text, font, max_width, lines):
     text = text.strip()
 
     if width(text, font) <= max_width:
-        return [text]
+        return [u"{text}"]
     
     else:
         current_width = 0
@@ -422,7 +422,7 @@ def calculate_text(text, font, max_width, lines):
             if current_line == lines:
                 if width(characters + i, font) >= max_width-dots_width: # if width exceeds max - dots, return
                     characters += '...'
-                    line_list.append(characters)
+                    line_list.append(u"{characters}")
                     return line_list
                 else:
                     characters += i
@@ -433,7 +433,7 @@ def calculate_text(text, font, max_width, lines):
                         characters += i
                     else:
                         current_line += 1
-                        line_list.append(characters)
+                        line_list.append(u"{characters}")
                         if i not in [' ','-','/',':']:
                             characters = i
                         else:
@@ -443,7 +443,7 @@ def calculate_text(text, font, max_width, lines):
                     characters += i
                     current_width = width(characters, font)
         if characters:  # if there are remaining characters
-            line_list.append(characters)
+            line_list.append(u"{characters}")
         return line_list
     
 
