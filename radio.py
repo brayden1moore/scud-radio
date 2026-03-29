@@ -572,14 +572,15 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw info
         y_offset = 0
-        everything_info_y = name_chunk_start + 29
+        everything_info_y = name_chunk_start + 30
         for i in title_lines:
             draw.text((name_chunk_start_x, everything_info_y + y_offset), i, font=EVERYTHING_INFO_FONT, fill=WHITE)
             y_offset += 20
 
         # draw location
-        draw.rectangle([name_chunk_start_x, name_chunk_start + 54, name_chunk_start_x + width(location, MEDIUM_FONT), name_chunk_start + 55 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
-        draw.text((name_chunk_start_x, name_chunk_start + 52), location, font=MEDIUM_FONT, fill=BLACK)
+        tags_start = name_chunk_start + 54
+        draw.rectangle([name_chunk_start_x, tags_start, name_chunk_start_x + width(location, MEDIUM_FONT), tags_start + 1 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
+        draw.text((name_chunk_start_x, tags_start - 2), location, font=MEDIUM_FONT, fill=BLACK)
         
         genre_start = name_chunk_start_x + width(location, MEDIUM_FONT)
         genres = streams[name]['genres']
@@ -588,8 +589,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             genre_widths = [width(g, MEDIUM_FONT) for g in genres]
             genre_x_offset = 5
             for genre, genre_width in zip(genres, genre_widths):
-                draw.rectangle([genre_start + genre_x_offset, name_chunk_start + 54, genre_start + genre_x_offset + genre_width, name_chunk_start + 55 + height('S', MEDIUM_FONT)], fill=GREEN) # bg
-                draw.text((genre_start + genre_x_offset, name_chunk_start + 52), genre, font=MEDIUM_FONT, fill=BLACK)
+                draw.rectangle([genre_start + genre_x_offset, tags_start, genre_start + genre_x_offset + genre_width, tags_start + 1 + height('S', MEDIUM_FONT)], fill=GREEN) # bg
+                draw.text((genre_start + genre_x_offset, tags_start - 2), genre, font=MEDIUM_FONT, fill=BLACK)
                 genre_x_offset += genre_width + 5
 
         # logos
