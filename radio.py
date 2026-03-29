@@ -1409,6 +1409,7 @@ selector = 'red'
 has_displayed_once = False
 volume_overlay_showing = False
 last_ambient_display = time.time()
+switch_off_time = None
 
 user_tz = pytz.timezone(get_timezone_from_ip())
 
@@ -1685,9 +1686,6 @@ volume_click_button.when_pressed =  wrapped_action(lambda: on_volume_button_pres
 volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
     
 ## main loop
-
-switch_off_time = None
-
 last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
