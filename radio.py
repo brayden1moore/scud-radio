@@ -55,6 +55,7 @@ RED = (255,71,71)
 
 SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
 MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
+MEDIUM_FONT_BOLD = ImageFont.truetype("assets/Archivo-Bold.ttf", 18)
 LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",42)
 LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
 LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28)
@@ -558,10 +559,11 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # draw name and underline
         name_chunk_start = 240 - 80
         name_chunk_start_x = 12 + start_x
-        name_line = calculate_text(name, LARGE_FONT_THIN, 315, 1)
-        draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + height('S', LARGE_FONT_THIN)], fill=BLACK) # bg
-        draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line[0], font=LARGE_FONT_THIN, fill=WHITE) 
-        draw.rectangle([name_chunk_start_x, name_chunk_start + 30, name_chunk_start_x + width(name_line[0], LARGE_FONT_THIN), name_chunk_start + 30], fill=WHITE) # ul
+        name_font = LARGE_FONT
+        name_line = calculate_text(name, name_font, 315, 1)
+        draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], name_font), name_chunk_start + height('S', name_font)], fill=BLACK) # bg
+        draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line[0], font=name_font, fill=WHITE) 
+        draw.rectangle([name_chunk_start_x, name_chunk_start + 30, name_chunk_start_x + width(name_line[0], name_font), name_chunk_start + 30], fill=WHITE) # ul
 
         # draw info
         y_offset = 0
