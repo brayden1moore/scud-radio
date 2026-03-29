@@ -735,9 +735,9 @@ def display_one(name):
         
         info_lines = [i for i in calculate_text(' - '.join(info[1:]), font=ONE_INFO_FONT, max_width=290, lines=num_info_lines) if i != '']
 
-        line_gap = 1
+        line_gap = 2
         section_gap = 7
-        anchor = get_anchor(title_lines, info_lines, line_gap, section_gap)
+        anchor = get_anchor(title_lines, info_lines, line_gap, section_gap, title_font, ONE_INFO_FONT)
         avg_title_height = height("Sg", title_font)
         avg_info_height = height("Sg", ONE_INFO_FONT)
 
@@ -816,14 +816,14 @@ def display_current():
         display_ambient(stream, clicked=True)
 
 
-def get_anchor(title, info, line_gap, section_gap):
+def get_anchor(title, info, line_gap, section_gap, title_font, info_font):
     size = 0
     for line in title:
-        size += height(line, LARGE_FONT) + line_gap
+        size += height(line, title_font) + line_gap
     if info:
         size += section_gap
         for line in info:
-            size += height(line, MEDIUM_FONT) + line_gap
+            size += height(line, info_font) + line_gap
 
     section_height = 215 - (72 + 12 + 6)
     return 65 + 12 + 6 + round((section_height - size) // 2) - 6
