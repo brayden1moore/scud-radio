@@ -1254,8 +1254,6 @@ def volume_handle_rotation(direction):
     
     show_volume_overlay(new_volume)
     current_volume = new_volume
-    set_last_volume(str(new_volume))
-
     send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
 def display_readied_cached(name, pushed=False):
@@ -1689,6 +1687,8 @@ readied_stream = None
 display_everything(0, stream, readied=False)
 try:
     while True:
+        set_last_volume(str(current_volume))
+
         if (time.time() - last_input_time > 20) & (time.time() - last_ambient_display > 30):
             logging.info('DISPLAYING AMBIENT VIA MAIN LOOP')
             display_ambient(stream)
