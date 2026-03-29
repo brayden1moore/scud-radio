@@ -66,7 +66,7 @@ def load_noto(size, weight=400):
     return font
 
 EVERYTHING_INFO_FONT = load_noto(17, weight=400)  
-EVERYTHING_NAME_FONT = load_noto(28, weight=400)
+EVERYTHING_NAME_FONT = load_noto(28, weight=700)
 ONE_INFO_FONT = EVERYTHING_INFO_FONT
 ONE_LARGE_FONT = load_noto(38, 300)
 ONE_LARGISH_FONT = load_noto(32, 300)
@@ -562,7 +562,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), EVERYTHING_INFO_FONT, 315, 1)
 
         # draw name and underline
-        name_chunk_start = 240 - 80
+        name_chunk_start = 240 - 85
         name_chunk_start_x = 12 + start_x
         name_font = EVERYTHING_NAME_FONT
         name_line = calculate_text(name, name_font, 315, 1)
