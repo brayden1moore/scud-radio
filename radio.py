@@ -562,7 +562,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), EVERYTHING_INFO_FONT, 315, 1)
 
         # draw name and underline
-        name_chunk_start = 240 - 86
+        name_chunk_start = 240 - 88
         name_chunk_start_x = 12 + start_x
         name_font = EVERYTHING_NAME_FONT
         name_line = calculate_text(name, name_font, 315, 1)
