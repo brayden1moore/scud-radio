@@ -1038,7 +1038,7 @@ def switch_on():
     last_input_time = time.time()
     button_released_time = current_time
     backlight_on()
-    if current_time - switch_off_time >= 3600:
+    if current_time - switch_off_time >= 3:#600:
         if stream in stream_list:
             play(stream)
         else:
