@@ -58,14 +58,14 @@ MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
 MEDIUM_FONT_BOLD = ImageFont.truetype("assets/Archivo-Bold.ttf", 18)
 LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",42)
 LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
-LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28)
+LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28) 
 
 def load_noto(size, weight=400):
     font = ImageFont.truetype('assets/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf', size)
     font.set_variation_by_axes([weight])  # 100–900
     return font
 
-#SMALL_FONT     = load_noto(13, weight=300)  
+EVERYTHING_INFO_FONT = load_noto(18, weight=300)  
 #MEDIUM_FONT    = load_noto(18, weight=300)
 #LARGE_FONT     = load_noto(42, weight=300)
 #LARGE_ISH_FONT = load_noto(28, weight=700)  
@@ -554,7 +554,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         currently_displaying = 'everything'
 
         location = streams[name]['location']
-        title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), MEDIUM_FONT, 315, 1)
+        title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), EVERYTHING_INFO_FONT, 315, 1)
 
         # draw name and underline
         name_chunk_start = 240 - 80
@@ -568,7 +568,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         # draw info
         y_offset = 0
         for i in title_lines:
-            draw.text((name_chunk_start_x, name_chunk_start + 33 + y_offset), i, font=MEDIUM_FONT, fill=WHITE)
+            draw.text((name_chunk_start_x, name_chunk_start + 33 + y_offset), i, font=EVERYTHING_INFO_FONT, fill=WHITE)
             y_offset += 20
 
         # draw location
@@ -624,9 +624,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # double prev and next
         double_prev_position = (square_start, logo_chunk_start + 57 - 4)
-        double_next_position = (290, logo_chunk_start + 57 - 4)
-        #double_prev_position = (0 - (60-25), logo_chunk_start + 22 - 4)
-        #double_next_position = (286 + 7, logo_chunk_start + 22 - 4)        
+        double_next_position = (290, logo_chunk_start + 57 - 4)     
         double_prev = streams[double_prev_stream]['logo_25']
         double_next = streams[double_next_stream]['logo_25']
         
