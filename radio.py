@@ -610,7 +610,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(next_live, next_position, next_live)
 
         # double prev and next
-        double_prev_position = (7, logo_chunk_start + 57 - 4)
+        double_prev_position = (tick_start, logo_chunk_start + 57 - 4)
         double_next_position = (286, logo_chunk_start + 57 - 4)
         #double_prev_position = (0 - (60-25), logo_chunk_start + 22 - 4)
         #double_next_position = (286 + 7, logo_chunk_start + 22 - 4)        
