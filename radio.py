@@ -1039,7 +1039,7 @@ def switch_on():
     button_released_time = current_time
     backlight_on()
     if switch_off_time:
-        if current_time - switch_off_time >= 3:#600:
+        if current_time - switch_off_time >= 3600:
             if stream in stream_list:
                 play(stream)
             else:
@@ -1276,14 +1276,8 @@ def display_readied_cached(name, pushed=False):
             if pushed:
                 image = image.copy()
                 draw = ImageDraw.Draw(image)
-                #logo_position = (129, logo_chunk_start)
                 bg_position = og_logo_position
-                #logo = streams[name]['logo_60']    
-                #enhancer = ImageEnhance.Brightness(logo)
-                #logo = enhancer.enhance(BRIGHTNESS)
-                #first_pixel_color = logo.getpixel((2,2))
-                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], outline=BLUE, width=4)
-                #image.paste(logo, logo_position)
+                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], outline=BLUE, width=3)
 
             disp.ShowImage(image)
         else:
