@@ -730,11 +730,11 @@ def display_one(name):
         
         info_lines = [i for i in calculate_text(' - '.join(info[1:]), font=ONE_INFO_FONT, max_width=290, lines=num_info_lines) if i != '']
 
-        line_gap = 1
+        line_gap = 2
         section_gap = 6
         anchor = get_anchor(title_lines, info_lines, line_gap, section_gap)
         avg_title_height = sum(height(i, ONE_LARGE_FONT) for i in title_lines) / len(title_lines) if title_lines else 0
-        avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
+        avg_info_height = sum(height(i, ONE_INFO_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
 
         for i in title_lines:
             draw.text((14, anchor), i, font=ONE_LARGE_FONT, fill=WHITE)
