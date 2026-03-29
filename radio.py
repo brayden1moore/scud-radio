@@ -500,7 +500,7 @@ def calculate_ticks():
     
     if favorites:
         tick_color = BLACK
-        draw.rectangle([square_start, tick_bar_start + 4, square_end, tick_bar_start - 4 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
+        draw.rectangle([square_start, tick_bar_start + 4, square_end, tick_bar_start - 4], fill=YELLOW, outline=YELLOW, width=1)
         
         for i in sorted(favorites, key=str.casefold):
             draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height+2], fill=tick_color)
