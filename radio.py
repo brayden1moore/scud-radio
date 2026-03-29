@@ -1282,7 +1282,7 @@ def display_readied_cached(name, pushed=False):
                 #enhancer = ImageEnhance.Brightness(logo)
                 #logo = enhancer.enhance(BRIGHTNESS)
                 #first_pixel_color = logo.getpixel((2,2))
-                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], outline=BLUE, width=5)
+                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], outline=BLUE, width=4)
                 #image.paste(logo, logo_position)
 
             disp.ShowImage(image)
