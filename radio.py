@@ -1208,9 +1208,9 @@ def toggle_hidden(station):
 
         freeze_for_task = False
     
-
+ready_to_display = False
 def refresh_everything_cache(refresh_stream_list):
-    global cached_everything_dict, refreshing_everything_now
+    global cached_everything_dict, refreshing_everything_now, ready_to_display
     refreshing_everything_now = True
     origin_stream = readied_stream if readied_stream else stream
     if origin_stream:
@@ -1220,14 +1220,14 @@ def refresh_everything_cache(refresh_stream_list):
         backwards = list(reversed(forwards))
         
         print('FORWARDS', forwards)
-        print('BACKWARDS', backwards)        
+        print('BACKWARDS', backwards)   
+
         curr_idx = 0
         while len(ordered_refresh_list) < len(refresh_stream_list):
             if forwards[curr_idx % len(forwards)] in refresh_stream_list:
                 ordered_refresh_list.append(forwards[curr_idx % len(forwards)])
             if backwards[curr_idx % len(backwards)] in refresh_stream_list:
                 ordered_refresh_list.append(backwards[curr_idx  % len(backwards)])
-
             curr_idx += 1
             
         print('ORDERED', ordered_refresh_list)
@@ -1250,6 +1250,8 @@ def refresh_everything_cache(refresh_stream_list):
             for future in as_completed(future_to_name):
                 name, result = future.result()
                 cached_everything_dict[name] = result
+                if name == stream:
+                    ready_to_display = True
 
     refreshing_everything_now = False
 
@@ -1707,8 +1709,11 @@ last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
 
-display_everything(0, stream, readied=False)
 refresh_everything_cache(stream_list)
+while ready_to_display == False:
+    time.sleep(0.01)
+display_everything(0, stream, readied=False)
+
 try:
     while True:
         set_last_volume(str(current_volume))
