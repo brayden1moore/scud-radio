@@ -1209,6 +1209,7 @@ def toggle_hidden(station):
         freeze_for_task = False
     
 ready_to_display = False
+refreshing_everything_now = False
 def refresh_everything_cache(refresh_stream_list):
     global cached_everything_dict, refreshing_everything_now, ready_to_display
     refreshing_everything_now = True
