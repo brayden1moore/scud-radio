@@ -1278,12 +1278,12 @@ def display_readied_cached(name, pushed=False):
                 draw = ImageDraw.Draw(image)
                 #logo_position = (129, logo_chunk_start)
                 bg_position = og_logo_position
-                logo = streams[name]['logo_60']    
-                enhancer = ImageEnhance.Brightness(logo)
-                logo = enhancer.enhance(BRIGHTNESS)
-                first_pixel_color = logo.getpixel((2,2))
-                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], fill=first_pixel_color, outline=BLUE, width=3)
-                image.paste(logo, logo_position)
+                #logo = streams[name]['logo_60']    
+                #enhancer = ImageEnhance.Brightness(logo)
+                #logo = enhancer.enhance(BRIGHTNESS)
+                #first_pixel_color = logo.getpixel((2,2))
+                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], fill=BLACK, outline=BLUE, width=3)
+                #image.paste(logo, logo_position)
 
             disp.ShowImage(image)
         else:
