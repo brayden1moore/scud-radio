@@ -477,7 +477,7 @@ total_span = SCREEN_WIDTH - (2 * padding)
 tick_start = padding  
 tick_bar_height = 25
 tick_bar_start = logo_chunk_start + 94
-tick_height = 3
+tick_height = 2
 tick_start_y = (tick_bar_start + tick_bar_height / 2) 
 
 tick_image = None
