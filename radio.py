@@ -65,7 +65,7 @@ def load_noto(size, weight=400):
     font.set_variation_by_axes([weight])  # 100–900
     return font
 
-EVERYTHING_INFO_FONT = load_noto(18, weight=300)  
+EVERYTHING_INFO_FONT = load_noto(17, weight=400)  
 #MEDIUM_FONT    = load_noto(18, weight=300)
 #LARGE_FONT     = load_noto(42, weight=300)
 #LARGE_ISH_FONT = load_noto(28, weight=700)  
@@ -567,8 +567,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw info
         y_offset = 0
+        everything_info_y = name_chunk_start + 31
         for i in title_lines:
-            draw.text((name_chunk_start_x, name_chunk_start + 33 + y_offset), i, font=EVERYTHING_INFO_FONT, fill=WHITE)
+            draw.text((name_chunk_start_x, everything_info_y + y_offset), i, font=EVERYTHING_INFO_FONT, fill=WHITE)
             y_offset += 20
 
         # draw location
