@@ -586,7 +586,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         
         draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=1) # border
 
-        prev_position = (og_logo_position[0] - 69, logo_chunk_start + 22 - 4)
+        prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
         prev_next_rotation = 0
         prev = streams[prev_stream]['logo_60']
