@@ -1709,7 +1709,8 @@ last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
 
-refresh_everything_cache(stream_list)
+refresh_thread = threading.Thread(target=refresh_everything_cache, args=(stream_list,), daemon=True)
+refresh_thread.start()
 while ready_to_display == False:
     time.sleep(0.01)
 display_everything(0, stream, readied=False)
