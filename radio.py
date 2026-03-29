@@ -70,10 +70,6 @@ ONE_INFO_FONT = EVERYTHING_INFO_FONT
 ONE_LARGE_FONT = load_noto(38, 400)
 ONE_LARGISH_FONT = load_noto(32, 400)
 
-import time
-t = time.time(); load_noto(38, 400); print(time.time() - t)
-print(t)
-
 #MEDIUM_FONT    = load_noto(18, weight=300)
 #LARGE_FONT     = load_noto(42, weight=300)
 #LARGE_ISH_FONT = load_noto(28, weight=700)  
@@ -1500,8 +1496,6 @@ if last_played in list(streams.keys()):
 else:
     play_random()
 
-refresh_everything_cache(stream_list)
-
 ## remote controls
 
 CONTROL_SOCKET = "/tmp/radio_control"
@@ -1709,6 +1703,7 @@ update_thread.start()
 
 readied_stream = None
 display_everything(0, stream, readied=False)
+refresh_everything_cache(stream_list)
 try:
     while True:
         set_last_volume(str(current_volume))
