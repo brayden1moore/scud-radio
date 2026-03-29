@@ -66,6 +66,9 @@ def load_noto(size, weight=400):
     return font
 
 EVERYTHING_INFO_FONT = load_noto(17, weight=400)  
+ONE_INFO_FONT = EVERYTHING_INFO_FONT
+ONE_LARGE_FONT = load_noto(42, 400)
+
 #MEDIUM_FONT    = load_noto(18, weight=300)
 #LARGE_FONT     = load_noto(42, weight=300)
 #LARGE_ISH_FONT = load_noto(28, weight=700)  
@@ -679,9 +682,6 @@ def display_one(name):
         # logo
         logo = streams[name]['logo_60']
         first_pixel_color = logo.getpixel((2,2))
-        pixel_array = np.asarray(first_pixel_color)
-        white_array = np.asarray([255, 255, 255, 255])
-        black_array = np.asarray([0, 0, 0, 255])
 
         image = Image.new('RGBA',(320, 240), color=BLACK)
         draw = ImageDraw.Draw(image)  
@@ -719,7 +719,7 @@ def display_one(name):
         elif len(info) == 2:
             num_title_lines = 3
 
-        title_lines = [i for i in calculate_text(info[0], font=LARGE_FONT, max_width=290, lines=num_title_lines) if i != '']
+        title_lines = [i for i in calculate_text(info[0], font=ONE_LARGE_FONT, max_width=290, lines=num_title_lines) if i != '']
 
         if len(title_lines) == 3:
             num_info_lines = 1
@@ -728,7 +728,7 @@ def display_one(name):
         else:
             num_info_lines = 2
         
-        info_lines = [i for i in calculate_text(' - '.join(info[1:]), font=MEDIUM_FONT, max_width=290, lines=num_info_lines) if i != '']
+        info_lines = [i for i in calculate_text(' - '.join(info[1:]), font=ONE_INFO_FONT, max_width=290, lines=num_info_lines) if i != '']
 
         line_gap = 3
         section_gap = 6
