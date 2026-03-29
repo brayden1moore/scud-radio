@@ -67,7 +67,7 @@ def load_noto(size, weight=400):
 
 EVERYTHING_INFO_FONT = load_noto(17, weight=400)  
 ONE_INFO_FONT = EVERYTHING_INFO_FONT
-ONE_LARGE_FONT = load_noto(32, 400)
+ONE_LARGE_FONT = load_noto(38, 400)
 
 #MEDIUM_FONT    = load_noto(18, weight=300)
 #LARGE_FONT     = load_noto(42, weight=300)
