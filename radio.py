@@ -567,7 +567,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw info
         y_offset = 0
-        everything_info_y = name_chunk_start + 31
+        everything_info_y = name_chunk_start + 29
         for i in title_lines:
             draw.text((name_chunk_start_x, everything_info_y + y_offset), i, font=EVERYTHING_INFO_FONT, fill=WHITE)
             y_offset += 20
