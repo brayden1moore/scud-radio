@@ -738,8 +738,8 @@ def display_one(name):
         line_gap = 1
         section_gap = 7
         anchor = get_anchor(title_lines, info_lines, line_gap, section_gap)
-        avg_title_height = sum(height(i, title_font) for i in title_lines) / len(title_lines) if title_lines else 0
-        avg_info_height = sum(height(i, ONE_INFO_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
+        avg_title_height = height("S", title_font)
+        avg_info_height = height("S", ONE_INFO_FONT)
 
         for i in title_lines:
             draw.text((14, anchor), i, font=title_font, fill=WHITE)
