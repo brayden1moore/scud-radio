@@ -818,12 +818,12 @@ def display_current():
 
 def get_anchor(title, info, line_gap, section_gap, title_font, info_font):
     size = 0
-    for line in title:
-        size += height(line, title_font) + line_gap
+    for _ in title:
+        size += height('Ay', title_font) + line_gap
     if info:
         size += section_gap
-        for line in info:
-            size += height(line, info_font) + line_gap
+        for _ in info:
+            size += height('Ay', info_font) + line_gap
 
     section_height = 215 - (72 + 12 + 6)
     return 65 + 12 + 6 + round((section_height - size) // 2) - 8
