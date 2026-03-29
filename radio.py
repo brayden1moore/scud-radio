@@ -59,6 +59,17 @@ LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",42)
 LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
 LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28)
 
+def load_noto(size, weight=400):
+    font = ImageFont.truetype('assets/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf', size)
+    font.set_variation_by_axes([weight])  # 100–900
+    return font
+
+SMALL_FONT     = load_noto(13, weight=300)   # Light
+MEDIUM_FONT    = load_noto(18, weight=300)
+LARGE_FONT     = load_noto(42, weight=300)
+LARGE_ISH_FONT = load_noto(28, weight=700)   # Bold
+LARGE_FONT_THIN = load_noto(28, weight=300)
+
 LIB_PATH = "/var/lib/scud-radio"
 
 
