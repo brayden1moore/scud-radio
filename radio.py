@@ -1208,7 +1208,8 @@ def toggle_hidden(station):
     
 
 def refresh_everything_cache(refresh_stream_list):
-    global cached_everything_dict
+    global cached_everything_dict, refreshing_everything_now
+    refreshing_everything_now = True
     origin_stream = readied_stream if readied_stream else stream
     if origin_stream:
         ordered_refresh_list = []
@@ -1248,7 +1249,9 @@ def refresh_everything_cache(refresh_stream_list):
                 name, result = future.result()
                 cached_everything_dict[name] = result
 
-        
+    refreshing_everything_now = False
+
+
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
     rotated = True
@@ -1311,9 +1314,9 @@ def periodic_update():
 
         time_since_last_success = time.time() - last_successful_fetch
         if sleeping:
-            should_fetch = (time_since_last_update >= 120) or (time_since_last_success > 120) or len(cached_everything_dict)==0
+            should_fetch = not refreshing_everything_now and ((time_since_last_update >= 120) or (time_since_last_success > 120) or len(cached_everything_dict)==0)
         else:
-            should_fetch = (time_since_last_update >= 30) or (time_since_last_success > 30) or len(cached_everything_dict)==0
+            should_fetch = not refreshing_everything_now and ((time_since_last_update >= 30) or (time_since_last_success > 30) or len(cached_everything_dict)==0)
         if should_fetch:
             try:
                 logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
