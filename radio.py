@@ -402,7 +402,7 @@ def calculate_text(text, font, max_width, lines):
     text = text.strip()
 
     if width(text, font) <= max_width:
-        return [text.decode('utf_8')]
+        return [text]
     
     else:
         current_width = 0
@@ -415,7 +415,7 @@ def calculate_text(text, font, max_width, lines):
             text = text.split(' ')
 
         for idx, i in enumerate(text):
-            i = i.decode('utf_8')
+            #i = i.decode('utf-8')
 
             if lines > 1:
                 i = i + ' '
