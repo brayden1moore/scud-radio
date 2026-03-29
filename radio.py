@@ -700,7 +700,7 @@ def display_one(name):
         name_line = calculate_text(name, font=name_font, max_width=225, lines=1)[0]
         draw.rectangle([92, 20 - 4, 92 + width(name_line, name_font), 20 + height('S', name_font)], fill=BLACK)
         draw.text((90, 13), name_line, font=name_font, fill=WHITE)
-        draw.rectangle([92, 47, 92 + width(name_line, name_font), 47], fill=WHITE) # underline
+        draw.rectangle([92, 45, 92 + width(name_line, name_font), 45], fill=WHITE) # underline
         #draw.rectangle([15, 72 + 12, SCREEN_WIDTH-15, 72 + 12], outline=WHITE, width=1) # divider
         
         # location
@@ -891,7 +891,7 @@ def seek_stream(direction):
                 else:
                     readied_stream = stream_list[idx + direction]
 
-            print('TURNED TO....', readied_stream)
+            #print('TURNED TO....', readied_stream)
             display_readied_cached(readied_stream) # otherwise show EVERYTHING (READIED)
 
 def confirm_seek():
