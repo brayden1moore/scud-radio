@@ -611,7 +611,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # double prev and next
         double_prev_position = (square_start, logo_chunk_start + 57 - 4)
-        double_next_position = (286, logo_chunk_start + 57 - 4)
+        double_next_position = (290, logo_chunk_start + 57 - 4)
         #double_prev_position = (0 - (60-25), logo_chunk_start + 22 - 4)
         #double_next_position = (286 + 7, logo_chunk_start + 22 - 4)        
         double_prev = streams[double_prev_stream]['logo_25']
