@@ -1019,11 +1019,12 @@ def on_volume_button_released():
     volume_held = False
 
 def switch_off():
-    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep
+    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, switch_off_time
     held = False
     current_time = time.time()
-    last_input_time = time.time()
+    last_input_time = current_time
     button_released_time = current_time
+    switch_off_time = current_time
     send_mpv_command({"command": ["set_property", "volume", 0]})
     set_last_volume(str(current_volume))
     backlight_off()
@@ -1037,6 +1038,11 @@ def switch_on():
     last_input_time = time.time()
     button_released_time = current_time
     backlight_on()
+    if current_time - switch_off_time >= 3600:
+        if stream in stream_list:
+            play(stream)
+        else:
+            play(stream_list[0])
     if not muted:
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
     sleeping = False
@@ -1679,6 +1685,8 @@ volume_click_button.when_pressed =  wrapped_action(lambda: on_volume_button_pres
 volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
     
 ## main loop
+
+switch_off_time = None
 
 last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
