@@ -67,7 +67,7 @@ def load_noto(size, weight=400):
 
 EVERYTHING_INFO_FONT = load_noto(17, weight=400)  
 ONE_INFO_FONT = EVERYTHING_INFO_FONT
-ONE_LARGE_FONT = load_noto(34, 400)
+ONE_LARGE_FONT = load_noto(32, 400)
 
 #MEDIUM_FONT    = load_noto(18, weight=300)
 #LARGE_FONT     = load_noto(42, weight=300)
@@ -733,18 +733,18 @@ def display_one(name):
         line_gap = 1
         section_gap = 6
         anchor = get_anchor(title_lines, info_lines, line_gap, section_gap)
-        avg_title_height = sum(height(i, LARGE_FONT) for i in title_lines) / len(title_lines) if title_lines else 0
+        avg_title_height = sum(height(i, ONE_LARGE_FONT) for i in title_lines) / len(title_lines) if title_lines else 0
         avg_info_height = sum(height(i, MEDIUM_FONT) for i in info_lines) / len(info_lines) if info_lines else 0
 
         for i in title_lines:
-            draw.text((14, anchor), i, font=LARGE_FONT, fill=WHITE)
+            draw.text((14, anchor), i, font=ONE_LARGE_FONT, fill=WHITE)
             anchor += avg_title_height + line_gap
 
         anchor += section_gap
 
         if info_lines:
             for i in info_lines:
-                draw.text((16, anchor), i, font=MEDIUM_FONT, fill=WHITE)
+                draw.text((16, anchor), i, font=ONE_INFO_FONT, fill=WHITE)
                 anchor += avg_info_height + line_gap
 
         display_bar(draw=draw)
