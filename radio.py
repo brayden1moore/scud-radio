@@ -473,6 +473,7 @@ logo_position = og_logo_position
 
 tick_width = 1
 padding = 12 + 6
+square_start = padding - 5
 total_span = SCREEN_WIDTH - (2 * padding)
 tick_start = padding  
 tick_bar_height = 25
@@ -495,7 +496,6 @@ def calculate_ticks():
     
     tick_start_local = tick_start 
     
-    square_start = padding - 5
     square_end = padding + mark_width * len(favorites) - 1
     
     if favorites:
@@ -610,7 +610,7 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             image.paste(next_live, next_position, next_live)
 
         # double prev and next
-        double_prev_position = (tick_start, logo_chunk_start + 57 - 4)
+        double_prev_position = (padding - 5, logo_chunk_start + 57 - 4)
         double_next_position = (286, logo_chunk_start + 57 - 4)
         #double_prev_position = (0 - (60-25), logo_chunk_start + 22 - 4)
         #double_next_position = (286 + 7, logo_chunk_start + 22 - 4)        
