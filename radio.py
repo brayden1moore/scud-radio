@@ -468,7 +468,7 @@ def calculate_text_cached(text, font_name, width, lines):
 start_x = 0
 logo_chunk_start = 35
 logo_chunk_start_x = 12 + start_x
-og_logo_position = (111, logo_chunk_start - 14 - 4)
+og_logo_position = (115, logo_chunk_start - 14 - 4)
 logo_position = og_logo_position
 
 tick_width = 1
@@ -586,8 +586,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         
         draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=1) # border
 
-        prev_position = (39, logo_chunk_start + 22 - 4)
-        next_position = (219, logo_chunk_start + 22 - 4)
+        prev_position = (og_logo_position[0] - 75, logo_chunk_start + 22 - 4)
+        next_position = (og_logo_position[0] + 105, logo_chunk_start + 22 - 4)
         prev_next_rotation = 0
         prev = streams[prev_stream]['logo_60']
         next = streams[next_stream]['logo_60']
