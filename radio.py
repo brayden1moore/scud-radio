@@ -1038,11 +1038,12 @@ def switch_on():
     last_input_time = time.time()
     button_released_time = current_time
     backlight_on()
-    if current_time - switch_off_time >= 3:#600:
-        if stream in stream_list:
-            play(stream)
-        else:
-            play(stream_list[0])
+    if switch_off_time:
+        if current_time - switch_off_time >= 3:#600:
+            if stream in stream_list:
+                play(stream)
+            else:
+                play(stream_list[0])
     if not muted:
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
     sleeping = False
