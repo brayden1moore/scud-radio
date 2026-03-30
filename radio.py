@@ -702,16 +702,15 @@ def display_one(name):
         # name and underline
         name_font = LARGE_ISH_FONT
         name_line = calculate_text(name, font=name_font, max_width=225, lines=1)[0]
-        block_start = 88
+        block_start = 85
         draw.rectangle([block_start, 20 - 4, block_start + width(name_line, name_font), 20 + height('S', name_font)], fill=BLACK)
         draw.text((block_start-2, 13), name_line, font=name_font, fill=WHITE)
         draw.rectangle([block_start, 45, block_start + width(name_line, name_font), 45], fill=WHITE) # underline
-        #draw.rectangle([15, 72 + 12, SCREEN_WIDTH-15, 72 + 12], outline=WHITE, width=1) # divider
         
         # location
         location = streams[name]['location']
-        draw.rectangle([block_start, 52 + 2, block_start + width(location, MEDIUM_FONT), 52 + 3 + height('S', MEDIUM_FONT)], fill=BLUE)# bg
-        draw.text((block_start, 52), calculate_text(location, font=MEDIUM_FONT, max_width=223, lines=1)[0], font=MEDIUM_FONT, fill=BLACK)    
+        draw.rectangle([block_start, 52 + 2, block_start + width(location, ONE_INFO_FONT), 52 + 3 + height('S', ONE_INFO_FONT)], fill=BLUE)# bg
+        draw.text((block_start, 52), calculate_text(location, font=ONE_INFO_FONT, max_width=223, lines=1)[0], font=ONE_INFO_FONT, fill=BLACK)    
 
         # now playing
         y_offset = 0
