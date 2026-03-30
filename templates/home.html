@@ -164,6 +164,7 @@ function addStation(name, hidden) {
     xBackground.classList.add('x-background');
     xBackground.dataset.station = name;
     xBackground.addEventListener('click', (e) => addToOrRemoveFromHiddenQueue(e.currentTarget));
+    editOverlay.appendChild(xBackground);
     container.appendChild(editOverlay);
 
     // play button
