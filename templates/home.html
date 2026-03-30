@@ -231,6 +231,7 @@ function toggleEditMode() {
 
     if (editMode) {
         editMode = false;
+
         editButton.src = 'assets/edit_icon_web.svg';
 
         stationName.textContent = status.dataset.station;
@@ -240,6 +241,8 @@ function toggleEditMode() {
             const editOverlay = station.querySelector('.edit-overlay');
             editOverlay.style.display = 'none';
         })
+
+        confirmHideAndUnhide();
     }
     else {
         editMode = true;
@@ -274,6 +277,8 @@ function confirmHideAndUnhide() {
         thisStation = document.getElementById(station);
         thisStation.style.display = 'none';
     })
+
+    hiddenQueue = [];
 }
 
 updateStatus();
