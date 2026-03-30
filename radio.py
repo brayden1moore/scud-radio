@@ -1252,8 +1252,8 @@ def refresh_everything_cache(refresh_stream_list):
         forwards = stream_list[stream_idx:] + stream_list[:stream_idx]
         backwards = list(reversed(forwards))
         
-        print('FORWARDS', forwards)
-        print('BACKWARDS', backwards)   
+        #print('FORWARDS', forwards)
+        #print('BACKWARDS', backwards)   
 
         curr_idx = 0
         while len(ordered_refresh_list) < len(refresh_stream_list):
@@ -1263,13 +1263,13 @@ def refresh_everything_cache(refresh_stream_list):
                 ordered_refresh_list.append(backwards[curr_idx  % len(backwards)])
             curr_idx += 1
             
-        print('ORDERED', ordered_refresh_list)
+        #print('ORDERED', ordered_refresh_list)
     
     def refresh_stream(name):
         if name in one_cache.keys():
             del one_cache[name]
         if name in streams.keys():
-            logging.info(f'Refreshing image for {name}')
+            #logging.info(f'Refreshing image for {name}')
             result = display_everything(0, name=name, readied=True, silent=True)
         else:
             result = None
