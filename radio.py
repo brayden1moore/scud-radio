@@ -76,6 +76,8 @@ EXTRALARGE_LIGHT = load_font('Archivo',38, weight=400)
 
 def replace_font(font):
     replacement = 'Noto'
+    size = 17
+    weight = 400
     if font == SMALL_LIGHT:
         weight = 400
         size = 17
