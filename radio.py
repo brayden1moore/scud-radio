@@ -83,8 +83,6 @@ LIB_PATH = "/var/lib/scud-radio"
 
 import driver as LCD_2inch
 
-currently_displaying = 'everything'
-
 
 def read_last_played():
     scud_path = Path(LIB_PATH)
@@ -1498,7 +1496,7 @@ favorites = get_favorites()
 hidden = get_hidden()
 
 button_released_time = time.time()
-currently_displaying = 'everything'
+currently_displaying = 'scud'
 button_press_times = []
 
 failed_fetches = 0
