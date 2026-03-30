@@ -737,7 +737,7 @@ def display_one(name):
         # location
         location = streams[name]['location']
         draw.rectangle([block_start, 52 + 2, block_start + width(location, ONE_INFO_FONT), 52 + 3 + height('S', ONE_INFO_FONT)], fill=BLUE)# bg
-        draw.text((block_start, 52), calculate_text(location, font=ONE_INFO_FONT, max_width=223, lines=1)[0][0], font=ONE_INFO_FONT, fill=WHITE)    
+        draw.text((block_start, 52), calculate_text(location, font=ONE_INFO_FONT, max_width=223, lines=1)[0][0], font=ONE_INFO_FONT, fill=BLACK)    
 
         # now playing
         y_offset = 0
@@ -775,14 +775,14 @@ def display_one(name):
         avg_info_height = height("Sg", info_font)
 
         for i in title_lines:
-            draw.text((14, anchor), i, font=title_font, fill=BLACK)
+            draw.text((14, anchor), i, font=title_font, fill=WHITE)
             anchor += avg_title_height + line_gap
 
         anchor += section_gap
 
         if info_lines:
             for i in info_lines:
-                draw.text((14, anchor), i, font=info_font, fill=BLACK)
+                draw.text((14, anchor), i, font=info_font, fill=WHITE)
                 anchor += avg_info_height + line_gap
 
         display_bar(draw=draw)
