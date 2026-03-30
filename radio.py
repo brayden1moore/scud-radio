@@ -61,7 +61,7 @@ LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
 LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28) 
 
 def load_noto(size, weight=400):
-    font = ImageFont.truetype('assets/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf', size)
+    font = ImageFont.truetype('assets/Archivo/Archivo-VariableFont_wdth,wght.ttf', size)
     font.set_variation_by_axes([weight])  # 100–900
     return font
 
