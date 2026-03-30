@@ -619,13 +619,17 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw.text((name_chunk_start_x, tags_start - 2), location, font=SMALL_LIGHT, fill=BLACK)
         
         genre_start = name_chunk_start_x + width(location, SMALL_LIGHT)
-        genres = streams[name]['genres']
+        genres = [streams[name]['status']] + streams[name]['genres']
         genre_x_offset = 5
         if genres:
             genre_widths = [width(g, SMALL_LIGHT) for g in genres]
             genre_x_offset = 5
             for genre, genre_width in zip(genres, genre_widths):
-                draw.rectangle([genre_start + genre_x_offset, tags_start, genre_start + genre_x_offset + genre_width, tags_start + 1 + height('S', SMALL_LIGHT)], fill=GREEN) # bg
+                if genre == genres[0]:
+                    fill = RED
+                else:
+                    fill = GREEN
+                draw.rectangle([genre_start + genre_x_offset, tags_start, genre_start + genre_x_offset + genre_width, tags_start + 1 + height('S', SMALL_LIGHT)], fill=fill) # bg
                 draw.text((genre_start + genre_x_offset, tags_start - 2), genre, font=SMALL_LIGHT, fill=BLACK)
                 genre_x_offset += genre_width + 5
 
@@ -636,9 +640,9 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         if name in favorites:
             this_star = star_96.copy()
             image.paste(this_star, og_logo_position, this_star)
-        if streams[name]['status'] == 'Live':
-            this_live = live_96.copy()
-            image.paste(this_live, og_logo_position, this_live)
+        #if streams[name]['status'] == 'Live':
+            #this_live = live_96.copy()
+            #image.paste(this_live, og_logo_position, this_live)
         
         draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=1) # border
 
@@ -658,12 +662,12 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         if next_stream in favorites:
             next_star = star_60.copy().rotate(-prev_next_rotation, expand=True)
             image.paste(next_star, next_position, next_star)
-        if streams[prev_stream]['status'] == "Live":
-            prev_live = live_60.copy().rotate(prev_next_rotation, expand=True)
-            image.paste(prev_live, prev_position, prev_live)
-        if streams[next_stream]['status'] == "Live":
-            next_live = live_60.copy().rotate(-prev_next_rotation, expand=True)
-            image.paste(next_live, next_position, next_live)
+        #if streams[prev_stream]['status'] == "Live":
+        #    prev_live = live_60.copy().rotate(prev_next_rotation, expand=True)
+        #    image.paste(prev_live, prev_position, prev_live)
+        #if streams[next_stream]['status'] == "Live":
+        #    next_live = live_60.copy().rotate(-prev_next_rotation, expand=True)
+        #    image.paste(next_live, next_position, next_live)
 
         # double prev and next
         double_prev_position = (square_start, logo_chunk_start + 57 - 4)
@@ -677,18 +681,18 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()
             image.paste(double_prev_star, double_prev_position, double_prev_star)
-        if streams[double_prev_stream]['status'] == "Live":
-            double_prev_live = live_25.copy()
-            image.paste(double_prev_live, double_prev_position, double_prev_live)
+        #if streams[double_prev_stream]['status'] == "Live":
+        #    double_prev_live = live_25.copy()
+        #    image.paste(double_prev_live, double_prev_position, double_prev_live)
 
         image.paste(double_next, double_next_position)
         draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + double_size, double_next_position[1] + double_size], outline=WHITE, width=1)
         if double_next_stream in favorites:
             double_next_star = star_25.copy()
             image.paste(double_next_star, double_next_position, double_next_star)
-        if streams[double_next_stream]['status'] == "Live":
-            double_next_live = live_25.copy()
-            image.paste(double_next_live, double_next_position, double_next_live)
+        #if streams[double_next_stream]['status'] == "Live":
+        #    double_next_live = live_25.copy()
+        #    image.paste(double_next_live, double_next_position, double_next_live)
 
         # draw marks
         image.paste(tick_image, (0,0), mask=tick_image)
@@ -730,8 +734,8 @@ def display_one(name):
         image.paste(logo, logo_position)
         if name in favorites:
             image.paste(star_60, logo_position, star_60)
-        if streams[name]['status'] == 'Live':
-            image.paste(live_60, (16, 12), live_60)
+        #if streams[name]['status'] == 'Live':
+        #    image.paste(live_60, (16, 12), live_60)
 
         # name and underline
         name_font = ONE_NAME_FONT
