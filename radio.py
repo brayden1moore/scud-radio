@@ -149,6 +149,8 @@ def get_last_volume():
         return 60
 
 def display_scud():
+    global currently_displaying, current_image
+    currently_displaying = 'scud'
 
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
     bg = Image.open(f'assets/one_radio_splash.png') 
@@ -156,6 +158,7 @@ def display_scud():
     enhancer = ImageEnhance.Brightness(image)
     image = enhancer.enhance(BRIGHTNESS)
     disp.ShowImage(image)
+    current_image = image
 
     global user_tz
 
@@ -1210,8 +1213,12 @@ def toggle_hidden(station):
     
 ready_to_display = False
 refreshing_everything_now = False
+
 def refresh_everything_cache(refresh_stream_list):
     global cached_everything_dict, refreshing_everything_now, ready_to_display
+    if currently_displaying == 'scud':
+        draw = Image.ImageDraw(current_image)
+
     refreshing_everything_now = True
     origin_stream = readied_stream if readied_stream else stream
     if origin_stream:
@@ -1251,8 +1258,9 @@ def refresh_everything_cache(refresh_stream_list):
             for future in as_completed(future_to_name):
                 name, result = future.result()
                 cached_everything_dict[name] = result
-                if name == stream:
-                    ready_to_display = True
+                if currently_displaying == 'scud':
+                    draw.rectangle([0, 0, 30, 30], fill=YELLOW)
+                    draw.text((15, 15), f'{(len(cached_everything_dict)/len(ordered_refresh_list))*100}%', font=EVERYTHING_INFO_FONT, fill=BLACK)
 
     refreshing_everything_now = False
 
