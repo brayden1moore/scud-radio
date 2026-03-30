@@ -417,7 +417,7 @@ def play_random():
     play_status = 'play'
 
 def get_tofu_mask(font):
-    return font.getmask('\uffff').tobytes() 
+    return font.getmask('\uffff').tostring() 
 
 def calculate_text(text, font, max_width, lines):
     text = text.strip()
