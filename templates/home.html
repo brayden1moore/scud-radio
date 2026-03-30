@@ -257,8 +257,8 @@ function toggleEditMode() {
         editMode = true;
         editButton.src = 'assets/confirm_icon_web.svg';
 
-        stationName.textContent = 'Editing stations...';
-        oneLiner.textContent = 'Changes will take effect next time you restart your radio.';
+        stationName.textContent = 'Editing stations';
+        oneLiner.textContent = 'Changes take effect next time you restart.';
 
         stationsToEdit.forEach(station => {
             station.style.display = 'block';
