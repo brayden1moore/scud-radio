@@ -224,9 +224,11 @@ fetch("https://internetradioprotocol.org/info", {
 
 
 let editMode = false;
+const editButton = document.getElementById('edit');
 function toggleEditMode() {
     if (editMode) {
         editMode = false;
+        editButton.src = 'assets/edit_icon_web.svg';
 
         stationName.textContent = status.dataset.station;
         oneLiner.textContent = status.dataset.oneliner;
@@ -239,6 +241,7 @@ function toggleEditMode() {
     }
     else {
         editMode = true;
+        editButton.src = 'assets/confirm_icon_web.svg';
 
         stationName.textContent = 'Editing stations...';
         oneLiner.textContent = 'Your changes will take effect next time you power on or restart your radio.';
@@ -401,7 +404,6 @@ left: -36px !important;
     border-radius: 30px;
     border: 0.5px solid black;
 }
-
 
 .x-background:hover{
     background-color: #FF4747;
