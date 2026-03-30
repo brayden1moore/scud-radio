@@ -190,20 +190,20 @@ function updateStations() {
       })
       .then(function(response) { return response.json(); })
       .then(function(json) {
-            console.log(json['output'])
-            const shown = json['output'].split("|")[0].split(";");
+            const allStatons = JSON.parse(json['output']);
+            const shown = allStatons["shown"];
+            const hidden = allStatons["hidden"];
 
             stations.innerHTML = "";
             shown.forEach(station => {
                 addStation(station, hidden=false)
             });
 
-            if (json['output'].contains("|")) {
-                const hidden = json['output'].split("|")[1].split(";");
-                hidden.forEach(station => {
-                    addStation(station, hidden=true)
-                });
-            }
+
+            hidden.forEach(station => {
+                addStation(station, hidden=true)
+            });
+            
       });
 }
 
@@ -222,7 +222,6 @@ fetch("https://one-radio.com/info", {
       .then(function(json) {
         info = json;
 })
-
 
 let editMode = false;
 let hiddenQueue = [];
