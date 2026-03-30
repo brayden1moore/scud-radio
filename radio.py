@@ -441,9 +441,9 @@ def calculate_text(text, font, max_width, lines):
     text = text.strip()
 
     all_good = True
-    text_idx = 0
-    while all_good and text_idx < min(4,len(text)):
-        tofu = bytes(font.getmask('\uffff'))
+    text_idx = 0        
+    tofu = bytes(font.getmask('\uffff'))
+    while all_good and text_idx < min(3,len(text)):
         if bytes(font.getmask(text[text_idx])) == tofu:
             font = replace_font(font)
             all_good = False
@@ -453,7 +453,6 @@ def calculate_text(text, font, max_width, lines):
         return [f"{text}"], font
     
     else:
-        current_width = 0
         characters = ''
         line_list = []
         current_line = 1
