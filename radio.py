@@ -517,7 +517,7 @@ logo_chunk_start_x = 12 + start_x
 og_logo_position = (116, logo_chunk_start - 14 - 4)
 logo_position = og_logo_position
 
-tick_width = 1
+tick_width = 0
 padding = 12 + 6
 square_start = padding - 5
 total_span = SCREEN_WIDTH - (2 * padding)
