@@ -712,7 +712,7 @@ def display_one(name):
         logo = streams[name]['logo_60']
         first_pixel_color = logo.getpixel((2,2))
 
-        image = Image.new('RGBA',(320, 240), color=DARK_WHITE)
+        image = Image.new('RGBA',(320, 240), color=WHITE)
         draw = ImageDraw.Draw(image)  
 
         draw.rectangle([15, 11, 76, 72], outline=BLACK, width=1)
@@ -803,7 +803,7 @@ def display_bar(draw):
 
     # bottom bar 218 y for bottom
     y = 218
-    draw.rectangle([0, y, 320, y+24], fill=YELLOW)
+    draw.rectangle([0, y, 320, y+24], fill=DARK_WHITE)
     draw.rectangle([0, y, 320, y], fill=BLACK)
     center_of_section = round((240 + 218) / 2)
 
