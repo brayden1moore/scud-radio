@@ -1417,6 +1417,8 @@ disp = LCD_2inch.LCD_2inch()
 disp.Init()
 #disp.clear()
 disp.bl_DutyCycle(current_bl)
+current_image = None
+
 display_scud()
 
 mpv_process = None
@@ -1424,7 +1426,6 @@ stream = None
 readied_stream = None
 last_rotation = None
 screen_on = True
-current_image = None
 saved_image_while_paused = None
 play_status = 'pause'
 last_input_time = time.time()
