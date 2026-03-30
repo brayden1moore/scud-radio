@@ -538,7 +538,7 @@ def calculate_ticks():
     draw.rectangle([0, tick_bar_start + 4, SCREEN_WIDTH, tick_bar_start - 4 + tick_bar_height], fill=BLACK)
     
     total_ticks = len(stream_list)
-    mark_width = round(total_span / (total_ticks))
+    mark_width = total_span / (total_ticks)
     
     tick_start_local = tick_start 
     
@@ -546,11 +546,12 @@ def calculate_ticks():
     
     if favorites:
         tick_color = BLACK
-        draw.rectangle([square_start, tick_bar_start + 4, square_end, tick_bar_start - 4 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
+        draw.rectangle([square_start, tick_bar_start + 4, round(square_end), tick_bar_start - 4 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
         
         for i in sorted(favorites, key=str.casefold):
-            draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height+2], fill=tick_color)
+            tick_start_local = round(tick_start_local)
             tick_locations[i] = tick_start_local
+            draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height+2], fill=tick_color)
             tick_start_local += mark_width
         
         square_end += mark_width
@@ -558,8 +559,9 @@ def calculate_ticks():
     
     tick_color = WHITE
     for i in [i for i in stream_list if i not in favorites]:
-        draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height+2], fill=tick_color)
+        tick_start_local = round(tick_start_local)
         tick_locations[i] = tick_start_local
+        draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height+2], fill=tick_color)
         tick_start_local += mark_width
     
     tick_image = image
