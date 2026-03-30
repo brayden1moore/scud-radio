@@ -559,7 +559,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
         draw = ImageDraw.Draw(image) 
         
-        currently_displaying = 'everything'
+        if not silent:
+            currently_displaying = 'everything'
 
         location = streams[name]['location']
         title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), EVERYTHING_INFO_FONT, 315, 1)
