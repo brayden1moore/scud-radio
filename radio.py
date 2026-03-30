@@ -447,7 +447,7 @@ def calculate_text(text, font, max_width, lines):
             if bytes(font.getmask(text[text_idx])) == tofu:
                 font = replace_font(font)
                 all_good = False
-        except KeyError:
+        except IndexError:
             pass
         text_idx += 1
 
