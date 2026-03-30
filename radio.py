@@ -416,12 +416,11 @@ def play_random():
     stream = chosen
     play_status = 'play'
 
-
 def calculate_text(text, font, max_width, lines):
     text = text.strip()
     for i in text:
-        print(i)
-        print(font.getmask(i))
+        if font.getmask(i) == font.getmask('л'):
+            print(i)
 
     if width(text, font) <= max_width:
         return [f"{text}"]
