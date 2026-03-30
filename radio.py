@@ -568,6 +568,9 @@ def calculate_ticks():
     tick_image = image
 
 def draw_tick(draw, name):
+    if name not in tick_locations.keys():
+        calculate_ticks()
+
     bar_width = 2
     mark_start = tick_locations[name]
     readied_fill = WHITE if name not in favorites else WHITE 
@@ -1271,12 +1274,8 @@ def display_readied_cached(name, pushed=False):
         image = cached_everything_dict[name]
         image.paste(tick_image, (0,0), mask=tick_image)
         draw = ImageDraw.Draw(image)
-        if name in tick_locations.keys():
-            draw_tick(draw, name)
-        else:
-            calculate_ticks()
-            draw_tick(draw, name)
-        
+        draw_tick(draw, name)
+
         if image:
             if pushed:
                 image = image.copy()
