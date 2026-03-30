@@ -190,18 +190,19 @@ function updateStations() {
       })
       .then(function(response) { return response.json(); })
       .then(function(json) {
-            const allStatons = JSON.parse(json['output']);
-            const shown = allStatons["shown"];
-            const hidden = allStatons["hidden"];
+            const allStations = JSON.parse(json['output']);
+            const shown = allStations["shown"];
+            const hidden = allStations["hidden"];
 
             stations.innerHTML = "";
             shown.forEach(shownStation => {
-                addStation(shownStation, hidden=false)
+                addStation(shownStation, hidden=false);
+                stationList.push(shownStation['name']);
             });
 
 
             hidden.forEach(hiddenStation => {
-                addStation(hiddenStation, hidden=true)
+                addStation(hiddenStation, hidden=true);
             });
             
       });
