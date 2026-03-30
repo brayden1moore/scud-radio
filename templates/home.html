@@ -224,7 +224,7 @@ fetch("https://internetradioprotocol.org/info", {
 
 
 let editMode = false;
-const editButton = document.getElementById('edit').getElementsByClassName('icon');
+const editButton = document.getElementById('edit').querySelector('.icon');
 function toggleEditMode() {
     if (editMode) {
         editMode = false;
