@@ -249,7 +249,7 @@ function toggleEditMode() {
         oneLiner.textContent = 'Your changes will take effect next time you power on or restart your radio.';
 
         stationsToEdit.forEach(station => {
-            station.style.display = 'flex';
+            station.style.display = 'block';
             const editOverlay = station.querySelector('.edit-overlay');
             editOverlay.style.display = 'flex';
         })
