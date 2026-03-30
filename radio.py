@@ -423,7 +423,7 @@ def calculate_text(text, font, max_width, lines):
     text = text.strip()
     for i in text:
         tofu = get_tofu_mask(font)
-        if font.getmask(i).tobytes() == tofu:
+        if font.getmask(i).tostring() == tofu:
             print(f"Missing glyph: {i!r}")
 
     if width(text, font) <= max_width:
