@@ -1253,13 +1253,14 @@ def refresh_everything_cache(refresh_stream_list):
 
     refreshing_everything_now = False
 
-
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
     rotated = True
     last_rotation = time.time()
     last_input_time = time.time()
     seek_stream(direction)
+    if confirm_on_rotate:
+        confirm_seek()
 
 def volume_handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
@@ -1422,6 +1423,7 @@ has_displayed_once = False
 volume_overlay_showing = False
 last_ambient_display = time.time()
 switch_off_time = None
+confirm_on_rotate = True
 
 user_tz = pytz.timezone(get_timezone_from_ip())
 
