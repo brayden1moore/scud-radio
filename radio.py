@@ -444,7 +444,7 @@ def calculate_text(text, font, max_width, lines):
             font = replace_font(font)
 
     if width(text, font) <= max_width:
-        return [f"{text}"]
+        return [f"{text}"], font
     
     else:
         current_width = 0
