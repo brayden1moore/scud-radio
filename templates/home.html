@@ -163,7 +163,7 @@ function addStation(name, hidden) {
     xBackground = document.createElement('div'); 
     xBackground.classList.add('x-background');
     xBackground.dataset.station = name;
-    xBackground.addEventListener('click', () => addToOrRemoveFromHiddenQueue(xBackground));    editOverlay.appendChild(xBackground);
+    xBackground.addEventListener('click', (e) => addToOrRemoveFromHiddenQueue(e.currentTarget));
     container.appendChild(editOverlay);
 
     // play button
