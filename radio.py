@@ -1217,7 +1217,7 @@ refreshing_everything_now = False
 def refresh_everything_cache(refresh_stream_list):
     global cached_everything_dict, refreshing_everything_now, ready_to_display
     if currently_displaying == 'scud':
-        draw = Image.ImageDraw(current_image)
+        draw = Image.ImageDraw(current_image.copy())
 
     refreshing_everything_now = True
     origin_stream = readied_stream if readied_stream else stream
