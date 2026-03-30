@@ -619,7 +619,8 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         draw.text((name_chunk_start_x, tags_start - 2), location, font=SMALL_LIGHT, fill=BLACK)
         
         genre_start = name_chunk_start_x + width(location, SMALL_LIGHT)
-        genres = [streams[name]['status']] + streams[name]['genres']
+        genres = [streams[name]['status']] 
+        genres.extend(streams[name]['genres'])
         genre_x_offset = 5
         if genres:
             genre_widths = [width(g, SMALL_LIGHT) for g in genres]
