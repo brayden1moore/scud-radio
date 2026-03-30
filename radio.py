@@ -68,6 +68,7 @@ def load_noto(size, weight=400):
 EVERYTHING_INFO_FONT = load_noto(17, weight=400)  
 EVERYTHING_NAME_FONT = load_noto(28, weight=600)
 ONE_INFO_FONT = EVERYTHING_INFO_FONT
+ONE_NAME_FONT = EVERYTHING_NAME_FONT
 ONE_LARGE_FONT = load_noto(38, 300)
 ONE_LARGISH_FONT = load_noto(32, 300)
 
@@ -702,7 +703,7 @@ def display_one(name):
             image.paste(live_60, (16, 12), live_60)
 
         # name and underline
-        name_font = LARGE_ISH_FONT
+        name_font = ONE_NAME_FONT
         name_line = calculate_text(name, font=name_font, max_width=225, lines=1)[0]
         block_start = 85
         draw.rectangle([block_start, 20 - 4, block_start + width(name_line, name_font), 20 + height('S', name_font)], fill=BLACK)
