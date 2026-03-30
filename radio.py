@@ -598,7 +598,10 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw info
         y_offset = 0
-        everything_info_y = name_chunk_start + 30
+        if title_font == SMALL_LIGHT:
+            everything_info_y = name_chunk_start + 30
+        else:
+            everything_info_y = name_chunk_start + 26
         for i in title_lines:
             draw.text((name_chunk_start_x, everything_info_y + y_offset), i, font=title_font, fill=WHITE)
             y_offset += 20
@@ -803,7 +806,7 @@ def display_bar(draw):
 
     # bottom bar 218 y for bottom
     y = 218
-    draw.rectangle([0, y, 320, y+24], fill=DARK_WHITE)
+    draw.rectangle([0, y, 320, y+24], fill=YELLOW)
     draw.rectangle([0, y, 320, y], fill=BLACK)
     center_of_section = round((240 + 218) / 2)
 
