@@ -532,34 +532,37 @@ tick_locations = {}
 def calculate_ticks():
     global tick_locations, tick_image
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0,0,0,0))
-    draw = ImageDraw.Draw(image)
+    draw = ImageDraw.Draw(image) 
     tick_locations = {}
+
     draw.rectangle([0, tick_bar_start + 4, SCREEN_WIDTH, tick_bar_start - 4 + tick_bar_height], fill=BLACK)
     
     total_ticks = len(stream_list)
-    if total_ticks == 0:
-        tick_image = image
-        return
-
-    favs = sorted(favorites, key=str.casefold)
-    non_favs = [i for i in stream_list if i not in favorites]
-
+    mark_width = round(total_span / (total_ticks))
+    
+    tick_start_local = tick_start 
+    
+    square_end = padding + mark_width * len(favorites) - 1
+    
     if favorites:
-        square_end = tick_start + (len(favorites) * total_span / total_ticks) - 1
-        draw.rectangle([square_start, tick_bar_start + 4, round(square_end), tick_bar_start - 4 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
-        for idx, i in enumerate(favs):
-            x = tick_start + round(idx * total_span / total_ticks)
-            tick_locations[i] = x
-            draw.rectangle([x, tick_start_y - 2, x + tick_width, tick_start_y + tick_height + 2], fill=BLACK)
-
-    fav_count = len(favorites)
-    for idx, i in enumerate(non_favs):
-        x = tick_start + round((fav_count + idx) * total_span / total_ticks)
-        tick_locations[i] = x
-        draw.rectangle([x, tick_start_y - 2, x + tick_width, tick_start_y + tick_height + 2], fill=WHITE)
-
+        tick_color = BLACK
+        draw.rectangle([square_start, tick_bar_start + 4, square_end, tick_bar_start - 4 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
+        
+        for i in sorted(favorites, key=str.casefold):
+            draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height+2], fill=tick_color)
+            tick_locations[i] = tick_start_local
+            tick_start_local += mark_width
+        
+        square_end += mark_width
+        tick_start_local += 5
+    
+    tick_color = WHITE
+    for i in [i for i in stream_list if i not in favorites]:
+        draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height+2], fill=tick_color)
+        tick_locations[i] = tick_start_local
+        tick_start_local += mark_width
+    
     tick_image = image
-
 
 def draw_tick(draw, name):
     if name not in tick_locations.keys():
