@@ -225,7 +225,7 @@ function enterEditMode() {
     stationName.textContent = 'Editing stations...';
     oneLiner.textContent = 'Your changes will take effect next time you power on or restart your radio.';
 
-    stationsToEdit = document.querySelectorAll('.a-station');
+    const stationsToEdit = document.querySelectorAll('.a-station');
     stationsToEdit.forEach(station => {
         editOverlay = station.getElementByClass('edit-overlay');
         editOverlay.style.display = 'block';
