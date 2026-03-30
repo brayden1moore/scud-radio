@@ -621,10 +621,13 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         genre_start = name_chunk_start_x + width(location, SMALL_LIGHT)
         live_status = [streams[name]['status']] 
         stream_genres = streams[name]['genres']
-        genre_x_offset = 5
+
+        genres = live_status
         if stream_genres:
-            genres = live_status
             genres.extend(stream_genres)
+
+        genre_x_offset = 5
+        if genres:
             genre_widths = [width(g, SMALL_LIGHT) for g in genres]
             genre_x_offset = 5
             for genre, genre_width in zip(genres, genre_widths):
