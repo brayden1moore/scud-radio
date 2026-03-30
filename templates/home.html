@@ -157,6 +157,7 @@ function addStation(name, hidden) {
     station.classList.add('fade-in-element');
     container.appendChild(station);
 
+    // play button
     overlay = document.createElement('div'); 
     overlay.classList.add('play-overlay');
     overlay.innerHTML = `
@@ -168,6 +169,12 @@ function addStation(name, hidden) {
         handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
     });
     container.appendChild(overlay);
+
+    // hide button
+    editOverlay = document.createElement('div'); 
+    editOverlay.classList.add('edit-overlay');
+    editOverlay.textContent = 'x';
+    container.appendChild(editOverlay);
 
     stations.appendChild(container)
 }
@@ -218,7 +225,11 @@ function enterEditMode() {
     stationName.textContent = 'Editing stations...';
     oneLiner.textContent = 'Your changes will take effect next time you power on or restart your radio.';
 
-
+    stations = document.querySelectorAll('.a-station');
+    stations.forEach(station => {
+        editOverlay = station.getElementByClass('edit-overlay');
+        editOverlay.style.display = 'block';
+    })
 }
 
 updateStatus();
@@ -342,6 +353,16 @@ left: -36px !important;
     display: none;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    top: -80px;
+}
+
+.edit-overlay {
+    display: none;
+    align-items: top;
+    justify-content: right;
     width: 100%;
     height: 100%;
     position: relative;
