@@ -92,7 +92,6 @@ def replace_font(font):
         size - 38
     return load_font(replacement, size, weight)
 
-EVERYTHING_INFO_FONT = SMALL_LIGHT
 ONE_INFO_FONT = SMALL_LIGHT
 EVERYTHING_NAME_FONT = MEDIUM_BOLD
 ONE_NAME_FONT = MEDIUM_BOLD
@@ -487,7 +486,7 @@ def calculate_text(text, font, max_width, lines):
                     current_width = width(characters, font)
         if characters:  # if there are remaining characters
             line_list.append(f"{characters}")
-        return line_list
+        return line_list, font
     
 
 def draw_angled_text(text, font, angle, image, coords, color):
@@ -586,13 +585,13 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
             currently_displaying = 'everything'
 
         location = streams[name]['location']
-        title_lines = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), EVERYTHING_INFO_FONT, 315, 1)
+        title_lines, title_font = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), SMALL_LIGHT, 315, 1)
 
         # draw name and underline
         name_chunk_start = 240 - 88
         name_chunk_start_x = 12 + start_x
-        name_font = EVERYTHING_NAME_FONT
-        name_line = calculate_text(name, name_font, 315, 1)
+        name_font = MEDIUM_BOLD
+        name_line = calculate_text(name, name_font, 315, 1)[0]
         draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], name_font), name_chunk_start + height('S', name_font)], fill=BLACK) # bg
         draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line[0], font=name_font, fill=WHITE) 
         #draw.rectangle([name_chunk_start_x, name_chunk_start + 30, name_chunk_start_x + width(name_line[0], name_font), name_chunk_start + 30], fill=WHITE) # ul
@@ -601,23 +600,23 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
         y_offset = 0
         everything_info_y = name_chunk_start + 30
         for i in title_lines:
-            draw.text((name_chunk_start_x, everything_info_y + y_offset), i, font=EVERYTHING_INFO_FONT, fill=WHITE)
+            draw.text((name_chunk_start_x, everything_info_y + y_offset), i, font=title_font, fill=WHITE)
             y_offset += 20
 
         # draw location
         tags_start = name_chunk_start + 54
-        draw.rectangle([name_chunk_start_x, tags_start, name_chunk_start_x + width(location, EVERYTHING_INFO_FONT), tags_start + 1 + height('S', EVERYTHING_INFO_FONT)], fill=BLUE) # bg
-        draw.text((name_chunk_start_x, tags_start - 2), location, font=EVERYTHING_INFO_FONT, fill=BLACK)
+        draw.rectangle([name_chunk_start_x, tags_start, name_chunk_start_x + width(location, SMALL_LIGHT), tags_start + 1 + height('S', SMALL_LIGHT)], fill=BLUE) # bg
+        draw.text((name_chunk_start_x, tags_start - 2), location, font=SMALL_LIGHT, fill=BLACK)
         
-        genre_start = name_chunk_start_x + width(location, EVERYTHING_INFO_FONT)
+        genre_start = name_chunk_start_x + width(location, SMALL_LIGHT)
         genres = streams[name]['genres']
         genre_x_offset = 5
         if genres:
-            genre_widths = [width(g, EVERYTHING_INFO_FONT) for g in genres]
+            genre_widths = [width(g, SMALL_LIGHT) for g in genres]
             genre_x_offset = 5
             for genre, genre_width in zip(genres, genre_widths):
-                draw.rectangle([genre_start + genre_x_offset, tags_start, genre_start + genre_x_offset + genre_width, tags_start + 1 + height('S', EVERYTHING_INFO_FONT)], fill=GREEN) # bg
-                draw.text((genre_start + genre_x_offset, tags_start - 2), genre, font=EVERYTHING_INFO_FONT, fill=BLACK)
+                draw.rectangle([genre_start + genre_x_offset, tags_start, genre_start + genre_x_offset + genre_width, tags_start + 1 + height('S', SMALL_LIGHT)], fill=GREEN) # bg
+                draw.text((genre_start + genre_x_offset, tags_start - 2), genre, font=SMALL_LIGHT, fill=BLACK)
                 genre_x_offset += genre_width + 5
 
         # logos
@@ -726,7 +725,7 @@ def display_one(name):
 
         # name and underline
         name_font = ONE_NAME_FONT
-        name_line = calculate_text(name, font=name_font, max_width=225, lines=1)[0]
+        name_line = calculate_text(name, font=name_font, max_width=225, lines=1)[0][0]
         block_start = 85
         #draw.rectangle([block_start, 20 - 4, block_start + width(name_line, name_font), 20 + height('S', name_font)], fill=BLACK) # bg
         draw.text((block_start-2, 13), name_line, font=name_font, fill=BLACK)
@@ -735,7 +734,7 @@ def display_one(name):
         # location
         location = streams[name]['location']
         draw.rectangle([block_start, 52 + 2, block_start + width(location, ONE_INFO_FONT), 52 + 3 + height('S', ONE_INFO_FONT)], fill=BLUE)# bg
-        draw.text((block_start, 52), calculate_text(location, font=ONE_INFO_FONT, max_width=223, lines=1)[0], font=ONE_INFO_FONT, fill=BLACK)    
+        draw.text((block_start, 52), calculate_text(location, font=ONE_INFO_FONT, max_width=223, lines=1)[0][0], font=ONE_INFO_FONT, fill=BLACK)    
 
         # now playing
         y_offset = 0
@@ -748,11 +747,13 @@ def display_one(name):
         elif len(info) == 2:
             num_title_lines = 3
 
-        title_font = ONE_LARGE_FONT
-        title_lines = [i for i in calculate_text(info[0], font=title_font, max_width=290, lines=num_title_lines) if i != '']
+        title_font = EXTRALARGE_LIGHT
+        title_lines, title_font = calculate_text(info[0], font=EXTRALARGE_LIGHT, max_width=290, lines=num_title_lines)
+        title_lines = [i for i in title_lines if i != '']
         if len(title_lines) >=3:
-            title_font = ONE_LARGISH_FONT
-            title_lines = [i for i in calculate_text(info[0], font=title_font, max_width=290, lines=num_title_lines) if i != '']
+            title_font = LARGE_LIGHT
+            title_lines, title_font = calculate_text(info[0], font=LARGE_LIGHT, max_width=290, lines=num_title_lines)
+            title_lines = [i for i in title_lines if i != '']
 
         if len(title_lines) == 3:
             num_info_lines = 1
@@ -761,13 +762,14 @@ def display_one(name):
         else:
             num_info_lines = 2
         
-        info_lines = [i for i in calculate_text(' - '.join(info[1:]), font=ONE_INFO_FONT, max_width=290, lines=num_info_lines) if i != '']
+        info_lines, info_font = calculate_text(' - '.join(info[1:]), font=SMALL_LIGHT, max_width=290, lines=num_info_lines)
+        info_lines = [i for i in info_lines if i != '']
 
         line_gap = 2
         section_gap = 7
-        anchor = get_anchor(title_lines, info_lines, line_gap, section_gap, title_font, ONE_INFO_FONT)
+        anchor = get_anchor(title_lines, info_lines, line_gap, section_gap, title_font, info_font)
         avg_title_height = height("Sg", title_font)
-        avg_info_height = height("Sg", ONE_INFO_FONT)
+        avg_info_height = height("Sg", info_font)
 
         for i in title_lines:
             draw.text((14, anchor), i, font=title_font, fill=BLACK)
@@ -777,7 +779,7 @@ def display_one(name):
 
         if info_lines:
             for i in info_lines:
-                draw.text((14, anchor), i, font=ONE_INFO_FONT, fill=BLACK)
+                draw.text((14, anchor), i, font=info_font, fill=BLACK)
                 anchor += avg_info_height + line_gap
 
         display_bar(draw=draw)
