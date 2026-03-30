@@ -89,7 +89,7 @@ def replace_font(font):
         size = 32
     elif font == EXTRALARGE_LIGHT:
         weight = 400
-        size - 38
+        size = 38
     return load_font(replacement, size, weight)
 
 ONE_INFO_FONT = SMALL_LIGHT
