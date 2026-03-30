@@ -443,7 +443,7 @@ def calculate_text(text, font, max_width, lines):
     text_idx = 0
     while all_good and text_idx < len(text):
         tofu = bytes(font.getmask('\uffff'))
-        if bytes(font.getmask(i)) == tofu:
+        if bytes(font.getmask(text[text_idx])) == tofu:
             font = replace_font(font)
             all_good = False
         text_idx += 1
