@@ -60,8 +60,17 @@ Usage:
         if result['status'] == 'ok':
             if isinstance(result['stations'], list):
                 output = ';'.join(result['stations'])
-                if isinstance(result['hidden'], list) and result['hidden']:
-                    output += f"|{';'.join(result['hidden'])}"
+                print(output)
+            else:
+                print("")
+        else:
+            print(result)
+
+    elif command == 'hidden':
+        result = send_command('hidden')
+        if result['status'] == 'ok':
+            if isinstance(result['stations'], list):
+                output = ';'.join(result['stations'])
                 print(output)
             else:
                 print("")

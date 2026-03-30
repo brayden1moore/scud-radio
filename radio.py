@@ -1570,6 +1570,13 @@ def handle_remote_command(command_data):
                 'stations': stream_list,
                 'favorites': favorites
         }
+
+        elif cmd == 'hidden':
+            return {
+                'status': 'ok',
+                'stations': hidden,
+                'favorites': favorites
+        }
         
         elif cmd == 'favorite':
             rotated = False
