@@ -1569,7 +1569,7 @@ def handle_remote_command(command_data):
                 'status': 'ok',
                 'stations': stream_list,
                 'favorites': favorites
-            }
+        }
         
         elif cmd == 'favorite':
             rotated = False
