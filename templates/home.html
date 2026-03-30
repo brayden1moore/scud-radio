@@ -160,7 +160,10 @@ function addStation(name, hidden) {
     // hide button
     editOverlay = document.createElement('div'); 
     editOverlay.classList.add('edit-overlay');
-    editOverlay.textContent = 'x';
+    xBackground = document.createElement('div'); 
+    xBackground.classList.add('x-background');
+    xBackground.textContent = 'x';
+    editOverlay.appendChild(xBackground);
     container.appendChild(editOverlay);
 
     // play button
