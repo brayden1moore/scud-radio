@@ -194,6 +194,8 @@ function updateStations() {
             const shown = allStations["shown"];
             const hidden = allStations["hidden"];
 
+            console.log(shown)
+
             stations.innerHTML = "";
             shown.forEach(shownStation => {
                 addStation(shownStation, hidden=false);
