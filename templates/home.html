@@ -155,6 +155,10 @@ function addStation(name, hidden) {
     container.id = name;
     station.title = info[name]['oneLiner'];
     station.classList.add('fade-in-element');
+    container.dataset.hidden = hidden;
+    if (hidden) {
+        container.style.display = 'none';
+    }
     container.appendChild(station);
 
     // hide button
@@ -180,7 +184,7 @@ function addStation(name, hidden) {
     });
     container.appendChild(overlay);
 
-    stations.appendChild(container)
+    stations.appendChild(container);
 }
 
 let stationList = [];
