@@ -418,6 +418,8 @@ def play_random():
 
 def calculate_text(text, font, max_width, lines):
     text = text.strip()
+    for i in text:
+        print(i)
 
     if width(text, font) <= max_width:
         return [f"{text}"]
@@ -433,7 +435,6 @@ def calculate_text(text, font, max_width, lines):
             text = text.split(' ')
 
         for idx, i in enumerate(text):
-            print(i)
 
             if lines > 1:
                 i = i + ' '
