@@ -1246,6 +1246,10 @@ def refresh_everything_cache(refresh_stream_list):
         if name in streams.keys():
             logging.info(f'Refreshing image for {name}')
             result = display_everything(0, name=name, readied=True, silent=True)
+            if currently_displaying == 'scud':
+                draw.rectangle([0, 0, 30, 30], fill=YELLOW)
+                draw.text((15, 15), f'{name}', font=EVERYTHING_INFO_FONT, fill=BLACK)
+                disp.ShowImage(current_image)
         else:
             result = None
         return name, result 
@@ -1258,11 +1262,6 @@ def refresh_everything_cache(refresh_stream_list):
             for future in as_completed(future_to_name):
                 name, result = future.result()
                 cached_everything_dict[name] = result
-                if currently_displaying == 'scud':
-                    draw.rectangle([0, 0, 30, 30], fill=YELLOW)
-                    draw.text((15, 15), f'{(len(cached_everything_dict)/len(ordered_refresh_list))*100}%', font=EVERYTHING_INFO_FONT, fill=BLACK)
-                    print(f'{(len(cached_everything_dict)/len(ordered_refresh_list))*100}%')
-                    disp.ShowImage(current_image)
 
     refreshing_everything_now = False
 
