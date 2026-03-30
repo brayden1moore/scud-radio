@@ -168,7 +168,7 @@ def get_last_volume():
         return 60
 
 def display_scud():
-    global currently_displaying, current_image
+    global currently_displaying, current_image, current_time
     currently_displaying = 'scud'
 
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
@@ -185,11 +185,6 @@ def display_scud():
     user_tz = pytz.timezone(timezone_name)
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
-    current_hour = current_time.hour
-
-    last_played = read_last_played()
-    volume = round((get_last_volume()/150)*100)
-    #get_battery()
 
 def get_favorites():
     fav_path = Path(LIB_PATH)
@@ -314,9 +309,11 @@ def fetch_logos(name):
     return name, logos
 
 def get_streams():
+    global hidden
 
     info = requests.get(f'https://internetradioprotocol.org/info?cacheBuster={random.randint(0,10000)}', timeout=5).json()
     active = {n: v for n, v in info.items() if v['hidden']!=True}
+    hidden = list(set(hidden.append([n for n, v in info.items() if v['hidden']==True])))
     
     # clean text
     for name, _ in active.items():
