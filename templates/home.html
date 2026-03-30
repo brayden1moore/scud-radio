@@ -213,10 +213,11 @@ fetch("https://internetradioprotocol.org/info", {
 })
 
 function enterEditMode() {
-    stationName.classList.add('fade-in-effect');
-    oneLiner.classList.add('fade-in-effect');
+    stationName.classList.add('fade-in-element');
+    oneLiner.classList.add('fade-in-element');
     stationName.textContent = 'Editing stations...';
-    oneLiner.textContent = 'Changes will take effect next time you power on your radio.';
+    oneLiner.textContent = 'Your changes will take effect next time you power on or restart your radio.';
+
 
 }
 
