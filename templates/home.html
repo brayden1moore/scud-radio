@@ -157,6 +157,12 @@ function addStation(name, hidden) {
     station.classList.add('fade-in-element');
     container.appendChild(station);
 
+    // hide button
+    editOverlay = document.createElement('div'); 
+    editOverlay.classList.add('edit-overlay');
+    editOverlay.textContent = 'x';
+    container.appendChild(editOverlay);
+
     // play button
     overlay = document.createElement('div'); 
     overlay.classList.add('play-overlay');
@@ -169,12 +175,6 @@ function addStation(name, hidden) {
         handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
     });
     container.appendChild(overlay);
-
-    // hide button
-    editOverlay = document.createElement('div'); 
-    editOverlay.classList.add('edit-overlay');
-    editOverlay.textContent = 'x';
-    container.appendChild(editOverlay);
 
     stations.appendChild(container)
 }
