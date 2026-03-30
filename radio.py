@@ -438,10 +438,15 @@ def play_random():
 
 def calculate_text(text, font, max_width, lines):
     text = text.strip()
-    for i in text:
+
+    all_good = True
+    text_idx = 0
+    while all_good and text_idx < len(text):
         tofu = bytes(font.getmask('\uffff'))
         if bytes(font.getmask(i)) == tofu:
             font = replace_font(font)
+            all_good = False
+        text_idx += 1
 
     if width(text, font) <= max_width:
         return [f"{text}"], font
