@@ -95,8 +95,8 @@ function handleCall(endpoint) {
         status.dataset.station = next;
     }
     else if (endpoint.includes('restart')) {
-        stationName.textContent = 'Updating and restarted';
-        oneLiner.textContent = 'Refresh this page when it has started.';
+        stationName.textContent = 'Updating';
+        oneLiner.textContent = 'Refresh this page once it has started.';
     }  
 
     fetch(endpoint).then(() => {
@@ -298,7 +298,12 @@ function confirmHideAndUnhide() {
     })
 
     const hiddenList = hiddenQueue.join(';');
-    handleCall(`/control/hide?station=${hiddenList.replace(/ /g, "+")}`);
+    if (hiddenList.length == 0) {
+        handleCall(`/control/hide?station=<None>`);
+    }
+    else {
+        handleCall(`/control/hide?station=${hiddenList.replace(/ /g, "+")}`);
+    }
     hiddenQueue = [];
     antennaBlip();
 }
