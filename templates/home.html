@@ -292,7 +292,7 @@ function confirmHideAndUnhide() {
     })
 
     const hiddenList = hiddenQueue.join(';');
-    handleCall(`/control/hide?station=${hiddenList.replace(/ /g, "+")}`);
+    //handleCall(`/control/hide?station=${hiddenList.replace(/ /g, "+")}`);
     hiddenQueue = [];
     antennaBlip();
 }
