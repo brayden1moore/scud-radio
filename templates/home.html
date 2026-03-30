@@ -227,7 +227,7 @@ function enterEditMode() {
 
     const stationsToEdit = document.querySelectorAll('.a-station');
     stationsToEdit.forEach(station => {
-        editOverlay = station.getElementByClass('edit-overlay');
+        editOverlay = station.querySelector('.edit-overlay');
         editOverlay.style.display = 'block';
     })
 }
