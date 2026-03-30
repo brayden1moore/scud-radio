@@ -581,18 +581,18 @@ def display_everything(direction, name, update=False, readied=False, pushed=Fals
 
         # draw location
         tags_start = name_chunk_start + 54
-        draw.rectangle([name_chunk_start_x, tags_start, name_chunk_start_x + width(location, MEDIUM_FONT), tags_start + 1 + height('S', MEDIUM_FONT)], fill=BLUE) # bg
-        draw.text((name_chunk_start_x, tags_start - 2), location, font=MEDIUM_FONT, fill=BLACK)
+        draw.rectangle([name_chunk_start_x, tags_start, name_chunk_start_x + width(location, EVERYTHING_INFO_FONT), tags_start + 1 + height('S', EVERYTHING_INFO_FONT)], fill=BLUE) # bg
+        draw.text((name_chunk_start_x, tags_start - 2), location, font=EVERYTHING_INFO_FONT, fill=BLACK)
         
-        genre_start = name_chunk_start_x + width(location, MEDIUM_FONT)
+        genre_start = name_chunk_start_x + width(location, EVERYTHING_INFO_FONT)
         genres = streams[name]['genres']
         genre_x_offset = 5
         if genres:
-            genre_widths = [width(g, MEDIUM_FONT) for g in genres]
+            genre_widths = [width(g, EVERYTHING_INFO_FONT) for g in genres]
             genre_x_offset = 5
             for genre, genre_width in zip(genres, genre_widths):
-                draw.rectangle([genre_start + genre_x_offset, tags_start, genre_start + genre_x_offset + genre_width, tags_start + 1 + height('S', MEDIUM_FONT)], fill=GREEN) # bg
-                draw.text((genre_start + genre_x_offset, tags_start - 2), genre, font=MEDIUM_FONT, fill=BLACK)
+                draw.rectangle([genre_start + genre_x_offset, tags_start, genre_start + genre_x_offset + genre_width, tags_start + 1 + height('S', EVERYTHING_INFO_FONT)], fill=GREEN) # bg
+                draw.text((genre_start + genre_x_offset, tags_start - 2), genre, font=EVERYTHING_INFO_FONT, fill=BLACK)
                 genre_x_offset += genre_width + 5
 
         # logos
