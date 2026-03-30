@@ -43,7 +43,7 @@
             <div class="control" id="question" title="Update and restart" onClick="handleCall('/control/restart')"><img class="icon" src="assets/question_icon_web.svg"></div>
             <div class="control" id="favorite" title="Favorite / Unfavorite" onClick="handleCall('/control/favorite')"><img class="icon" src="assets/favorite_icon_web.svg"></div>            
             <div class="control" id="random" title="Play random" onClick="playRandom()"><img class="icon" src="assets/random_icon_web.svg"></div>
-            <div class="control" id="edit" title="Edit stations" onClick="enterEditMode()"><img class="icon" src="assets/edit_icon_web.svg"></div>
+            <div class="control" id="edit" title="Edit stations" onClick="toggleEditMode()"><img class="icon" src="assets/edit_icon_web.svg"></div>
     </div>
     <div id="stations"></div>
 </div>
@@ -219,17 +219,29 @@ fetch("https://internetradioprotocol.org/info", {
         info = json;
 })
 
-function enterEditMode() {
-    stationName.classList.add('fade-in-element');
-    oneLiner.classList.add('fade-in-element');
-    stationName.textContent = 'Editing stations...';
-    oneLiner.textContent = 'Your changes will take effect next time you power on or restart your radio.';
 
-    const stationsToEdit = document.querySelectorAll('.a-station-and-overlay');
-    stationsToEdit.forEach(station => {
-        const editOverlay = station.querySelector('.edit-overlay');
-        editOverlay.style.display = 'block';
-    })
+let editMode = false;
+function toggleEditMode() {
+    if (editMode) {
+        stationName.textContent = status.dataset.name;
+        oneLiner.textContent = status.dataset.oneliner;
+
+        const stationsToEdit = document.querySelectorAll('.a-station-and-overlay');
+        stationsToEdit.forEach(station => {
+            const editOverlay = station.querySelector('.edit-overlay');
+            editOverlay.style.display = 'none';
+        })
+    }
+    else {
+        stationName.textContent = 'Editing stations...';
+        oneLiner.textContent = 'Your changes will take effect next time you power on or restart your radio.';
+
+        const stationsToEdit = document.querySelectorAll('.a-station-and-overlay');
+        stationsToEdit.forEach(station => {
+            const editOverlay = station.querySelector('.edit-overlay');
+            editOverlay.style.display = 'block';
+        })
+    }
 }
 
 updateStatus();
