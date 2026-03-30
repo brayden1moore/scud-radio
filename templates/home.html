@@ -223,6 +223,8 @@ fetch("https://internetradioprotocol.org/info", {
 let editMode = false;
 function toggleEditMode() {
     if (editMode) {
+        editMode = false;
+
         stationName.textContent = status.dataset.name;
         oneLiner.textContent = status.dataset.oneliner;
 
@@ -233,6 +235,8 @@ function toggleEditMode() {
         })
     }
     else {
+        editMode = true;
+
         stationName.textContent = 'Editing stations...';
         oneLiner.textContent = 'Your changes will take effect next time you power on or restart your radio.';
 
