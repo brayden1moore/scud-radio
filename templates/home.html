@@ -162,7 +162,8 @@ function addStation(name, hidden) {
     editOverlay.classList.add('edit-overlay');
     xBackground = document.createElement('div'); 
     xBackground.classList.add('x-background');
-    editOverlay.appendChild(xBackground);
+    xBackground.dataset.station = name;
+    xBackground.addEventListener('click', () => addToOrRemoveFromHiddenQueue(xBackground));    editOverlay.appendChild(xBackground);
     container.appendChild(editOverlay);
 
     // play button
@@ -251,6 +252,18 @@ function toggleEditMode() {
             editOverlay.style.display = 'flex';
         })
     }
+}
+
+let hiddenQueue = [];
+function addToOrRemoveFromHiddenQueue(element) {
+    const station = element.dataset.station;
+    if (hiddenQueue.contains(station)) {
+        hiddenQueue.pop(station);
+    }
+    else {
+        hiddenQueue.push(station);
+    }
+    console.log(hiddenQueue);
 }
 
 updateStatus();
