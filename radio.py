@@ -60,25 +60,43 @@ LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",42)
 LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
 LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28) 
 
-def load_noto(size, weight=400):
-    font = ImageFont.truetype('assets/Archivo/Archivo-VariableFont_wdth,wght.ttf', size)
-    font.set_variation_by_axes([weight])  # 100–900
+def load_font(name, size, weight=400):
+    if name == 'Archivo':
+        font = ImageFont.truetype('assets/Archivo/Archivo-VariableFont_wdth,wght.ttf', size)
+    elif name == 'Noto':
+        font = ImageFont.truetype('Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf', size - 1)   
+    font.set_variation_by_axes([weight]) 
     return font
 
-EVERYTHING_INFO_FONT = load_noto(17, weight=400)  
-EVERYTHING_NAME_FONT = load_noto(28, weight=600)
-ONE_INFO_FONT = EVERYTHING_INFO_FONT
-ONE_NAME_FONT = EVERYTHING_NAME_FONT
-ONE_LARGE_FONT = load_noto(38, 300)
-ONE_LARGISH_FONT = load_noto(32, 300)
+SMALL_LIGHT = load_font('Archivo', 17, weight=400)  
+MEDIUM_BOLD = load_font('Archivo',28, weight=600)
+LARGE_LIGHT = load_font('Archivo',32, weight=400)  
+EXTRALARGE_LIGHT = load_font('Archivo',38, weight=400)  
 
-#MEDIUM_FONT    = load_noto(18, weight=300)
-#LARGE_FONT     = load_noto(42, weight=300)
-#LARGE_ISH_FONT = load_noto(28, weight=700)  
-#LARGE_FONT_THIN = load_noto(28, weight=300)
+def replace_font(font):
+    replacement = 'Noto'
+    if font == SMALL_LIGHT:
+        weight = 400
+        size = 17
+    elif font == MEDIUM_BOLD:
+        weight = 600
+        size = 28
+    elif font == LARGE_LIGHT:
+        weight = 400
+        size = 32
+    elif font == EXTRALARGE_LIGHT:
+        weight = 400
+        size - 38
+    return load_font(replacement, size, weight)
+
+EVERYTHING_INFO_FONT = SMALL_LIGHT
+ONE_INFO_FONT = SMALL_LIGHT
+EVERYTHING_NAME_FONT = MEDIUM_BOLD
+ONE_NAME_FONT = MEDIUM_BOLD
+ONE_LARGISH_FONT = LARGE_LIGHT
+ONE_LARGE_FONT = EXTRALARGE_LIGHT
 
 LIB_PATH = "/var/lib/scud-radio"
-
 
 ## functions
 
@@ -421,7 +439,7 @@ def calculate_text(text, font, max_width, lines):
     for i in text:
         tofu = bytes(font.getmask('\uffff'))
         if bytes(font.getmask(i)) == tofu:
-            print(f"Missing glyph: {i!r}")
+            font = replace_font(font)
 
     if width(text, font) <= max_width:
         return [f"{text}"]
