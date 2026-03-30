@@ -134,6 +134,7 @@ function updateStatus(fromHandleCall) {
       .then(function(json) {
             name = json['output'].split(' - ')[0];
             status.dataset.station = name;
+            status.dataset.oneliner = info[name]['oneLiner'];
             stationName.textContent = name;
             stationName.classList.add('fade-in-element');
             oneLiner.classList.add('fade-in-element');
@@ -192,9 +193,6 @@ function updateStations() {
                     addStation(station, hidden=true)
                 });
             }
-
-
-
       });
 }
 
@@ -213,6 +211,11 @@ fetch("https://internetradioprotocol.org/info", {
       .then(function(json) {
         info = json;
 })
+
+function enterEditMode() {
+    stationName.textContent = 'Editing Stations...';
+    oneLiner.textContent = 'Changes will take effect next time you power on your radio.';
+}
 
 updateStatus();
 updateStations();
