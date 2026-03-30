@@ -104,45 +104,6 @@ LIB_PATH = "/var/lib/scud-radio"
 
 import driver as LCD_2inch
 
-
-def read_last_played():
-    scud_path = Path(LIB_PATH)
-    scud_path.mkdir(parents=True, exist_ok=True)
-    
-    played_file = scud_path / 'last_played.txt'
-    if not played_file.exists():
-        played_file.touch() 
-        return None
-    try:
-        with open(played_file, 'r') as f:
-            last_played = f.read()
-        return last_played
-    except:
-        return None
-    
-def get_battery():
-    global battery, charging
-
-    try:
-        result = subprocess.run(['nc', '-q', '1', '127.0.0.1', '8423'], 
-                                input='get battery_charging\nget battery\n', 
-                                stdout=subprocess.PIPE, text=True, timeout=2)
-        
-        lines = result.stdout.strip().split('\n')
-        if 'battery' not in lines[0]:
-            lines = lines[1:]
-        
-        charging_line = lines[0].strip().split(': ')[1] 
-        charging = charging_line == 'true'
-        
-        battery_line = lines[1].strip().split(': ')[1] 
-        battery = int(float(battery_line))
-    except Exception as e:
-        #logging.info(e)
-        return battery, charging
-
-    return 0, False
-
 def get_timezone_from_ip():
     try:
         response = requests.get('http://ip-api.com/json/')
@@ -150,22 +111,52 @@ def get_timezone_from_ip():
         return data['timezone']
     except:
         return 'UTC' 
+    
+def get_config():
+    Path(LIB_PATH).mkdir(parents=True, exist_ok=True)
+    default_config = {
+            'confirm_on_rotate': True,
+            'volume': 60,
+            'last_played': None
+    }
+    config_file_path = Path(LIB_PATH) / 'config.json'
+    if not config_file_path.exists():
+        config_file_path.touch() 
+        return default_config
+    try:
+        with open(config_file_path, 'rb') as f:
+            config = json.load(f)
+        return config
+    except:
+        return default_config
+    
+def set_config(config):
+    Path(LIB_PATH).mkdir(parents=True, exist_ok=True)
+    config_file_path = Path(LIB_PATH) / 'config.json'
+    if isinstance(config, dict):
+        with open(config_file_path, 'wb') as f:
+            json.dump(config, f)
 
 def get_last_volume():
-    vol_path = Path(LIB_PATH)
-    vol_path.mkdir(parents=True, exist_ok=True)
-    
-    volume_file = vol_path / 'volume.txt'
-    if not volume_file.exists():
-        volume_file.touch() 
-        return 60
-    
+    config = get_config()
+    return config['volume']
+
+def set_last_volume(vol):
+    config = get_config()
     try:
-        with open(volume_file, 'r') as f:
-            vol = int(f.read())
-        return vol
+        config['volume'] = int(vol)
     except:
-        return 60
+        config['volume'] = 60
+    set_config(config)
+
+def set_last_played(name):
+    config = get_config()
+    config['last_played'] = name
+    set_config(config)
+
+def get_last_played():
+    config = get_config()
+    return config['last_played']
 
 def display_scud():
     global currently_displaying, current_image, current_time
@@ -229,31 +220,11 @@ def set_hidden(hidden):
     
     return hidden
 
-def set_last_volume(vol):
-    vol_path = Path(LIB_PATH)
-    vol_path.mkdir(parents=True, exist_ok=True)
-
-    with open(vol_path / 'volume.txt', 'w') as f:
-        f.write(vol)
-
 def safe_display(image):
     global current_image
     #if screen_on & (image != current_image):
     disp.ShowImage(image)
     current_image = image.copy()
-    
-def write_to_tmp_os_path(name):
-    scud_path = Path(LIB_PATH)
-    scud_path.mkdir(parents=True, exist_ok=True)
-    
-    played_file = scud_path / 'last_played.txt'
-
-    if not played_file.exists():
-        played_file.touch() 
-        
-    with open(played_file, 'w') as file:
-        file.write(name)
-
 
 def backlight_on():
     global screen_on
@@ -424,7 +395,7 @@ def play(name, toggled=False):
     if not sleeping:
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
-    write_to_tmp_os_path(name)
+    set_last_played(name)
 
 
 def play_random():
@@ -963,6 +934,16 @@ def confirm_seek():
         if not confirm_on_rotate:
             readied_stream = None
 
+def toggle_confirm_on_rotate():
+    global confirm_on_rotate
+    if confirm_on_rotate:
+        confirm_on_rotate = False
+    else: 
+        confirm_on_rotate = True
+    config = get_config()
+    config['confirm_on_rotate'] = confirm_on_rotate
+    set_config(config)
+
 def show_volume_overlay(volume):
     global current_image, volume_overlay_showing
     if current_image:
@@ -1424,7 +1405,7 @@ has_displayed_once = False
 volume_overlay_showing = False
 last_ambient_display = time.time()
 switch_off_time = None
-confirm_on_rotate = True
+confirm_on_rotate = get_config()['confirm_on_rotate']
 
 user_tz = pytz.timezone(get_timezone_from_ip())
 
@@ -1492,7 +1473,7 @@ streams = get_streams()
 last_successful_fetch = time.time()
 stream_list = get_stream_list(streams)
 
-last_played = read_last_played()
+last_played = get_last_played()
 if last_played in stream_list:
     play(last_played)
 else:
