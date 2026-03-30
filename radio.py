@@ -1215,8 +1215,6 @@ refreshing_everything_now = False
 
 def refresh_everything_cache(refresh_stream_list):
     global cached_everything_dict, refreshing_everything_now, ready_to_display
-    if currently_displaying == 'scud':
-        draw = ImageDraw.Draw(current_image.copy())
 
     refreshing_everything_now = True
     origin_stream = readied_stream if readied_stream else stream
@@ -1245,10 +1243,6 @@ def refresh_everything_cache(refresh_stream_list):
         if name in streams.keys():
             logging.info(f'Refreshing image for {name}')
             result = display_everything(0, name=name, readied=True, silent=True)
-            if currently_displaying == 'scud':
-                draw.rectangle([0, 0, 30, 30], fill=YELLOW)
-                draw.text((15, 15), f'{name}', font=EVERYTHING_INFO_FONT, fill=BLACK)
-                disp.ShowImage(current_image)
         else:
             result = None
         return name, result 
