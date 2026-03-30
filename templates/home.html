@@ -383,7 +383,7 @@ left: -36px !important;
     position: relative;
 }
 
-.a-station-and-overlay:hover .play-overlay {
+.a-station-and-overlay:hover:not(:has(.edit-overlay:hover)) .play-overlay {
     display: flex;
 }
 
