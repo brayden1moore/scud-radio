@@ -433,6 +433,7 @@ def calculate_text(text, font, max_width, lines):
             text = text.split(' ')
 
         for idx, i in enumerate(text):
+            print(i)
 
             if lines > 1:
                 i = i + ' '
