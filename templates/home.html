@@ -225,7 +225,7 @@ function toggleEditMode() {
     if (editMode) {
         editMode = false;
 
-        stationName.textContent = status.dataset.name;
+        stationName.textContent = status.dataset.station;
         oneLiner.textContent = status.dataset.oneliner;
 
         const stationsToEdit = document.querySelectorAll('.a-station-and-overlay');
