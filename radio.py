@@ -222,6 +222,7 @@ def get_hidden():
     
     with open(hidden_file, 'r') as f:
         hidden = f.readlines()
+
     return [hid.strip() for hid in hidden]
 
 def set_hidden(hidden):
