@@ -1587,6 +1587,8 @@ def handle_remote_command(command_data):
         
         elif cmd == 'hide':
             stations = command_data.get('value')
+            if stations == '<None>':
+                stations = []
             try:
                 new_hidden = set_hidden(stations)
                 return {'status': 'ok', 'hidden': new_hidden}        
