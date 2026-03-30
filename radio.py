@@ -44,6 +44,7 @@ SCREEN_HEIGHT = 240
 BRIGHTNESS = 1
 
 WHITE = (255,255,255)
+DARK_WHITE = (243,243,243)
 BLACK = (0,0,0)
 YELLOW = (255,255,0)
 BLUE = (0,187,255)
@@ -710,10 +711,10 @@ def display_one(name):
         logo = streams[name]['logo_60']
         first_pixel_color = logo.getpixel((2,2))
 
-        image = Image.new('RGBA',(320, 240), color=BLACK)
+        image = Image.new('RGBA',(320, 240), color=DARK_WHITE)
         draw = ImageDraw.Draw(image)  
 
-        draw.rectangle([15, 11, 76, 72], outline=WHITE, width=1)
+        draw.rectangle([15, 11, 76, 72], outline=BLACK, width=1)
         logo_position = (16, 12)
         image.paste(logo, logo_position)
         if name in favorites:
@@ -725,9 +726,9 @@ def display_one(name):
         name_font = ONE_NAME_FONT
         name_line = calculate_text(name, font=name_font, max_width=225, lines=1)[0]
         block_start = 85
-        draw.rectangle([block_start, 20 - 4, block_start + width(name_line, name_font), 20 + height('S', name_font)], fill=BLACK)
-        draw.text((block_start-2, 13), name_line, font=name_font, fill=WHITE)
-        draw.rectangle([block_start, 45, block_start + width(name_line, name_font), 45], fill=WHITE) # underline
+        #draw.rectangle([block_start, 20 - 4, block_start + width(name_line, name_font), 20 + height('S', name_font)], fill=BLACK) # bg
+        draw.text((block_start-2, 13), name_line, font=name_font, fill=BLACK)
+        draw.rectangle([block_start, 45, block_start + width(name_line, name_font), 45], fill=BLACK) # underline
         
         # location
         location = streams[name]['location']
@@ -767,14 +768,14 @@ def display_one(name):
         avg_info_height = height("Sg", ONE_INFO_FONT)
 
         for i in title_lines:
-            draw.text((14, anchor), i, font=title_font, fill=WHITE)
+            draw.text((14, anchor), i, font=title_font, fill=BLACK)
             anchor += avg_title_height + line_gap
 
         anchor += section_gap
 
         if info_lines:
             for i in info_lines:
-                draw.text((14, anchor), i, font=ONE_INFO_FONT, fill=WHITE)
+                draw.text((14, anchor), i, font=ONE_INFO_FONT, fill=BLACK)
                 anchor += avg_info_height + line_gap
 
         display_bar(draw=draw)
