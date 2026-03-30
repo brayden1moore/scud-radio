@@ -440,7 +440,7 @@ def calculate_text(text, font, max_width, lines):
     text = text.strip()
 
     all_good = True
-    text_idx = 0        
+    text_idx = -1      
     tofu = bytes(font.getmask('\uffff'))
     while all_good and text_idx < min(3,len(text)):
         if bytes(font.getmask(text[text_idx])) == tofu:
