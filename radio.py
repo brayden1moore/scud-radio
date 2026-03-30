@@ -1621,7 +1621,7 @@ def handle_remote_command(command_data):
             return {'status': 'error', 'message': 'Unknown command'}
             
     except Exception as e:
-        return {'status': 'error', 'message': str(e)}
+        return {'status': 'error', 'message': str(e.with_traceback())}
 
 
 def control_socket_listener():
