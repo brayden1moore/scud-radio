@@ -416,14 +416,11 @@ def play_random():
     stream = chosen
     play_status = 'play'
 
-def get_tofu_mask(font):
-    return font.getmask('\uffff').tostring() 
-
 def calculate_text(text, font, max_width, lines):
     text = text.strip()
     for i in text:
-        tofu = get_tofu_mask(font)
-        if font.getmask(i).tostring() == tofu:
+        tofu = bytes(font.getmask('\uffff'))
+        if bytes(font.getmask(i)) == tofu:
             print(f"Missing glyph: {i!r}")
 
     if width(text, font) <= max_width:
