@@ -260,10 +260,10 @@ function addToOrRemoveFromHiddenQueue(element) {
     const station = element.dataset.station;
     if (hiddenQueue.includes(station)) {      
         hiddenQueue = hiddenQueue.filter(s => s !== station); 
-        element.style.backgroundColor = '#00BBFF !important';
+        element.style.background = '#00BBFF !important';
     } else {
         hiddenQueue.push(station);
-        element.style.backgroundColor = '#FF4747 !important';
+        element.style.background = '#FF4747 !important';
     }
     
     console.log(hiddenQueue);
