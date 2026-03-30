@@ -371,12 +371,10 @@ def get_stream_list(stream_dict):
     reruns = [i for i in stream_list if stream_dict[i]['status'] == 'Re-Run']
     
     if favorites:
-        #fav_start_idx = round(len(stream_list) / 2) - round(len(favorites) / 2)
-        #front_half = [i for i in stream_list if i not in favorites][:fav_start_idx]
-        #back_half = [i for i in stream_list if i not in favorites and i not in front_half]
         stream_list =  sorted([i for i in favorites if i in stream_list], key=str.casefold) + sorted([i for i in stream_list if i not in favorites], key=str.casefold)
     
     if hidden:
+        print(hidden)
         stream_list = [i for i in stream_list if i not in hidden]
 
     return stream_list
