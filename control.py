@@ -43,7 +43,7 @@ Usage:
     radio off                 Put the radio to sleep
     radio on                  Wake the radio up
     radio restart             Restart the radio and gather updates
-    radio hide <station>      Toggle hidden/shown for specific station
+    radio hide <stations>     Toggle hidden/shown for specific stations separated by ;
 """)
         sys.exit(1)
     
@@ -97,10 +97,10 @@ Usage:
 
     elif command == 'hide':
         if len(sys.argv) < 3:
-            print("Error: Please specify station name")
+            print("Error: Please specify stations")
             sys.exit(1)
-        station = ' '.join(sys.argv[2:])
-        result = send_command('hide', value=station)
+        stations = sys.argv[2].split(';')
+        result = send_command('hide', value=stations)
         if result['status'] == 'ok':
             print(f"Hidden: {result['hidden']}")
         else:

@@ -230,6 +230,8 @@ def set_hidden(hidden):
     
     with open(hidden_path / 'hidden.txt', 'w') as f:
         f.write('\n'.join(hidden))
+    
+    return hidden
 
 def set_last_volume(vol):
     vol_path = Path(LIB_PATH)
@@ -1190,59 +1192,6 @@ def toggle_favorite():
 
         freeze_for_task = False
 
-
-def toggle_hidden(station):
-    global hidden, stream_list, cached_everything_dict, last_input_time, readied_stream, freeze_for_task
-
-    freeze_for_task = True
-
-    chosen_stream = station
-    if chosen_stream in stream_list:
-        prior_idx = stream_list.index(chosen_stream)
-        if readied_stream:
-            img = cached_everything_dict[chosen_stream].copy().convert('RGBA')
-        else:
-            img = one_cache[chosen_stream].copy().convert('RGBA')
-
-        action = None
-        if chosen_stream in hidden:
-            action = 'unhide'
-            hidden = [i for i in hidden if i != chosen_stream]
-        else:
-            action = 'hide'
-            hidden.append(chosen_stream)
-            hidden = list(set(hidden))
-
-        set_hidden(hidden)
-        stream_list = get_stream_list(streams)
-
-        print('TOGGLED HIDDEN. REFRESHING, ', stream_list)
-        thread = threading.Thread(target=refresh_everything_cache, args=(stream_list,), daemon=True)
-
-        if action == 'unhide':
-            img = current_image.convert('RGBA')
-            img.paste(unhide_img, (0, 0), unhide_img)
-            disp.ShowImage(img)
-            time.sleep(0.1)
-        else:
-            img = current_image.convert('RGBA')
-            img.paste(hide_img, (0, 0), hide_img)
-            disp.ShowImage(img)
-            time.sleep(0.1)  
-
-        if action == 'unhide':
-            readied_stream = chosen_stream
-        else:
-            readied_stream = stream_list[prior_idx % len(stream_list)]
-
-        thread.start()
-        time.sleep(0.5)
-        last_input_time = time.time()
-
-        play(readied_stream)
-
-        freeze_for_task = False
-    
 ready_to_display = False
 refreshing_everything_now = False
 
@@ -1630,9 +1579,9 @@ def handle_remote_command(command_data):
             return {'status': 'ok', 'favorites': favorites}
         
         elif cmd == 'hide':
-            station_name = command_data.get('value')
+            stations = command_data.get('value')
             try:
-                toggle_hidden(station_name)
+                hidden = set_hidden(stations)
                 return {'status': 'ok', 'hidden': hidden}        
             except Exception as e:
                 return {'status': 'not ok', 'message': e}        
