@@ -156,7 +156,7 @@ function addStation(name, hidden) {
     station.title = info[name]['oneLiner'];
     station.classList.add('fade-in-element');
     container.dataset.hidden = hidden;
-    container.dataset.station = name;
+    container.dataset.name = name;
     if (hidden) {
         container.style.display = 'none';
     }
@@ -267,8 +267,9 @@ function toggleEditMode() {
 
             if (station.dataset.hidden == "true") {
                 station.style.display = 'block';
-                console.log(station);
-                addToOrRemoveFromHiddenQueue(station);
+                hiddenQueue.push(station.dataset.name)
+                const xbg = editOverlay.querySelector('.x-background');
+                xbg.style.background = '#FF4747';
             }
         })
     }
