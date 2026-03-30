@@ -65,7 +65,7 @@ def load_font(name, size, weight=400):
     if name == 'Archivo':
         font = ImageFont.truetype('assets/Archivo/Archivo-VariableFont_wdth,wght.ttf', size)
     elif name == 'Noto':
-        font = ImageFont.truetype('Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf', size - 1)   
+        font = ImageFont.truetype('assets/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf', size - 1)   
     font.set_variation_by_axes([weight]) 
     return font
 
