@@ -245,7 +245,6 @@ function toggleEditMode() {
         })
 
         confirmHideAndUnhide();
-        antennaBlip();
     }
     else {
         editMode = true;
@@ -281,6 +280,7 @@ function confirmHideAndUnhide() {
     })
 
     hiddenQueue = [];
+    antennaBlip();
 }
 
 updateStatus();
