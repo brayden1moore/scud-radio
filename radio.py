@@ -1261,6 +1261,7 @@ def refresh_everything_cache(refresh_stream_list):
                 if currently_displaying == 'scud':
                     draw.rectangle([0, 0, 30, 30], fill=YELLOW)
                     draw.text((15, 15), f'{(len(cached_everything_dict)/len(ordered_refresh_list))*100}%', font=EVERYTHING_INFO_FONT, fill=BLACK)
+                    print(f'{(len(cached_everything_dict)/len(ordered_refresh_list))*100}%')
                     disp.ShowImage(current_image)
 
     refreshing_everything_now = False
