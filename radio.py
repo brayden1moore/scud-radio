@@ -124,7 +124,7 @@ def get_config():
         config_file_path.touch() 
         return default_config
     try:
-        with open(config_file_path, 'rb') as f:
+        with open(config_file_path, 'r') as f:
             config = json.load(f)
         return config
     except:
@@ -134,7 +134,7 @@ def set_config(config):
     Path(LIB_PATH).mkdir(parents=True, exist_ok=True)
     config_file_path = Path(LIB_PATH) / 'config.json'
     if isinstance(config, dict):
-        with open(config_file_path, 'wb') as f:
+        with open(config_file_path, 'w') as f:
             json.dump(config, f)
 
 def get_last_volume():
