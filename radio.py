@@ -158,7 +158,7 @@ def display_scud():
     enhancer = ImageEnhance.Brightness(image)
     image = enhancer.enhance(BRIGHTNESS)
     disp.ShowImage(image)
-    current_image = image
+    current_image = image.copy()
 
     global user_tz
 
@@ -1718,11 +1718,12 @@ volume_click_button.when_pressed =  wrapped_action(lambda: on_volume_button_pres
 volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
     
 ## main loop
+refresh_everything_cache(stream_list)
+
 last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
 
-refresh_everything_cache(stream_list)
 display_everything(0, stream, readied=False)
 
 try:
