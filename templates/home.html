@@ -265,7 +265,7 @@ function toggleEditMode() {
             const editOverlay = station.querySelector('.edit-overlay');
             editOverlay.style.display = 'flex';
 
-            if (station.dataset.hidden == true) {
+            if (station.dataset.hidden == "true") {
                 station.style.display = 'block';
                 console.log(station);
                 addToOrRemoveFromHiddenQueue(station);
