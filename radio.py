@@ -715,10 +715,10 @@ def display_one(name):
         logo = streams[name]['logo_60']
         first_pixel_color = logo.getpixel((2,2))
 
-        image = Image.new('RGBA',(320, 240), color=WHITE)
+        image = Image.new('RGBA',(320, 240), color=BLACK)
         draw = ImageDraw.Draw(image)  
 
-        draw.rectangle([15, 11, 76, 72], outline=BLACK, width=1)
+        draw.rectangle([15, 11, 76, 72], outline=WHITE, width=1)
         logo_position = (16, 12)
         image.paste(logo, logo_position)
         if name in favorites:
@@ -731,13 +731,13 @@ def display_one(name):
         name_line = calculate_text(name, font=name_font, max_width=225, lines=1)[0][0]
         block_start = 85
         #draw.rectangle([block_start, 20 - 4, block_start + width(name_line, name_font), 20 + height('S', name_font)], fill=BLACK) # bg
-        draw.text((block_start-2, 13), name_line, font=name_font, fill=BLACK)
-        draw.rectangle([block_start, 45, block_start + width(name_line, name_font), 45], fill=BLACK) # underline
+        draw.text((block_start-2, 13), name_line, font=name_font, fill=WHITE)
+        draw.rectangle([block_start, 45, block_start + width(name_line, name_font), 45], fill=WHITE) # underline
         
         # location
         location = streams[name]['location']
         draw.rectangle([block_start, 52 + 2, block_start + width(location, ONE_INFO_FONT), 52 + 3 + height('S', ONE_INFO_FONT)], fill=BLUE)# bg
-        draw.text((block_start, 52), calculate_text(location, font=ONE_INFO_FONT, max_width=223, lines=1)[0][0], font=ONE_INFO_FONT, fill=BLACK)    
+        draw.text((block_start, 52), calculate_text(location, font=ONE_INFO_FONT, max_width=223, lines=1)[0][0], font=ONE_INFO_FONT, fill=WHITE)    
 
         # now playing
         y_offset = 0
@@ -1292,13 +1292,7 @@ def handle_rotation(direction):
     rotated = True
     last_rotation = time.time()
     last_input_time = time.time()
-
-    #logging.info(f'HANDLE ROTATION {direction}')
-
-    if volume_held and readied_stream != stream:
-        toggle_hidden(readied_stream)
-    else:
-        seek_stream(direction)
+    seek_stream(direction)
 
 def volume_handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
