@@ -60,7 +60,7 @@ Usage:
         if result['status'] == 'ok':
             if isinstance(result['stations'], dict):
                 output = result['stations']
-                print(output)
+                print(json.dumps(output))
             else:
                 print("")
         else:
