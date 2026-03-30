@@ -65,6 +65,8 @@ Usage:
                 print(output)
             else:
                 print("")
+        else:
+            print(result['status'])
     
     elif command == 'favorites':
         result = send_command('list')
