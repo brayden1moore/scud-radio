@@ -225,6 +225,8 @@ fetch("https://internetradioprotocol.org/info", {
 
 
 let editMode = false;
+let hiddenQueue = [];
+
 const editButton = document.getElementById('edit').querySelector('.icon');
 function toggleEditMode() {
     const stationsToEdit = document.querySelectorAll('.a-station-and-overlay');
@@ -243,6 +245,7 @@ function toggleEditMode() {
         })
 
         confirmHideAndUnhide();
+        antennaBlip();
     }
     else {
         editMode = true;
@@ -259,7 +262,6 @@ function toggleEditMode() {
     }
 }
 
-let hiddenQueue = [];
 function addToOrRemoveFromHiddenQueue(element) {
     const station = element.dataset.station;
     if (hiddenQueue.includes(station)) {      
