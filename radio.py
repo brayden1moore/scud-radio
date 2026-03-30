@@ -313,7 +313,8 @@ def get_streams():
 
     info = requests.get(f'https://internetradioprotocol.org/info?cacheBuster={random.randint(0,10000)}', timeout=5).json()
     active = {n: v for n, v in info.items() if v['hidden']!=True}
-    hidden = list(set(hidden.append([n for n, v in info.items() if v['hidden']==True])))
+    hidden.extend([n for n, v in info.items() if v['hidden']==True])
+    hidden = list(set(hidden))
     
     # clean text
     for name, _ in active.items():
