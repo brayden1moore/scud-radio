@@ -465,7 +465,7 @@ def calculate_text(text, font, max_width, lines):
                 if width(characters + i, font) >= max_width-dots_width: # if width exceeds max - dots, return
                     characters += '...'
                     line_list.append(f"{characters}")
-                    return line_list
+                    return line_list, font
                 else:
                     characters += i
                     current_width = width(characters, font)
