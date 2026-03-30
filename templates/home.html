@@ -152,7 +152,7 @@ function addStation(name, hidden) {
     station.src = info[name]['logo'];
     station.dataset.name = name;
     station.dataset.oneLiner = info[name]['oneLiner'];
-    station.id = name;
+    container.id = name;
     station.title = info[name]['oneLiner'];
     station.classList.add('fade-in-element');
     container.appendChild(station);
@@ -265,8 +265,13 @@ function addToOrRemoveFromHiddenQueue(element) {
         hiddenQueue.push(station);
         element.style.background = '#FF4747';
     }
-    
     console.log(hiddenQueue);
+}
+
+function confirmHideAndUnhide() {
+    hiddenQueue.forEach(station => {
+        thisStation = document.getElementById
+    })
 }
 
 updateStatus();
