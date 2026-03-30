@@ -421,7 +421,7 @@ def calculate_text(text, font, max_width, lines):
     text = text.strip()
     for i in text:
         print(i)
-        print(font.getbbox(i))
+        print(font.getbbox(i.decode('utf-8')))
 
     if width(text, font) <= max_width:
         return [f"{text}"]
