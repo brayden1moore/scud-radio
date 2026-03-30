@@ -58,19 +58,8 @@ Usage:
     elif command == 'list':
         result = send_command('list')
         if result['status'] == 'ok':
-            if isinstance(result['stations'], list):
-                output = ';'.join(result['stations'])
-                print(output)
-            else:
-                print("")
-        else:
-            print(result)
-
-    elif command == 'hidden':
-        result = send_command('hidden')
-        if result['status'] == 'ok':
-            if isinstance(result['stations'], list):
-                output = ';'.join(result['stations'])
+            if isinstance(result['stations'], dict):
+                output = result['stations']
                 print(output)
             else:
                 print("")

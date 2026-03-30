@@ -1567,8 +1567,11 @@ def handle_remote_command(command_data):
         elif cmd == 'list':
             return {
                 'status': 'ok',
-                'stations': stream_list,
-                'favorites': favorites
+                'stations': {
+                    'shown': stream_list,
+                    'hidden': hidden,
+                    'favorites': favorites
+                }
         }
 
         elif cmd == 'hidden':
