@@ -960,7 +960,8 @@ def confirm_seek():
             stream = readied_stream
             play(stream)
         #display_everything(0, stream)
-        readied_stream = None
+        if not confirm_on_rotate:
+            readied_stream = None
 
 def show_volume_overlay(volume):
     global current_image, volume_overlay_showing
