@@ -156,6 +156,7 @@ function addStation(name, hidden) {
     station.title = info[name]['oneLiner'];
     station.classList.add('fade-in-element');
     container.dataset.hidden = hidden;
+    container.dataset.name = name;
     if (hidden) {
         container.style.display = 'none';
     }
@@ -263,6 +264,11 @@ function toggleEditMode() {
             station.style.display = 'block';
             const editOverlay = station.querySelector('.edit-overlay');
             editOverlay.style.display = 'flex';
+
+            if (station.dataset.hidden === true) {
+                station.style.display = 'block';
+                hiddenQueue.push(station.dataset.name);
+            }
         })
     }
 }
