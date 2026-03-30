@@ -195,13 +195,13 @@ function updateStations() {
             const hidden = allStatons["hidden"];
 
             stations.innerHTML = "";
-            shown.forEach(station => {
-                addStation(station, hidden=false)
+            shown.forEach(shownStation => {
+                addStation(shownStation, hidden=false)
             });
 
 
-            hidden.forEach(station => {
-                addStation(station, hidden=true)
+            hidden.forEach(hiddenStation => {
+                addStation(hiddenStation, hidden=true)
             });
             
       });
