@@ -1010,9 +1010,6 @@ def on_button_pressed():
 
     play_random()
 
-    #if readied_stream and currently_displaying == 'everything':
-    #    display_readied_cached(readied_stream, pushed=True)
-
     rotated = False
 
 def on_button_released():
@@ -1154,20 +1151,17 @@ def toggle_favorite():
             time.sleep(0.1)
             disp.ShowImage(img)    
 
-        if action == 'unfavorite':
-            readied_stream = stream_list[prior_idx]
+        #if action == 'unfavorite':
+            #readied_stream = stream_list[prior_idx]
 
         thread.start()
         time.sleep(0.5)
         last_input_time = time.time()
 
-        if readied_stream:
-            display_everything(0, readied_stream, update=False, readied=True)
-        else:
-            if chosen_stream in list(one_cache.keys()):
-                del one_cache[chosen_stream]
-            display_one(chosen_stream)  
-
+        if chosen_stream in list(one_cache.keys()):
+            del one_cache[chosen_stream]
+            
+        display_one(chosen_stream)  
         freeze_for_task = False
 
 ready_to_display = False
@@ -1708,7 +1702,7 @@ try:
             confirm_overlay_showing = False
             display_current()
 
-        time.sleep(5)
+        time.sleep(3)
 
 except KeyboardInterrupt:
     if mpv_process:
