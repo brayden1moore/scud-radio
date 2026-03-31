@@ -624,7 +624,7 @@ def display_everything(name, readied=False, silent=False):
             #this_live = live_96.copy()
             #image.paste(this_live, og_logo_position, this_live)
         
-        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=1) # border
+        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLUE, width=3) # border
 
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
@@ -1698,7 +1698,7 @@ try:
             screen_on = False
             backlight_off()
 
-        if (readied_stream or volume_overlay_showing or confirm_overlay_showing) and last_rotation and ((time.time() - last_rotation > 2) and (time.time() - last_input_time > 2)) and restarting == False and held == False:
+        if (readied_stream or volume_overlay_showing or confirm_overlay_showing) and last_rotation and ((time.time() - last_rotation > 3) and (time.time() - last_input_time > 3)) and restarting == False and held == False:
             logging.info('DISPLAYING CURRENT VIA MAIN LOOP')
             readied_stream = None
             volume_overlay_showing = False
