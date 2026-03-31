@@ -1220,13 +1220,13 @@ def handle_rotation(direction):
 
     require_hover = False
     last_rotation = time.time()
-    if not seek_session: # if no session
+    if not seek_session_start: # if no session
         seek_session_start = last_rotation # start a seek session
     else:
         if last_rotation - seek_session_start < 1: # if multiple seeks within the second
             seek_session.append(last_rotation)
 
-    if len(seek_session) > 5: # if 5 seeks within the second
+    if len(seek_session) >= 5: # if 5 seeks within the second
         require_hover = True
 
     last_input_time = time.time()
