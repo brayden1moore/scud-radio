@@ -223,7 +223,6 @@ def set_hidden(hidden):
 
 def safe_display(image):
     global current_image
-    #if screen_on & (image != current_image):
     disp.ShowImage(image)
     current_image = image.copy()
 
@@ -698,7 +697,6 @@ def display_one(name):
         draw = ImageDraw.Draw(cached_one)
         display_bar(cached_one)
         safe_display(cached_one)
-        #safe_display(cached_one)
         one_cache[name] = cached_one
 
     else:
@@ -952,7 +950,7 @@ def toggle_confirm_on_rotate():
     config = get_config()
     config['confirm_on_rotate'] = confirm_on_rotate
     set_config(config)
-    display_bar()
+    display_bar(current_image)
 
 def show_volume_overlay(volume):
     global current_image, volume_overlay_showing
