@@ -1008,7 +1008,11 @@ def on_button_pressed():
     button_press_time = time.time()
     button_released_time = None
 
-    play_random()
+    if currently_displaying != 'everything':
+        play_random()
+    else:
+        display_everything(readied_stream, pushed=True)
+
 
     rotated = False
 
