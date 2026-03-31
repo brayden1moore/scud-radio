@@ -1218,8 +1218,14 @@ def handle_rotation(direction):
         start_confirm_timer()
 
 def start_confirm_timer():
-    time.sleep(1)
-    confirm_seek()
+    rotation_time = last_rotation 
+
+    def delayed_confirm():
+        time.sleep(1)
+        if last_rotation == rotation_time:
+            confirm_seek()
+
+    threading.Thread(target=delayed_confirm, daemon=True).start()
 
 def volume_handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
