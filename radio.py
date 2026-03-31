@@ -695,7 +695,7 @@ def display_one(name):
         print("IS CACHED")
         cached_one = one_cache[name]
         draw = ImageDraw.Draw(cached_one)
-        display_bar(cached_one, draw)
+        display_bar(cached_one)
         safe_display(cached_one)
         #safe_display(cached_one)
         one_cache[name] = cached_one
@@ -776,7 +776,7 @@ def display_one(name):
                 draw.text((14, anchor), i, font=info_font, fill=WHITE)
                 anchor += avg_info_height + line_gap
 
-        display_bar(image, draw)
+        display_bar(image)
         enhancer = ImageEnhance.Brightness(image)
         image = enhancer.enhance(BRIGHTNESS)
         safe_display(image)
@@ -786,28 +786,30 @@ def display_one(name):
     currently_displaying = 'one'
 
 
-def display_bar(image, draw):
+def display_bar(image=current_image):
     # time
-    now = time.time()
-    current_time = datetime.fromtimestamp(now, tz=user_tz)
-    formatted_date = current_time.strftime("%a %b %d").replace(' 0', '  ').lstrip('0')
-    formatted_time = current_time.strftime("%I:%M %p").replace(' 0', '  ').lstrip('0')
-    text_color = BLACK
-    logging.info(f'CURRENT TIME: {formatted_time}')
+    if image:
+        draw = ImageDraw.Draw(image)
+        now = time.time()
+        current_time = datetime.fromtimestamp(now, tz=user_tz)
+        formatted_date = current_time.strftime("%a %b %d").replace(' 0', '  ').lstrip('0')
+        formatted_time = current_time.strftime("%I:%M %p").replace(' 0', '  ').lstrip('0')
+        text_color = BLACK
+        logging.info(f'CURRENT TIME: {formatted_time}')
 
-    # bottom bar 218 y for bottom
-    y = 218
-    draw.rectangle([0, y, 320, y+24], fill=YELLOW)
-    draw.rectangle([0, y, 320, y], fill=BLACK)
-    center_of_section = round((240 + 218) / 2)
+        # bottom bar 218 y for bottom
+        y = 218
+        draw.rectangle([0, y, 320, y+24], fill=YELLOW)
+        draw.rectangle([0, y, 320, y], fill=BLACK)
+        center_of_section = round((240 + 218) / 2)
 
-    draw.text((13,y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
-    draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
+        draw.text((13,y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
+        draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
-    if confirm_on_rotate:
-        image.paste(turn_icon, (146,222), turn_icon)
-    else:
-        image.paste(press_icon, (146,222), press_icon)
+        if confirm_on_rotate:
+            image.paste(turn_icon, (146,222), turn_icon)
+        else:
+            image.paste(press_icon, (146,222), press_icon)
 
 
 
@@ -824,7 +826,7 @@ def display_ambient(name, clicked=False):
 
     currently_displaying = 'ambient'
     logging.info(f'DISPLAY AMBIENT BEING CALLED')
-    display_bar(image, draw)
+    display_bar(image)
 
     enhancer = ImageEnhance.Brightness(image)
     image = enhancer.enhance(BRIGHTNESS)
@@ -949,6 +951,7 @@ def toggle_confirm_on_rotate():
     config = get_config()
     config['confirm_on_rotate'] = confirm_on_rotate
     set_config(config)
+    display_bar()
 
 def show_volume_overlay(volume):
     global current_image, volume_overlay_showing
@@ -1007,6 +1010,7 @@ def on_button_pressed():
     if volume_held:
         play_random()
 
+    '''
     else:
         if readied_stream:
             display_readied_cached(readied_stream, pushed=True)
@@ -1020,6 +1024,7 @@ def on_button_pressed():
 
             elif currently_displaying == 'ambient':
                 display_readied_cached(stream)
+    '''
 
     held = True
     rotated = False
