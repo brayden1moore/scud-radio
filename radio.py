@@ -1008,13 +1008,11 @@ def on_button_pressed():
     button_press_time = time.time()
     button_released_time = None
 
-    if volume_held:
-        play_random()
+    play_random()
 
-    if readied_stream and currently_displaying == 'everything':
-        display_readied_cached(readied_stream, pushed=True)
+    #if readied_stream and currently_displaying == 'everything':
+    #    display_readied_cached(readied_stream, pushed=True)
 
-    held = True
     rotated = False
 
 def on_button_released():
@@ -1046,23 +1044,7 @@ def on_volume_button_pressed():
     current_time = time.time()
     last_input_time = time.time()
     button_released_time = current_time
-    volume_held = True
-
-    '''
-
-    if not muted:
-        send_mpv_command({"command": ["set_property", "volume", 0]})
-        #backlight_off()
-        muted = True
-        #put_to_sleep = True
-    else: 
-        #backlight_on()
-        send_mpv_command({"command": ["set_property", "volume", current_volume]})
-        muted = False
-        #sleeping = False
-        #put_to_sleep = False
     
-    '''
 
 def on_volume_button_released():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, muted, volume_held
@@ -1071,6 +1053,8 @@ def on_volume_button_released():
     last_input_time = time.time()
     button_released_time = current_time
     volume_held = False
+
+    toggle_favorite()
 
 def switch_off():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, switch_off_time
@@ -1673,7 +1657,7 @@ from gpiozero import RotaryEncoder, Button
 click_button = Button(26, bounce_time=0.05)
 click_button.hold_time = 2
 click_button.when_pressed = wrapped_action(lambda: on_button_pressed())
-click_button.when_released = wrapped_action(lambda: on_button_released())
+#click_button.when_released = wrapped_action(lambda: on_button_released())
 #click_button.when_held = wrapped_action(lambda: toggle_confirm_on_rotate())
 
 CLK_PIN = 5 
@@ -1689,9 +1673,9 @@ volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_hand
 volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1, True)
 
 volume_click_button = Button(17, bounce_time=0.05)
-volume_click_button.when_pressed =  wrapped_action(lambda: on_volume_button_pressed())
-volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
-volume_click_button.when_held = wrapped_action(lambda: toggle_favorite())
+#volume_click_button.when_pressed =  wrapped_action(lambda: on_volume_button_pressed())
+#volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
+volume_click_button.when_pressed = wrapped_action(lambda: toggle_favorite())
     
 ## main loop
 refresh_everything_cache(stream_list)
