@@ -1212,10 +1212,11 @@ def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
     rotated = True
 
-    if time.time() - last_rotation < 0.2:
-        seek_session = True
-    else: 
-        seek_session = False
+    if last_rotation:
+        if time.time() - last_rotation < 0.2:
+            seek_session = True
+        else: 
+            seek_session = False
 
     last_rotation = time.time()
     last_input_time = time.time()
