@@ -1011,7 +1011,7 @@ def on_button_pressed():
     if currently_displaying != 'everything':
         play_random()
     else:
-        display_everything(stream, pushed=True)
+        display_readied_cached(stream, pushed=True)
 
 
     rotated = False
