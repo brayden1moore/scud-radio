@@ -919,7 +919,7 @@ def seek_stream(direction):
 
 def confirm_seek():
     global readied_stream, stream, seek_session, seek_session_start
-    
+
     seek_session = [] # clear seek session
     seek_session_start = None
 
@@ -1239,6 +1239,8 @@ def handle_rotation(direction):
 
 def start_confirm_timer():
     rotation_time = last_rotation 
+
+    print('CONFIRM TIMER STARTED')
 
     def delayed_confirm():
         time.sleep(1)
