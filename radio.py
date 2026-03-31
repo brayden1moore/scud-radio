@@ -1005,7 +1005,7 @@ def on_button_pressed():
         play_random()
     else:
         display_readied_cached(stream, pushed=True)
-        confirm_seek()
+        readied_stream = None
 
     rotated = False
 
