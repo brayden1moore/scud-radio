@@ -996,7 +996,7 @@ def safe_restart():
 
 
 def on_button_pressed():
-    global button_press_time, rotated, button_press_times, held, button_released_time, last_input_time, currently_displaying
+    global button_press_time, rotated, button_press_times, held, button_released_time, last_input_time, currently_displaying, readied_stream
     last_input_time = time.time()
     button_press_time = time.time()
     button_released_time = None
@@ -1005,6 +1005,7 @@ def on_button_pressed():
         play_random()
     else:
         display_readied_cached(stream, pushed=True)
+        confirm_seek()
 
     rotated = False
 
