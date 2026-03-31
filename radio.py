@@ -918,7 +918,11 @@ def seek_stream(direction):
         display_readied_cached(readied_stream) # otherwise show EVERYTHING (READIED)
 
 def confirm_seek():
-    global readied_stream, stream
+    global readied_stream, stream, seek_session, seek_session_start
+    
+    seek_session = [] # clear seek session
+    seek_session_start = None
+
     if readied_stream:
         if stream != readied_stream:
             stream = readied_stream
@@ -1208,20 +1212,27 @@ def refresh_everything_cache(refresh_stream_list):
 
     refreshing_everything_now = False
 
+seek_session = []
+seek_session_start = None
 def handle_rotation(direction):
-    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
+    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time, seek_session, seek_session_start
     rotated = True
 
-    seek_session = False
-    if last_rotation: # if user is seeking quickly
-        if time.time() - last_rotation < 0.2:
-            seek_session = True
-
+    require_hover = False
     last_rotation = time.time()
+    if not seek_session: # if no session
+        seek_session_start = last_rotation # start a seek session
+    else:
+        if last_rotation - seek_session_start < 1: # if multiple seeks within the second
+            seek_session.append(last_rotation)
+
+    if len(seek_session) > 5: # if 5 seeks within the second
+        require_hover = True
+
     last_input_time = time.time()
     seek_stream(direction)
     if confirm_on_rotate:
-        if seek_session:
+        if require_hover:
             start_confirm_timer()
         else:
             confirm_seek()
