@@ -1215,7 +1215,11 @@ def handle_rotation(direction):
     last_input_time = time.time()
     seek_stream(direction)
     if confirm_on_rotate:
-        confirm_seek()
+        start_confirm_timer()
+
+def start_confirm_timer():
+    time.sleep(1)
+    confirm_seek()
 
 def volume_handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
