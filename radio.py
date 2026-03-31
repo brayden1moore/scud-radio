@@ -369,13 +369,14 @@ def s(number):
         return ''
     else:
         return 's'
-    
+
+
 def pause(show_icon=False):
     global play_status, saved_image_while_paused, current_image
     #send_mpv_command({"command": ["stop"]})
     #send_mpv_command({"command": ["set_property", "volume", 0]})
-
     play_status = 'pause'
+
 
 def play(name, toggled=False):
     global play_status, stream, first_boot
@@ -385,7 +386,6 @@ def play(name, toggled=False):
     if toggled:
         safe_display(saved_image_while_paused)
     else:
-        #logging.info(f'attempting to play {name}')
         stream_url = streams[name]['streamLink']
         if first_boot:
             send_mpv_command({"command": ["loadfile", stream_url]})
@@ -547,7 +547,7 @@ def draw_tick(draw, name):
     readied_fill = WHITE if name not in favorites else WHITE 
     draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
 
-def display_everything(name, update=False, readied=False, pushed=False, silent=False):
+def display_everything(name, readied=False, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
     if readied and not restarting:
@@ -1012,7 +1012,6 @@ def on_button_pressed():
         play_random()
     else:
         display_readied_cached(stream, pushed=True)
-
 
     rotated = False
 
@@ -1655,7 +1654,7 @@ from gpiozero import RotaryEncoder, Button
 click_button = Button(26, bounce_time=0.05)
 click_button.hold_time = 2
 click_button.when_pressed = wrapped_action(lambda: on_button_pressed())
-#click_button.when_released = wrapped_action(lambda: on_button_released())
+click_button.when_released = wrapped_action(lambda: on_button_released())
 #click_button.when_held = wrapped_action(lambda: toggle_confirm_on_rotate())
 
 CLK_PIN = 5 
@@ -1699,14 +1698,14 @@ try:
             screen_on = False
             backlight_off()
 
-        if (readied_stream or volume_overlay_showing or confirm_overlay_showing) and last_rotation and ((time.time() - last_rotation > 5) and (time.time() - last_input_time > 5)) and restarting == False and held == False:
+        if (readied_stream or volume_overlay_showing or confirm_overlay_showing) and last_rotation and ((time.time() - last_rotation > 2) and (time.time() - last_input_time > 2)) and restarting == False and held == False:
             logging.info('DISPLAYING CURRENT VIA MAIN LOOP')
             readied_stream = None
             volume_overlay_showing = False
             confirm_overlay_showing = False
             display_current()
 
-        time.sleep(3)
+        time.sleep(1)
 
 except KeyboardInterrupt:
     if mpv_process:
