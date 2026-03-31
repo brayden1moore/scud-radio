@@ -805,9 +805,9 @@ def display_bar(image, draw):
     draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
     if confirm_on_rotate:
-        image.paste(press_icon, (146,222), press_icon)
-    else:
         image.paste(turn_icon, (146,222), turn_icon)
+    else:
+        image.paste(press_icon, (146,222), press_icon)
 
 
 
