@@ -935,6 +935,7 @@ def confirm_seek():
 
 def toggle_confirm_on_rotate():
     global confirm_on_rotate, current_image, confirm_overlay_showing
+    last_input_time = time.time()
 
     if confirm_on_rotate:
         confirm_on_rotate = False
