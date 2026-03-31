@@ -918,10 +918,7 @@ def seek_stream(direction):
         display_readied_cached(readied_stream) # otherwise show EVERYTHING (READIED)
 
 def confirm_seek():
-    global readied_stream, stream, seek_session, seek_session_start
-
-    seek_session = [] # clear seek session
-    seek_session_start = None
+    global readied_stream, stream
 
     if readied_stream:
         if stream != readied_stream:
@@ -1212,39 +1209,16 @@ def refresh_everything_cache(refresh_stream_list):
 
     refreshing_everything_now = False
 
-seek_session = []
-seek_session_start = None
+
 def handle_rotation(direction):
-    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time, seek_session, seek_session_start
+    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
     rotated = True
     last_rotation = time.time()
-
-    if not seek_session or (last_rotation - seek_session_start >= 1):
-        seek_session = [last_rotation]
-        seek_session_start = last_rotation
-    else:
-        seek_session.append(last_rotation)
-
     last_input_time = time.time()
     seek_stream(direction)
-
     if confirm_on_rotate:
-        if len(seek_session) >= 5:
-            start_confirm_timer()  
-        else:
-            confirm_seek() 
+        confirm_seek() 
 
-def start_confirm_timer():
-    rotation_time = last_rotation 
-
-    print('\n\n\n\n\nCONFIRM TIMER STARTED\n\n\n\n\n')
-
-    def delayed_confirm():
-        time.sleep(1)
-        if last_rotation == rotation_time:
-            confirm_seek()
-
-    threading.Thread(target=delayed_confirm, daemon=True).start()
 
 def volume_handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
@@ -1260,6 +1234,7 @@ def volume_handle_rotation(direction):
     show_volume_overlay(new_volume)
     current_volume = new_volume
     send_mpv_command({"command": ["set_property", "volume", current_volume]})
+
 
 def display_readied_cached(name, pushed=False):
     ''' First looks for cached version and if not, rebuilds '''
