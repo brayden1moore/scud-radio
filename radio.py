@@ -402,7 +402,7 @@ def play_random():
     global stream, play_status
     available_streams = [i for i in stream_list if i != stream]
     chosen = random.choice(available_streams)
-    display_everything(0, chosen)
+    display_everything(chosen)
     play(chosen)
     stream = chosen
     play_status = 'play'
@@ -547,7 +547,7 @@ def draw_tick(draw, name):
     readied_fill = WHITE if name not in favorites else WHITE 
     draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
 
-def display_everything(direction, name, update=False, readied=False, pushed=False, silent=False):
+def display_everything(name, update=False, readied=False, pushed=False, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
     if readied and not restarting:
@@ -1200,7 +1200,7 @@ def refresh_everything_cache(refresh_stream_list):
             del one_cache[name]
         if name in streams.keys():
             #logging.info(f'Refreshing image for {name}')
-            result = display_everything(0, name=name, readied=True, silent=True)
+            result = display_everything(name=name, readied=True, silent=True)
         else:
             result = None
         return name, result 
@@ -1259,9 +1259,9 @@ def display_readied_cached(name, pushed=False):
 
             disp.ShowImage(image)
         else:
-            cached_everything_dict[name] = display_everything(0, name, readied=True)
+            cached_everything_dict[name] = display_everything(name, readied=True)
     else:
-        cached_everything_dict[name] = display_everything(0, name, readied=True)
+        cached_everything_dict[name] = display_everything(name, readied=True)
 
 def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict, sleeping
@@ -1494,7 +1494,7 @@ def handle_remote_command(command_data):
             station_name = command_data.get('value')
             if station_name in stream_list:
                 play(station_name)
-                display_everything(0,station_name)
+                display_everything(station_name)
             return {
                 'status': 'ok',
                 'station': station_name,
@@ -1682,7 +1682,7 @@ last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
 
-display_everything(0, stream, readied=False)
+display_everything(stream, readied=False)
 
 try:
     while True:
