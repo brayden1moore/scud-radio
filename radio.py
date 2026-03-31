@@ -934,7 +934,7 @@ def confirm_seek():
             readied_stream = None
 
 def toggle_confirm_on_rotate():
-    global confirm_on_rotate, current_image, confirm_overlay_showing
+    global confirm_on_rotate, current_image, confirm_overlay_showing, last_input_time
     last_input_time = time.time()
 
     if confirm_on_rotate:
@@ -1674,7 +1674,7 @@ click_button = Button(26, bounce_time=0.05)
 click_button.hold_time = 2
 click_button.when_pressed = wrapped_action(lambda: on_button_pressed())
 click_button.when_released = wrapped_action(lambda: on_button_released())
-click_button.when_held = wrapped_action(lambda: toggle_confirm_on_rotate())
+#click_button.when_held = wrapped_action(lambda: toggle_confirm_on_rotate())
 
 CLK_PIN = 5 
 DT_PIN = 6   
