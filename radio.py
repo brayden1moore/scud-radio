@@ -402,7 +402,7 @@ def play_random():
     global stream, play_status
     available_streams = [i for i in stream_list if i != stream]
     chosen = random.choice(available_streams)
-    display_everything(chosen)
+    display_readied_cached(chosen)
     play(chosen)
     stream = chosen
     play_status = 'play'
@@ -1005,7 +1005,6 @@ def on_button_pressed():
         play_random()
     else:
         display_readied_cached(stream, pushed=True)
-        readied_stream = None
 
     rotated = False
 
