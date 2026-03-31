@@ -1648,7 +1648,7 @@ from gpiozero import RotaryEncoder, Button
 click_button = Button(26, bounce_time=0.05)
 click_button.hold_time = 2
 click_button.when_pressed = wrapped_action(lambda: on_button_pressed())
-click_button.when_released = wrapped_action(lambda: on_button_released())
+#click_button.when_released = wrapped_action(lambda: on_button_released())
 #click_button.when_held = wrapped_action(lambda: toggle_confirm_on_rotate())
 
 CLK_PIN = 5 
