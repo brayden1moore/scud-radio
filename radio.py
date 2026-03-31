@@ -1211,11 +1211,20 @@ def refresh_everything_cache(refresh_stream_list):
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
     rotated = True
+
+    if time.time() - last_rotation < 0.2:
+        seek_session = True
+    else: 
+        seek_session = False
+
     last_rotation = time.time()
     last_input_time = time.time()
     seek_stream(direction)
     if confirm_on_rotate:
-        start_confirm_timer()
+        if seek_session:
+            start_confirm_timer()
+        else:
+            confirm_seek()
 
 def start_confirm_timer():
     rotation_time = last_rotation 
