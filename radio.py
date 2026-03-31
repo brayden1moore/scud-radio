@@ -805,12 +805,6 @@ def display_bar(image=current_image):
         draw.text((13,y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
         draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
-        if confirm_on_rotate:
-            image.paste(turn_icon, (146,222), turn_icon)
-        else:
-            image.paste(press_icon, (146,222), press_icon)
-
-
 
 def display_ambient(name, clicked=False):
     global currently_displaying, last_ambient_display
@@ -934,23 +928,30 @@ def confirm_seek():
     global readied_stream, stream
     if readied_stream:
         if stream != readied_stream:
-            #pause()
             stream = readied_stream
             play(stream)
-        #display_everything(0, stream)
         if not confirm_on_rotate:
             readied_stream = None
 
 def toggle_confirm_on_rotate():
-    global confirm_on_rotate
+    global confirm_on_rotate, current_image, confirm_overlay_showing
+
     if confirm_on_rotate:
         confirm_on_rotate = False
+        icon = press_icon
     else: 
         confirm_on_rotate = True
+        icon = turn_icon
+        
     config = get_config()
     config['confirm_on_rotate'] = confirm_on_rotate
     set_config(config)
-    display_bar(current_image)
+
+    if current_image:
+        img = current_image.copy()
+        img.paste(icon, (155,222), icon)
+        disp.ShowImage(img)
+        confirm_overlay_showing = True
 
 def show_volume_overlay(volume):
     global current_image, volume_overlay_showing
@@ -1399,6 +1400,7 @@ first_boot = True
 selector = 'red'
 has_displayed_once = False
 volume_overlay_showing = False
+confirm_overlay_showing = False
 last_ambient_display = time.time()
 switch_off_time = None
 confirm_on_rotate = get_config()['confirm_on_rotate']
@@ -1714,10 +1716,11 @@ try:
             screen_on = False
             backlight_off()
 
-        if (readied_stream or volume_overlay_showing) and last_rotation and ((time.time() - last_rotation > 5) and (time.time() - last_input_time > 5)) and restarting == False and held == False:
+        if (readied_stream or volume_overlay_showing or confirm_overlay_showing) and last_rotation and ((time.time() - last_rotation > 5) and (time.time() - last_input_time > 5)) and restarting == False and held == False:
             logging.info('DISPLAYING CURRENT VIA MAIN LOOP')
             readied_stream = None
             volume_overlay_showing = False
+            confirm_overlay_showing = False
             display_current()
 
         time.sleep(5)
