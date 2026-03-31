@@ -400,9 +400,9 @@ def play(name, toggled=False):
 
 def play_random():
     global stream, play_status
-    available_streams = [i for i in stream_list if i != stream]
+    available_streams = [i for i in stream_list if i != stream and streams[i]['status'] != 'Offline']
     chosen = random.choice(available_streams)
-    display_readied_cached(chosen)
+    display_one(chosen)
     play(chosen)
     stream = chosen
     play_status = 'play'
