@@ -695,7 +695,7 @@ def display_one(name):
         print("IS CACHED")
         cached_one = one_cache[name]
         draw = ImageDraw.Draw(cached_one)
-        display_bar(draw)
+        display_bar(cached_one, draw)
         safe_display(cached_one)
         #safe_display(cached_one)
         one_cache[name] = cached_one
@@ -776,7 +776,7 @@ def display_one(name):
                 draw.text((14, anchor), i, font=info_font, fill=WHITE)
                 anchor += avg_info_height + line_gap
 
-        display_bar(draw=draw)
+        display_bar(image, draw)
         enhancer = ImageEnhance.Brightness(image)
         image = enhancer.enhance(BRIGHTNESS)
         safe_display(image)
@@ -786,7 +786,7 @@ def display_one(name):
     currently_displaying = 'one'
 
 
-def display_bar(draw):
+def display_bar(image, draw):
     # time
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
@@ -804,6 +804,12 @@ def display_bar(draw):
     draw.text((13,y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
     draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
+    if confirm_on_rotate:
+        image.paste(press_icon, (146,222), press_icon)
+    else:
+        image.paste(turn_icon, (146,222), turn_icon)
+
+
 
 def display_ambient(name, clicked=False):
     global currently_displaying, last_ambient_display
@@ -818,7 +824,7 @@ def display_ambient(name, clicked=False):
 
     currently_displaying = 'ambient'
     logging.info(f'DISPLAY AMBIENT BEING CALLED')
-    display_bar(draw=draw)
+    display_bar(image, draw)
 
     enhancer = ImageEnhance.Brightness(image)
     image = enhancer.enhance(BRIGHTNESS)
@@ -1447,6 +1453,9 @@ live_60 = Image.open('assets/live_60.png').convert('RGBA')
 live_96 = Image.open('assets/live_96.png').convert('RGBA')
 live_25 = Image.open('assets/live_25.png').convert('RGBA')
 
+press_icon = Image.open('assets/press_icon.png').convert('RGBA')
+turn_icon = Image.open('assets/turn_icon.png').convert('RGBA')
+
 # switch
 switch = Button(23, pull_up=False, bounce_time=0.05)
 switch.when_pressed  = switch_on
@@ -1671,8 +1680,8 @@ from gpiozero import RotaryEncoder, Button
 click_button = Button(26, bounce_time=0.05)
 click_button.hold_time = 2
 click_button.when_pressed = wrapped_action(lambda: on_button_pressed())
-click_button.when_held = wrapped_action(lambda: toggle_favorite())
 click_button.when_released = wrapped_action(lambda: on_button_released())
+click_button.when_held = wrapped_action(lambda: toggle_confirm_on_rotate())
 
 CLK_PIN = 5 
 DT_PIN = 6   
@@ -1689,6 +1698,7 @@ volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotat
 volume_click_button = Button(17, bounce_time=0.05)
 volume_click_button.when_pressed =  wrapped_action(lambda: on_volume_button_pressed())
 volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
+volume_click_button.when_held = wrapped_action(lambda: toggle_favorite())
     
 ## main loop
 refresh_everything_cache(stream_list)
