@@ -37,6 +37,7 @@ charging = False
 sleeping = False
 muted = False
 put_to_sleep = False
+current_image = None
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -1010,22 +1011,6 @@ def on_button_pressed():
     if volume_held:
         play_random()
 
-    '''
-    else:
-        if readied_stream:
-            display_readied_cached(readied_stream, pushed=True)
-
-        else:
-            if currently_displaying=='everything':
-                display_one(stream)
-
-            #elif currently_displaying == 'one':
-            #    display_ambient(stream, clicked=True)
-
-            elif currently_displaying == 'ambient':
-                display_readied_cached(stream)
-    '''
-
     held = True
     rotated = False
 
@@ -1390,7 +1375,6 @@ disp = LCD_2inch.LCD_2inch()
 disp.Init()
 #disp.clear()
 disp.bl_DutyCycle(current_bl)
-current_image = None
 
 display_scud()
 
