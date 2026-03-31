@@ -1240,7 +1240,7 @@ def handle_rotation(direction):
 def start_confirm_timer():
     rotation_time = last_rotation 
 
-    print('CONFIRM TIMER STARTED')
+    print('\n\n\n\n\nCONFIRM TIMER STARTED\n\n\n\n\n')
 
     def delayed_confirm():
         time.sleep(1)
