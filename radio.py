@@ -1009,6 +1009,9 @@ def on_button_pressed():
     if volume_held:
         play_random()
 
+    if readied_stream and currently_displaying == 'everything':
+        display_readied_cached(readied_stream, pushed=True)
+
     held = True
     rotated = False
 
