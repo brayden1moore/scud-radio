@@ -1217,20 +1217,20 @@ seek_session_start = None
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time, seek_session, seek_session_start
     rotated = True
-
     require_hover = False
     last_rotation = time.time()
-    if not seek_session_start: # if no session
-        seek_session_start = last_rotation # start a seek session
-    else:
-        if last_rotation - seek_session_start < 1: # if multiple seeks within the second
-            seek_session.append(last_rotation)
 
-    if len(seek_session) >= 5: # if 5 seeks within the second
-        require_hover = True
+    if not seek_session or (last_rotation - seek_session_start >= 1):
+        seek_session = [last_rotation]
+        seek_session_start = last_rotation
+    else:
+        seek_session.append(last_rotation)
+        if len(seek_session) >= 5:
+            require_hover = True
 
     last_input_time = time.time()
     seek_stream(direction)
+
     if confirm_on_rotate:
         if require_hover:
             start_confirm_timer()
