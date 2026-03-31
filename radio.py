@@ -902,13 +902,6 @@ def seek_stream(direction):
     if not freeze_for_task:
         idx = stream_list.index(stream)
     
-        #logging.info(f"SEEK STREAM {direction}")
-
-        #if (readied_stream == None) and currently_displaying == 'ambient': # show ONE if currently displaying AMBIENT
-        #    display_one(stream)
-        #    readied_stream = stream
-
-        #else:
         if readied_stream == None:
             readied_stream = stream # show EVERYTHING (STREAM) if currently displaying ONE
             
@@ -1136,16 +1129,16 @@ def toggle_favorite():
         thread = threading.Thread(target=refresh_everything_cache, args=(streams_needing_refresh,), daemon=True)
 
         if action == 'unfavorite':
+            no_star_img = img.copy()
             for i in list(reversed(favorite_images)):
                 img.paste(i, (0, 0), i)
                 disp.ShowImage(img)  
-                img = current_image.convert('RGBA')
+                img = no_star_img.convert('RGBA')
 
             img.paste(unfavorite, (0, 0), unfavorite)
             disp.ShowImage(img)
             time.sleep(0.1)
         else:
-
             img.paste(favorite_images[0], (0, 0), favorite_images[0])
             disp.ShowImage(img)
             for i in favorite_images:
