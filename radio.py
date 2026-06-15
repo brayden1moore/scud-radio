@@ -345,7 +345,6 @@ def get_stream_list(stream_dict):
         stream_list =  sorted([i for i in favorites if i in stream_list], key=str.casefold) + sorted([i for i in stream_list if i not in favorites], key=str.casefold)
     
     if hidden:
-        print(hidden)
         stream_list = [i for i in stream_list if i not in hidden]
 
     return stream_list

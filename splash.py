@@ -1,35 +1,26 @@
 #!/usr/bin/python3
 import time
-boot_start = time.monotonic()
-
-with open('/tmp/splash-boot.log', 'w') as f:
-    f.write(f"Script started at boot time: {boot_start:.2f}\n")
-
-from PIL import Image
+t0 = time.monotonic()
 import driver as LCD_2inch
-
-SCREEN_WIDTH = 320
-SCREEN_HEIGHT = 240
 
 disp = LCD_2inch.LCD_2inch()
 disp.Init()
 disp.bl_DutyCycle(100)
-disp.clear()
 
-image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-bg = Image.open('assets/scud_splash_1.png')
-image.paste(bg, (0, 0))
+with open('assets/scud_splash_1.raw', 'rb') as f:
+    buf = f.read()
 
-disp.ShowImage(image)
+# replicate ShowImage's landscape setup exactly
+disp.command(0x36)
+disp.data(0x70)
+disp.SetWindows(0, 0, disp.height, disp.width)   # (0,0,320,240)
+disp.digital_write(disp.DC_PIN, True)
 
-with open('/tmp/splash-boot.log', 'a') as f:
-    f.write(f"[{time.time()-boot_start:.2f}s] First display\n")
+for i in range(0, len(buf), 4096):
+    disp.spi_writebyte(buf[i:i+4096])
 
-for i in range(20):
-    time.sleep(1)
-    disp.ShowImage(image)
-    with open('/tmp/splash-boot.log', 'a') as f:
-        f.write(f"[{time.time()-boot_start:.2f}s] Redraw {i}\n")
+with open('/tmp/splash-boot.log', 'w') as f:
+    f.write(f"[{time.monotonic()-t0:.2f}s] frame up\n")
 
 while True:
-    time.sleep(1)
+    time.sleep(3600)
