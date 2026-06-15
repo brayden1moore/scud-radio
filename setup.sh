@@ -4,7 +4,7 @@
 sudo rm /boot/firmware/config.txt
 sudo tee /boot/firmware/config.txt > /dev/null <<EOF
 dtoverlay=hifiberry-dac
-#dtoverlay=disable-bt
+dtoverlay=disable-bt
 disable_splash=1
 
 dtparam=i2c_arm=on
