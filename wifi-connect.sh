@@ -4,7 +4,7 @@ nmcli device wifi rescan 2>/dev/null || true
 for i in 1 2 3 4 5; do
   visible="$(nmcli -t -f SSID device wifi list 2>/dev/null | sed '/^$/d')"
   [ -n "$visible" ] && break
-  sleep 0.2
+  sleep 1
 done
 
 mapfile -t saved < <(nmcli -t -f NAME,TYPE connection show \
