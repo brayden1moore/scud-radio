@@ -195,6 +195,7 @@ ap_name: One-Radio
 web_service: radio.service
 external_callback: /home/scud/scud-radio/comitup-callback.sh
 EOF
+chmod +x /home/scud/scud-radio/comitup-callback.sh
 
 # add NM config
 sudo rm -f /etc/NetworkManager/NetworkManager.conf
