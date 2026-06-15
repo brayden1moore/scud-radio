@@ -104,7 +104,6 @@ LIB_PATH = "/var/lib/scud-radio"
 ## functions
 
 import driver as LCD_2inch
-user_tz = pytz.timezone(get_timezone_from_ip())
 
 def get_timezone_from_ip():
     try:
@@ -113,6 +112,7 @@ def get_timezone_from_ip():
         return data['timezone']
     except:
         return 'UTC' 
+user_tz = pytz.timezone(get_timezone_from_ip())
     
 def get_config():
     Path(LIB_PATH).mkdir(parents=True, exist_ok=True)
