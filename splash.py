@@ -17,7 +17,7 @@ disp.SetWindows(0, 0, disp.height, disp.width)   # (0,0,320,240)
 disp.digital_write(disp.DC_PIN, True)
 
 for i in range(0, len(buf), 4096):
-    disp.spi_writebyte(buf[i:i+4096])
+    disp.spi_writebyte(list(buf[i:i+4096]))
 
 with open('/tmp/splash-boot.log', 'w') as f:
     f.write(f"[{time.monotonic()-t0:.2f}s] frame up\n")
