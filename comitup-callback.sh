@@ -5,12 +5,15 @@
 
 case "$1" in
     CONNECTED)
-        echo "Connected to WiFi - radio.service will start automatically"
-        # Optional: Update LCD display to show "connected"
+        sudo /bin/systemctl stop launcher.service
+        sudo /bin/systemctl stop splash.service
+        sudo /bin/systemctl start radio.service
+        ;;
+    CONNECTING)
+        # add connecting screen
         ;;
     HOTSPOT)
-        echo "In hotspot mode - radio.service stopped"
-        # Optional: Update LCD display to show "portal mode"
+        sudo /bin/systemctl stop radio.service
         sudo /bin/systemctl start launcher.service
         ;;
 esac

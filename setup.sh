@@ -30,17 +30,33 @@ dtoverlay=dwc2,dr_mode=host
 [all]
 EOF
 
-if [ "$1" = "hat" ]; then
-    cd ~/
-    git clone https://github.com/waveshare/WM8960-Audio-HAT
-    cd WM8960-Audio-HAT
-    sudo chmod +x install.sh
-    sudo ./install.sh -y
-    cd ~/
-fi
+cd ~/
+git clone https://github.com/waveshare/WM8960-Audio-HAT
+cd WM8960-Audio-HAT
+sudo chmod +x install.sh
+sudo ./install.sh -y
+cd ~/
 
 sudo apt install mpv -y
 amixer -D pulse sset Master 100%
+
+# Create wifi connect service file
+sudo tee /etc/systemd/system/wifi-connect.service > /dev/null <<EOF
+
+[Unit]
+Description=Scan-first WiFi connect
+After=NetworkManager.service
+Wants=NetworkManager.service
+Before=comitup.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/scud/scud-radio/wifi-connect.sh
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target
+EOF
 
 # Create the splash service file
 sudo tee /etc/systemd/system/splash.service > /dev/null <<EOF
@@ -88,8 +104,7 @@ EOF
 sudo tee /etc/systemd/system/radio.service > /dev/null <<EOF
 [Unit]
 Description=One-Radio Tuner
-After=network-online.target api.service
-Wants=network-online.target
+After=api.service
 Conflicts=splash.service launcher.service
 
 [Service]
@@ -99,18 +114,12 @@ WorkingDirectory=/home/scud/scud-radio
 ExecStartPre=/bin/systemctl start api.service
 ExecStartPre=/bin/systemctl stop launcher.service
 ExecStartPre=/bin/systemctl stop splash.service
-ExecStartPre=/bin/sh -c 'until ping -c1 internetradioprotocol.org >/dev/null 2>&1; do sleep 1; done'
 ExecStart=/usr/bin/python3 /home/scud/scud-radio/radio.py
 Restart=always
 RestartSec=3
 StandardOutput=journal
 StandardError=journal
-
-[Install]
-WantedBy=multi-user.target
 EOF
-
-sudo systemctl daemon-reload
 
 # Create the shutdown service file
 sudo tee /etc/systemd/system/shutdown.service > /dev/null <<EOF
@@ -152,6 +161,7 @@ EOF
 # Reload systemd and enable the service
 sudo systemctl daemon-reload
 sudo systemctl enable splash
+sudo systemctl enable wifi-connect
 
 # Install dependencies
 sudo apt install pip -y
@@ -174,40 +184,6 @@ sudo systemctl disable cloud-init-main.service
 sudo systemctl disable NetworkManager-wait-online.service
 sudo systemctl disable apt-daily.service apt-daily-upgrade.service apt-daily.timer apt-daily-upgrade.timer
 echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
-
-# Battery config
-sudo rm -f /etc/pisugar-server/config.json
-sudo tee /etc/pisugar-server/config.json > /dev/null <<EOF
-{
-  "auth_user": "scud",
-  "auth_password": "scud",
-  "session_timeout": 3600,
-  "i2c_bus": 1,
-  "i2c_addr": null,
-  "auto_wake_time": null,
-  "auto_wake_repeat": 0,
-  "single_tap_enable": false,
-  "single_tap_shell": "",
-  "double_tap_enable": false,
-  "double_tap_shell": "",
-  "long_tap_enable": false,
-  "long_tap_shell": "",
-  "auto_shutdown_level": 100,
-  "auto_shutdown_delay": null,
-  "auto_charging_range": null,
-  "full_charge_duration": null,
-  "auto_power_on": true,
-  "soft_poweroff": true,
-  "soft_poweroff_shell": "sudo shutdown now",
-  "auto_rtc_sync": null,
-  "adj_comm": null,
-  "adj_diff": null,
-  "rtc_adj_ppm": null,
-  "anti_mistouch": false,
-  "bat_protect": null,
-  "battery_curve": null
-}
-EOF
 
 # Copy comitup templates
 sudo cp -a ~/scud-radio/comitup-templates/. /usr/share/comitup/web/templates/
@@ -232,32 +208,12 @@ managed=false
 [connectivity]
 uri=http://connectivity-check.ubuntu.com/
 interval=300
-enabled=true
+enabled=false
 EOF
-
-chmod -x comitup-callback.sh
 
 if ! grep -q 'subprocess.run(\["sudo","systemctl","start","launcher"\])' /usr/share/comitup/web/comitupweb.py; then
     sudo sed -i '1i import subprocess\nsubprocess.run(["sudo","systemctl","start","launcher"])' /usr/share/comitup/web/comitupweb.py
 fi
 
-# shairport
-sudo apt install --no-install-recommends build-essential git autoconf automake libtool     libpopt-dev libconfig-dev libasound2-dev avahi-daemon libavahi-client-dev libssl-dev libsoxr-dev     libplist-dev libsodium-dev libavutil-dev libavcodec-dev libavformat-dev uuid-dev libgcrypt-dev xxd -y
-cd ~/
-git clone https://github.com/mikebrady/nqptp.git
-cd nqptp
-autoreconf -fi
-./configure --with-systemd-startup
-sudo make
-sudo make install
-cd ~/
-git clone https://github.com/mikebrady/shairport-sync.git
-cd shairport-sync
-sudo autoreconf -fi
-./configure --sysconfdir=/etc --with-alsa \
-    --with-soxr --with-avahi --with-ssl=openssl --with-systemd --with-airplay-2
-make
-sudo make install
-sudo systemctl enable shairport-sync
 
 sudo reboot

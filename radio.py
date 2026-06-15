@@ -170,11 +170,6 @@ def display_scud():
     image = enhancer.enhance(BRIGHTNESS)
     disp.ShowImage(image)
     current_image = image.copy()
-
-    global user_tz
-
-    timezone_name = get_timezone_from_ip()
-    user_tz = pytz.timezone(timezone_name)
     now = time.time()
     current_time = datetime.fromtimestamp(now, tz=user_tz)
 
