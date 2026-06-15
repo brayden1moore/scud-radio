@@ -88,7 +88,7 @@ chmod +x /home/scud/scud-radio/wifi-connect.sh
 # Create the splash service file
 sudo tee /etc/systemd/system/splash.service > /dev/null <<EOF
 [Unit]
-Description=One-Radio Tuner Splash Screen
+Description=Scud Radio Splash Screen
 DefaultDependencies=no
 After=local-fs.target
 
@@ -107,7 +107,7 @@ EOF
 # Create the launcher service file
 sudo tee /etc/systemd/system/launcher.service > /dev/null <<EOF
 [Unit]
-Description=One-Radio Tuner Launcher
+Description=Scud Radio Tuner Launcher
 After=NetworkManager.service
 Wants=NetworkManager.service
 Before=network-online.target
@@ -130,7 +130,7 @@ EOF
 # Create the radio service file
 sudo tee /etc/systemd/system/radio.service > /dev/null <<EOF
 [Unit]
-Description=One-Radio Tuner
+Description=Scud Radio Tuner
 After=api.service
 Conflicts=splash.service launcher.service
 
@@ -152,7 +152,7 @@ EOF
 sudo tee /etc/systemd/system/shutdown.service > /dev/null <<EOF
 
 [Unit] 
-Description=One-Radio Tuner Shutdown
+Description=Scud Radio Tuner Shutdown
 Conflicts=radio.service
 
 [Service] 
@@ -170,7 +170,7 @@ EOF
 sudo tee /etc/systemd/system/api.service > /dev/null <<EOF
 
 [Unit] 
-Description=One-Radio Tuner API 
+Description=Scud Radio Tuner API 
 After=network.target 
 
 [Service] 
@@ -218,7 +218,7 @@ sudo cp -a ~/scud-radio/comitup-templates/. /usr/share/comitup/web/templates/
 # add Comitup config
 sudo rm -f /etc/comitup.conf
 sudo tee /etc/comitup.conf > /dev/null <<EOF
-ap_name: One-Radio
+ap_name: Scud House
 web_service: radio.service
 external_callback: /home/scud/scud-radio/comitup-callback.sh
 EOF
