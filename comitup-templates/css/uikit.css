@@ -1180,7 +1180,7 @@ button.uk-icon:not(:disabled) {
 }
 
 #ears-logo {
-  animation: rotate 6s linear infinite;
+  /*animation: rotate 6s linear infinite;*/
   height: 150px;
   margin-top: 50px;
 }
