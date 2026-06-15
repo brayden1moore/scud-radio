@@ -104,6 +104,7 @@ LIB_PATH = "/var/lib/scud-radio"
 ## functions
 
 import driver as LCD_2inch
+user_tz = pytz.timezone(get_timezone_from_ip())
 
 def get_timezone_from_ip():
     try:
@@ -1377,8 +1378,6 @@ confirm_overlay_showing = False
 last_ambient_display = time.time()
 switch_off_time = None
 confirm_on_rotate = get_config()['confirm_on_rotate']
-
-user_tz = pytz.timezone(get_timezone_from_ip())
 
 current_volume = get_last_volume()
 
