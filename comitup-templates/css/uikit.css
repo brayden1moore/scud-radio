@@ -1404,7 +1404,8 @@ button.uk-icon:not(:disabled) {
   /* 3 */
   border-radius: 0;
   /* 4 */
-  font: inherit;
+  font-family: 'Archivo Light';
+  letter-spacing: -0.05em;
 }
 /*
  * Show the overflow in Edge.
@@ -1996,7 +1997,7 @@ select.uk-form-width-xsmall {
   /* 7 */
   display: inline-block;
   box-sizing: border-box;
-  padding: 0 30px;
+  padding: 0px;
   vertical-align: middle;
   font-size: 0.875rem;
   /* 8 */
@@ -2005,7 +2006,6 @@ select.uk-form-width-xsmall {
   text-align: center;
   /* 10 */
   text-decoration: none;
-  text-transform: uppercase;
   transition: 0.1s ease-in-out;
   transition-property: color, background-color, border-color;
 }
