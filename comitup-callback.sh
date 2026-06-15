@@ -5,8 +5,7 @@
 
 case "$1" in
     CONNECTED)
-        active=$(nmcli -t -f NAME,TYPE connection show --active \
-                 | awk -F: '$2=="802-11-wireless"{print $1}' | head -1)
+        active=$(nmcli -t -f NAME,TYPE connection show --active | awk -F: '$2=="802-11-wireless"{print $1}' | head -1)
         [ -n "$active" ] && sudo nmcli connection modify "$active" connection.autoconnect no
         sudo /bin/systemctl stop launcher.service
         sudo /bin/systemctl stop splash.service
