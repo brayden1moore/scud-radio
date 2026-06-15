@@ -14,13 +14,12 @@ class LCD_2inch(lcdconfig.RaspberryPi):
         self.digital_write(self.DC_PIN, True)
         self.spi_writebyte([val])
     def reset(self):
-        """Reset the display"""
-        self.digital_write(self.RST_PIN,True)
-        time.sleep(0.01)
-        self.digital_write(self.RST_PIN,False)
-        time.sleep(0.01)
-        self.digital_write(self.RST_PIN,True)
-        time.sleep(0.01)
+        self.digital_write(self.RST_PIN, True)
+        time.sleep(0.1)        # was 0.01
+        self.digital_write(self.RST_PIN, False)
+        time.sleep(0.1)        # was 0.01
+        self.digital_write(self.RST_PIN, True)
+        time.sleep(0.2)        # was 0.01
         
     def Init(self):
         """Initialize dispaly"""  
@@ -113,7 +112,7 @@ class LCD_2inch(lcdconfig.RaspberryPi):
         self.command(0x21)
 
         self.command(0x11)
-
+        time.sleep(0.5)
         self.command(0x29)
 
   
