@@ -57,6 +57,7 @@ RemainAfterExit=no
 [Install]
 WantedBy=multi-user.target
 EOF
+chmod +x /home/scud/scud-radio/wifi-connect.sh
 
 # Create the splash service file
 sudo tee /etc/systemd/system/splash.service > /dev/null <<EOF
