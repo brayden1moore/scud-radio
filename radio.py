@@ -165,7 +165,7 @@ def display_scud():
     currently_displaying = 'scud'
 
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
-    bg = Image.open(f'assets/one_radio_splash.png') 
+    bg = Image.open(f'assets/success.png') 
     image.paste(bg, (0, 0))
     enhancer = ImageEnhance.Brightness(image)
     image = enhancer.enhance(BRIGHTNESS)
