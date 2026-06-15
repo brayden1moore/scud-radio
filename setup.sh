@@ -37,6 +37,32 @@ sudo chmod +x install.sh
 sudo ./install.sh -y
 cd ~/
 
+# Patch the WM8960 service to remove the fixed 6s boot delay
+sudo tee /usr/bin/wm8960-soundcard > /dev/null <<'EOF'
+#!/bin/bash
+set -x
+exec 1>/var/log/$(basename $0).log 2>&1
+dtparam i2c_arm=on
+modprobe i2c-dev
+
+for loop in $(seq 1 20); do
+    is_1a=$(i2cdetect -y 1 0x1a 0x1a | egrep "(1a|UU)" | awk '{print $2}')
+    if [ "x${is_1a}" != "x" ]; then
+        echo "install wm8960-soundcard"
+        dtoverlay wm8960-soundcard
+        sleep 1
+        rm -f /etc/asound.conf /var/lib/alsa/asound.state
+        ln -s /etc/wm8960-soundcard/asound.conf /etc/asound.conf
+        ln -s /etc/wm8960-soundcard/wm8960_asound.state /var/lib/alsa/asound.state
+        break
+    fi
+    sleep 0.3
+done
+alsactl restore
+exit 0
+EOF
+sudo chmod +x /usr/bin/wm8960-soundcard
+
 sudo apt install mpv -y
 amixer -D pulse sset Master 100%
 
