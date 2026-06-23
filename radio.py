@@ -346,6 +346,8 @@ def get_stream_list(stream_dict):
     return stream_list
 
 def width(string, font):
+    if not string:
+        string = ''
     left, top, right, bottom = font.getbbox(string)
     text_width = right - left
     return text_width
