@@ -140,6 +140,9 @@ Usage:
 
     elif command == 'on':
         result = send_command('on')
+    
+    elif command == 'mute':
+        result = send_command('mute')
 
     elif command == 'pause':
         result = send_command('pause')

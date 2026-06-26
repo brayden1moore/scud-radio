@@ -1575,6 +1575,9 @@ def handle_remote_command(command_data):
             set_last_volume(str(current_volume))
             wake_screen()
 
+        elif cmd == 'mute':
+            send_mpv_command({"command": ["set_property", "volume", 0]})
+
         elif cmd == 'pause':
             send_mpv_command({"command": ["set_property", "volume", 0]})
 

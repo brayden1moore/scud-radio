@@ -40,7 +40,8 @@ def control(command):
         'resume':'resume',
         'list':'list',
         'favorites':'favorites',
-        'restart':'restart'
+        'restart':'restart',
+        'mute':'mute'
     }
     
     if command not in allowed_commands:
