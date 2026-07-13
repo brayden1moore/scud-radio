@@ -961,9 +961,11 @@ def show_volume_overlay(volume):
         # volume maps to how far right the fill extends
         volume_bar_end = padding + total_bar_width * (volume / 150)
 
-        draw.rectangle([padding, tick_bar_start - 1, SCREEN_WIDTH, tick_bar_start + tick_bar_height + 1], fill=BLACK)
-        draw.rectangle([padding, tick_bar_start, volume_bar_end, tick_bar_start + tick_bar_height], fill=trim_color)
-        draw.rectangle([padding, tick_bar_start, volume_bar_end, tick_bar_start + tick_bar_height], width=1, outline=BLACK)
+        #draw.rectangle([padding, bar_top - 10, SCREEN_WIDTH, bar_bottom + 10], fill=BLACK)
+
+        # volume fill (from left edge to volume_bar_end)
+        draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], fill=trim_color)
+        draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
 
         disp.ShowImage(img)
         time.sleep(0.005)
