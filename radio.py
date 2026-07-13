@@ -1129,7 +1129,10 @@ def toggle_favorite():
         thread.start()
         time.sleep(0.5)
         last_input_time = time.time()
-            
+        
+        if chosen_stream in cached_everything_dict:
+            del cached_everything_dict[chosen_stream]
+        
         display_readied_cached(chosen_stream)  
         freeze_for_task = False
 
