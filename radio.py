@@ -1236,10 +1236,12 @@ def refresh_everything_cache(refresh_stream_list):
 
 
 def handle_rotation(direction):
-    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
-    last_input_time = time.time()
+    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time, last_seek_rotation
+    now = time.time()
+    last_input_time = now
     rotated = True
-    last_rotation = time.time()
+    last_rotation = now
+    last_seek_rotation = now
     seek_stream(direction)
     if confirm_on_rotate:
         confirm_seek() 
@@ -1388,6 +1390,7 @@ mpv_process = None
 stream = None
 readied_stream = None
 last_rotation = None
+last_seek_rotation = None
 screen_on = True
 saved_image_while_paused = None
 play_status = 'pause'
@@ -1732,7 +1735,7 @@ try:
             
         # ---- marquee the oneLiner on the everything screen ----
         active_name = readied_stream if readied_stream else stream
-        seeking = last_rotation and (now - last_rotation < 1)
+        seeking = last_seek_rotation and (now - last_seek_rotation < 1)
         if (screen_on and not sleeping and not seeking
                 and currently_displaying == 'everything'
                 and active_name and active_name in cached_everything_dict):
