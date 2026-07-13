@@ -1747,11 +1747,10 @@ try:
                 if marquee_name != active_name:
                     marquee_name = active_name
                     marquee_offset = 0
-                    marquee_pause_until = now + 3      # pause on the first frame too
                 elif now < marquee_pause_until:
                     pass                                # holding at start, don't advance
                 else:
-                    marquee_offset += 8
+                    marquee_offset += 5
                     if marquee_offset >= span:          # completed a full loop
                         marquee_offset = 0
                         marquee_pause_until = now + 3   # pause 3s at the start
