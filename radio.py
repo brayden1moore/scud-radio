@@ -954,8 +954,8 @@ def show_volume_overlay(volume):
         draw = ImageDraw.Draw(img)
 
         overlay_height = 10       
-        bar_top = 0                 
-        bar_bottom = overlay_height
+        bar_top = tick_bar_start               
+        bar_bottom = bar_top + overlay_height
 
         total_bar_width = SCREEN_WIDTH
         # volume maps to how far right the fill extends
