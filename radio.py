@@ -509,7 +509,7 @@ def calculate_ticks():
     draw.rectangle([0, tick_bar_start + 4, SCREEN_WIDTH, tick_bar_start - 4 + tick_bar_height], fill=BLACK)
     
     total_ticks = len(stream_list)
-    mark_width = round(total_span / (total_ticks * (tick_width + 1) * 3))
+    mark_width = round(total_span / total_ticks)
     
     tick_start_local = tick_start 
     
