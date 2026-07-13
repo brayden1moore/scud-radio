@@ -221,7 +221,8 @@ def set_hidden(hidden):
 
 def safe_display(image):
     global current_image
-    disp.ShowImage(image)
+    with display_lock:
+        disp.ShowImage(image)
     current_image = image.copy()
 
 def backlight_on():
@@ -729,8 +730,9 @@ def display_everything(name, readied=False, silent=False):
         enhancer = ImageEnhance.Brightness(image)
         image = enhancer.enhance(BRIGHTNESS)
 
-        if not silent:  
-            disp.ShowImage(image)
+        if not silent: 
+            with display_lock:
+                    disp.ShowImage(img)   
         return image
         #safe_display(image)
 
@@ -998,32 +1000,6 @@ def toggle_confirm_on_rotate():
         confirm_overlay_showing = True
 
 def show_volume_overlay(volume):
-    global current_image, volume_overlay_showing
-    if current_image:
-        img = cached_everything_dict[stream].copy()
-
-        trim_color = RED
-        draw = ImageDraw.Draw(img)
-
-        overlay_height = 10       
-        bar_top = tick_bar_start + 7            
-        bar_bottom = bar_top + overlay_height
-
-        total_bar_width = SCREEN_WIDTH
-        # volume maps to how far right the fill extends
-        volume_bar_end = padding + total_bar_width * (volume / 150)
-
-        draw.rectangle([padding, bar_top - 10, SCREEN_WIDTH, bar_bottom + 10], fill=BLACK)
-
-        # volume fill (from left edge to volume_bar_end)
-        draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], fill=trim_color)
-        draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
-
-        disp.ShowImage(img)
-        time.sleep(0.005)
-        volume_overlay_showing = True
-
-def show_volume_overlay(volume):
     global volume_overlay_showing, volume_overlay_value, last_volume_change
     volume_overlay_value = volume
     volume_overlay_showing = True
@@ -1176,20 +1152,25 @@ def toggle_favorite():
             no_star_img = img.copy()
             for i in list(reversed(favorite_images)):
                 img.paste(i, (0, 0), i)
-                disp.ShowImage(img)  
+                with display_lock:
+                    disp.ShowImage(img)  
                 img = no_star_img.convert('RGBA')
 
             img.paste(unfavorite, (0, 0), unfavorite)
-            disp.ShowImage(img)
+            with display_lock:
+                    disp.ShowImage(img)  
             time.sleep(0.1)
         else:
             img.paste(favorite_images[0], (0, 0), favorite_images[0])
-            disp.ShowImage(img)
+            with display_lock:
+                    disp.ShowImage(img)  
             for i in favorite_images:
                 img.paste(i, (0, 0), i)
-                disp.ShowImage(img)    
+                with display_lock:
+                    disp.ShowImage(img)     
             time.sleep(0.1)
-            disp.ShowImage(img)    
+            with display_lock:
+                    disp.ShowImage(img)      
 
         thread.start()
         time.sleep(0.5)
@@ -1297,7 +1278,8 @@ def display_readied_cached(name, pushed=False):
                 bg_position = og_logo_position
                 draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], outline=BLUE, width=3)
 
-            disp.ShowImage(image)
+            with display_lock:
+                disp.ShowImage(image)
         else:
             cached_everything_dict[name] = display_everything(name, readied=True)
     else:
