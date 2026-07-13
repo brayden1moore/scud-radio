@@ -616,7 +616,8 @@ def display_everything(name, readied=False, silent=False):
             currently_displaying = 'everything'
 
         location = streams[name]['location']
-        
+        title_font = SMALL_LIGHT
+
         # draw name and underline
         name_chunk_start = 240 - 88
         name_chunk_start_x = 12 + start_x
