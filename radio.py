@@ -954,23 +954,18 @@ def show_volume_overlay(volume):
         draw = ImageDraw.Draw(img)
 
         overlay_height = 10       
-        bar_top = tick_bar_start               
+        bar_top = tick_bar_start + 5             
         bar_bottom = bar_top + overlay_height
 
-        total_bar_width = SCREEN_WIDTH
+        total_bar_width = SCREEN_WIDTH - padding * 2
         # volume maps to how far right the fill extends
         volume_bar_end = total_bar_width * (volume / 150)
 
-        # ticks (now spaced horizontally)
-        tick_gap = round(SCREEN_WIDTH / (150 / volume_step))
-        tick_pos = 0
-        while tick_pos < SCREEN_WIDTH:
-            draw.rectangle([tick_pos, bar_top, tick_pos + 1, bar_bottom], fill=BLACK)
-            tick_pos += tick_gap
+        draw.rectangle([padding, bar_top, SCREEN_WIDTH - padding, bar_bottom], fill=BLACK)
 
         # volume fill (from left edge to volume_bar_end)
-        draw.rectangle([0, bar_top, volume_bar_end, bar_bottom], fill=trim_color)
-        draw.rectangle([0, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
+        draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], fill=trim_color)
+        draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
 
         disp.ShowImage(img)
         time.sleep(0.005)
