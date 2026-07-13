@@ -805,8 +805,13 @@ def display_ambient(name, clicked=False):
     # logo
     logo = streams[name]['logo_216']
     first_pixel = logo.getpixel((5,5))
+    first_column = [img.getpixel((0, y)) for y in range(216)]
+    last_column = [img.getpixel((-1, y)) for y in range(216)]
 
     image = Image.new('RGB',(SCREEN_WIDTH, SCREEN_HEIGHT), color = first_pixel)
+    for col in range(53):
+        image.paste(first_column, (col,2))
+        
     image.paste(logo, (52, 2))
     draw = ImageDraw.Draw(image)
 
