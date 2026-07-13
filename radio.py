@@ -781,23 +781,24 @@ def display_one(name):
 
 
 def display_bar(image=current_image, color=WHITE):
-    # time
     if image:
         draw = ImageDraw.Draw(image)
         now = time.time()
         current_time = datetime.fromtimestamp(now, tz=user_tz)
         formatted_date = current_time.strftime("%a %b %d").replace(' 0', '  ').lstrip('0')
         formatted_time = current_time.strftime("%I:%M %p").replace(' 0', '  ').lstrip('0')
-        text_color = BLACK
-        logging.info(f'CURRENT TIME: {formatted_time}')
+
+        # pick text color based on how dark the bar color is
+        r, g, b = color[:3]
+        luminance = 0.299 * r + 0.587 * g + 0.114 * b
+        text_color = WHITE if luminance < 128 else BLACK
 
         # bottom bar 218 y for bottom
         y = 218
         draw.rectangle([0, y, 320, y+24], fill=color)
-        draw.rectangle([0, y, 320, y], fill=BLACK)
-        center_of_section = round((240 + 218) / 2)
+        draw.rectangle([0, y, 320, y], fill=text_color)
 
-        draw.text((13,y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
+        draw.text((13, y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
         draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
 
 
