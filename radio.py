@@ -896,14 +896,17 @@ def seek_stream(direction):
 
     if not freeze_for_task:
         idx = stream_list.index(stream)
-    
-        idx = stream_list.index(readied_stream if readied_stream else stream) 
-        if (direction == 1) and (idx==len(stream_list)-1):
-            readied_stream = stream_list[0]
-        elif (direction == -1) and (idx==0):
-            readied_stream = stream_list[-1]
+        
+        if currently_displaying == 'ambient':
+            readied_stream = stream_list[idx]
         else:
-            readied_stream = stream_list[idx + direction]
+            idx = stream_list.index(readied_stream if readied_stream else stream) 
+            if (direction == 1) and (idx==len(stream_list)-1):
+                readied_stream = stream_list[0]
+            elif (direction == -1) and (idx==0):
+                readied_stream = stream_list[-1]
+            else:
+                readied_stream = stream_list[idx + direction]
 
          #print('TURNED TO....', readied_stream)
         display_readied_cached(readied_stream) # otherwise show EVERYTHING (READIED)
