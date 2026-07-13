@@ -1742,14 +1742,23 @@ try:
             text = streams[active_name]['oneLiner'].replace('&amp;', '&').strip()
             avail_w = SCREEN_WIDTH - MARQUEE_X
             if width(text, SMALL_LIGHT) > avail_w:
+                span = width(text, SMALL_LIGHT) + MARQUEE_GAP
+
                 if marquee_name != active_name:
                     marquee_name = active_name
                     marquee_offset = 0
+                    marquee_pause_until = now + 3      # pause on the first frame too
+                elif now < marquee_pause_until:
+                    pass                                # holding at start, don't advance
                 else:
-                    marquee_offset += 8        # pixels per second — tune to taste
+                    marquee_offset += 8
+                    if marquee_offset >= span:          # completed a full loop
+                        marquee_offset = 0
+                        marquee_pause_until = now + 3   # pause 3s at the start
+
                 draw_marquee(active_name, marquee_offset)
             else:
-                marquee_name = None               # short text, nothing to scroll
+                marquee_name = None
         else:
             marquee_name = None
 
