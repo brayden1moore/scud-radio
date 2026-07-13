@@ -1657,7 +1657,7 @@ try:
     while True:
         set_last_volume(str(current_volume))
 
-        if (time.time() - last_input_time > 60) & (time.time() - last_ambient_display > 30):
+        if (time.time() - last_input_time > 5) & (time.time() - last_ambient_display > 5): # change back to 60
             logging.info('DISPLAYING AMBIENT VIA MAIN LOOP')
             display_ambient(stream)
             last_ambient_display = time.time()
