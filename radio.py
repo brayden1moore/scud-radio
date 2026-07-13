@@ -573,7 +573,7 @@ def draw_marquee(name, offset):
 
     # clear the old text strip (black background band)
     draw.rectangle([MARQUEE_X, everything_info_y - 3,
-                    SCREEN_WIDTH, everything_info_y + line_h + 3], fill=BLACK)
+                    SCREEN_WIDTH, everything_info_y + line_h + 4], fill=BLACK)
 
     # draw the text twice so it wraps seamlessly
     span = full_w + MARQUEE_GAP
