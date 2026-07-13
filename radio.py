@@ -1642,7 +1642,7 @@ from gpiozero import RotaryEncoder, Button
 
 click_button = Button(26, bounce_time=0.05)
 click_button.hold_time = 2
-click_button.when_pressed = wrapped_action(lambda: on_button_pressed())
+click_button.when_pressed = wrapped_action(lambda: toggle_favorite())
 #click_button.when_released = wrapped_action(lambda: on_button_released())
 #click_button.when_held = wrapped_action(lambda: toggle_confirm_on_rotate())
 
@@ -1661,7 +1661,7 @@ volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotat
 volume_click_button = Button(17, bounce_time=0.05)
 #volume_click_button.when_pressed =  wrapped_action(lambda: on_volume_button_pressed())
 #volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
-volume_click_button.when_pressed = wrapped_action(lambda: toggle_favorite())
+volume_click_button.when_pressed = wrapped_action(lambda: on_button_pressed())
     
 ## main loop
 refresh_everything_cache(stream_list)
