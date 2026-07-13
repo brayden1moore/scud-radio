@@ -793,7 +793,7 @@ def display_bar(image=current_image, color=WHITE):
         # bottom bar 218 y for bottom
         y = 218
         draw.rectangle([0, y, 320, y+24], fill=color)
-        draw.rectangle([0, y, 320, y], fill=text_color)
+        draw.rectangle([0, y, 320, y], fill=BLACK)
 
         draw.text((13, y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
         draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
