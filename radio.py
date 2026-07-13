@@ -1110,6 +1110,7 @@ def toggle_favorite():
                         new_idx+1,
                         new_idx+2,
                         new_idx+3]
+        
         streams_needing_refresh = [chosen_stream] + favorites
         for i in indexes_needing_refresh:
             streams_needing_refresh.append(stream_list[i % len(stream_list)])
@@ -1137,9 +1138,6 @@ def toggle_favorite():
             time.sleep(0.1)
             disp.ShowImage(img)    
 
-        #if action == 'unfavorite':
-            #readied_stream = stream_list[prior_idx]
-
         thread.start()
         time.sleep(0.5)
         last_input_time = time.time()
@@ -1149,6 +1147,8 @@ def toggle_favorite():
         
         display_readied_cached(chosen_stream)  
         freeze_for_task = False
+
+        calculate_ticks()
 
 ready_to_display = False
 refreshing_everything_now = False
