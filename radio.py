@@ -568,7 +568,7 @@ def display_everything(name, readied=False, silent=False):
         # draw name and underline
         name_chunk_start = 240 - 88
         name_chunk_start_x = 12 + start_x
-        name_font = MEDIUM_BOLD
+        name_font = EXTRALARGE_LIGHT
         name_line = calculate_text(name, name_font, 315, 1)[0]
         draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], name_font), name_chunk_start + height('S', name_font)], fill=BLACK) # bg
         draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line[0], font=name_font, fill=WHITE) 
