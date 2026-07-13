@@ -576,7 +576,7 @@ def display_everything(name, readied=False, silent=False):
 
         # draw info
         y_offset = 0
-        everything_info_y = name_chunk_start + height('S', name_font)
+        everything_info_y = name_chunk_start + height('S', name_font) + 12
         for i in title_lines:
             draw.text((name_chunk_start_x, everything_info_y + y_offset), i, font=title_font, fill=WHITE)
             y_offset += 20
