@@ -605,7 +605,7 @@ def display_everything(name, readied=False, silent=False):
                 if genre == genres[0]:
                     fill = RED
                 else:
-                    fill = GREEN
+                    fill = YELLOW
                 draw.rectangle([genre_start + genre_x_offset, tags_start, genre_start + genre_x_offset + genre_width, tags_start + 1 + height('S', SMALL_LIGHT)], fill=fill) # bg
                 draw.text((genre_start + genre_x_offset, tags_start - 2), genre, font=SMALL_LIGHT, fill=BLACK)
                 genre_x_offset += genre_width + 5
