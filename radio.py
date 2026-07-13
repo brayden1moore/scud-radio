@@ -616,8 +616,7 @@ def display_everything(name, readied=False, silent=False):
             currently_displaying = 'everything'
 
         location = streams[name]['location']
-        title_lines, title_font = calculate_text(streams[name]['oneLiner'].replace('&amp;','&'), SMALL_LIGHT, 315, 1)
-
+        
         # draw name and underline
         name_chunk_start = 240 - 88
         name_chunk_start_x = 12 + start_x
@@ -630,9 +629,8 @@ def display_everything(name, readied=False, silent=False):
         # draw info
         y_offset = 0
         everything_info_y = name_chunk_start + height('S', name_font) + 12
-        for i in title_lines:
-            draw.text((name_chunk_start_x, everything_info_y + y_offset), i, font=title_font, fill=WHITE)
-            y_offset += 20
+        draw.text((name_chunk_start_x, everything_info_y + y_offset), streams[name]['oneLiner'].replace('&amp;','&'), font=SMALL_LIGHT, fill=WHITE)
+        y_offset += 20
 
         # draw location
         tags_start = everything_info_y + height('S', title_font) + 12
