@@ -957,11 +957,11 @@ def show_volume_overlay(volume):
         bar_top = tick_bar_start + 7            
         bar_bottom = bar_top + overlay_height
 
-        total_bar_width = SCREEN_WIDTH - padding * 2
+        total_bar_width = SCREEN_WIDTH - padding
         # volume maps to how far right the fill extends
         volume_bar_end = total_bar_width * (volume / 150)
 
-        draw.rectangle([padding, bar_top, SCREEN_WIDTH - padding, bar_bottom], fill=BLACK)
+        draw.rectangle([padding, bar_top - 5, SCREEN_WIDTH - padding, bar_bottom + 5], fill=BLACK)
 
         # volume fill (from left edge to volume_bar_end)
         draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], fill=trim_color)
