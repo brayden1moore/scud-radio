@@ -1240,7 +1240,6 @@ def handle_rotation(direction):
     last_input_time = time.time()
     rotated = True
     last_rotation = time.time()
-    last_input_time = time.time()
     seek_stream(direction)
     if confirm_on_rotate:
         confirm_seek() 
@@ -1736,8 +1735,7 @@ try:
         overlay_up = volume_overlay_showing or confirm_overlay_showing
         if (screen_on and not sleeping and not overlay_up
                 and currently_displaying == 'everything'
-                and active_name and active_name in cached_everything_dict
-                and now - last_input_time > 3):
+                and active_name and active_name in cached_everything_dict):
 
             text = streams[active_name]['oneLiner'].replace('&amp;', '&').strip()
             avail_w = SCREEN_WIDTH - MARQUEE_X
@@ -1747,7 +1745,7 @@ try:
                 if marquee_name != active_name:
                     marquee_name = active_name
                     marquee_offset = 0
-                    marquee_pause_until = now
+                    marquee_pause_until = now + 3
                 elif now < marquee_pause_until:
                     pass                                # holding at start, don't advance
                 else:
