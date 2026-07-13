@@ -804,13 +804,17 @@ def display_ambient(name, clicked=False):
 
     # logo
     logo = streams[name]['logo_216']
-    first_pixel = logo.getpixel((5,5))
-    first_column = [logo.getpixel((0, y)) for y in range(216)]
-    last_column = [logo.getpixel((-1, y)) for y in range(216)]
+    logo_w, logo_h = logo.size  # height should be 216
+    first_pixel = logo.getpixel((0, 0))
 
-    image = Image.new('RGB',(SCREEN_WIDTH, SCREEN_HEIGHT), color = first_pixel)
-    for col in range(53):
-        image.paste(first_column, (col,2))
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=first_pixel)
+
+    # grab the logo's leftmost column as a 1px-wide strip
+    first_col_strip = logo.crop((0, 0, 1, logo_h))
+
+    # paste it across every column from 0 up to where the logo starts (x=52)
+    for col in range(52):
+        image.paste(first_col_strip, (col, 2))
 
     image.paste(logo, (52, 2))
     draw = ImageDraw.Draw(image)
