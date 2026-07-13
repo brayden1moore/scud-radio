@@ -1747,6 +1747,7 @@ try:
                 if marquee_name != active_name:
                     marquee_name = active_name
                     marquee_offset = 0
+                    marquee_pause_until = now
                 elif now < marquee_pause_until:
                     pass                                # holding at start, don't advance
                 else:
