@@ -807,7 +807,7 @@ def display_ambient(name, clicked=False):
     first_pixel = logo.getpixel((5,5))
 
     image = Image.new('RGB',(SCREEN_WIDTH, SCREEN_HEIGHT), color = first_pixel)
-    image.paste(logo, (72, 32))
+    image.paste(logo, (72, 8))
     draw = ImageDraw.Draw(image)
 
     currently_displaying = 'ambient'
