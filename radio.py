@@ -1732,8 +1732,8 @@ try:
             
         # ---- marquee the oneLiner on the everything screen ----
         active_name = readied_stream if readied_stream else stream
-        overlay_up = volume_overlay_showing or confirm_overlay_showing
-        if (screen_on and not sleeping and not overlay_up
+        seeking = last_rotation and (now - last_rotation < 1)
+        if (screen_on and not sleeping and not seeking
                 and currently_displaying == 'everything'
                 and active_name and active_name in cached_everything_dict):
 
