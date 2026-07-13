@@ -1711,19 +1711,20 @@ display_readied_cached(stream)
 try:
     while True:
         set_last_volume(str(current_volume))
+        now = time.time()
 
-        if (time.time() - last_input_time > 60) & (time.time() - last_ambient_display > 30):
+        if (now - last_input_time > 60) & (now - last_ambient_display > 30):
             logging.info('DISPLAYING AMBIENT VIA MAIN LOOP')
             display_ambient(stream)
-            last_ambient_display = time.time()
+            last_ambient_display = now
 
-        if screen_on and (time.time() - last_input_time > 600):
+        if screen_on and (now - last_input_time > 600):
             logging.info('TURNING SCREEN OFF VIA MAIN LOOP')
             sleeping = True
             screen_on = False
             backlight_off()
 
-        if (readied_stream or volume_overlay_showing or confirm_overlay_showing) and last_rotation and ((time.time() - last_rotation > 3) and (time.time() - last_input_time > 3)) and restarting == False and held == False:
+        if (readied_stream or volume_overlay_showing or confirm_overlay_showing) and last_rotation and ((now - last_rotation > 3) and (now - last_input_time > 3)) and restarting == False and held == False:
             logging.info('DISPLAYING CURRENT VIA MAIN LOOP')
             readied_stream = None
             volume_overlay_showing = False
@@ -1736,7 +1737,7 @@ try:
         if (screen_on and not sleeping and not overlay_up
                 and currently_displaying == 'everything'
                 and active_name and active_name in cached_everything_dict
-                and last_input_time > 3):
+                and now - last_input_time > 3):
 
             text = streams[active_name]['oneLiner'].replace('&amp;', '&').strip()
             avail_w = SCREEN_WIDTH - MARQUEE_X
@@ -1745,14 +1746,14 @@ try:
                     marquee_name = active_name
                     marquee_offset = 0
                 else:
-                    marquee_offset += 12        # pixels per second — tune to taste
+                    marquee_offset += 8        # pixels per second — tune to taste
                 draw_marquee(active_name, marquee_offset)
             else:
                 marquee_name = None               # short text, nothing to scroll
         else:
             marquee_name = None
 
-        time.sleep(0.2)
+        time.sleep(0.1)
 
 except KeyboardInterrupt:
     if mpv_process:
