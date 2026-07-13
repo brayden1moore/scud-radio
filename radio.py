@@ -803,11 +803,11 @@ def display_ambient(name, clicked=False):
     global currently_displaying, last_ambient_display
 
     # logo
-    logo = streams[name]['logo_176']
+    logo = streams[name]['logo_216']
     first_pixel = logo.getpixel((5,5))
 
     image = Image.new('RGB',(SCREEN_WIDTH, SCREEN_HEIGHT), color = first_pixel)
-    image.paste(logo, (72, 24))
+    image.paste(logo, (52, 0))
     draw = ImageDraw.Draw(image)
 
     currently_displaying = 'ambient'
