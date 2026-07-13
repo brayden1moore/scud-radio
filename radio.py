@@ -811,10 +811,14 @@ def display_ambient(name, clicked=False):
 
     # grab the logo's leftmost column as a 1px-wide strip
     first_col_strip = logo.crop((0, 0, 1, logo_h))
+    last_col_strip = logo.crop((logo_w-1, 0, logo_w, logo_h))
 
     # paste it across every column from 0 up to where the logo starts (x=52)
     for col in range(52):
         image.paste(first_col_strip, (col, 2))
+
+    for col in range(logo_w + 52):
+        image.paste(last_col_strip, (col, 2))
 
     image.paste(logo, (52, 2))
     draw = ImageDraw.Draw(image)
