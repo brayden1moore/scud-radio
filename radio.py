@@ -948,29 +948,29 @@ def toggle_confirm_on_rotate():
 def show_volume_overlay(volume):
     global current_image, volume_overlay_showing
     if current_image:
-        img = cached_everything_dict[stream].copy()
+        img = current_image.copy()
 
         trim_color = RED
-
         draw = ImageDraw.Draw(img)
-        total_bar_height = SCREEN_HEIGHT
-        last_volume_bar_end = max(0, total_bar_height * ((150-current_volume)/150)) 
-        volume_bar_end = total_bar_height * ((150-volume)/150)
-        overlay_width = 12
-        #draw.rectangle([SCREEN_WIDTH-12, 222, SCREEN_WIDTH, SCREEN_WIDTH-12 + 1], fill=BLACK) # make small divider on bottom bar
-        # ticks
-        tick_gap = round(SCREEN_HEIGHT / (150/ volume_step))
-        tick_start = 0
-        tick_height = 1
-        while tick_start < SCREEN_HEIGHT:
-            #draw.rectangle([SCREEN_WIDTH-6, tick_start, SCREEN_WIDTH-4, tick_start + tick_height], fill=BLACK)
-            tick_start += tick_gap
 
-        # volume fill
-        #img_background = img.getpixel((SCREEN_WIDTH-5,last_volume_bar_end))
-        #draw.rectangle([SCREEN_WIDTH-10, last_volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=img_background)
-        draw.rectangle([SCREEN_WIDTH-10, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], fill=trim_color)
-        draw.rectangle([SCREEN_WIDTH-10, volume_bar_end, SCREEN_WIDTH, SCREEN_HEIGHT], width=1, outline=BLACK)
+        overlay_height = 12          # thickness of the bar (was overlay_width)
+        bar_top = 0                  # sits along the top edge
+        bar_bottom = overlay_height
+
+        total_bar_width = SCREEN_WIDTH
+        # volume maps to how far right the fill extends
+        volume_bar_end = total_bar_width * (volume / 150)
+
+        # ticks (now spaced horizontally)
+        tick_gap = round(SCREEN_WIDTH / (150 / volume_step))
+        tick_pos = 0
+        while tick_pos < SCREEN_WIDTH:
+            draw.rectangle([tick_pos, bar_top, tick_pos + 1, bar_bottom], fill=BLACK)
+            tick_pos += tick_gap
+
+        # volume fill (from left edge to volume_bar_end)
+        draw.rectangle([0, bar_top, volume_bar_end, bar_bottom], fill=trim_color)
+        draw.rectangle([0, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
 
         disp.ShowImage(img)
         time.sleep(0.005)
