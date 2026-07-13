@@ -1080,7 +1080,8 @@ def toggle_favorite():
     chosen_stream = stream if not readied_stream else readied_stream
     if chosen_stream in stream_list:
         prior_idx = stream_list.index(chosen_stream)
-        img = refresh_everything_cache[chosen_stream].copy().convert('RGBA')
+        
+        img = cached_everything_dict[chosen_stream].copy().convert('RGBA')
 
         action = None
         if chosen_stream in favorites:
