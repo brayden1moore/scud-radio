@@ -1743,14 +1743,42 @@ try:
         seeking = last_seek_rotation and (now - last_seek_rotation < 1)
         vol = volume_overlay_value if volume_overlay_showing else None
 
-        if (screen_on and not sleeping and not seeking
-                and currently_displaying == 'everything'
-                and active_name and active_name in cached_everything_dict):
+        on_everything = (screen_on and not sleeping
+                         and currently_displaying == 'everything'
+                         and active_name and active_name in cached_everything_dict)
 
+        if on_everything:
             text = streams[active_name]['oneLiner'].replace('&amp;', '&').strip()
             long_text = width(text, SMALL_LIGHT) > (SCREEN_WIDTH - MARQUEE_X)
 
-            if long_text:
+            if vol is not None:
+                # volume overlay is active — always show it, even mid-seek.
+                # keep the marquee offset advancing underneath (long text only)
+                if long_text and not seeking:
+                    span = width(text, SMALL_LIGHT) + MARQUEE_GAP
+                    if marquee_name != active_name:
+                        marquee_name = active_name
+                        marquee_offset = 0
+                        marquee_pause_until = now + 3
+                    elif now >= marquee_pause_until:
+                        marquee_offset += 2
+                        if marquee_offset >= span:
+                            marquee_offset = 0
+                            marquee_pause_until = now + 3
+                    render_everything_frame(active_name, marquee_offset, volume=vol)
+                else:
+                    # short text, or seeking — bar only, leave text untouched
+                    render_everything_frame(active_name, 0, volume=vol, draw_text=False)
+
+            elif seeking:
+                # mid-seek, no volume — let the seek's own frames own the screen
+                marquee_name = None
+
+            elif volume_just_cleared:
+                display_readied_cached(active_name)
+                marquee_name = None
+
+            elif long_text:
                 span = width(text, SMALL_LIGHT) + MARQUEE_GAP
                 if marquee_name != active_name:
                     marquee_name = active_name
@@ -1763,14 +1791,8 @@ try:
                     if marquee_offset >= span:
                         marquee_offset = 0
                         marquee_pause_until = now + 3
-                render_everything_frame(active_name, marquee_offset, volume=vol)
-            elif vol is not None:
-                render_everything_frame(active_name, 0, volume=vol, draw_text=False)
-                marquee_name = None
-            elif volume_just_cleared:
-                # overlay just turned off — repaint the clean card once to erase the bar
-                display_readied_cached(active_name)
-                marquee_name = None
+                render_everything_frame(active_name, marquee_offset)
+
             else:
                 marquee_name = None
         else:
