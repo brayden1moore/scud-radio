@@ -954,7 +954,7 @@ def show_volume_overlay(volume):
         draw = ImageDraw.Draw(img)
 
         overlay_height = 10       
-        bar_top = tick_bar_start + 5             
+        bar_top = tick_bar_start + 7            
         bar_bottom = bar_top + overlay_height
 
         total_bar_width = SCREEN_WIDTH - padding * 2
