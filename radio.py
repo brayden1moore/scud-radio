@@ -1747,7 +1747,7 @@ try:
             
         # ---- marquee the oneLiner on the everything screen ----
         # expire the volume overlay after 5s of no volume rotation
-        if volume_overlay_showing and now - last_volume_change > 5:
+        if (now - last_volume_change) > 3:
             volume_overlay_showing = False
 
         # teardown readied/confirm overlays (volume handled separately above)
