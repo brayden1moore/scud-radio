@@ -32,6 +32,8 @@ logging.basicConfig(
     ]
 )
 
+display_lock = threading.Lock()
+
 battery = None
 charging = False
 sleeping = False
@@ -584,7 +586,6 @@ def _draw_volume_bar(draw, volume):
 
 
 def render_everything_frame(name, offset=0, volume=None, draw_text=True):
-    """Composite card + optional scrolled oneLiner + optional volume bar, push once."""
     base = cached_everything_dict.get(name)
     if not base:
         return
@@ -594,7 +595,8 @@ def render_everything_frame(name, offset=0, volume=None, draw_text=True):
         _draw_marquee_text(draw, name, offset)
     if volume is not None:
         _draw_volume_bar(draw, volume)
-    disp.ShowImage(img)
+    with display_lock:
+        disp.ShowImage(img)
 
 
 def display_everything(name, readied=False, silent=False):
@@ -1748,15 +1750,11 @@ try:
             
         # ---- marquee the oneLiner on the everything screen ----
         # expire the volume overlay after 5s of no volume rotation
-        if (now - last_volume_change) > 3:
+        if volume_overlay_showing and (now - last_volume_change) > 3:
             volume_overlay_showing = False
-
-        # teardown readied/confirm overlays (volume handled separately above)
-        if (readied_stream or confirm_overlay_showing) and last_rotation and ((now - last_rotation > 3) and (now - last_input_time > 3)) and restarting == False and held == False:
-            logging.info('DISPLAYING CURRENT VIA MAIN LOOP')
-            readied_stream = None
-            confirm_overlay_showing = False
-            ##display_current()
+            volume_just_cleared = True
+        else:
+            volume_just_cleared = False
 
         # ---- everything screen: marquee + optional volume overlay, one writer ----
         active_name = readied_stream if readied_stream else stream
@@ -1786,6 +1784,10 @@ try:
                 render_everything_frame(active_name, marquee_offset, volume=vol)
             elif vol is not None:
                 render_everything_frame(active_name, 0, volume=vol, draw_text=False)
+                marquee_name = None
+            elif volume_just_cleared:
+                # overlay just turned off — repaint the clean card once to erase the bar
+                display_readied_cached(active_name)
                 marquee_name = None
             else:
                 marquee_name = None
