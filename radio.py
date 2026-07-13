@@ -399,7 +399,7 @@ def play_random():
     global stream, play_status
     available_streams = [i for i in stream_list if i != stream and streams[i]['status'] != 'Offline']
     chosen = random.choice(available_streams)
-    display_one(chosen)
+    display_readied_cached(chosen)
     play(chosen)
     stream = chosen
     play_status = 'play'
@@ -547,7 +547,7 @@ def draw_tick(draw, name):
 def display_everything(name, readied=False, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
-    if readied and not restarting:
+    if not restarting:
 
         first_display = False
         len_stream_list = len(stream_list)
@@ -682,8 +682,6 @@ def display_everything(name, readied=False, silent=False):
             disp.ShowImage(image)
         return image
         #safe_display(image)
-    else:
-        display_one(name)
 
 def display_one(name):
     global has_displayed_once, currently_displaying
@@ -829,10 +827,10 @@ def display_ambient(name, clicked=False):
 def display_current():
 
     if currently_displaying == 'everything':
-        display_one(stream)
+        display_readied_cached(stream)
 
     elif currently_displaying == 'one':
-        display_one(stream)
+        display_readied_cached(stream)
 
     elif currently_displaying == 'ambient':
         display_ambient(stream, clicked=True)
@@ -899,17 +897,13 @@ def seek_stream(direction):
     if not freeze_for_task:
         idx = stream_list.index(stream)
     
-        if readied_stream == None:
-            readied_stream = stream # show EVERYTHING (STREAM) if currently displaying ONE
-            
+        idx = stream_list.index(readied_stream if readied_stream else stream) 
+        if (direction == 1) and (idx==len(stream_list)-1):
+            readied_stream = stream_list[0]
+        elif (direction == -1) and (idx==0):
+            readied_stream = stream_list[-1]
         else:
-            idx = stream_list.index(readied_stream if readied_stream else stream) 
-            if (direction == 1) and (idx==len(stream_list)-1):
-                readied_stream = stream_list[0]
-            elif (direction == -1) and (idx==0):
-                readied_stream = stream_list[-1]
-            else:
-                readied_stream = stream_list[idx + direction]
+            readied_stream = stream_list[idx + direction]
 
          #print('TURNED TO....', readied_stream)
         display_readied_cached(readied_stream) # otherwise show EVERYTHING (READIED)
@@ -1155,7 +1149,7 @@ def toggle_favorite():
         if chosen_stream in list(one_cache.keys()):
             del one_cache[chosen_stream]
             
-        display_one(chosen_stream)  
+        display_readied_cached(chosen_stream)  
         freeze_for_task = False
 
 ready_to_display = False
@@ -1485,7 +1479,7 @@ def handle_remote_command(command_data):
             station_name = command_data.get('value')
             if station_name in stream_list:
                 play(station_name)
-                display_everything(station_name)
+                display_readied_cached(station_name)
             return {
                 'status': 'ok',
                 'station': station_name,
@@ -1676,7 +1670,7 @@ last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
 
-display_everything(stream, readied=False)
+display_readied_cached(stream, readied=False)
 
 try:
     while True:
