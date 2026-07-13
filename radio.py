@@ -1277,22 +1277,6 @@ def volume_handle_rotation(direction):
     send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
 
-def volume_handle_rotation(direction):
-    global rotated, current_volume, last_rotation, last_input_time
-    rotated = True
-    last_input_time = time.time()
-    last_rotation = time.time()
-
-    if direction == 1:
-        new_volume = min(150, current_volume + volume_step)
-    else:
-        new_volume = max(0, current_volume - volume_step)
-
-    show_volume_overlay(new_volume)
-    current_volume = new_volume
-    send_mpv_command({"command": ["set_property", "volume", current_volume]})
-
-
 def display_readied_cached(name, pushed=False):
     ''' First looks for cached version and if not, rebuilds '''
     global cached_everything_dict, currently_displaying
@@ -1771,7 +1755,7 @@ try:
             logging.info('DISPLAYING CURRENT VIA MAIN LOOP')
             readied_stream = None
             confirm_overlay_showing = False
-            display_current()
+            ##display_current()
 
         # ---- everything screen: marquee + optional volume overlay, one writer ----
         active_name = readied_stream if readied_stream else stream
