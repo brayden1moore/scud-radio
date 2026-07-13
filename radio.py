@@ -1746,7 +1746,7 @@ display_readied_cached(stream)
 try:
     while True:
         now = time.time()
-        
+
         if now - last_input_time > 10:
             set_last_volume(str(current_volume))
 
@@ -1760,13 +1760,6 @@ try:
             sleeping = True
             screen_on = False
             backlight_off()
-
-        if (readied_stream or volume_overlay_showing or confirm_overlay_showing) and last_rotation and ((now - last_rotation > 3) and (now - last_input_time > 3)) and restarting == False and held == False:
-            logging.info('DISPLAYING CURRENT VIA MAIN LOOP')
-            readied_stream = None
-            volume_overlay_showing = False
-            confirm_overlay_showing = False
-            display_current()
             
         # ---- marquee the oneLiner on the everything screen ----
         # expire the volume overlay after 5s of no volume rotation
