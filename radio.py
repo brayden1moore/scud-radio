@@ -551,40 +551,48 @@ marquee_name = None
 MARQUEE_X = 12 + start_x                      # name_chunk_start_x
 MARQUEE_GAP = 30                              # blank gap before the text repeats
 
-def draw_marquee(name, offset):
-    """Redraw just the oneLiner line on a copy of the cached everything image, scrolled by `offset`."""
-    if name not in cached_everything_dict:
-        return
-    base = cached_everything_dict[name]
-    if not base:
-        return
-
+def _draw_marquee_text(draw, name, offset):
+    """Paint the scrolled oneLiner onto an existing draw object. No push."""
     text = streams[name]['oneLiner'].replace('&amp;', '&').strip()
     full_w = width(text, SMALL_LIGHT)
 
-    # compute the y of the oneLiner exactly as display_everything does
     name_font = EXTRALARGE_LIGHT
     name_chunk_start = 240 - 88
     everything_info_y = name_chunk_start + height('S', name_font) + 12
     line_h = height('S', SMALL_LIGHT)
 
-    img = base.copy()
-    draw = ImageDraw.Draw(img)
-
-    # clear the old text strip (black background band)
     draw.rectangle([MARQUEE_X, everything_info_y - 3,
                     SCREEN_WIDTH, everything_info_y + line_h + 4], fill=BLACK)
 
-    # draw the text twice so it wraps seamlessly
     span = full_w + MARQUEE_GAP
     start = MARQUEE_X - (offset % span)
     draw.text((start, everything_info_y), text, font=SMALL_LIGHT, fill=WHITE)
     draw.text((start + span, everything_info_y), text, font=SMALL_LIGHT, fill=WHITE)
 
-    # re-clip anything that scrolled left of the margin
     draw.rectangle([0, everything_info_y - 2, MARQUEE_X - 1,
                     everything_info_y + line_h + 2], fill=BLACK)
 
+
+def _draw_volume_bar(draw, volume):
+    """Paint the volume bar onto an existing draw object. No push."""
+    bar_top = tick_bar_start + 7
+    bar_bottom = bar_top + 10
+    volume_bar_end = padding + SCREEN_WIDTH * (volume / 150)
+    draw.rectangle([padding, bar_top - 10, SCREEN_WIDTH, bar_bottom + 10], fill=BLACK)
+    draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], fill=RED)
+    draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
+
+
+def render_everything_frame(name, offset=0, volume=None):
+    """Composite card + scrolled oneLiner + optional volume bar, and push once."""
+    base = cached_everything_dict.get(name)
+    if not base:
+        return
+    img = base.copy()
+    draw = ImageDraw.Draw(img)
+    _draw_marquee_text(draw, name, offset)
+    if volume is not None:
+        _draw_volume_bar(draw, volume)
     disp.ShowImage(img)
 
 
@@ -1013,6 +1021,12 @@ def show_volume_overlay(volume):
         time.sleep(0.005)
         volume_overlay_showing = True
 
+def show_volume_overlay(volume):
+    global volume_overlay_showing, volume_overlay_value, last_volume_change
+    volume_overlay_value = volume
+    volume_overlay_showing = True
+    last_volume_change = time.time()
+
 def safe_restart():
     global restarting
     restarting = True
@@ -1263,6 +1277,22 @@ def volume_handle_rotation(direction):
     send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
 
+def volume_handle_rotation(direction):
+    global rotated, current_volume, last_rotation, last_input_time
+    rotated = True
+    last_input_time = time.time()
+    last_rotation = time.time()
+
+    if direction == 1:
+        new_volume = min(150, current_volume + volume_step)
+    else:
+        new_volume = max(0, current_volume - volume_step)
+
+    show_volume_overlay(new_volume)
+    current_volume = new_volume
+    send_mpv_command({"command": ["set_property", "volume", current_volume]})
+
+
 def display_readied_cached(name, pushed=False):
     ''' First looks for cached version and if not, rebuilds '''
     global cached_everything_dict, currently_displaying
@@ -1407,6 +1437,9 @@ first_boot = True
 selector = 'red'
 has_displayed_once = False
 volume_overlay_showing = False
+volume_overlay_value = 0
+last_volume_change = 0
+marquee_pause_until = 0
 confirm_overlay_showing = False
 last_ambient_display = time.time()
 switch_off_time = None
@@ -1734,30 +1767,46 @@ try:
             display_current()
             
         # ---- marquee the oneLiner on the everything screen ----
+        # expire the volume overlay after 5s of no volume rotation
+        if volume_overlay_showing and now - last_volume_change > 5:
+            volume_overlay_showing = False
+
+        # teardown readied/confirm overlays (volume handled separately above)
+        if (readied_stream or confirm_overlay_showing) and last_rotation and ((now - last_rotation > 3) and (now - last_input_time > 3)) and restarting == False and held == False:
+            logging.info('DISPLAYING CURRENT VIA MAIN LOOP')
+            readied_stream = None
+            confirm_overlay_showing = False
+            display_current()
+
+        # ---- everything screen: marquee + optional volume overlay, one writer ----
         active_name = readied_stream if readied_stream else stream
         seeking = last_seek_rotation and (now - last_seek_rotation < 1)
+        vol = volume_overlay_value if volume_overlay_showing else None
+
         if (screen_on and not sleeping and not seeking
                 and currently_displaying == 'everything'
                 and active_name and active_name in cached_everything_dict):
 
             text = streams[active_name]['oneLiner'].replace('&amp;', '&').strip()
-            avail_w = SCREEN_WIDTH - MARQUEE_X
-            if width(text, SMALL_LIGHT) > avail_w:
-                span = width(text, SMALL_LIGHT) + MARQUEE_GAP
+            long_text = width(text, SMALL_LIGHT) > (SCREEN_WIDTH - MARQUEE_X)
 
+            if long_text:
+                span = width(text, SMALL_LIGHT) + MARQUEE_GAP
                 if marquee_name != active_name:
                     marquee_name = active_name
                     marquee_offset = 0
                     marquee_pause_until = now + 3
                 elif now < marquee_pause_until:
-                    pass                                # holding at start, don't advance
+                    pass
                 else:
                     marquee_offset += 5
-                    if marquee_offset >= span:          # completed a full loop
+                    if marquee_offset >= span:
                         marquee_offset = 0
-                        marquee_pause_until = now + 3   # pause 3s at the start
-
-                draw_marquee(active_name, marquee_offset)
+                        marquee_pause_until = now + 3
+                render_everything_frame(active_name, marquee_offset, volume=vol)
+            elif vol is not None:
+                render_everything_frame(active_name, 0, volume=vol)
+                marquee_name = None
             else:
                 marquee_name = None
         else:
