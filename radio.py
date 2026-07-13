@@ -804,12 +804,12 @@ def display_ambient(name, clicked=False):
 
     logo = streams[name]['logo_216']
     logo_w, logo_h = logo.size
-    first_pixel = logo.getpixel((0, 0))
+    first_pixel = logo.getpixel((3, 0))
 
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=first_pixel)
 
-    first_col_strip = logo.crop((0, 0, 1, logo_h))
-    last_col_strip = logo.crop((logo_w - 1, 0, logo_w, logo_h))
+    first_col_strip = logo.crop((2, 0, 3, logo_h))
+    last_col_strip = logo.crop((logo_w - 3, 0, logo_w - 2, logo_h))
 
     # fill left of the logo with its first column
     for col in range(52):
