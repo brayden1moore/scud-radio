@@ -572,8 +572,8 @@ def draw_marquee(name, offset):
     draw = ImageDraw.Draw(img)
 
     # clear the old text strip (black background band)
-    draw.rectangle([MARQUEE_X, everything_info_y - 4,
-                    SCREEN_WIDTH, everything_info_y + line_h + 4], fill=BLACK)
+    draw.rectangle([MARQUEE_X, everything_info_y - 3,
+                    SCREEN_WIDTH, everything_info_y + line_h + 3], fill=BLACK)
 
     # draw the text twice so it wraps seamlessly
     span = full_w + MARQUEE_GAP
@@ -1734,7 +1734,8 @@ try:
         overlay_up = volume_overlay_showing or confirm_overlay_showing
         if (screen_on and not sleeping and not overlay_up
                 and currently_displaying == 'everything'
-                and active_name and active_name in cached_everything_dict):
+                and active_name and active_name in cached_everything_dict
+                and last_input_time > 3):
 
             text = streams[active_name]['oneLiner'].replace('&amp;', '&').strip()
             avail_w = SCREEN_WIDTH - MARQUEE_X
@@ -1743,14 +1744,14 @@ try:
                     marquee_name = active_name
                     marquee_offset = 0
                 else:
-                    marquee_offset += 12          # pixels per second — tune to taste
+                    marquee_offset += 12        # pixels per second — tune to taste
                 draw_marquee(active_name, marquee_offset)
             else:
                 marquee_name = None               # short text, nothing to scroll
         else:
             marquee_name = None
 
-        time.sleep(0.5)
+        time.sleep(0.2)
 
 except KeyboardInterrupt:
     if mpv_process:
