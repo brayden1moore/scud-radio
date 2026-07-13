@@ -576,10 +576,7 @@ def display_everything(name, readied=False, silent=False):
 
         # draw info
         y_offset = 0
-        if title_font == SMALL_LIGHT:
-            everything_info_y = name_chunk_start + 30
-        else:
-            everything_info_y = name_chunk_start + 26
+        everything_info_y = name_chunk_start + 30
         for i in title_lines:
             draw.text((name_chunk_start_x, everything_info_y + y_offset), i, font=title_font, fill=WHITE)
             y_offset += 20
