@@ -948,7 +948,7 @@ def toggle_confirm_on_rotate():
 def show_volume_overlay(volume):
     global current_image, volume_overlay_showing
     if current_image:
-        img = current_image.copy()
+        img = cached_everything_dict[stream].copy()
 
         trim_color = RED
         draw = ImageDraw.Draw(img)
