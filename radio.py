@@ -1752,8 +1752,9 @@ try:
             long_text = width(text, SMALL_LIGHT) > (SCREEN_WIDTH - MARQUEE_X)
 
             if vol is not None:
-                # volume overlay is active — always show it, even mid-seek.
-                # keep the marquee offset advancing underneath (long text only)
+                # volume overlay active — always show it, even mid-seek.
+                # scroll the text underneath only when long and not seeking.
+                # NEVER null marquee_name here, so the offset survives dismissal.
                 if long_text and not seeking:
                     span = width(text, SMALL_LIGHT) + MARQUEE_GAP
                     if marquee_name != active_name:
@@ -1767,18 +1768,17 @@ try:
                             marquee_pause_until = now + 3
                     render_everything_frame(active_name, marquee_offset, volume=vol)
                 else:
-                    # short text, or seeking — bar only, leave text untouched
+                    # short text, or seeking — bar only, leave baked-in text untouched
                     render_everything_frame(active_name, 0, volume=vol, draw_text=False)
 
             elif seeking:
                 # mid-seek, no volume — let the seek's own frames own the screen
                 marquee_name = None
 
-            elif volume_just_cleared:
-                display_readied_cached(active_name)
-                marquee_name = None
-
             elif long_text:
+                # normal scrolling, and also the just-cleared tick for long text:
+                # marquee_name still equals active_name (never nulled during overlay),
+                # so the offset resumes and this frame repaints the strip, erasing the bar
                 span = width(text, SMALL_LIGHT) + MARQUEE_GAP
                 if marquee_name != active_name:
                     marquee_name = active_name
@@ -1792,6 +1792,11 @@ try:
                         marquee_offset = 0
                         marquee_pause_until = now + 3
                 render_everything_frame(active_name, marquee_offset)
+
+            elif volume_just_cleared:
+                # only reached for short text — nothing else redraws, so wipe the bar
+                display_readied_cached(active_name)
+                marquee_name = None
 
             else:
                 marquee_name = None
