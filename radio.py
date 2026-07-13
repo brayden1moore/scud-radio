@@ -1145,10 +1145,9 @@ def toggle_favorite():
         if chosen_stream in cached_everything_dict:
             del cached_everything_dict[chosen_stream]
         
+        calculate_ticks()
         display_readied_cached(chosen_stream)  
         freeze_for_task = False
-
-        calculate_ticks()
 
 ready_to_display = False
 refreshing_everything_now = False
