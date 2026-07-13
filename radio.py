@@ -1433,6 +1433,7 @@ cached_everything_dict = {}
 streams = get_streams()
 last_successful_fetch = time.time()
 stream_list = get_stream_list(streams)
+calculate_ticks()
 
 last_played = get_last_played()
 if last_played in stream_list:
@@ -1656,7 +1657,6 @@ volume_click_button = Button(17, bounce_time=0.05)
 volume_click_button.when_pressed = wrapped_action(lambda: on_button_pressed())
     
 ## main loop
-calculate_ticks()
 refresh_everything_cache(stream_list)
 
 last_input_time = time.time()
