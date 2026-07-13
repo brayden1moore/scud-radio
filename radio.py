@@ -529,10 +529,6 @@ def calculate_ticks():
     for idx, name in enumerate(ordered):
         x = tick_start + step * idx
         tick_locations[name] = round(x)
-        if name in favorites:
-            xr = round(x)
-            draw.rectangle([xr - 1, line_y - 4, xr + 1, line_y + 4], fill=BLACK)
-
     tick_image = image
 
 
@@ -549,7 +545,7 @@ def draw_tick(draw, name):
         width=1
     )
 
-    
+
 def display_everything(name, readied=False, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
