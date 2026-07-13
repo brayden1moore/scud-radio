@@ -780,7 +780,7 @@ def display_one(name):
     currently_displaying = 'one'
 
 
-def display_bar(image=current_image):
+def display_bar(image=current_image, color=WHITE):
     # time
     if image:
         draw = ImageDraw.Draw(image)
@@ -793,7 +793,7 @@ def display_bar(image=current_image):
 
         # bottom bar 218 y for bottom
         y = 218
-        draw.rectangle([0, y, 320, y+24], fill=WHITE)
+        draw.rectangle([0, y, 320, y+24], fill=color)
         draw.rectangle([0, y, 320, y], fill=BLACK)
         center_of_section = round((240 + 218) / 2)
 
@@ -814,7 +814,7 @@ def display_ambient(name, clicked=False):
 
     currently_displaying = 'ambient'
     logging.info(f'DISPLAY AMBIENT BEING CALLED')
-    display_bar(image)
+    display_bar(image, color = first_pixel)
 
     enhancer = ImageEnhance.Brightness(image)
     image = enhancer.enhance(BRIGHTNESS)
@@ -1143,9 +1143,6 @@ def toggle_favorite():
         thread.start()
         time.sleep(0.5)
         last_input_time = time.time()
-
-        if chosen_stream in list(one_cache.keys()):
-            del one_cache[chosen_stream]
             
         display_readied_cached(chosen_stream)  
         freeze_for_task = False
