@@ -953,8 +953,8 @@ def show_volume_overlay(volume):
         trim_color = RED
         draw = ImageDraw.Draw(img)
 
-        overlay_height = 12          # thickness of the bar (was overlay_width)
-        bar_top = 0                  # sits along the top edge
+        overlay_height = 10       
+        bar_top = 0                 
         bar_bottom = overlay_height
 
         total_bar_width = SCREEN_WIDTH
