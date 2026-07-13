@@ -1251,12 +1251,13 @@ def refresh_everything_cache(refresh_stream_list):
 
 
 def handle_rotation(direction):
-    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time, last_seek_rotation
+    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time, last_seek_rotation, volume_overlay_showing
     now = time.time()
     last_input_time = now
     rotated = True
     last_rotation = now
     last_seek_rotation = now
+    volume_overlay_showing = False
     seek_stream(direction)
     if confirm_on_rotate:
         confirm_seek() 
