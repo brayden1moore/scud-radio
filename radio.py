@@ -561,7 +561,7 @@ def _draw_marquee_text(draw, name, offset):
     everything_info_y = name_chunk_start + height('S', name_font) + 12
     line_h = height('S', SMALL_LIGHT)
 
-    draw.rectangle([MARQUEE_X, everything_info_y - 3,
+    draw.rectangle([MARQUEE_X, everything_info_y - 1,
                     SCREEN_WIDTH, everything_info_y + line_h + 4], fill=BLACK)
 
     span = full_w + MARQUEE_GAP
@@ -1745,8 +1745,10 @@ display_readied_cached(stream)
 
 try:
     while True:
-        set_last_volume(str(current_volume))
         now = time.time()
+        
+        if now - last_input_time > 10:
+            set_last_volume(str(current_volume))
 
         if (now - last_input_time > 60) & (now - last_ambient_display > 30):
             logging.info('DISPLAYING AMBIENT VIA MAIN LOOP')
@@ -1799,7 +1801,7 @@ try:
                 elif now < marquee_pause_until:
                     pass
                 else:
-                    marquee_offset += 5
+                    marquee_offset += 2
                     if marquee_offset >= span:
                         marquee_offset = 0
                         marquee_pause_until = now + 3
@@ -1812,7 +1814,7 @@ try:
         else:
             marquee_name = None
 
-        time.sleep(0.05)
+        time.sleep(0.02)
 
 except KeyboardInterrupt:
     if mpv_process:
