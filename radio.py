@@ -896,7 +896,7 @@ def seek_stream(direction):
 
     if not freeze_for_task:
         idx = stream_list.index(stream)
-        
+
         if currently_displaying == 'ambient':
             readied_stream = stream_list[idx]
         else:
@@ -945,10 +945,7 @@ def toggle_confirm_on_rotate():
 def show_volume_overlay(volume):
     global current_image, volume_overlay_showing
     if current_image:
-        if readied_stream:
-            img = cached_everything_dict[readied_stream].copy()
-        else:
-            img = current_image.copy()
+        img = cached_everything_dict[readied_stream].copy()
 
         trim_color = RED
 
