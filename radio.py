@@ -520,7 +520,7 @@ def calculate_ticks():
         draw.rectangle([square_start, tick_bar_start + 4, square_end, tick_bar_start - 4 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
         
         for i in sorted(favorites, key=str.casefold):
-            draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height+2], fill=tick_color)
+            draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height], fill=tick_color)
             tick_locations[i] = tick_start_local - 1
             tick_start_local += mark_width
         
@@ -529,7 +529,7 @@ def calculate_ticks():
     
     tick_color = WHITE
     for i in [i for i in stream_list if i not in favorites]:
-        draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height+2], fill=tick_color)
+        draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height], fill=tick_color)
         tick_locations[i] = tick_start_local - 1
         tick_start_local += mark_width
     
