@@ -553,6 +553,7 @@ def draw_tick(draw, name):
 
 marquee_offset = 0
 marquee_name = None
+marquee_shown_text = None
 
 MARQUEE_X = 12 + start_x                      # name_chunk_start_x
 MARQUEE_GAP = 30                              # blank gap before the text repeats
@@ -1723,7 +1724,7 @@ try:
         if now - last_input_time > 10:
             set_last_volume(str(current_volume))
 
-        if (now - last_input_time > 120) & (now - last_ambient_display > 30):
+        if (now - last_input_time > 300) & (now - last_ambient_display > 30):
             logging.info('DISPLAYING AMBIENT VIA MAIN LOOP')
             display_ambient(stream)
             last_ambient_display = now
@@ -1754,6 +1755,17 @@ try:
         if on_everything:
             text = streams[active_name]['oneLiner'].replace('&amp;', '&').strip()
             long_text = width(text, SMALL_LIGHT) > (SCREEN_WIDTH - MARQUEE_X)
+
+            # content changed out from under us (periodic_update swapped the oneLiner)
+            text_changed = (marquee_name == active_name and marquee_shown_text != text)
+            if text_changed:
+                marquee_offset = 0
+                marquee_pause_until = now + 3
+                marquee_name = None         
+                if not long_text:
+                    # short text won't be repainted by the marquee path — push a fresh frame now
+                    display_readied_cached(active_name)
+            marquee_shown_text = text
 
             if vol is not None:
                 # volume overlay active — always show it, even mid-seek.
