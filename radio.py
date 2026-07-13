@@ -490,7 +490,7 @@ logo_position = og_logo_position
 
 tick_width = 0
 padding = 10
-square_start = padding - 5
+square_start = padding 
 total_span = SCREEN_WIDTH - (2 * padding)
 tick_start = padding  
 tick_bar_height = 25
