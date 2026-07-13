@@ -228,11 +228,14 @@ def safe_display(image):
 def backlight_on():
     global screen_on
     if disp:
-        if current_image:
-            safe_display(current_image)
-        if currently_displaying == 'ambient':
-            display_ambient(stream)
-        time.sleep(0.2)
+        if stream:
+            if currently_displaying == 'ambient':
+                display_ambient(stream)
+            else:
+                display_readied_cached(stream)
+        else:
+            display_scud()
+        time.sleep(0.1)
         disp.bl_DutyCycle(100)
         screen_on = True
 
