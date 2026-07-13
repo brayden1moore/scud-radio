@@ -1093,6 +1093,8 @@ def switch_on():
     last_input_time = time.time()
     button_released_time = current_time
     backlight_on()
+    sleeping = False
+    put_to_sleep = False
     if switch_off_time:
         if current_time - switch_off_time >= 3600:
             if stream in stream_list:
@@ -1101,8 +1103,7 @@ def switch_on():
                 play(stream_list[0])
     if not muted:
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
-    sleeping = False
-    put_to_sleep = False
+
 
 def toggle_favorite():
     global favorites, stream_list, cached_everything_dict, last_input_time, readied_stream, freeze_for_task
