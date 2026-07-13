@@ -847,18 +847,6 @@ def get_anchor(title, info, line_gap, section_gap, title_font, info_font):
 
     section_height = 215 - (72 + 12 + 6)
     return 65 + 12 + 6 + round((section_height - size) // 2) - 6
-
-
-def display_battery(draw, image):
-    if not battery:
-        get_battery()
-    if battery:
-        outer_sq = draw.rectangle([280, 227, 300, 237], fill=BLACK)
-        nipple = draw.rectangle([300, 229, 301, 235], fill=BLACK)
-        inner_white = draw.rectangle([281, 228, 299, 236], fill=WHITE) 
-
-        fill = BLACK if not charging else GREEN
-        inner_sq = draw.rectangle([282, 229, 282 + round(15*battery/100), 235], fill=fill) 
     
 
 def get_wifi_strength():
@@ -993,10 +981,7 @@ def on_button_pressed():
     button_press_time = time.time()
     button_released_time = None
 
-    if currently_displaying != 'everything':
-        play_random()
-    else:
-        display_readied_cached(stream, pushed=True)
+    play_random()
 
     rotated = False
 
