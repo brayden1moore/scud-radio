@@ -583,14 +583,15 @@ def _draw_volume_bar(draw, volume):
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
 
 
-def render_everything_frame(name, offset=0, volume=None):
-    """Composite card + scrolled oneLiner + optional volume bar, and push once."""
+def render_everything_frame(name, offset=0, volume=None, draw_text=True):
+    """Composite card + optional scrolled oneLiner + optional volume bar, push once."""
     base = cached_everything_dict.get(name)
     if not base:
         return
     img = base.copy()
     draw = ImageDraw.Draw(img)
-    _draw_marquee_text(draw, name, offset)
+    if draw_text:
+        _draw_marquee_text(draw, name, offset)
     if volume is not None:
         _draw_volume_bar(draw, volume)
     disp.ShowImage(img)
@@ -1784,7 +1785,7 @@ try:
                         marquee_pause_until = now + 3
                 render_everything_frame(active_name, marquee_offset, volume=vol)
             elif vol is not None:
-                render_everything_frame(active_name, 0, volume=vol)
+                render_everything_frame(active_name, 0, volume=vol, draw_text=False)
                 marquee_name = None
             else:
                 marquee_name = None
