@@ -582,7 +582,7 @@ def display_everything(name, readied=False, silent=False):
             y_offset += 20
 
         # draw location
-        tags_start = name_chunk_start + 54
+        tags_start = everything_info_y + height('S', title_font) + 12
         draw.rectangle([name_chunk_start_x, tags_start, name_chunk_start_x + width(location, SMALL_LIGHT), tags_start + 1 + height('S', SMALL_LIGHT)], fill=BLUE) # bg
         draw.text((name_chunk_start_x, tags_start - 2), location, font=SMALL_LIGHT, fill=BLACK)
         
