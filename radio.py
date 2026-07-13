@@ -495,11 +495,11 @@ total_span = SCREEN_WIDTH - (2 * padding)
 tick_start = padding  
 tick_bar_height = 25
 tick_bar_start = logo_chunk_start + 87
-tick_height = 2
+tick_height = 1
 tick_start_y = (tick_bar_start + tick_bar_height / 2) 
-
 tick_image = None
 tick_locations = {}
+
 def calculate_ticks():
     global tick_locations, tick_image
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0,0,0,0))
