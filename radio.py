@@ -502,48 +502,54 @@ tick_locations = {}
 
 def calculate_ticks():
     global tick_locations, tick_image
-    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0,0,0,0))
-    draw = ImageDraw.Draw(image) 
+    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0, 0, 0, 0))
+    draw = ImageDraw.Draw(image)
     tick_locations = {}
 
-    draw.rectangle([0, tick_bar_start + 4, SCREEN_WIDTH, tick_bar_start - 4 + tick_bar_height], fill=BLACK)
-    
     total_ticks = len(stream_list)
-    mark_width = round(total_span / total_ticks)
-    
-    tick_start_local = tick_start 
-    
-    square_end = padding + mark_width * len(favorites) - 1
-    
-    if favorites:
-        tick_color = BLACK
-        draw.rectangle([square_start, tick_bar_start + 4, square_end, tick_bar_start - 4 + tick_bar_height], fill=YELLOW, outline=YELLOW, width=1)
-        
-        for i in sorted(favorites, key=str.casefold):
-            #draw.rectangle([tick_start_local, tick_start_y - 2, tick_start_local + tick_width, tick_start_y + tick_height], fill=tick_color)
-            tick_locations[i] = tick_start_local - 1
-            tick_start_local += mark_width
-        
-        square_end += mark_width
-        tick_start_local += 5
-    
-    tick_color = WHITE
-    draw.rectangle([0, tick_start_y - 2, SCREEN_WIDTH, tick_start_y + tick_height], fill=tick_color)
-    for i in [i for i in stream_list if i not in favorites]:
-        tick_locations[i] = tick_start_local - 1
-        tick_start_local += mark_width
-    
+    step = total_span / total_ticks          # float spacing — round only at store time
+
+    fav_sorted = sorted(favorites, key=str.casefold)
+    rest = [i for i in stream_list if i not in favorites]
+    ordered = fav_sorted + rest
+
+    line_y = tick_start_y
+
+    # yellow highlight block behind the favorites region
+    if fav_sorted:
+        fav_start_x = tick_start
+        fav_end_x = tick_start + step * len(fav_sorted)
+        draw.rectangle([fav_start_x, line_y - 3, fav_end_x, line_y + 3], fill=YELLOW)
+
+    # white baseline for the non-favorite region
+    rest_start_x = tick_start + step * len(fav_sorted)
+    draw.rectangle([rest_start_x, line_y - 1, SCREEN_WIDTH, line_y + 1], fill=WHITE)
+
+    # assign positions; draw individual ticks only for favorites
+    for idx, name in enumerate(ordered):
+        x = tick_start + step * idx
+        tick_locations[name] = round(x)
+        if name in favorites:
+            xr = round(x)
+            draw.rectangle([xr - 1, line_y - 4, xr + 1, line_y + 4], fill=BLACK)
+
     tick_image = image
 
+
 def draw_tick(draw, name):
-    if name not in tick_locations.keys():
+    if name not in tick_locations:
         calculate_ticks()
 
-    bar_width = 2
     mark_start = tick_locations[name]
-    readied_fill = WHITE if name not in favorites else WHITE 
-    draw.rectangle([mark_start-1, tick_bar_start + 1, mark_start + bar_width+1, tick_bar_start + 2 + tick_bar_height - 3], fill=readied_fill, outline=BLACK, width=1)
+    bar_width = 3
+    draw.rectangle(
+        [mark_start - 1, tick_bar_start, mark_start + bar_width, tick_bar_start + tick_bar_height],
+        fill=WHITE,
+        outline=BLACK,
+        width=1
+    )
 
+    
 def display_everything(name, readied=False, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
