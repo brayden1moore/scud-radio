@@ -793,7 +793,7 @@ def display_bar(image=current_image, color=WHITE):
         # bottom bar 218 y for bottom
         y = 218
         draw.rectangle([0, y, 320, y+24], fill=color)
-        draw.rectangle([0, y, 320, y], fill=BLACK)
+        draw.rectangle([0, y, 320, y], fill=text_color)
 
         draw.text((13, y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
         draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
@@ -804,12 +804,12 @@ def display_ambient(name, clicked=False):
 
     logo = streams[name]['logo_216']
     logo_w, logo_h = logo.size
-    first_pixel = logo.getpixel((3, 0))
+    first_pixel = logo.getpixel((4, 0))
 
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=first_pixel)
 
-    first_col_strip = logo.crop((2, 0, 3, logo_h))
-    last_col_strip = logo.crop((logo_w - 3, 0, logo_w - 2, logo_h))
+    first_col_strip = logo.crop((4, 0, 5, logo_h))
+    last_col_strip = logo.crop((logo_w - 4, 0, logo_w - 3, logo_h))
 
     # fill left of the logo with its first column
     for col in range(52):
