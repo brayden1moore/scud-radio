@@ -1719,7 +1719,7 @@ try:
         if now - last_input_time > 10:
             set_last_volume(str(current_volume))
 
-        if (now - last_input_time > 60) & (now - last_ambient_display > 30):
+        if (now - last_input_time > 120) & (now - last_ambient_display > 30):
             logging.info('DISPLAYING AMBIENT VIA MAIN LOOP')
             display_ambient(stream)
             last_ambient_display = now
