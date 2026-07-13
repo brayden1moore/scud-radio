@@ -545,6 +545,48 @@ def draw_tick(draw, name):
         width=1
     )
 
+marquee_offset = 0
+marquee_name = None
+
+MARQUEE_X = 12 + start_x                      # name_chunk_start_x
+MARQUEE_GAP = 30                              # blank gap before the text repeats
+
+def draw_marquee(name, offset):
+    """Redraw just the oneLiner line on a copy of the cached everything image, scrolled by `offset`."""
+    if name not in cached_everything_dict:
+        return
+    base = cached_everything_dict[name]
+    if not base:
+        return
+
+    text = streams[name]['oneLiner'].replace('&amp;', '&').strip()
+    full_w = width(text, SMALL_LIGHT)
+
+    # compute the y of the oneLiner exactly as display_everything does
+    name_font = EXTRALARGE_LIGHT
+    name_chunk_start = 240 - 88
+    everything_info_y = name_chunk_start + height('S', name_font) + 12
+    line_h = height('S', SMALL_LIGHT)
+
+    img = base.copy()
+    draw = ImageDraw.Draw(img)
+
+    # clear the old text strip (black background band)
+    draw.rectangle([MARQUEE_X, everything_info_y - 2,
+                    SCREEN_WIDTH, everything_info_y + line_h + 2], fill=BLACK)
+
+    # draw the text twice so it wraps seamlessly
+    span = full_w + MARQUEE_GAP
+    start = MARQUEE_X - (offset % span)
+    draw.text((start, everything_info_y), text, font=SMALL_LIGHT, fill=WHITE)
+    draw.text((start + span, everything_info_y), text, font=SMALL_LIGHT, fill=WHITE)
+
+    # re-clip anything that scrolled left of the margin
+    draw.rectangle([0, everything_info_y - 2, MARQUEE_X - 1,
+                    everything_info_y + line_h + 2], fill=BLACK)
+
+    disp.ShowImage(img)
+
 
 def display_everything(name, readied=False, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
@@ -1686,6 +1728,27 @@ try:
             volume_overlay_showing = False
             confirm_overlay_showing = False
             display_current()
+            
+            # ---- marquee the oneLiner on the everything screen ----
+            active_name = readied_stream if readied_stream else stream
+            overlay_up = volume_overlay_showing or confirm_overlay_showing
+            if (screen_on and not sleeping and not overlay_up
+                    and currently_displaying == 'everything'
+                    and active_name and active_name in cached_everything_dict):
+
+                text = streams[active_name]['oneLiner'].replace('&amp;', '&').strip()
+                avail_w = SCREEN_WIDTH - MARQUEE_X
+                if width(text, SMALL_LIGHT) > avail_w:
+                    if marquee_name != active_name:
+                        marquee_name = active_name
+                        marquee_offset = 0
+                    else:
+                        marquee_offset += 12          # pixels per second — tune to taste
+                    draw_marquee(active_name, marquee_offset)
+                else:
+                    marquee_name = None               # short text, nothing to scroll
+            else:
+                marquee_name = None
 
         time.sleep(1)
 
