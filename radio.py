@@ -1670,7 +1670,7 @@ last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
 
-display_readied_cached(stream, readied=False)
+display_readied_cached(stream)
 
 try:
     while True:
