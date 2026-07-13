@@ -1229,10 +1229,10 @@ def display_readied_cached(name, pushed=False):
     global cached_everything_dict, currently_displaying
     currently_displaying = 'everything'
     if name in list(cached_everything_dict.keys()):
-        image = cached_everything_dict[name]
-        image.paste(tick_image, (0,0), mask=tick_image)
-        draw = ImageDraw.Draw(image)
-        draw_tick(draw, name)
+        #image = cached_everything_dict[name]
+        #image.paste(tick_image, (0,0), mask=tick_image)
+        #draw = ImageDraw.Draw(image)
+        #draw_tick(draw, name)
 
         if image:
             if pushed:
