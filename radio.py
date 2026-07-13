@@ -572,8 +572,8 @@ def draw_marquee(name, offset):
     draw = ImageDraw.Draw(img)
 
     # clear the old text strip (black background band)
-    draw.rectangle([MARQUEE_X, everything_info_y - 2,
-                    SCREEN_WIDTH, everything_info_y + line_h + 2], fill=BLACK)
+    draw.rectangle([MARQUEE_X, everything_info_y - 4,
+                    SCREEN_WIDTH, everything_info_y + line_h + 4], fill=BLACK)
 
     # draw the text twice so it wraps seamlessly
     span = full_w + MARQUEE_GAP
@@ -1750,7 +1750,7 @@ try:
         else:
             marquee_name = None
 
-        time.sleep(1)
+        time.sleep(0.5)
 
 except KeyboardInterrupt:
     if mpv_process:
