@@ -1729,26 +1729,26 @@ try:
             confirm_overlay_showing = False
             display_current()
             
-            # ---- marquee the oneLiner on the everything screen ----
-            active_name = readied_stream if readied_stream else stream
-            overlay_up = volume_overlay_showing or confirm_overlay_showing
-            if (screen_on and not sleeping and not overlay_up
-                    and currently_displaying == 'everything'
-                    and active_name and active_name in cached_everything_dict):
+        # ---- marquee the oneLiner on the everything screen ----
+        active_name = readied_stream if readied_stream else stream
+        overlay_up = volume_overlay_showing or confirm_overlay_showing
+        if (screen_on and not sleeping and not overlay_up
+                and currently_displaying == 'everything'
+                and active_name and active_name in cached_everything_dict):
 
-                text = streams[active_name]['oneLiner'].replace('&amp;', '&').strip()
-                avail_w = SCREEN_WIDTH - MARQUEE_X
-                if width(text, SMALL_LIGHT) > avail_w:
-                    if marquee_name != active_name:
-                        marquee_name = active_name
-                        marquee_offset = 0
-                    else:
-                        marquee_offset += 12          # pixels per second — tune to taste
-                    draw_marquee(active_name, marquee_offset)
+            text = streams[active_name]['oneLiner'].replace('&amp;', '&').strip()
+            avail_w = SCREEN_WIDTH - MARQUEE_X
+            if width(text, SMALL_LIGHT) > avail_w:
+                if marquee_name != active_name:
+                    marquee_name = active_name
+                    marquee_offset = 0
                 else:
-                    marquee_name = None               # short text, nothing to scroll
+                    marquee_offset += 12          # pixels per second — tune to taste
+                draw_marquee(active_name, marquee_offset)
             else:
-                marquee_name = None
+                marquee_name = None               # short text, nothing to scroll
+        else:
+            marquee_name = None
 
         time.sleep(1)
 
