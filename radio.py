@@ -293,7 +293,7 @@ def get_streams():
     # see if cached image exists. if so, read into dict. if not, add to queue.
     need_imgs = []
     for name, _ in active.items():
-        full_img_path = Path(LIB_PATH) / f'{name.replace(' ','_')}_176.pkl'
+        full_img_path = Path(LIB_PATH) / f'{name.replace(' ','_')}_216.pkl'
 
         if not full_img_path.exists():
             need_imgs.append(name)
@@ -305,7 +305,7 @@ def get_streams():
             if file_age_days > 7:  # refresh if older than 7 days
                 need_imgs.append(name)
             else:
-                for i in ['25','60','96','176']:
+                for i in ['25','60','96','216']:
                     with open(Path(LIB_PATH) / f'{name.replace(' ','_')}_{i}.pkl', 'rb') as f:
                         image = pickle.load(f).convert('RGB')
                         active[name][f'logo_{i}'] = image
