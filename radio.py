@@ -75,7 +75,7 @@ def load_font(name, size, weight=400):
     font.set_variation_by_axes([weight]) 
     return font
 
-SMALL_LIGHT = load_font('Archivo', 17, weight=400)  
+SMALL_LIGHT = load_font('Noto', 17, weight=400)  
 MEDIUM_BOLD = load_font('Archivo',28, weight=600)
 LARGE_LIGHT = load_font('Archivo',32, weight=400)  
 EXTRALARGE_LIGHT = load_font('Archivo',38, weight=400)  
@@ -580,8 +580,7 @@ def _draw_marquee_text(draw, name, offset):
     global text_on_screen
 
     """Paint the scrolled oneLiner onto an existing draw object. No push."""
-    text = calculate_text(streams[name]['oneLiner'], SMALL_LIGHT, 640, 1)[0][0]
-
+    text = streams[name]['oneLiner'].replace('&amp;', '&').strip()
     full_w = streams[name].get('oneLinerWidth') or width(text, SMALL_LIGHT)
 
     name_font = EXTRALARGE_LIGHT
