@@ -585,7 +585,7 @@ def _draw_marquee_text(draw, name, offset):
 
     name_font = EXTRALARGE_LIGHT
     name_chunk_start = 240 - 88
-    everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 12
+    everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 10
     line_h = FONT_HEIGHTS['SMALL_LIGHT']
 
     draw.rectangle([MARQUEE_X, everything_info_y - 1,
