@@ -1166,7 +1166,7 @@ def toggle_favorite():
         for i in indexes_needing_refresh:
             streams_needing_refresh.append(sl[i % len(sl)])
     
-    img = refresh_everything_cache[chosen_stream].copy()
+    img = cached_everything_dict[chosen_stream].copy()
     streams_needing_refresh = list(set(streams_needing_refresh))
 
     print('TOGGLED. REFRESHING, ', streams_needing_refresh)
