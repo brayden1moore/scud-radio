@@ -1033,7 +1033,7 @@ def on_button_pressed():
     last_input_time = time.time()
     button_press_time = time.time()
     button_released_time = None
-
+    held = True
     play_random()
 
     rotated = False
@@ -1754,6 +1754,7 @@ try:
         vol = volume_overlay_value if volume_overlay_showing else None
 
         on_everything = (screen_on and not sleeping
+                and held != True
                 and freeze_for_task != True
                 and currently_displaying == 'everything'
                 and active_name and active_name in cached_everything_dict)
