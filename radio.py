@@ -553,12 +553,14 @@ def draw_tick(draw, name):
 
 marquee_offset = 0
 marquee_name = None
-marquee_shown_text = None
+text_on_screen = None
 
 MARQUEE_X = 12 + start_x                      # name_chunk_start_x
 MARQUEE_GAP = 30                              # blank gap before the text repeats
 
 def _draw_marquee_text(draw, name, offset):
+    global text_on_screen
+
     """Paint the scrolled oneLiner onto an existing draw object. No push."""
     text = streams[name]['oneLiner'].replace('&amp;', '&').strip()
     full_w = width(text, SMALL_LIGHT)
@@ -578,6 +580,8 @@ def _draw_marquee_text(draw, name, offset):
 
     draw.rectangle([0, everything_info_y - 2, MARQUEE_X - 1,
                     everything_info_y + line_h + 2], fill=BLACK)
+    
+    text_on_screen = streams[name]['oneLiner']
 
 
 def _draw_volume_bar(draw, volume):
@@ -1268,7 +1272,7 @@ def volume_handle_rotation(direction):
 
 def display_readied_cached(name, pushed=False):
     ''' First looks for cached version and if not, rebuilds '''
-    global cached_everything_dict, currently_displaying
+    global cached_everything_dict, currently_displaying, text_on_screen
     currently_displaying = 'everything'
     if name in list(cached_everything_dict.keys()):
         image = cached_everything_dict[name]
@@ -1289,6 +1293,9 @@ def display_readied_cached(name, pushed=False):
             cached_everything_dict[name] = display_everything(name, readied=True)
     else:
         cached_everything_dict[name] = display_everything(name, readied=True)
+
+    text_on_screen = streams[name]['oneLiner']
+    
 
 def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict, sleeping
@@ -1753,11 +1760,12 @@ try:
                          and active_name and active_name in cached_everything_dict)
 
         if on_everything:
-            text = streams[active_name]['oneLiner'].replace('&amp;', '&').strip()
+            one_liner = streams[active_name]['oneLiner']
+            text = one_liner.replace('&amp;', '&').strip()
             long_text = width(text, SMALL_LIGHT) > (SCREEN_WIDTH - MARQUEE_X)
 
             # content changed out from under us (periodic_update swapped the oneLiner)
-            text_changed = (marquee_name == active_name and marquee_shown_text != text)
+            text_changed = (marquee_name == active_name and text_on_screen != one_liner)
             if text_changed:
                 marquee_offset = 0
                 marquee_pause_until = now + 3
@@ -1765,7 +1773,6 @@ try:
                 if not long_text:
                     # short text won't be repainted by the marquee path — push a fresh frame now
                     display_readied_cached(active_name)
-            marquee_shown_text = text
 
             if vol is not None:
                 # volume overlay active — always show it, even mid-seek.
