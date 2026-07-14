@@ -235,7 +235,7 @@ def backlight_on():
             if currently_displaying == 'ambient':
                 display_ambient(stream)
             else:
-                display_readied_cached(stream)
+                displa_cached_scroll(stream)
         else:
             display_scud()
         time.sleep(0.1)
@@ -415,7 +415,7 @@ def play_random():
     with state_lock:
         available = [i for i in stream_list if i != stream and streams[i]['status'] != 'Offline']
     chosen = random.choice(available)
-    display_readied_cached(chosen)
+    displa_cached_scroll(chosen)
     play(chosen)
     stream = chosen
     readied_stream = None
@@ -611,8 +611,9 @@ def _draw_volume_bar(draw, volume):
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], fill=RED)
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
 
-def render_everything_frame(name, offset=0, volume=None, draw_text=True):
-    base = cached_everything_dict.get(name)
+
+def render_frame(name, offset=0, volume=None, draw_text=True):
+    base = scroll_cache_dict.get(name)
     if not base:
         return
     img = base.copy()
@@ -627,208 +628,7 @@ def render_everything_frame(name, offset=0, volume=None, draw_text=True):
             return
         disp.ShowImage(img)
 
-base_card_cache = {}   # (name, oneLiner, status) -> RGB image
-
-def _base_key(name):
-    s = streams[name]
-    return (name, s['oneLiner'], s['status'])
-
-def render_card_base(name):
-    """
-    Expensive, favorite-independent layer for one station:
-    name text (with tofu font fallback), oneLiner, tag pills, main 96px
-    logo + blue border. Pure function of streams[name] — no globals
-    mutated, no display push, safe to call from a prefetch thread.
-    """
-    key = _base_key(name)
-    cached = base_card_cache.get(key)
-    if cached is not None:
-        return cached
-
-    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
-    draw = ImageDraw.Draw(image)
-
-    # --- name ---
-    name_chunk_start = 240 - 88
-    name_chunk_start_x = 12 + start_x
-    name_lines, name_font = calculate_text(name, EXTRALARGE_LIGHT, 315, 1)
-    name_line = name_lines[0]
-    draw.text((name_chunk_start_x - 1, name_chunk_start - 1),
-              name_line, font=name_font, fill=WHITE)
-
-    # --- oneLiner info line ---
-    # (baked in for the static/short-text case; the marquee partial-update
-    # path paints over this band anyway)
-    everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 10
-    draw.text((name_chunk_start_x, everything_info_y),
-              streams[name]['oneLiner'], font=SMALL_LIGHT, fill=WHITE)
-
-    # --- tag pills: status, location, genres ---
-    tags_start_y = round(everything_info_y + FONT_HEIGHTS['SMALL_LIGHT'] + 12)
-    tags_start_x = name_chunk_start_x
-    genres = [streams[name]['status'], streams[name]['location']]
-    if streams[name]['genres']:
-        genres.extend(streams[name]['genres'])
-
-    genre_x_offset = 0
-    box_h = FONT_HEIGHTS['SMALL_LIGHT'] - 4
-    for idx, genre in enumerate(genres):
-        genre_width = width(genre, SMALL_LIGHT)
-        fill = RED if idx == 0 else BLUE if idx == 1 else YELLOW
-        x0 = tags_start_x + genre_x_offset
-        draw.rectangle([x0, tags_start_y, x0 + genre_width, tags_start_y + 1 + box_h],
-                       fill=fill)
-        top = SMALL_LIGHT.getbbox(genre)[1]
-        draw.text((x0, tags_start_y - top + 1), genre, font=SMALL_LIGHT, fill=BLACK)
-        genre_x_offset += genre_width + 5
-
-    # --- main logo + border (star is favorite-dependent -> compose layer) ---
-    image.paste(streams[name]['logo_96'], logo_position)
-    draw.rectangle([og_logo_position[0], og_logo_position[1],
-                    og_logo_position[0] + 96, og_logo_position[1] + 96],
-                   outline=BLUE, width=3)
-
-    base_card_cache[key] = image
-    return image
-
-def _base_key(name):
-    s = streams[name]
-    return (name, s['oneLiner'], s['status'])
-
-def render_card_base(name):
-    """
-    Expensive, favorite-independent layer for one station:
-    name text (with tofu font fallback), oneLiner, tag pills, main 96px
-    logo + blue border. Pure function of streams[name] — no globals
-    mutated, no display push, safe to call from a prefetch thread.
-    """
-    key = _base_key(name)
-    cached = base_card_cache.get(key)
-    if cached is not None:
-        return cached
-
-    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
-    draw = ImageDraw.Draw(image)
-
-    # --- name ---
-    name_chunk_start = 240 - 88
-    name_chunk_start_x = 12 + start_x
-    name_lines, name_font = calculate_text(name, EXTRALARGE_LIGHT, 315, 1)
-    name_line = name_lines[0]
-    draw.text((name_chunk_start_x - 1, name_chunk_start - 1),
-              name_line, font=name_font, fill=WHITE)
-
-    # --- oneLiner info line ---
-    # (baked in for the static/short-text case; the marquee partial-update
-    # path paints over this band anyway)
-    everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 10
-    draw.text((name_chunk_start_x, everything_info_y),
-              streams[name]['oneLiner'], font=SMALL_LIGHT, fill=WHITE)
-
-    # --- tag pills: status, location, genres ---
-    tags_start_y = round(everything_info_y + FONT_HEIGHTS['SMALL_LIGHT'] + 12)
-    tags_start_x = name_chunk_start_x
-    genres = [streams[name]['status'], streams[name]['location']]
-    if streams[name]['genres']:
-        genres.extend(streams[name]['genres'])
-
-    genre_x_offset = 0
-    box_h = FONT_HEIGHTS['SMALL_LIGHT'] - 4
-    for idx, genre in enumerate(genres):
-        genre_width = width(genre, SMALL_LIGHT)
-        fill = RED if idx == 0 else BLUE if idx == 1 else YELLOW
-        x0 = tags_start_x + genre_x_offset
-        draw.rectangle([x0, tags_start_y, x0 + genre_width, tags_start_y + 1 + box_h],
-                       fill=fill)
-        top = SMALL_LIGHT.getbbox(genre)[1]
-        draw.text((x0, tags_start_y - top + 1), genre, font=SMALL_LIGHT, fill=BLACK)
-        genre_x_offset += genre_width + 5
-
-    # --- main logo + border (star is favorite-dependent -> compose layer) ---
-    image.paste(streams[name]['logo_96'], logo_position)
-    draw.rectangle([og_logo_position[0], og_logo_position[1],
-                    og_logo_position[0] + 96, og_logo_position[1] + 96],
-                   outline=BLUE, width=3)
-
-    base_card_cache[key] = image
-    return image
-
-
-def compose_card(name):
-    """
-    Cheap, order/favorite-dependent layer: neighbor thumbnails, stars,
-    tick bar. A handful of pastes + rects (~ms). Returns a fresh image
-    ready to push — never mutates the cached base.
-    """
-    # snapshot ordering state so a concurrent favorite-toggle can't
-    # shift indices mid-compose
-    with state_lock:
-        sl = list(stream_list)
-        favs = set(favorites)
-
-    if name not in sl:
-        return render_card_base(name).copy()
-
-    n = len(sl)
-    idx = sl.index(name)
-    prev_stream        = sl[(idx - 1) % n]
-    double_prev_stream = sl[(idx - 2) % n]
-    next_stream        = sl[(idx + 1) % n]
-    double_next_stream = sl[(idx + 2) % n]
-
-    image = render_card_base(name).copy()
-    draw = ImageDraw.Draw(image)
-
-    # star on the main logo
-    if name in favs:
-        image.paste(star_96, og_logo_position, star_96)
-
-    # prev / next 60px thumbnails
-    prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
-    next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
-
-    image.paste(streams[prev_stream]['logo_60'], prev_position)
-    draw.rectangle([prev_position[0], prev_position[1],
-                    prev_position[0] + 60, prev_position[1] + 60],
-                   outline=WHITE, width=1)
-    image.paste(streams[next_stream]['logo_60'], next_position)
-    draw.rectangle([next_position[0], next_position[1],
-                    next_position[0] + 60, next_position[1] + 60],
-                   outline=WHITE, width=1)
-
-    if prev_stream in favs:
-        image.paste(star_60, prev_position, star_60)
-    if next_stream in favs:
-        image.paste(star_60, next_position, star_60)
-
-    # double prev / next 25px thumbnails
-    double_prev_position = (square_start, logo_chunk_start + 57 - 4)
-    double_next_position = (290, logo_chunk_start + 57 - 4)
-    double_size = 25
-
-    image.paste(streams[double_prev_stream]['logo_25'], double_prev_position)
-    draw.rectangle([double_prev_position[0], double_prev_position[1],
-                    double_prev_position[0] + double_size,
-                    double_prev_position[1] + double_size],
-                   outline=WHITE, width=1)
-    if double_prev_stream in favs:
-        image.paste(star_25, double_prev_position, star_25)
-
-    image.paste(streams[double_next_stream]['logo_25'], double_next_position)
-    draw.rectangle([double_next_position[0], double_next_position[1],
-                    double_next_position[0] + double_size,
-                    double_next_position[1] + double_size],
-                   outline=WHITE, width=1)
-    if double_next_stream in favs:
-        image.paste(star_25, double_next_position, star_25)
-
-    # tick bar
-    image.paste(tick_image, (0, 0), mask=tick_image)
-    draw_tick(draw, name)
-
-    return image
-
-def display_everything(name, silent=False):
+def display_scroll(name, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
     if not restarting:
@@ -897,7 +697,10 @@ def display_everything(name, silent=False):
         if name in favorites:
             this_star = star_96.copy()
             image.paste(this_star, og_logo_position, this_star)
-
+        #if streams[name]['status'] == 'Live':
+            #this_live = live_96.copy()
+            #image.paste(this_live, og_logo_position, this_live)
+        
         draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLUE, width=3) # border
 
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
@@ -1012,10 +815,10 @@ def display_ambient(name, clicked=False):
 def display_current():
 
     if currently_displaying == 'everything':
-        display_readied_cached(stream)
+        displa_cached_scroll(stream)
 
     elif currently_displaying == 'one':
-        display_readied_cached(stream)
+        displa_cached_scroll(stream)
 
     elif currently_displaying == 'ambient':
         display_ambient(stream, clicked=True)
@@ -1073,7 +876,7 @@ def seek_stream(direction):
         cur = readied_stream if readied_stream else stream
         idx = sl.index(cur)
         readied_stream = sl[(idx + direction) % len(sl)]
-    display_readied_cached(readied_stream)
+    displa_cached_scroll(readied_stream)
     confirm_seek()
 
 def confirm_seek():
@@ -1240,17 +1043,17 @@ def _refresh_worker(ordered, gen):
             if gen != refresh_generation:      # superseded by a newer pass
                 return
             one_cache.pop(name, None)
-            img = display_everything(name, silent=True)
+            img = display_scroll(name, silent=True)
             if gen != refresh_generation:      # check again before writing
                 return
             if img:
-                cached_everything_dict[name] = img
+                scroll_cache_dict[name] = img
     finally:
         if gen == refresh_generation:
             refreshing_everything_now = False
 
 def toggle_favorite():
-    global favorites, stream_list, cached_everything_dict, last_input_time, freeze_for_task
+    global favorites, stream_list, scroll_cache_dict, last_input_time, freeze_for_task
     freeze_for_task = True
     try:
         chosen_stream = readied_stream if readied_stream else stream
@@ -1266,7 +1069,7 @@ def toggle_favorite():
             set_favorites(favorites)
             stream_list = get_stream_list(streams)
 
-        img = cached_everything_dict[chosen_stream].copy()
+        img = scroll_cache_dict[chosen_stream].copy()
 
         if action == 'unfavorite':
             no_star_img = img.copy()
@@ -1293,8 +1096,8 @@ def toggle_favorite():
                     disp.ShowImage(img)      
 
         calculate_ticks()
-        cached_everything_dict.clear()         
-        display_readied_cached(chosen_stream)  
+        scroll_cache_dict.clear()         
+        displa_cached_scroll(chosen_stream)  
         start_priority_refresh(chosen_stream)   
         last_input_time = time.time()
     finally:
@@ -1304,7 +1107,7 @@ ready_to_display = False
 refreshing_everything_now = False
 
 def refresh_everything_cache(refresh_stream_list):
-    global cached_everything_dict, refreshing_everything_now, ready_to_display
+    global scroll_cache_dict, refreshing_everything_now, ready_to_display
 
     refreshing_everything_now = True
     origin_stream = readied_stream if readied_stream else stream
@@ -1333,7 +1136,7 @@ def refresh_everything_cache(refresh_stream_list):
             del one_cache[name]
         if name in streams.keys():
             #logging.info(f'Refreshing image for {name}')
-            result = display_everything(name=name, silent=True)
+            result = display_scroll(name=name, silent=True)
         else:
             result = None
         return name, result 
@@ -1345,7 +1148,7 @@ def refresh_everything_cache(refresh_stream_list):
             
             for future in as_completed(future_to_name):
                 name, result = future.result()
-                cached_everything_dict[name] = result
+                scroll_cache_dict[name] = result
 
     refreshing_everything_now = False
 
@@ -1380,12 +1183,12 @@ def volume_handle_rotation(direction):
     send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
 
-def display_readied_cached(name, pushed=False):
+def displa_cached_scroll(name, pushed=False):
     ''' First looks for cached version and if not, rebuilds '''
-    global cached_everything_dict, currently_displaying, text_on_screen
+    global scroll_cache_dict, currently_displaying, text_on_screen
     currently_displaying = 'everything'
-    if name in list(cached_everything_dict.keys()):
-        image = cached_everything_dict[name]
+    if name in list(scroll_cache_dict.keys()):
+        image = scroll_cache_dict[name]
         if image:
             if pushed:
                 image = image.copy()
@@ -1396,42 +1199,25 @@ def display_readied_cached(name, pushed=False):
             with display_lock:
                 disp.ShowImage(image)
         else:
-            cached_everything_dict[name] = display_everything(name)
+            scroll_cache_dict[name] = display_scroll(name)
     else:
-        cached_everything_dict[name] = display_everything(name)
+        scroll_cache_dict[name] = display_scroll(name)
 
     text_on_screen = streams[name]['oneLiner']
     
 
-def display_readied_cached(name, pushed=False):
-    """Compose + push the 'everything' card for a station."""
-    global currently_displaying, text_on_screen
-    currently_displaying = 'everything'
-    image = compose_card(name)
-    if pushed:
-        draw = ImageDraw.Draw(image)
-        draw.rectangle([og_logo_position[0], og_logo_position[1],
-                        og_logo_position[0] + 96, og_logo_position[1] + 96],
-                       outline=BLUE, width=3)
-    if BRIGHTNESS != 1:
-        image = ImageEnhance.Brightness(image).enhance(BRIGHTNESS)
-    with display_lock:
-        disp.ShowImage(image)
-    text_on_screen = streams[name]['oneLiner']
-
-
 def periodic_update():
-    global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict, sleeping
+    global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, scroll_cache_dict, sleeping
     while True:
         
         logging.info('PERIODIC UPDATE OCCURRING')
-        print('cache size', len(cached_everything_dict))
+        print('cache size', len(scroll_cache_dict))
 
         time_since_last_success = time.time() - last_successful_fetch
         if sleeping:
-            should_fetch = not refreshing_everything_now and ((time_since_last_update >= 120) or (time_since_last_success > 120) or len(cached_everything_dict)==0)
+            should_fetch = not refreshing_everything_now and ((time_since_last_update >= 120) or (time_since_last_success > 120) or len(scroll_cache_dict)==0)
         else:
-            should_fetch = not seeking and not refreshing_everything_now and ((time_since_last_update >= 10) or (time_since_last_success > 10) or len(cached_everything_dict)==0)
+            should_fetch = not seeking and not refreshing_everything_now and ((time_since_last_update >= 10) or (time_since_last_success > 10) or len(scroll_cache_dict)==0)
         if should_fetch:
             try:
                 logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
@@ -1441,7 +1227,7 @@ def periodic_update():
                 updated_streams = []
                 for name, v in fetched_streams.items():
                     if (name in streams.keys()):
-                        if (v['oneLiner'] != streams[name]['oneLiner']) or (len(cached_everything_dict)==0):
+                        if (v['oneLiner'] != streams[name]['oneLiner']) or (len(scroll_cache_dict)==0):
                             updated_streams.append(name)
                             streams[name].update(v)
                             updated_count += 1                              
@@ -1611,7 +1397,7 @@ failed_fetches = 0
 time_since_last_update = 0
 
 one_cache = {}
-cached_everything_dict = {}
+scroll_cache_dict = {}
 
 streams = get_streams()
 last_successful_fetch = time.time()
@@ -1655,7 +1441,7 @@ def handle_remote_command(command_data):
             station_name = command_data.get('value')
             if station_name in stream_list:
                 play(station_name)
-                display_readied_cached(station_name)
+                displa_cached_scroll(station_name)
             return {
                 'status': 'ok',
                 'station': station_name,
@@ -1840,19 +1626,13 @@ volume_click_button = Button(17, bounce_time=0.05)
 volume_click_button.when_pressed = wrapped_action(lambda: on_button_pressed())
     
 ## main loop
-#refresh_everything_cache(stream_list)
-
-def warm_bases(center):
-    for n in proximity_order(list(stream_list), center):
-        render_card_base(n)   # pure, no display, no lock needed
-
-threading.Thread(target=warm_bases, args=(stream,), daemon=True).start()
+refresh_everything_cache(stream_list)
 
 last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
 
-display_readied_cached(stream)
+displa_cached_scroll(stream)
 
 try:
     while True:
@@ -1889,7 +1669,7 @@ try:
                          and not freeze_for_task
                          and not seeking
                          and currently_displaying == 'everything'
-                         and active_name and active_name in cached_everything_dict)
+                         and active_name and active_name in scroll_cache_dict)
 
         if on_everything:
             text = streams[active_name]['oneLiner']
@@ -1905,8 +1685,8 @@ try:
                 marquee_name = None         
                 if not long_text:
                     # short text won't be repainted by the marquee path — push a fresh frame now
-                    del cached_everything_dict[active_name]
-                    display_readied_cached(active_name)
+                    del scroll_cache_dict[active_name]
+                    displa_cached_scroll(active_name)
 
             if vol is not None:
                 # volume overlay active — always show it, even mid-seek.
@@ -1923,10 +1703,10 @@ try:
                         if marquee_offset >= span:
                             marquee_offset = 0
                             marquee_pause_until = now + 3
-                    render_everything_frame(active_name, marquee_offset, volume=vol)
+                    render_frame(active_name, marquee_offset, volume=vol)
                 else:
                     # short text, or seeking — bar only, leave baked-in text untouched
-                    render_everything_frame(active_name, 0, volume=vol, draw_text=False)
+                    render_frame(active_name, 0, volume=vol, draw_text=False)
 
             elif seeking:
                 # mid-seek, no volume — let the seek's own frames own the screen
@@ -1948,11 +1728,11 @@ try:
                     if marquee_offset >= span:
                         marquee_offset = 0
                         marquee_pause_until = now + 3
-                render_everything_frame(active_name, marquee_offset)
+                render_frame(active_name, marquee_offset)
 
             elif volume_just_cleared:
                 # only reached for short text — nothing else redraws, so wipe the bar
-                display_readied_cached(active_name)
+                displa_cached_scroll(active_name)
                 marquee_name = None
 
             else:
