@@ -664,7 +664,7 @@ def display_everything(name, silent=False):
         y_offset = 0
         everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 10
         info_line = streams[name]['oneLiner']
-        draw.text((name_chunk_start_x, everything_info_y + y_offset), info_line[0], font=SMALL_LIGHT, fill=WHITE)
+        draw.text((name_chunk_start_x, everything_info_y + y_offset), info_line, font=SMALL_LIGHT, fill=WHITE)
         y_offset += 20
 
         # draw tags
