@@ -996,7 +996,7 @@ def confirm_seek():
     if readied_stream:
         if stream != readied_stream:
             stream = readied_stream
-            play(stream)
+            #play(stream)
             readied_stream = None
 
 def toggle_confirm_on_rotate():
