@@ -611,6 +611,18 @@ def _draw_volume_bar(draw, volume):
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], fill=RED)
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
 
+base_card_cache = {}   # (name, oneLiner) -> RGB image
+
+def render_card_base(name):
+    """Expensive layer: name, oneLiner, tags, main logo. Pure — no globals, no display."""
+    key = (name, streams[name]['oneLiner'])
+    if key in base_card_cache:
+        return base_card_cache[key]
+    img = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), BLACK)
+    # ... everything from display_everything up to and including the 96px logo + border,
+    #     but NOT prev/next/double thumbnails, stars, or ticks
+    base_card_cache[key] = img
+    return img
 
 def render_everything_frame(name, offset=0, volume=None, draw_text=True):
     base = cached_everything_dict.get(name)
@@ -628,6 +640,206 @@ def render_everything_frame(name, offset=0, volume=None, draw_text=True):
             return
         disp.ShowImage(img)
 
+base_card_cache = {}   # (name, oneLiner, status) -> RGB image
+
+def _base_key(name):
+    s = streams[name]
+    return (name, s['oneLiner'], s['status'])
+
+def render_card_base(name):
+    """
+    Expensive, favorite-independent layer for one station:
+    name text (with tofu font fallback), oneLiner, tag pills, main 96px
+    logo + blue border. Pure function of streams[name] — no globals
+    mutated, no display push, safe to call from a prefetch thread.
+    """
+    key = _base_key(name)
+    cached = base_card_cache.get(key)
+    if cached is not None:
+        return cached
+
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
+    draw = ImageDraw.Draw(image)
+
+    # --- name ---
+    name_chunk_start = 240 - 88
+    name_chunk_start_x = 12 + start_x
+    name_lines, name_font = calculate_text(name, EXTRALARGE_LIGHT, 315, 1)
+    name_line = name_lines[0]
+    draw.text((name_chunk_start_x - 1, name_chunk_start - 1),
+              name_line, font=name_font, fill=WHITE)
+
+    # --- oneLiner info line ---
+    # (baked in for the static/short-text case; the marquee partial-update
+    # path paints over this band anyway)
+    everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 10
+    draw.text((name_chunk_start_x, everything_info_y),
+              streams[name]['oneLiner'], font=SMALL_LIGHT, fill=WHITE)
+
+    # --- tag pills: status, location, genres ---
+    tags_start_y = round(everything_info_y + FONT_HEIGHTS['SMALL_LIGHT'] + 12)
+    tags_start_x = name_chunk_start_x
+    genres = [streams[name]['status'], streams[name]['location']]
+    if streams[name]['genres']:
+        genres.extend(streams[name]['genres'])
+
+    genre_x_offset = 0
+    box_h = FONT_HEIGHTS['SMALL_LIGHT'] - 4
+    for idx, genre in enumerate(genres):
+        genre_width = width(genre, SMALL_LIGHT)
+        fill = RED if idx == 0 else BLUE if idx == 1 else YELLOW
+        x0 = tags_start_x + genre_x_offset
+        draw.rectangle([x0, tags_start_y, x0 + genre_width, tags_start_y + 1 + box_h],
+                       fill=fill)
+        top = SMALL_LIGHT.getbbox(genre)[1]
+        draw.text((x0, tags_start_y - top + 1), genre, font=SMALL_LIGHT, fill=BLACK)
+        genre_x_offset += genre_width + 5
+
+    # --- main logo + border (star is favorite-dependent -> compose layer) ---
+    image.paste(streams[name]['logo_96'], logo_position)
+    draw.rectangle([og_logo_position[0], og_logo_position[1],
+                    og_logo_position[0] + 96, og_logo_position[1] + 96],
+                   outline=BLUE, width=3)
+
+    base_card_cache[key] = image
+    return image
+
+def _base_key(name):
+    s = streams[name]
+    return (name, s['oneLiner'], s['status'])
+
+def render_card_base(name):
+    """
+    Expensive, favorite-independent layer for one station:
+    name text (with tofu font fallback), oneLiner, tag pills, main 96px
+    logo + blue border. Pure function of streams[name] — no globals
+    mutated, no display push, safe to call from a prefetch thread.
+    """
+    key = _base_key(name)
+    cached = base_card_cache.get(key)
+    if cached is not None:
+        return cached
+
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
+    draw = ImageDraw.Draw(image)
+
+    # --- name ---
+    name_chunk_start = 240 - 88
+    name_chunk_start_x = 12 + start_x
+    name_lines, name_font = calculate_text(name, EXTRALARGE_LIGHT, 315, 1)
+    name_line = name_lines[0]
+    draw.text((name_chunk_start_x - 1, name_chunk_start - 1),
+              name_line, font=name_font, fill=WHITE)
+
+    # --- oneLiner info line ---
+    # (baked in for the static/short-text case; the marquee partial-update
+    # path paints over this band anyway)
+    everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 10
+    draw.text((name_chunk_start_x, everything_info_y),
+              streams[name]['oneLiner'], font=SMALL_LIGHT, fill=WHITE)
+
+    # --- tag pills: status, location, genres ---
+    tags_start_y = round(everything_info_y + FONT_HEIGHTS['SMALL_LIGHT'] + 12)
+    tags_start_x = name_chunk_start_x
+    genres = [streams[name]['status'], streams[name]['location']]
+    if streams[name]['genres']:
+        genres.extend(streams[name]['genres'])
+
+    genre_x_offset = 0
+    box_h = FONT_HEIGHTS['SMALL_LIGHT'] - 4
+    for idx, genre in enumerate(genres):
+        genre_width = width(genre, SMALL_LIGHT)
+        fill = RED if idx == 0 else BLUE if idx == 1 else YELLOW
+        x0 = tags_start_x + genre_x_offset
+        draw.rectangle([x0, tags_start_y, x0 + genre_width, tags_start_y + 1 + box_h],
+                       fill=fill)
+        top = SMALL_LIGHT.getbbox(genre)[1]
+        draw.text((x0, tags_start_y - top + 1), genre, font=SMALL_LIGHT, fill=BLACK)
+        genre_x_offset += genre_width + 5
+
+    # --- main logo + border (star is favorite-dependent -> compose layer) ---
+    image.paste(streams[name]['logo_96'], logo_position)
+    draw.rectangle([og_logo_position[0], og_logo_position[1],
+                    og_logo_position[0] + 96, og_logo_position[1] + 96],
+                   outline=BLUE, width=3)
+
+    base_card_cache[key] = image
+    return image
+
+
+def compose_card(name):
+    """
+    Cheap, order/favorite-dependent layer: neighbor thumbnails, stars,
+    tick bar. A handful of pastes + rects (~ms). Returns a fresh image
+    ready to push — never mutates the cached base.
+    """
+    # snapshot ordering state so a concurrent favorite-toggle can't
+    # shift indices mid-compose
+    with state_lock:
+        sl = list(stream_list)
+        favs = set(favorites)
+
+    if name not in sl:
+        return render_card_base(name).copy()
+
+    n = len(sl)
+    idx = sl.index(name)
+    prev_stream        = sl[(idx - 1) % n]
+    double_prev_stream = sl[(idx - 2) % n]
+    next_stream        = sl[(idx + 1) % n]
+    double_next_stream = sl[(idx + 2) % n]
+
+    image = render_card_base(name).copy()
+    draw = ImageDraw.Draw(image)
+
+    # star on the main logo
+    if name in favs:
+        image.paste(star_96, og_logo_position, star_96)
+
+    # prev / next 60px thumbnails
+    prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
+    next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
+
+    image.paste(streams[prev_stream]['logo_60'], prev_position)
+    draw.rectangle([prev_position[0], prev_position[1],
+                    prev_position[0] + 60, prev_position[1] + 60],
+                   outline=WHITE, width=1)
+    image.paste(streams[next_stream]['logo_60'], next_position)
+    draw.rectangle([next_position[0], next_position[1],
+                    next_position[0] + 60, next_position[1] + 60],
+                   outline=WHITE, width=1)
+
+    if prev_stream in favs:
+        image.paste(star_60, prev_position, star_60)
+    if next_stream in favs:
+        image.paste(star_60, next_position, star_60)
+
+    # double prev / next 25px thumbnails
+    double_prev_position = (square_start, logo_chunk_start + 57 - 4)
+    double_next_position = (290, logo_chunk_start + 57 - 4)
+    double_size = 25
+
+    image.paste(streams[double_prev_stream]['logo_25'], double_prev_position)
+    draw.rectangle([double_prev_position[0], double_prev_position[1],
+                    double_prev_position[0] + double_size,
+                    double_prev_position[1] + double_size],
+                   outline=WHITE, width=1)
+    if double_prev_stream in favs:
+        image.paste(star_25, double_prev_position, star_25)
+
+    image.paste(streams[double_next_stream]['logo_25'], double_next_position)
+    draw.rectangle([double_next_position[0], double_next_position[1],
+                    double_next_position[0] + double_size,
+                    double_next_position[1] + double_size],
+                   outline=WHITE, width=1)
+    if double_next_stream in favs:
+        image.paste(star_25, double_next_position, star_25)
+
+    # tick bar
+    image.paste(tick_image, (0, 0), mask=tick_image)
+    draw_tick(draw, name)
+
+    return image
 
 def display_everything(name, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
@@ -698,10 +910,7 @@ def display_everything(name, silent=False):
         if name in favorites:
             this_star = star_96.copy()
             image.paste(this_star, og_logo_position, this_star)
-        #if streams[name]['status'] == 'Live':
-            #this_live = live_96.copy()
-            #image.paste(this_live, og_logo_position, this_live)
-        
+
         draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLUE, width=3) # border
 
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
@@ -720,12 +929,6 @@ def display_everything(name, silent=False):
         if next_stream in favorites:
             next_star = star_60.copy().rotate(-prev_next_rotation, expand=True)
             image.paste(next_star, next_position, next_star)
-        #if streams[prev_stream]['status'] == "Live":
-        #    prev_live = live_60.copy().rotate(prev_next_rotation, expand=True)
-        #    image.paste(prev_live, prev_position, prev_live)
-        #if streams[next_stream]['status'] == "Live":
-        #    next_live = live_60.copy().rotate(-prev_next_rotation, expand=True)
-        #    image.paste(next_live, next_position, next_live)
 
         # double prev and next
         double_prev_position = (square_start, logo_chunk_start + 57 - 4)
@@ -739,18 +942,12 @@ def display_everything(name, silent=False):
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()
             image.paste(double_prev_star, double_prev_position, double_prev_star)
-        #if streams[double_prev_stream]['status'] == "Live":
-        #    double_prev_live = live_25.copy()
-        #    image.paste(double_prev_live, double_prev_position, double_prev_live)
 
         image.paste(double_next, double_next_position)
         draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + double_size, double_next_position[1] + double_size], outline=WHITE, width=1)
         if double_next_stream in favorites:
             double_next_star = star_25.copy()
             image.paste(double_next_star, double_next_position, double_next_star)
-        #if streams[double_next_stream]['status'] == "Live":
-        #    double_next_live = live_25.copy()
-        #    image.paste(double_next_live, double_next_position, double_next_live)
 
         # draw marks
         image.paste(tick_image, (0,0), mask=tick_image)
@@ -764,102 +961,6 @@ def display_everything(name, silent=False):
                     disp.ShowImage(image)   
         return image
         #safe_display(image)
-
-def display_one(name):
-    global has_displayed_once, currently_displaying
-    
-    if name in one_cache.keys():
-        print("IS CACHED")
-        cached_one = one_cache[name]
-        draw = ImageDraw.Draw(cached_one)
-        display_bar(cached_one)
-        safe_display(cached_one)
-        one_cache[name] = cached_one
-
-    else:
-        print("IS NOT CACHED")
-        # logo
-        logo = streams[name]['logo_60']
-        first_pixel_color = logo.getpixel((2,2))
-
-        image = Image.new('RGBA',(320, 240), color=BLACK)
-        draw = ImageDraw.Draw(image)  
-
-        draw.rectangle([15, 11, 76, 72], outline=WHITE, width=1)
-        logo_position = (16, 12)
-        image.paste(logo, logo_position)
-        if name in favorites:
-            image.paste(star_60, logo_position, star_60)
-        #if streams[name]['status'] == 'Live':
-        #    image.paste(live_60, (16, 12), live_60)
-
-        # name and underline
-        name_font = ONE_NAME_FONT
-        name_line = calculate_text(name, font=name_font, max_width=225, lines=1)[0][0]
-        block_start = 85
-        draw.text((block_start-2, 13), name_line, font=name_font, fill=WHITE)
-        draw.rectangle([block_start, 45, block_start + width(name_line, name_font), 45], fill=WHITE) # underline
-        
-        # location
-        location = streams[name]['location']
-        draw.rectangle([block_start, 52 + 2, block_start + width(location, ONE_INFO_FONT), 52 + 3 + height('S', ONE_INFO_FONT)], fill=BLUE)# bg
-        draw.text((block_start, 52), calculate_text(location, font=ONE_INFO_FONT, max_width=223, lines=1)[0][0], font=ONE_INFO_FONT, fill=BLACK)    
-
-        # now playing
-        y_offset = 0
-        num_title_lines = 2
-        info = streams[name]['oneLiner'].replace('&amp;','&').split(' - ')
-        info = [i for i in info if i in list(set(info))]
-
-        if len(info) == 1:
-            num_title_lines = 3
-        elif len(info) == 2:
-            num_title_lines = 3
-
-        title_font = EXTRALARGE_LIGHT
-        title_lines, title_font = calculate_text(info[0], font=EXTRALARGE_LIGHT, max_width=290, lines=num_title_lines)
-        title_lines = [i for i in title_lines if i != '']
-        if len(title_lines) >=3:
-            title_font = LARGE_LIGHT
-            title_lines, title_font = calculate_text(info[0], font=LARGE_LIGHT, max_width=290, lines=num_title_lines)
-            title_lines = [i for i in title_lines if i != '']
-
-        if len(title_lines) == 3:
-            num_info_lines = 1
-        elif len(title_lines) == 1: 
-            num_info_lines = 4
-        else:
-            num_info_lines = 2
-        
-        info_lines, info_font = calculate_text(' - '.join(info[1:]), font=SMALL_LIGHT, max_width=290, lines=num_info_lines)
-        info_lines = [i for i in info_lines if i != '']
-
-        line_gap = 2
-        section_gap = 7
-        anchor = get_anchor(title_lines, info_lines, line_gap, section_gap, title_font, info_font)
-        avg_title_height = height("Sg", title_font)
-        avg_info_height = height("Sg", info_font)
-
-        for i in title_lines:
-            draw.text((14, anchor), i, font=title_font, fill=WHITE)
-            anchor += avg_title_height + line_gap
-
-        anchor += section_gap
-
-        if info_lines:
-            for i in info_lines:
-                draw.text((14, anchor), i, font=info_font, fill=WHITE)
-                anchor += avg_info_height + line_gap
-
-        display_bar(image)
-        enhancer = ImageEnhance.Brightness(image)
-        image = enhancer.enhance(BRIGHTNESS)
-        safe_display(image)
-        has_displayed_once = True
-        one_cache[name] = image
-    
-    currently_displaying = 'one'
-
 
 def display_bar(image=current_image, color=WHITE):
     if image:
@@ -1735,7 +1836,13 @@ volume_click_button = Button(17, bounce_time=0.05)
 volume_click_button.when_pressed = wrapped_action(lambda: on_button_pressed())
     
 ## main loop
-refresh_everything_cache(stream_list)
+#refresh_everything_cache(stream_list)
+
+def warm_bases(center):
+    for n in proximity_order(list(stream_list), center):
+        render_card_base(n)   # pure, no display, no lock needed
+
+threading.Thread(target=warm_bases, args=(stream,), daemon=True).start()
 
 last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
