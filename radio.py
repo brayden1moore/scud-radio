@@ -756,8 +756,8 @@ def display_everything(name, silent=False):
         image.paste(tick_image, (0,0), mask=tick_image)
         draw_tick(draw, name)
         
-        enhancer = ImageEnhance.Brightness(image)
-        image = enhancer.enhance(BRIGHTNESS)
+        if BRIGHTNESS != 1:
+            image = ImageEnhance.Brightness(image).enhance(BRIGHTNESS)
 
         if not silent: 
             with display_lock:
@@ -977,22 +977,16 @@ def toggle_stream(name):
 
 freeze_for_task = False
 def seek_stream(direction):
-    global readied_stream 
-
-    if not freeze_for_task:
-
+    global readied_stream
+    if freeze_for_task:
+        return
+    with state_lock:
         sl = stream_list
         cur = readied_stream if readied_stream else stream
         idx = sl.index(cur)
-        if direction == 1 and idx == len(sl) - 1:
-            readied_stream = sl[0]
-        elif direction == -1 and idx == 0:
-            readied_stream = sl[-1]
-        else:
-            readied_stream = sl[idx + direction]
-        display_readied_cached(readied_stream)
-
-        confirm_seek()
+        readied_stream = sl[(idx + direction) % len(sl)]
+    display_readied_cached(readied_stream)
+    confirm_seek()
 
 def confirm_seek():
     global readied_stream, stream
@@ -1251,7 +1245,7 @@ def refresh_everything_cache(refresh_stream_list):
     
     if len(ordered_refresh_list) > 0:
         calculate_ticks()
-        with ThreadPoolExecutor(max_workers=min(len(ordered_refresh_list), 20)) as executor:
+        with ThreadPoolExecutor(max_workers= 4) as executor:
             future_to_name = {executor.submit(refresh_stream, name): name for name in ordered_refresh_list}
             
             for future in as_completed(future_to_name):
@@ -1343,11 +1337,8 @@ def periodic_update():
                 print('Updated',updated_streams)
                 refresh_everything_cache(updated_streams)
                 logging.info(f"Successfully updated {updated_count} streams")
-                
-                #with state_lock:
                 streams = fetched_streams
                 stream_list = get_stream_list(streams)
-                
                 failed_fetches = 0
                 last_successful_fetch = time.time()
                     
