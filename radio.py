@@ -1258,7 +1258,10 @@ def periodic_update():
         if sleeping:
             should_fetch = not refreshing_everything_now and ((time_since_last_update >= 120) or (time_since_last_success > 120) or len(scroll_cache_dict)==0)
         else:
-            should_fetch = not seeking and not refreshing_everything_now and ((time_since_last_update >= 10) or (time_since_last_success > 10) or len(scroll_cache_dict)==0)
+            should_fetch = not seeking and \
+                        not refreshing_everything_now and \
+                        ((text_mq['offset'] == 0) | (name_mq['offset'] == 0)) and \
+                        ((time_since_last_update >= 10) or (time_since_last_success > 10) or len(scroll_cache_dict)==0)
         if should_fetch:
             try:
                 logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
