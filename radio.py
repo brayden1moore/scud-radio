@@ -568,7 +568,6 @@ FONT_HEIGHTS = {
     'EXTRALARGE_LIGHT' : height('S',EXTRALARGE_LIGHT),
 }
 
-MARQUEE_PX_PER_SEC = 40
 marquee_offset = 0
 marquee_name = None
 seek_token = 0
@@ -1743,8 +1742,6 @@ update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
 
 display_readied_cached(stream)
-marquee_start_time = 0
-marquee_start_offset = 0
 
 try:
     while True:
@@ -1809,15 +1806,11 @@ try:
                     if marquee_name != active_name:
                         marquee_name = active_name
                         marquee_offset = 0
-                        marquee_start_time = now
-                        marquee_start_offset = 0
                         marquee_pause_until = now + 3
                     elif now >= marquee_pause_until:
-                        marquee_offset = marquee_start_offset + int((now - marquee_start_time) * MARQUEE_PX_PER_SEC)
+                        marquee_offset += 2
                         if marquee_offset >= span:
                             marquee_offset = 0
-                            marquee_start_time = now
-                            marquee_start_offset = 0
                             marquee_pause_until = now + 3
                     render_everything_frame(active_name, marquee_offset, volume=vol)
                 else:
@@ -1836,18 +1829,14 @@ try:
                 if marquee_name != active_name:
                     marquee_name = active_name
                     marquee_offset = 0
-                    marquee_start_time = now
-                    marquee_start_offset = 0
                     marquee_pause_until = now + 3
                 elif now < marquee_pause_until:
                     pass
                 else:
-                    marquee_offset = marquee_start_offset + int((now - marquee_start_time) * MARQUEE_PX_PER_SEC)
+                    marquee_offset += 2
                     if marquee_offset >= span:
                         marquee_offset = 0
-                        marquee_start_time = now
-                        marquee_start_offset = 0
-                        marquee_pause_until = now + 3              
+                        marquee_pause_until = now + 3
                 render_everything_frame(active_name, marquee_offset)
 
             elif volume_just_cleared:
@@ -1860,7 +1849,7 @@ try:
         else:
             marquee_name = None
 
-        time.sleep(0.01)
+        time.sleep(0.02)
 
 except KeyboardInterrupt:
     if mpv_process:
