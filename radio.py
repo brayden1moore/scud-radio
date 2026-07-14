@@ -996,7 +996,7 @@ def confirm_seek():
     if readied_stream:
         if stream != readied_stream:
             stream = readied_stream
-            #play(stream)
+            play(stream)
             readied_stream = None
 
 def toggle_confirm_on_rotate():
@@ -1269,8 +1269,6 @@ def handle_rotation(direction):
     marquee_name = None
     marquee_offset = 0
     seek_stream(direction)
-    if confirm_on_rotate:
-        confirm_seek() 
 
 
 def volume_handle_rotation(direction):
@@ -1367,8 +1365,8 @@ def periodic_update():
             
             time_since_last_update = 0
 
-        time_since_last_update += 5
-        time.sleep(5)
+        time_since_last_update += 10
+        time.sleep(10)
 
 def wake_screen():
     global screen_on, last_input_time, current_image
