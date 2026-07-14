@@ -1144,20 +1144,21 @@ def toggle_favorite():
         new_idx = sl.index(chosen_stream)
         set_favorites(favorites)
 
-        indexes_needing_refresh = [prior_idx, 
-                        prior_idx-1, 
-                        prior_idx-2,
-                        prior_idx-3,
-                        prior_idx+1,
-                        prior_idx+2,
-                        prior_idx+3,
+        indexes_needing_refresh = [
                         new_idx,
                         new_idx-1,
                         new_idx-2,
                         new_idx-3,
                         new_idx+1,
                         new_idx+2,
-                        new_idx+3]
+                        new_idx+3,
+                        prior_idx, 
+                        prior_idx-1, 
+                        prior_idx-2,
+                        prior_idx-3,
+                        prior_idx+1,
+                        prior_idx+2,
+                        prior_idx+3]
         
         streams_needing_refresh = [chosen_stream] + favorites
         for i in indexes_needing_refresh:
@@ -1195,7 +1196,6 @@ def toggle_favorite():
                 disp.ShowImage(img)      
 
     thread1.start()
-    thread2.start()
     time.sleep(0.5)
     last_input_time = time.time()
     
@@ -1204,6 +1204,7 @@ def toggle_favorite():
     
     calculate_ticks()
     display_readied_cached(chosen_stream)  
+    thread2.start()
     freeze_for_task = False
 
 ready_to_display = False
