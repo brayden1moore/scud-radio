@@ -1848,7 +1848,7 @@ try:
         else:
             marquee_name = None
 
-        time.sleep(0.03)
+        time.sleep(0.008)
 
 except KeyboardInterrupt:
     if mpv_process:
