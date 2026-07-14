@@ -402,12 +402,13 @@ def play(name, toggled=False):
 
 
 def play_random():
-    global stream, play_status
+    global stream, play_status, readied_stream
     available_streams = [i for i in stream_list if i != stream and streams[i]['status'] != 'Offline']
     chosen = random.choice(available_streams)
     display_readied_cached(chosen)
     play(chosen)
     stream = chosen
+    readied_stream = None
     play_status = 'play'
 
 def calculate_text(text, font, max_width, lines):
