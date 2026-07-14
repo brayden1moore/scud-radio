@@ -611,19 +611,6 @@ def _draw_volume_bar(draw, volume):
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], fill=RED)
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
 
-base_card_cache = {}   # (name, oneLiner) -> RGB image
-
-def render_card_base(name):
-    """Expensive layer: name, oneLiner, tags, main logo. Pure — no globals, no display."""
-    key = (name, streams[name]['oneLiner'])
-    if key in base_card_cache:
-        return base_card_cache[key]
-    img = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), BLACK)
-    # ... everything from display_everything up to and including the 96px logo + border,
-    #     but NOT prev/next/double thumbnails, stars, or ticks
-    base_card_cache[key] = img
-    return img
-
 def render_everything_frame(name, offset=0, volume=None, draw_text=True):
     base = cached_everything_dict.get(name)
     if not base:
@@ -1415,6 +1402,23 @@ def display_readied_cached(name, pushed=False):
 
     text_on_screen = streams[name]['oneLiner']
     
+
+def display_readied_cached(name, pushed=False):
+    """Compose + push the 'everything' card for a station."""
+    global currently_displaying, text_on_screen
+    currently_displaying = 'everything'
+    image = compose_card(name)
+    if pushed:
+        draw = ImageDraw.Draw(image)
+        draw.rectangle([og_logo_position[0], og_logo_position[1],
+                        og_logo_position[0] + 96, og_logo_position[1] + 96],
+                       outline=BLUE, width=3)
+    if BRIGHTNESS != 1:
+        image = ImageEnhance.Brightness(image).enhance(BRIGHTNESS)
+    with display_lock:
+        disp.ShowImage(image)
+    text_on_screen = streams[name]['oneLiner']
+
 
 def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, cached_everything_dict, sleeping
