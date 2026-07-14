@@ -401,8 +401,8 @@ def play(name, toggled=False):
             first_boot = False
         else:
             send_mpv_command({"command": ["loadfile", stream_url, 'replace']})
-    if not sleeping:
-        send_mpv_command({"command": ["set_property", "volume", current_volume]})
+    #if not sleeping:
+        #send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
     set_last_played(name)
 
