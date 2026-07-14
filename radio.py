@@ -563,7 +563,7 @@ def draw_tick(draw, name):
     )
 
 FONT_HEIGHTS = {
-    'SMALL' : height('S',SMALL_FONT),
+    'SMALL' : height('Sg',SMALL_FONT),
     'SMALL_LIGHT' : height('S',SMALL_LIGHT),
     'EXTRALARGE_LIGHT' : height('S',EXTRALARGE_LIGHT),
 }
