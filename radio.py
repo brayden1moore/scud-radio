@@ -645,9 +645,6 @@ def display_everything(name, silent=False):
 
         # draw tags
         tags_start = everything_info_y + height('S', title_font) + 12
-        draw.rectangle([name_chunk_start_x, tags_start, name_chunk_start_x + width(location, SMALL_LIGHT), tags_start + 1 + height('S', SMALL_LIGHT)], fill=BLUE) # bg
-        draw.text((name_chunk_start_x, tags_start - 2), location, font=SMALL_LIGHT, fill=BLACK)
-        
         genre_start = everything_info_y + height('S', title_font) + 12
         location = streams[name]['location']
         live_status = streams[name]['status']
