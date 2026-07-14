@@ -594,8 +594,8 @@ def _draw_marquee_name(draw, name, offset):
     # left gutter
     draw.rectangle([0, NAME_Y - 2, MARQUEE_X - 1, strip_bottom], fill=BLACK)
 
-text_mq  = {'offset': 0, 'pause_until': 0}
-name_mq  = {'offset': 0, 'pause_until': 0}
+oneliner_mq  = {'offset': 0, 'pause_until': 0, 'needed': False}
+name_mq  = {'offset': 0, 'pause_until': 0, 'needed': False}
 
 def _mq_reset(mq, now):
     mq['offset'] = 0
@@ -617,7 +617,7 @@ text_on_screen = None
 MARQUEE_X = 12 + start_x                      # name_chunk_start_x
 MARQUEE_GAP = 30                              # blank gap before the text repeats
 
-def _draw_marquee_text(draw, name, offset):
+def _draw_marquee_oneliner(draw, name, offset):
     global text_on_screen
 
     """Paint the scrolled oneLiner onto an existing draw object. No push."""
@@ -653,7 +653,7 @@ def _draw_volume_bar(draw, volume):
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
 
 
-def render_frame(name, offset=0, volume=None, draw_text=True, name_offset=None):
+def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=None):
     base = scroll_cache_dict.get(name)
     if not base:
         return
@@ -661,8 +661,8 @@ def render_frame(name, offset=0, volume=None, draw_text=True, name_offset=None):
     draw = ImageDraw.Draw(img)
     if name_offset is not None:
         _draw_marquee_name(draw, name, name_offset)
-    if draw_text:
-        _draw_marquee_text(draw, name, offset)
+    if draw_oneliner:
+        _draw_marquee_oneliner(draw, name, offset)
     if volume is not None:
         _draw_volume_bar(draw, volume)
     with display_lock:
@@ -1260,7 +1260,7 @@ def periodic_update():
         else:
             should_fetch = not seeking and \
                         not refreshing_everything_now and \
-                        ((text_mq['offset'] == 0) | (name_mq['offset'] == 0)) and \
+                            ((((oneliner_mq['offset'] == 0) | (name_mq['offset'] == 0)) and (oneliner_mq['needed']==True and name_mq['needed']==True)) or (((oneliner_mq['offset'] == 0) and (name_mq['offset'] == 0)))) and \
                         ((time_since_last_update >= 10) or (time_since_last_success > 10) or len(scroll_cache_dict)==0)
         if should_fetch:
             try:
@@ -1718,21 +1718,24 @@ try:
         if on_everything:
             text = streams[active_name]['oneLiner']
             text_w = width(text, SMALL_LIGHT)
-            long_text = text_w > (SCREEN_WIDTH - MARQUEE_X)
+            long_oneliner = text_w > (SCREEN_WIDTH - MARQUEE_X)
 
             _, name_w = _name_metrics(active_name)
             long_name = name_w > (SCREEN_WIDTH - MARQUEE_X)
 
-            needs_scroll = long_text or long_name
+            needs_scroll = long_oneliner or long_name
             text_span = text_w + MARQUEE_GAP
             name_span = name_w + MARQUEE_GAP
+
+            name_mq['needed'] = long_name
+            oneliner_mq['needed'] = long_oneliner
 
             text_changed = (text_on_screen != text)
             if text_changed:
                 print('------TEXT CHANGED------')
-                _mq_reset(text_mq, now)
+                _mq_reset(oneliner_mq, now)
                 marquee_name = None
-                if not long_text:
+                if not long_oneliner:
                     del scroll_cache_dict[active_name]
                     displa_cached_scroll(active_name)
 
@@ -1740,14 +1743,14 @@ try:
                 if needs_scroll and not seeking:
                     if marquee_name != active_name:
                         marquee_name = active_name
-                        _mq_reset(text_mq, now)
+                        _mq_reset(oneliner_mq, now)
                         _mq_reset(name_mq, now)
-                    t_off = _mq_tick(text_mq, text_span, now) if long_text else 0
+                    ol_off = _mq_tick(oneliner_mq, text_span, now) if long_oneliner else 0
                     n_off = _mq_tick(name_mq, name_span, now) if long_name else None
-                    render_frame(active_name, t_off, volume=vol,
-                                 draw_text=long_text, name_offset=n_off)
+                    render_frame(active_name, ol_off, volume=vol,
+                                 draw_oneliner=long_oneliner, name_offset=n_off)
                 else:
-                    render_frame(active_name, 0, volume=vol, draw_text=False)
+                    render_frame(active_name, 0, volume=vol, draw_oneliner=False)
 
             elif seeking:
                 marquee_name = None
@@ -1755,12 +1758,12 @@ try:
             elif needs_scroll:
                 if marquee_name != active_name:
                     marquee_name = active_name
-                    _mq_reset(text_mq, now)
+                    _mq_reset(oneliner_mq, now)
                     _mq_reset(name_mq, now)
-                t_off = _mq_tick(text_mq, text_span, now) if long_text else 0
+                ol_off = _mq_tick(oneliner_mq, text_span, now) if long_oneliner else 0
                 n_off = _mq_tick(name_mq, name_span, now) if long_name else None
-                render_frame(active_name, t_off,
-                             draw_text=long_text, name_offset=n_off)
+                render_frame(active_name, ol_off,
+                             draw_oneliner=long_oneliner, name_offset=n_off)
 
             elif volume_just_cleared:
                 displa_cached_scroll(active_name)
