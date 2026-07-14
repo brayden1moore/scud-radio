@@ -1763,19 +1763,13 @@ try:
         # ---- everything screen: marquee + optional volume overlay, one writer ----
         active_name = readied_stream if readied_stream else stream
         seeking = last_seek_rotation and (now - last_seek_rotation < 1)
-        token_at_start = seek_token
         vol = volume_overlay_value if volume_overlay_showing else None
 
         on_everything = (screen_on and not sleeping
-                and freeze_for_task != True
-                and currently_displaying == 'everything'
-                 and active_name and active_name in cached_everything_dict)
+                         and currently_displaying == 'everything'
+                         and active_name and active_name in cached_everything_dict)
 
         if on_everything:
-            # snapshot to detect a seek that landed mid-iteration
-            def _still_current():
-                return seek_token == token_at_start and (readied_stream if readied_stream else stream) == active_name
-
             one_liner = streams[active_name]['oneLiner']
             text = one_liner.replace('&amp;', '&').strip()
             long_text = width(text, SMALL_LIGHT) > (SCREEN_WIDTH - MARQUEE_X)
@@ -1805,17 +1799,13 @@ try:
                         if marquee_offset >= span:
                             marquee_offset = 0
                             marquee_pause_until = now + 3
-                    if _still_current():
-                        render_everything_frame(active_name, marquee_offset, volume=vol)
+                    render_everything_frame(active_name, marquee_offset, volume=vol)
                 else:
                     # short text, or seeking — bar only, leave baked-in text untouched
-                    if _still_current():
-                        render_everything_frame(active_name, marquee_offset, draw_text=False, volume=vol)
+                    render_everything_frame(active_name, 0, volume=vol, draw_text=False)
 
             elif seeking:
-                # during the settle window, keep the *current* station on screen
-                if _still_current():
-                    display_readied_cached(active_name)
+                # mid-seek, no volume — let the seek's own frames own the screen
                 marquee_name = None
 
             elif long_text:
@@ -1830,12 +1820,11 @@ try:
                 elif now < marquee_pause_until:
                     pass
                 else:
-                    marquee_offset += 3
+                    marquee_offset += 2
                     if marquee_offset >= span:
                         marquee_offset = 0
                         marquee_pause_until = now + 3
-                if _still_current():
-                        render_everything_frame(active_name, marquee_offset, volume=vol)
+                render_everything_frame(active_name, marquee_offset)
 
             elif volume_just_cleared:
                 # only reached for short text — nothing else redraws, so wipe the bar
@@ -1847,7 +1836,7 @@ try:
         else:
             marquee_name = None
 
-        time.sleep(0.0167)
+        time.sleep(0.01)
 
 except KeyboardInterrupt:
     if mpv_process:
