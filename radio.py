@@ -663,7 +663,7 @@ def display_everything(name, silent=False):
         info_font = SMALL_LIGHT
         y_offset = 0
         everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 10
-        info_line = calculate_text(streams[name]['oneLiner'], info_font, 640, 1)[0]
+        info_line = streams[name]['oneLiner']
         draw.text((name_chunk_start_x, everything_info_y + y_offset), info_line[0], font=SMALL_LIGHT, fill=WHITE)
         y_offset += 20
 
