@@ -635,14 +635,14 @@ def display_everything(name, silent=False):
     if not restarting:
 
         first_display = False
-        with state_lock:
-            sl = stream_list
-            n = len(sl)
-            i = sl.index(name)
-            prev_stream        = sl[(i - 1) % n]
-            double_prev_stream = sl[(i - 2) % n]
-            next_stream        = sl[(i + 1) % n]
-            double_next_stream = sl[(i + 2) % n]
+
+        sl = stream_list
+        n = len(sl)
+        i = sl.index(name)
+        prev_stream        = sl[(i - 1) % n]
+        double_prev_stream = sl[(i - 2) % n]
+        next_stream        = sl[(i + 1) % n]
+        double_next_stream = sl[(i + 2) % n]
 
         image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
         draw = ImageDraw.Draw(image) 
