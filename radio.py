@@ -997,7 +997,6 @@ def confirm_seek():
         if stream != readied_stream:
             stream = readied_stream
             play(stream)
-        if not confirm_on_rotate:
             readied_stream = None
 
 def toggle_confirm_on_rotate():
@@ -1744,6 +1743,9 @@ display_readied_cached(stream)
 try:
     while True:
         now = time.time()
+
+        if (readied_stream) and (now - last_seek_rotation) > 0.5:
+            confirm_seek()
 
         if now - last_input_time > 10:
             set_last_volume(str(current_volume))
