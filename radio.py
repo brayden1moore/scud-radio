@@ -978,16 +978,16 @@ def seek_stream(direction):
     global readied_stream 
 
     if not freeze_for_task:
-        with state_lock:
-            sl = stream_list
-            cur = readied_stream if readied_stream else stream
-            idx = sl.index(cur)
-            if direction == 1 and idx == len(sl) - 1:
-                readied_stream = sl[0]
-            elif direction == -1 and idx == 0:
-                readied_stream = sl[-1]
-            else:
-                readied_stream = sl[idx + direction]
+
+        sl = stream_list
+        cur = readied_stream if readied_stream else stream
+        idx = sl.index(cur)
+        if direction == 1 and idx == len(sl) - 1:
+            readied_stream = sl[0]
+        elif direction == -1 and idx == 0:
+            readied_stream = sl[-1]
+        else:
+            readied_stream = sl[idx + direction]
         display_readied_cached(readied_stream)
 
 def confirm_seek():
