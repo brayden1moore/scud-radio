@@ -611,6 +611,29 @@ def _draw_volume_bar(draw, volume):
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], fill=RED)
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
 
+MARQUEE_Y = (240 - 88) + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 10
+_strip, _strip_key = None, None
+
+def get_marquee_strip(name):
+    global _strip, _strip_key
+    text = streams[name]['oneLiner']
+    if _strip_key != (name, text):
+        full_w = streams[name].get('oneLinerWidth') or width(text, SMALL_LIGHT)
+        span = full_w + MARQUEE_GAP
+        strip = Image.new('RGB', (span + SCREEN_WIDTH, FONT_HEIGHTS['SMALL_LIGHT'] + 5), BLACK)
+        d = ImageDraw.Draw(strip)
+        d.text((0, 0), text, font=SMALL_LIGHT, fill=WHITE)
+        d.text((span, 0), text, font=SMALL_LIGHT, fill=WHITE)
+        _strip, _strip_key = strip, (name, text)
+    return _strip, span
+
+def push_marquee(name, offset):
+    strip, span = get_marquee_strip(name)
+    win = strip.crop((offset, 0, offset + (SCREEN_WIDTH - MARQUEE_X), strip.height))
+    with display_lock:
+        if (readied_stream if readied_stream else stream) != name:
+            return
+        disp.ShowWindow(win, MARQUEE_X, MARQUEE_Y)
 
 def render_everything_frame(name, offset=0, volume=None, draw_text=True):
     base = cached_everything_dict.get(name)
@@ -1743,6 +1766,10 @@ update_thread.start()
 
 display_readied_cached(stream)
 
+MARQUEE_INTERVAL = 0.04   # 25fps
+MARQUEE_STEP = 5          # ≈125 px/s, same feel as before
+next_frame = 0.0
+
 try:
     while True:
         now = time.time()
@@ -1802,17 +1829,10 @@ try:
                 # scroll the text underneath only when long and not seeking.
                 # NEVER null marquee_name here, so the offset survives dismissal.
                 if long_text and not seeking:
-                    span = width(text, SMALL_LIGHT) + MARQUEE_GAP
-                    if marquee_name != active_name:
-                        marquee_name = active_name
-                        marquee_offset = 0
-                        marquee_pause_until = now + 3
-                    elif now >= marquee_pause_until:
-                        marquee_offset += 2
-                        if marquee_offset >= span:
-                            marquee_offset = 0
-                            marquee_pause_until = now + 3
-                    render_everything_frame(active_name, marquee_offset, volume=vol)
+                    if now >= marquee_pause_until and now >= next_frame:
+                        next_frame = now + MARQUEE_INTERVAL
+                        marquee_offset = (marquee_offset + MARQUEE_STEP) % span
+                        push_marquee(active_name, marquee_offset)
                 else:
                     # short text, or seeking — bar only, leave baked-in text untouched
                     render_everything_frame(active_name, 0, volume=vol, draw_text=False)
