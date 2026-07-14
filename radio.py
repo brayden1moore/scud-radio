@@ -654,7 +654,7 @@ def display_everything(name, silent=False):
         if stream_genres:
             genres.extend(stream_genres)
 
-        genre_x_offset = 5
+        genre_x_offset = 0
         if genres:
             genre_widths = [width(g, SMALL_LIGHT) for g in genres]
             genre_x_offset = 5
