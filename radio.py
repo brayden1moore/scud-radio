@@ -1214,12 +1214,11 @@ def refresh_everything_cache(refresh_stream_list):
     origin_stream = readied_stream if readied_stream else stream
     if origin_stream:
         ordered_refresh_list = []
-        with state_lock:
-            sl = stream_list
-            if origin_stream not in sl:
-                refreshing_everything_now = False
-                return
-            stream_idx = sl.index(origin_stream)
+        sl = stream_list
+        if origin_stream not in sl:
+            refreshing_everything_now = False
+            return
+        stream_idx = sl.index(origin_stream)
         forwards = sl[stream_idx:] + sl[:stream_idx]
         backwards = list(reversed(forwards))
 
