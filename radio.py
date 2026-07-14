@@ -594,7 +594,22 @@ def _draw_marquee_name(draw, name, offset):
     # left gutter
     draw.rectangle([0, NAME_Y - 2, MARQUEE_X - 1, strip_bottom], fill=BLACK)
 
-marquee_offset = 0
+text_mq  = {'offset': 0, 'pause_until': 0}
+name_mq  = {'offset': 0, 'pause_until': 0}
+
+def _mq_reset(mq, now):
+    mq['offset'] = 0
+    mq['pause_until'] = now + 3
+
+def _mq_tick(mq, span, now):
+    """Advance one marquee controller. Returns current offset."""
+    if now >= mq['pause_until']:
+        mq['offset'] += 2
+        if mq['offset'] >= span:
+            mq['offset'] = 0
+            mq['pause_until'] = now + 3
+    return mq['offset']
+
 marquee_name = None
 seek_token = 0
 text_on_screen = None
@@ -1707,20 +1722,13 @@ try:
             long_name = name_w > (SCREEN_WIDTH - MARQUEE_X)
 
             needs_scroll = long_text or long_name
-
-            # shared clock wraps on the longer span; each strip wraps itself via modulo
-            spans = []
-            if long_text: spans.append(text_w + MARQUEE_GAP)
-            if long_name: spans.append(name_w + MARQUEE_GAP)
-            cycle_span = max(spans) if spans else 0
-
-            name_off = lambda: marquee_offset if long_name else None
+            text_span = text_w + MARQUEE_GAP
+            name_span = name_w + MARQUEE_GAP
 
             text_changed = (text_on_screen != text)
             if text_changed:
                 print('------TEXT CHANGED------')
-                marquee_offset = 0
-                marquee_pause_until = now + 3
+                _mq_reset(text_mq, now)
                 marquee_name = None
                 if not long_text:
                     del scroll_cache_dict[active_name]
@@ -1730,15 +1738,12 @@ try:
                 if needs_scroll and not seeking:
                     if marquee_name != active_name:
                         marquee_name = active_name
-                        marquee_offset = 0
-                        marquee_pause_until = now + 3
-                    elif now >= marquee_pause_until:
-                        marquee_offset += 2
-                        if marquee_offset >= cycle_span:
-                            marquee_offset = 0
-                            marquee_pause_until = now + 3
-                    render_frame(active_name, marquee_offset, volume=vol,
-                                 draw_text=long_text, name_offset=name_off())
+                        _mq_reset(text_mq, now)
+                        _mq_reset(name_mq, now)
+                    t_off = _mq_tick(text_mq, text_span, now) if long_text else 0
+                    n_off = _mq_tick(name_mq, name_span, now) if long_name else None
+                    render_frame(active_name, t_off, volume=vol,
+                                 draw_text=long_text, name_offset=n_off)
                 else:
                     render_frame(active_name, 0, volume=vol, draw_text=False)
 
@@ -1748,17 +1753,12 @@ try:
             elif needs_scroll:
                 if marquee_name != active_name:
                     marquee_name = active_name
-                    marquee_offset = 0
-                    marquee_pause_until = now + 3
-                elif now < marquee_pause_until:
-                    pass
-                else:
-                    marquee_offset += 2
-                    if marquee_offset >= cycle_span:
-                        marquee_offset = 0
-                        marquee_pause_until = now + 3
-                render_frame(active_name, marquee_offset,
-                             draw_text=long_text, name_offset=name_off())
+                    _mq_reset(text_mq, now)
+                    _mq_reset(name_mq, now)
+                t_off = _mq_tick(text_mq, text_span, now) if long_text else 0
+                n_off = _mq_tick(name_mq, name_span, now) if long_name else None
+                render_frame(active_name, t_off,
+                             draw_text=long_text, name_offset=n_off)
 
             elif volume_just_cleared:
                 displa_cached_scroll(active_name)
