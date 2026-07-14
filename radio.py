@@ -588,7 +588,7 @@ def _draw_marquee_text(draw, name, offset):
     everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 10
     line_h = FONT_HEIGHTS['SMALL_LIGHT']
 
-    draw.rectangle([MARQUEE_X, everything_info_y - 1,
+    draw.rectangle([MARQUEE_X, everything_info_y,
                     SCREEN_WIDTH, everything_info_y + line_h + 4], fill=BLACK)
 
     span = full_w + MARQUEE_GAP
