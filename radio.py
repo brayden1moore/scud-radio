@@ -1221,7 +1221,7 @@ def refresh_everything_cache(refresh_stream_list):
             del one_cache[name]
         if name in streams.keys():
             #logging.info(f'Refreshing image for {name}')
-            result = display_everything(name=name, readied=True, silent=True)
+            result = display_everything(name=name, silent=True)
         else:
             result = None
         return name, result 
@@ -1287,9 +1287,9 @@ def display_readied_cached(name, pushed=False):
             with display_lock:
                 disp.ShowImage(image)
         else:
-            cached_everything_dict[name] = display_everything(name, readied=True)
+            cached_everything_dict[name] = display_everything(name)
     else:
-        cached_everything_dict[name] = display_everything(name, readied=True)
+        cached_everything_dict[name] = display_everything(name)
 
     text_on_screen = streams[name]['oneLiner']
     
