@@ -608,7 +608,7 @@ def render_everything_frame(name, offset=0, volume=None, draw_text=True):
         disp.ShowImage(img)
 
 
-def display_everything(name, readied=False, silent=False):
+def display_everything(name, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
     if not restarting:
@@ -626,7 +626,6 @@ def display_everything(name, readied=False, silent=False):
         if not silent:
             currently_displaying = 'everything'
 
-        location = streams[name]['location']
         title_font = SMALL_LIGHT
 
         # draw name and underline
@@ -644,16 +643,17 @@ def display_everything(name, readied=False, silent=False):
         draw.text((name_chunk_start_x, everything_info_y + y_offset), streams[name]['oneLiner'].replace('&amp;','&'), font=SMALL_LIGHT, fill=WHITE)
         y_offset += 20
 
-        # draw location
+        # draw tags
         tags_start = everything_info_y + height('S', title_font) + 12
         draw.rectangle([name_chunk_start_x, tags_start, name_chunk_start_x + width(location, SMALL_LIGHT), tags_start + 1 + height('S', SMALL_LIGHT)], fill=BLUE) # bg
         draw.text((name_chunk_start_x, tags_start - 2), location, font=SMALL_LIGHT, fill=BLACK)
         
-        genre_start = name_chunk_start_x + width(location, SMALL_LIGHT)
-        live_status = [streams[name]['status']] 
+        genre_start = everything_info_y + height('S', title_font) + 12
+        location = streams[name]['location']
+        live_status = streams[name]['status']
         stream_genres = streams[name]['genres']
 
-        genres = live_status
+        genres = [live_status,location]
         if stream_genres:
             genres.extend(stream_genres)
 
@@ -661,9 +661,11 @@ def display_everything(name, readied=False, silent=False):
         if genres:
             genre_widths = [width(g, SMALL_LIGHT) for g in genres]
             genre_x_offset = 5
-            for genre, genre_width in zip(genres, genre_widths):
-                if genre == genres[0]:
+            for (idx, genre), genre_width in zip(enumerate(genres), genre_widths):
+                if idx == 0:
                     fill = RED
+                elif idx == 1:
+                    fill = BLUE
                 else:
                     fill = YELLOW
                 draw.rectangle([genre_start + genre_x_offset, tags_start, genre_start + genre_x_offset + genre_width, tags_start + 1 + height('S', SMALL_LIGHT)], fill=fill) # bg
