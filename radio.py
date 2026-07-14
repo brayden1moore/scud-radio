@@ -1341,9 +1341,11 @@ def periodic_update():
                 print('Updated',updated_streams)
                 refresh_everything_cache(updated_streams)
                 logging.info(f"Successfully updated {updated_count} streams")
-                with state_lock:
-                    streams = fetched_streams
-                    stream_list = get_stream_list(streams)
+                
+                #with state_lock:
+                streams = fetched_streams
+                stream_list = get_stream_list(streams)
+                
                 failed_fetches = 0
                 last_successful_fetch = time.time()
                     
