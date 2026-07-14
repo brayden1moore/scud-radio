@@ -681,7 +681,7 @@ def display_everything(name, silent=False):
         genre_x_offset = 0
         if genres:
             genre_widths = [width(g, SMALL_LIGHT) for g in genres]
-            box_h = FONT_HEIGHTS['SMALL_LIGHT'] - 3
+            box_h = FONT_HEIGHTS['SMALL_LIGHT'] - 5
             for (idx, genre), genre_width in zip(enumerate(genres), genre_widths):
                 fill = RED if idx == 0 else BLUE if idx == 1 else YELLOW
                 x0 = tags_start_x + genre_x_offset
