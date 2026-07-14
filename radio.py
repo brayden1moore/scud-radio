@@ -524,7 +524,7 @@ def calculate_ticks():
     tick_locations = {}
 
     total_ticks = len(stream_list)
-    step = total_span / total_ticks          # float spacing — round only at store time
+    step = total_span / total_ticks        
 
     fav_sorted = sorted(favorites, key=str.casefold)
     rest = [i for i in stream_list if i not in favorites]
@@ -1167,7 +1167,8 @@ def toggle_favorite():
     streams_needing_refresh = list(set(streams_needing_refresh))
 
     print('TOGGLED. REFRESHING, ', streams_needing_refresh)
-    thread = threading.Thread(target=refresh_everything_cache, args=(streams_needing_refresh,), daemon=True)
+    thread1 = threading.Thread(target=refresh_everything_cache, args=(streams_needing_refresh,), daemon=True)
+    thread2 = threading.Thread(target=refresh_everything_cache, args=([i for i in sl if i not in streams_needing_refresh],), daemon=True)
 
     if action == 'unfavorite':
         no_star_img = img.copy()
@@ -1193,7 +1194,8 @@ def toggle_favorite():
         with display_lock:
                 disp.ShowImage(img)      
 
-    thread.start()
+    thread1.start()
+    thread2.start()
     time.sleep(0.5)
     last_input_time = time.time()
     
