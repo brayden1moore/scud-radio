@@ -553,6 +553,7 @@ def draw_tick(draw, name):
 
 marquee_offset = 0
 marquee_name = None
+seek_token = 0
 text_on_screen = None
 
 MARQUEE_X = 12 + start_x                      # name_chunk_start_x
@@ -605,6 +606,9 @@ def render_everything_frame(name, offset=0, volume=None, draw_text=True):
     if volume is not None:
         _draw_volume_bar(draw, volume)
     with display_lock:
+        # atomic re-check: if a seek changed the target while we were drawing, drop this frame
+        if (readied_stream if readied_stream else stream) != name:
+            return
         disp.ShowImage(img)
 
 
@@ -1236,7 +1240,8 @@ def refresh_everything_cache(refresh_stream_list):
 
 
 def handle_rotation(direction):
-    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time, last_seek_rotation, volume_overlay_showing, marquee_name, marquee_offset
+    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time, last_seek_rotation, volume_overlay_showing, marquee_name, marquee_offset, seek_token
+    seek_token += 1
     now = time.time()
     last_input_time = now
     rotated = True
@@ -1745,6 +1750,7 @@ try:
         # ---- everything screen: marquee + optional volume overlay, one writer ----
         active_name = readied_stream if readied_stream else stream
         seeking = last_seek_rotation and (now - last_seek_rotation < 1)
+        token_at_start = seek_token
         vol = volume_overlay_value if volume_overlay_showing else None
 
         on_everything = (screen_on and not sleeping
@@ -1754,7 +1760,8 @@ try:
         if on_everything:
             # snapshot to detect a seek that landed mid-iteration
             def _still_current():
-                return (readied_stream if readied_stream else stream) == active_name
+                return seek_token == token_at_start and (readied_stream if readied_stream else stream) == active_name
+
             one_liner = streams[active_name]['oneLiner']
             text = one_liner.replace('&amp;', '&').strip()
             long_text = width(text, SMALL_LIGHT) > (SCREEN_WIDTH - MARQUEE_X)
@@ -1792,7 +1799,9 @@ try:
                         render_everything_frame(active_name, marquee_offset, volume=vol)
 
             elif seeking:
-                # mid-seek, no volume — let the seek's own frames own the screen
+                # during the settle window, keep the *current* station on screen
+                if _still_current():
+                    display_readied_cached(active_name)
                 marquee_name = None
 
             elif long_text:
