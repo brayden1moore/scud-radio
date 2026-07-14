@@ -654,7 +654,7 @@ def display_everything(name, silent=False):
         if stream_genres:
             genres.extend(stream_genres)
 
-        genre_x_offset = 0
+        genre_x_offset = name_chunk_start_x
         if genres:
             genre_widths = [width(g, SMALL_LIGHT) for g in genres]
             for (idx, genre), genre_width in zip(enumerate(genres), genre_widths):
