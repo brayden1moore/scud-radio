@@ -1120,92 +1120,97 @@ def switch_on():
     if not muted:
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
+def proximity_order(sl, center):
+    """[center, center-1, center+1, center-2, center+2, ...] wrapping around."""
+    n = len(sl)
+    idx = sl.index(center)
+    order = [sl[idx]]
+    for d in range(1, n // 2 + 1):
+        order.append(sl[(idx - d) % n])
+        if len(order) < n:
+            order.append(sl[(idx + d) % n])
+    return order
+
+refresh_generation = 0
+
+def start_priority_refresh(center):
+    global refresh_generation
+    with state_lock:
+        refresh_generation += 1
+        gen = refresh_generation
+        sl = list(stream_list)
+    if center not in sl:
+        center = sl[0]
+    ordered = proximity_order(sl, center)
+    threading.Thread(target=_refresh_worker, args=(ordered, gen), daemon=True).start()
+
+def _refresh_worker(ordered, gen):
+    global refreshing_everything_now
+    refreshing_everything_now = True
+    try:
+        for name in ordered:
+            if gen != refresh_generation:      # superseded by a newer pass
+                return
+            one_cache.pop(name, None)
+            img = display_everything(name, silent=True)
+            if gen != refresh_generation:      # check again before writing
+                return
+            if img:
+                cached_everything_dict[name] = img
+    finally:
+        if gen == refresh_generation:
+            refreshing_everything_now = False
 
 def toggle_favorite():
-    global favorites, stream_list, cached_everything_dict, last_input_time, readied_stream, freeze_for_task
-
+    global favorites, stream_list, cached_everything_dict, last_input_time, freeze_for_task
     freeze_for_task = True
+    try:
+        chosen_stream = readied_stream if readied_stream else stream
+        with state_lock:
+            if chosen_stream not in stream_list:
+                return
+            if chosen_stream in favorites:
+                action = 'unfavorite'
+                favorites = [i for i in favorites if i != chosen_stream]
+            else:
+                action = 'favorite'
+                favorites = list(set(favorites + [chosen_stream]))
+            set_favorites(favorites)
+            stream_list = get_stream_list(streams)
 
-    chosen_stream = stream if not readied_stream else readied_stream
-    with state_lock:
-        if chosen_stream not in stream_list:
-            freeze_for_task = False
-            return
-        prior_idx = stream_list.index(chosen_stream)
-        if chosen_stream in favorites:
-            action = 'unfavorite'
-            favorites = [i for i in favorites if i != chosen_stream]
+        img = cached_everything_dict[chosen_stream].copy()
+
+        if action == 'unfavorite':
+            no_star_img = img.copy()
+            for i in list(reversed(favorite_images)):
+                img.paste(i, (0, 0), i)
+                with display_lock:
+                    disp.ShowImage(img)  
+                img = no_star_img.convert('RGBA')
+
+            img.paste(unfavorite, (0, 0), unfavorite)
+            with display_lock:
+                    disp.ShowImage(img)  
+            time.sleep(0.1)
         else:
-            action = 'favorite'
-            favorites.append(chosen_stream)
-            favorites = list(set(favorites))
-        stream_list = get_stream_list(streams)
-        sl = stream_list
-        new_idx = sl.index(chosen_stream)
-        set_favorites(favorites)
-
-        indexes_needing_refresh = [
-                        new_idx,
-                        new_idx-1,
-                        new_idx-2,
-                        new_idx-3,
-                        new_idx+1,
-                        new_idx+2,
-                        new_idx+3,
-                        prior_idx, 
-                        prior_idx-1, 
-                        prior_idx-2,
-                        prior_idx-3,
-                        prior_idx+1,
-                        prior_idx+2,
-                        prior_idx+3]
-        
-        streams_needing_refresh = [chosen_stream] + favorites
-        for i in indexes_needing_refresh:
-            streams_needing_refresh.append(sl[i % len(sl)])
-    
-    img = cached_everything_dict[chosen_stream].copy()
-    streams_needing_refresh = list(set(streams_needing_refresh))
-
-    print('TOGGLED. REFRESHING, ', streams_needing_refresh)
-    thread1 = threading.Thread(target=refresh_everything_cache, args=(streams_needing_refresh,), daemon=True)
-    thread2 = threading.Thread(target=refresh_everything_cache, args=([i for i in sl if i not in streams_needing_refresh],), daemon=True)
-
-    if action == 'unfavorite':
-        no_star_img = img.copy()
-        for i in list(reversed(favorite_images)):
-            img.paste(i, (0, 0), i)
+            img.paste(favorite_images[0], (0, 0), favorite_images[0])
             with display_lock:
-                disp.ShowImage(img)  
-            img = no_star_img.convert('RGBA')
-
-        img.paste(unfavorite, (0, 0), unfavorite)
-        with display_lock:
-                disp.ShowImage(img)  
-        time.sleep(0.1)
-    else:
-        img.paste(favorite_images[0], (0, 0), favorite_images[0])
-        with display_lock:
-                disp.ShowImage(img)  
-        for i in favorite_images:
-            img.paste(i, (0, 0), i)
+                    disp.ShowImage(img)  
+            for i in favorite_images:
+                img.paste(i, (0, 0), i)
+                with display_lock:
+                    disp.ShowImage(img)     
+            time.sleep(0.1)
             with display_lock:
-                disp.ShowImage(img)     
-        time.sleep(0.1)
-        with display_lock:
-                disp.ShowImage(img)      
+                    disp.ShowImage(img)      
 
-    thread1.start()
-    time.sleep(0.5)
-    last_input_time = time.time()
-    
-    if chosen_stream in cached_everything_dict:
-        del cached_everything_dict[chosen_stream]
-    
-    calculate_ticks()
-    display_readied_cached(chosen_stream)  
-    thread2.start()
-    freeze_for_task = False
+        calculate_ticks()
+        cached_everything_dict.clear()         
+        display_readied_cached(chosen_stream)  
+        start_priority_refresh(chosen_stream)   
+        last_input_time = time.time()
+    finally:
+        freeze_for_task = False
 
 ready_to_display = False
 refreshing_everything_now = False
