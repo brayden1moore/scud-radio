@@ -614,7 +614,7 @@ def _draw_marquee_text(draw, name, offset):
     everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 5
     line_h = FONT_HEIGHTS['SMALL_LIGHT']
 
-    draw.rectangle([MARQUEE_X, everything_info_y,
+    draw.rectangle([MARQUEE_X, everything_info_y + 1,
                     SCREEN_WIDTH, everything_info_y + line_h + 4], fill=BLACK)
 
     span = full_w + MARQUEE_GAP
@@ -622,7 +622,7 @@ def _draw_marquee_text(draw, name, offset):
     draw.text((start, everything_info_y), text, font=SMALL_LIGHT, fill=WHITE)
     draw.text((start + span, everything_info_y), text, font=SMALL_LIGHT, fill=WHITE)
 
-    draw.rectangle([0, everything_info_y - 2, MARQUEE_X - 1,
+    draw.rectangle([0, everything_info_y, MARQUEE_X - 1,
                     everything_info_y + line_h + 2], fill=BLACK)
     
     text_on_screen = streams[name]['oneLiner']
