@@ -259,7 +259,7 @@ import socket
 def send_mpv_command(cmd, max_retries=10, retry_delay=1):
     for attempt in range(max_retries):
         try:
-            logging.info(f"Sending MPV command: {cmd}")
+            #logging.info(f"Sending MPV command: {cmd}")
             with socket.socket(socket.AF_UNIX) as s:
                 s.settimeout(2)
                 s.connect("/tmp/mpvsocket")
@@ -267,10 +267,10 @@ def send_mpv_command(cmd, max_retries=10, retry_delay=1):
                 return True
         except (ConnectionRefusedError, FileNotFoundError, socket.timeout) as e:
             if attempt < max_retries - 1:
-                logging.warning(f"MPV command failed (attempt {attempt + 1}/{max_retries}): {e}")
+                #logging.warning(f"MPV command failed (attempt {attempt + 1}/{max_retries}): {e}")
                 time.sleep(retry_delay)
             else:
-                logging.error(f"MPV command failed after {max_retries} attempts: {e}")
+                #logging.error(f"MPV command failed after {max_retries} attempts: {e}")
                 return False
     return False
 
