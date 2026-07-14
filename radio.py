@@ -1742,7 +1742,7 @@ try:
     while True:
         now = time.time()
 
-        if (readied_stream) and ((now - last_seek_rotation) > 2):
+        if (readied_stream) and ((now - last_seek_rotation) > 0.1):
             confirm_seek()
 
         if now - last_input_time > 10:
