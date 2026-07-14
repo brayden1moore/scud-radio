@@ -657,15 +657,14 @@ def display_everything(name, silent=False):
         genre_x_offset = 0
         if genres:
             genre_widths = [width(g, SMALL_LIGHT) for g in genres]
+            box_h = height('Sg', title_font)
             for (idx, genre), genre_width in zip(enumerate(genres), genre_widths):
-                if idx == 0:
-                    fill = RED
-                elif idx == 1:
-                    fill = BLUE
-                else:
-                    fill = YELLOW
-                draw.rectangle([tags_start_x + genre_x_offset, tags_start_y, tags_start_x + genre_x_offset + genre_width, tags_start_y + 1 + height('S', title_font)], fill=fill) # bg
-                draw.text((tags_start_x + genre_x_offset, tags_start_y - 2), genre, font=title_font, fill=BLACK)
+                fill = RED if idx == 0 else BLUE if idx == 1 else YELLOW
+                x0 = tags_start_x + genre_x_offset
+                draw.rectangle([x0, tags_start_y, x0 + genre_width, tags_start_y + 1 + box_h], fill=fill)
+                # anchor text by its own bbox top so per-string metrics don't shift it
+                top = title_font.getbbox(genre)[1]
+                draw.text((x0, tags_start_y - top + 1), genre, font=title_font, fill=BLACK)
                 genre_x_offset += genre_width + 5
 
         # logos
