@@ -650,8 +650,6 @@ def display_everything(name, silent=False):
         if not silent:
             currently_displaying = 'everything'
 
-        title_font = SMALL_LIGHT
-
         # draw name and underline
         name_chunk_start = 240 - 88
         name_chunk_start_x = 12 + start_x
@@ -662,10 +660,11 @@ def display_everything(name, silent=False):
         #draw.rectangle([name_chunk_start_x, name_chunk_start + 30, name_chunk_start_x + width(name_line[0], name_font), name_chunk_start + 30], fill=WHITE) # ul
 
         # draw info
+        info_font = SMALL_LIGHT
         y_offset = 0
         everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 12
-        name_line = calculate_text(name, title_font, 315, 1)[0]
-        draw.text((name_chunk_start_x, everything_info_y + y_offset), streams[name]['oneLiner'], font=SMALL_LIGHT, fill=WHITE)
+        info_line = calculate_text(streams[name]['oneLiner'], info_font, 640, 1)[0]
+        draw.text((name_chunk_start_x, everything_info_y + y_offset), info_line, font=SMALL_LIGHT, fill=WHITE)
         y_offset += 20
 
         # draw tags
@@ -688,8 +687,8 @@ def display_everything(name, silent=False):
                 x0 = tags_start_x + genre_x_offset
                 draw.rectangle([x0, tags_start_y, x0 + genre_width, tags_start_y + 1 + box_h], fill=fill)
                 # anchor text by its own bbox top so per-string metrics don't shift it
-                top = title_font.getbbox(genre)[1]
-                draw.text((x0, tags_start_y - top + 1), genre, font=title_font, fill=BLACK)
+                top = info_font.getbbox(genre)[1]
+                draw.text((x0, tags_start_y - top + 1), genre, font=info_font, fill=BLACK)
                 genre_x_offset += genre_width + 5
 
         # logos
