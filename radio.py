@@ -1754,8 +1754,9 @@ try:
         vol = volume_overlay_value if volume_overlay_showing else None
 
         on_everything = (screen_on and not sleeping
-                 and currently_displaying == 'everything'
-                 and active_name and active_name in cached_everything_dict)
+                and freeze_for_task != True
+                and currently_displaying == 'everything'
+                and active_name and active_name in cached_everything_dict)
 
         if on_everything:
             # snapshot to detect a seek that landed mid-iteration
