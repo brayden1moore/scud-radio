@@ -16,6 +16,7 @@ import pickle
 import signal
 import pytz
 import time
+import json
 import math
 import html
 import sys
@@ -33,6 +34,7 @@ logging.basicConfig(
 )
 
 display_lock = threading.Lock()
+state_lock = threading.RLock()
 
 battery = None
 charging = False
@@ -252,7 +254,6 @@ def backlight_dim():
 
 from gpiozero import Button
 import socket
-import json
 
 def send_mpv_command(cmd, max_retries=10, retry_delay=1):
     for attempt in range(max_retries):
@@ -293,6 +294,10 @@ def get_streams():
     # clean text
     for name, _ in active.items():
         active[name]['oneLiner'] = html.unescape(active[name]['oneLiner'])
+        if active[name]['status'] == 'Offline':
+            active[name]['oneLiner'] = 'Offline'
+        active[name]['oneLinerWidth'] = width(active[name]['oneLiner'], SMALL_LIGHT)
+        
         if active[name]['status'] == 'Offline':
             active[name]['oneLiner'] = 'Offline'
     
@@ -373,7 +378,6 @@ def s(number):
     else:
         return 's'
 
-
 def pause(show_icon=False):
     global play_status, saved_image_while_paused, current_image
     #send_mpv_command({"command": ["stop"]})
@@ -403,8 +407,9 @@ def play(name, toggled=False):
 
 def play_random():
     global stream, play_status, readied_stream
-    available_streams = [i for i in stream_list if i != stream and streams[i]['status'] != 'Offline']
-    chosen = random.choice(available_streams)
+    with state_lock:
+        available = [i for i in stream_list if i != stream and streams[i]['status'] != 'Offline']
+    chosen = random.choice(available)
     display_readied_cached(chosen)
     play(chosen)
     stream = chosen
@@ -552,6 +557,12 @@ def draw_tick(draw, name):
         width=1
     )
 
+FONT_HEIGHTS = {
+    'SMALL' : height('S',SMALL_FONT),
+    'SMALL_LIGHT' : height('S',SMALL_LIGHT),
+    'EXTRALARGE_LIGHT' : height('S',EXTRALARGE_LIGHT),
+}
+
 marquee_offset = 0
 marquee_name = None
 seek_token = 0
@@ -565,12 +576,12 @@ def _draw_marquee_text(draw, name, offset):
 
     """Paint the scrolled oneLiner onto an existing draw object. No push."""
     text = streams[name]['oneLiner'].replace('&amp;', '&').strip()
-    full_w = width(text, SMALL_LIGHT)
+    full_w = streams[name].get('oneLinerWidth') or width(text, SMALL_LIGHT)
 
     name_font = EXTRALARGE_LIGHT
     name_chunk_start = 240 - 88
-    everything_info_y = name_chunk_start + height('S', name_font) + 12
-    line_h = height('S', SMALL_LIGHT)
+    everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 12
+    line_h = FONT_HEIGHTS['SMALL_LIGHT']
 
     draw.rectangle([MARQUEE_X, everything_info_y - 1,
                     SCREEN_WIDTH, everything_info_y + line_h + 4], fill=BLACK)
@@ -619,11 +630,14 @@ def display_everything(name, silent=False):
     if not restarting:
 
         first_display = False
-        len_stream_list = len(stream_list)
-        prev_stream = stream_list[(stream_list.index(name) - 1) % len_stream_list]
-        double_prev_stream = stream_list[(stream_list.index(prev_stream) - 1) % len_stream_list]
-        next_stream = stream_list[(stream_list.index(name) + 1) % len_stream_list]
-        double_next_stream = stream_list[(stream_list.index(next_stream) + 1) % len_stream_list]
+        with state_lock:
+            sl = stream_list
+            n = len(sl)
+            i = sl.index(name)
+            prev_stream        = sl[(i - 1) % n]
+            double_prev_stream = sl[(i - 2) % n]
+            next_stream        = sl[(i + 1) % n]
+            double_next_stream = sl[(i + 2) % n]
 
         image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
         draw = ImageDraw.Draw(image) 
@@ -638,18 +652,19 @@ def display_everything(name, silent=False):
         name_chunk_start_x = 12 + start_x
         name_font = EXTRALARGE_LIGHT
         name_line = calculate_text(name, name_font, 315, 1)[0]
-        draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], name_font), name_chunk_start + height('S', name_font)], fill=BLACK) # bg
+        draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], name_font), name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT']], fill=BLACK) # bg
         draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line[0], font=name_font, fill=WHITE) 
         #draw.rectangle([name_chunk_start_x, name_chunk_start + 30, name_chunk_start_x + width(name_line[0], name_font), name_chunk_start + 30], fill=WHITE) # ul
 
         # draw info
         y_offset = 0
-        everything_info_y = name_chunk_start + height('S', name_font) + 12
-        draw.text((name_chunk_start_x, everything_info_y + y_offset), streams[name]['oneLiner'].replace('&amp;','&'), font=SMALL_LIGHT, fill=WHITE)
+        everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 12
+        name_line = calculate_text(name, title_font, 315, 1)[0]
+        draw.text((name_chunk_start_x, everything_info_y + y_offset), streams[name]['oneLiner'], font=SMALL_LIGHT, fill=WHITE)
         y_offset += 20
 
         # draw tags
-        tags_start_y = round(everything_info_y + height('S', title_font) + 12)
+        tags_start_y = round(everything_info_y + FONT_HEIGHTS['SMALL_LIGHT'] + 12)
         tags_start_x = name_chunk_start_x
         location = streams[name]['location']
         live_status = streams[name]['status']
@@ -662,7 +677,7 @@ def display_everything(name, silent=False):
         genre_x_offset = 0
         if genres:
             genre_widths = [width(g, SMALL_LIGHT) for g in genres]
-            box_h = height('Sg', title_font)
+            box_h = FONT_HEIGHTS['SMALL_LIGHT']
             for (idx, genre), genre_width in zip(enumerate(genres), genre_widths):
                 fill = RED if idx == 0 else BLUE if idx == 1 else YELLOW
                 x0 = tags_start_x + genre_x_offset
@@ -778,7 +793,6 @@ def display_one(name):
         name_font = ONE_NAME_FONT
         name_line = calculate_text(name, font=name_font, max_width=225, lines=1)[0][0]
         block_start = 85
-        #draw.rectangle([block_start, 20 - 4, block_start + width(name_line, name_font), 20 + height('S', name_font)], fill=BLACK) # bg
         draw.text((block_start-2, 13), name_line, font=name_font, fill=WHITE)
         draw.rectangle([block_start, 45, block_start + width(name_line, name_font), 45], fill=WHITE) # underline
         
@@ -918,11 +932,11 @@ def display_current():
 def get_anchor(title, info, line_gap, section_gap, title_font, info_font):
     size = 0
     for _ in title:
-        size += height('Ay', title_font) + line_gap
+        size += height('Sg', title_font) + line_gap
     if info:
         size += section_gap
         for _ in info:
-            size += height('Ay', info_font) + line_gap
+            size += height('Sg', info_font) + line_gap
 
     section_height = 215 - (72 + 12 + 6)
     return 65 + 12 + 6 + round((section_height - size) // 2) - 6
@@ -962,21 +976,17 @@ def seek_stream(direction):
     global readied_stream 
 
     if not freeze_for_task:
-        idx = stream_list.index(stream)
-
-        if currently_displaying == 'ambient':
-            readied_stream = stream_list[idx]
-        else:
-            idx = stream_list.index(readied_stream if readied_stream else stream) 
-            if (direction == 1) and (idx==len(stream_list)-1):
-                readied_stream = stream_list[0]
-            elif (direction == -1) and (idx==0):
-                readied_stream = stream_list[-1]
+        with state_lock:
+            sl = stream_list
+            cur = readied_stream if readied_stream else stream
+            idx = sl.index(cur)
+            if direction == 1 and idx == len(sl) - 1:
+                readied_stream = sl[0]
+            elif direction == -1 and idx == 0:
+                readied_stream = sl[-1]
             else:
-                readied_stream = stream_list[idx + direction]
-
-         #print('TURNED TO....', readied_stream)
-        display_readied_cached(readied_stream) # otherwise show EVERYTHING (READIED)
+                readied_stream = sl[idx + direction]
+        display_readied_cached(readied_stream)
 
 def confirm_seek():
     global readied_stream, stream
@@ -1124,16 +1134,18 @@ def toggle_favorite():
         img = cached_everything_dict[chosen_stream].copy().convert('RGBA')
 
         action = None
-        if chosen_stream in favorites:
-            action = 'unfavorite'
-            favorites = [i for i in favorites if i != chosen_stream]
-        else:
-            action = 'favorite'
-            favorites.append(chosen_stream)
-            favorites = list(set(favorites))
-
-        stream_list = get_stream_list(streams)
-        new_idx = stream_list.index(chosen_stream)
+        with state_lock:
+            if chosen_stream in favorites:
+                action = 'unfavorite'
+                favorites = [i for i in favorites if i != chosen_stream]
+            else:
+                action = 'favorite'
+                favorites.append(chosen_stream)
+                favorites = list(set(favorites))
+            stream_list = get_stream_list(streams)
+            new_idx = stream_list.index(chosen_stream)
+        sl = stream_list
+        new_idx = sl.index(chosen_stream)
         set_favorites(favorites)
 
         indexes_needing_refresh = [prior_idx, 
@@ -1153,7 +1165,7 @@ def toggle_favorite():
         
         streams_needing_refresh = [chosen_stream] + favorites
         for i in indexes_needing_refresh:
-            streams_needing_refresh.append(stream_list[i % len(stream_list)])
+            streams_needing_refresh.append(sl[i % len(stream_list)])
         streams_needing_refresh = list(set(streams_needing_refresh))
 
         print('TOGGLED. REFRESHING, ', streams_needing_refresh)
@@ -1324,8 +1336,9 @@ def periodic_update():
                 print('Updated',updated_streams)
                 refresh_everything_cache(updated_streams)
                 logging.info(f"Successfully updated {updated_count} streams")
-                streams = fetched_streams
-                stream_list = get_stream_list(streams)
+                with state_lock:
+                    streams = fetched_streams
+                    stream_list = get_stream_list(streams)
                 failed_fetches = 0
                 last_successful_fetch = time.time()
                     
@@ -1766,7 +1779,9 @@ try:
 
             one_liner = streams[active_name]['oneLiner']
             text = one_liner.replace('&amp;', '&').strip()
-            long_text = width(text, SMALL_LIGHT) > (SCREEN_WIDTH - MARQUEE_X)
+            full_w = streams[active_name].get('oneLinerWidth') or width(text, SMALL_LIGHT)
+            long_text = full_w > (SCREEN_WIDTH - MARQUEE_X)
+            span = full_w + MARQUEE_GAP
 
             # content changed out from under us (periodic_update swapped the oneLiner)
             text_changed = (marquee_name == active_name and text_on_screen != one_liner)
@@ -1783,7 +1798,6 @@ try:
                 # scroll the text underneath only when long and not seeking.
                 # NEVER null marquee_name here, so the offset survives dismissal.
                 if long_text and not seeking:
-                    span = width(text, SMALL_LIGHT) + MARQUEE_GAP
                     if marquee_name != active_name:
                         marquee_name = active_name
                         marquee_offset = 0
@@ -1810,7 +1824,7 @@ try:
                 # normal scrolling, and also the just-cleared tick for long text:
                 # marquee_name still equals active_name (never nulled during overlay),
                 # so the offset resumes and this frame repaints the strip, erasing the bar
-                span = width(text, SMALL_LIGHT) + MARQUEE_GAP
+                span = streams[active_name]['oneLinerWidth'] + MARQUEE_GAP
                 if marquee_name != active_name:
                     marquee_name = active_name
                     marquee_offset = 0
