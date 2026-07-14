@@ -657,7 +657,6 @@ def display_everything(name, silent=False):
         genre_x_offset = 0
         if genres:
             genre_widths = [width(g, SMALL_LIGHT) for g in genres]
-            genre_x_offset = 5
             for (idx, genre), genre_width in zip(enumerate(genres), genre_widths):
                 if idx == 0:
                     fill = RED
