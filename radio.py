@@ -1255,8 +1255,8 @@ def refresh_everything_cache(refresh_stream_list):
 
 
 def handle_rotation(direction):
-    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time, last_seek_rotation, volume_overlay_showing, marquee_name, marquee_offset, seek_token
-    seek_token += 1
+    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time, last_seek_rotation, volume_overlay_showing, marquee_name, marquee_offset, seeking
+    seeking = True
     now = time.time()
     last_input_time = now
     rotated = True
@@ -1318,7 +1318,7 @@ def periodic_update():
         if sleeping:
             should_fetch = not refreshing_everything_now and ((time_since_last_update >= 120) or (time_since_last_success > 120) or len(cached_everything_dict)==0)
         else:
-            should_fetch = not refreshing_everything_now and ((time_since_last_update >= 10) or (time_since_last_success > 10) or len(cached_everything_dict)==0)
+            should_fetch = not seeking and not refreshing_everything_now and ((time_since_last_update >= 10) or (time_since_last_success > 10) or len(cached_everything_dict)==0)
         if should_fetch:
             try:
                 logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
@@ -1435,6 +1435,7 @@ confirm_overlay_showing = False
 last_ambient_display = time.time()
 switch_off_time = None
 confirm_on_rotate = get_config()['confirm_on_rotate']
+seeking = False
 
 current_volume = get_last_volume()
 
