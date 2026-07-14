@@ -1776,7 +1776,9 @@ try:
 
             # content changed out from under us (periodic_update swapped the oneLiner)
             text_changed = (marquee_name == active_name and text_on_screen != one_liner)
+
             if text_changed:
+                print('------TEXT CHANGED------')
                 marquee_offset = 0
                 marquee_pause_until = now + 3
                 marquee_name = None         
