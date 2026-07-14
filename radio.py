@@ -1767,6 +1767,7 @@ try:
         vol = volume_overlay_value if volume_overlay_showing else None
 
         on_everything = (screen_on and not sleeping
+                         and not seeking
                          and currently_displaying == 'everything'
                          and active_name and active_name in cached_everything_dict)
 
