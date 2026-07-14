@@ -1776,7 +1776,7 @@ try:
             long_text = width(text, SMALL_LIGHT) > (SCREEN_WIDTH - MARQUEE_X)
 
             # content changed out from under us (periodic_update swapped the oneLiner)
-            text_changed = (text_on_screen != one_liner)
+            text_changed = (text_on_screen != text)
 
             if text_changed:
                 print('------TEXT CHANGED------')
