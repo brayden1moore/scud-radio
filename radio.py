@@ -1250,9 +1250,6 @@ def displa_cached_scroll(name, pushed=False):
 def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, scroll_cache_dict, sleeping
     while True:
-        
-        logging.info('PERIODIC UPDATE OCCURRING')
-        print('cache size', len(scroll_cache_dict))
 
         time_since_last_success = time.time() - last_successful_fetch
         if sleeping:
@@ -1263,6 +1260,9 @@ def periodic_update():
                             ((((oneliner_mq['offset'] == 0) | (name_mq['offset'] == 0)) and (oneliner_mq['needed']==True and name_mq['needed']==True)) or (((oneliner_mq['offset'] == 0) and (name_mq['offset'] == 0)))) and \
                         ((time_since_last_update >= 10) or (time_since_last_success > 10) or len(scroll_cache_dict)==0)
         if should_fetch:
+            logging.info('PERIODIC UPDATE OCCURRING')
+            print('cache size', len(scroll_cache_dict))
+
             try:
                 logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
                 fetched_streams = get_streams()
@@ -1304,8 +1304,8 @@ def periodic_update():
             
             time_since_last_update = 0
 
-        time_since_last_update += 10
-        time.sleep(10)
+        time_since_last_update += 1
+        time.sleep(1)
 
 def wake_screen():
     global screen_on, last_input_time, current_image
