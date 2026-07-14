@@ -638,7 +638,7 @@ def _draw_marquee_text(draw, name, offset):
     draw.text((start + span, everything_info_y), text, font=SMALL_LIGHT, fill=WHITE)
 
     draw.rectangle([0, everything_info_y, MARQUEE_X - 1,
-                    everything_info_y + line_h + 2], fill=BLACK)
+                    everything_info_y + line_h + 4], fill=BLACK)
     
     text_on_screen = streams[name]['oneLiner']
 
@@ -1768,7 +1768,7 @@ try:
         else:
             marquee_name = None
 
-        time.sleep(0.05)
+        time.sleep(0.01)
 
 except KeyboardInterrupt:
     if mpv_process:
