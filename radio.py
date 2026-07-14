@@ -636,13 +636,13 @@ def display_everything(name, silent=False):
 
         first_display = False
 
-        sl = stream_list
-        n = len(sl)
-        i = sl.index(name)
-        prev_stream        = sl[(i - 1) % n]
-        double_prev_stream = sl[(i - 2) % n]
-        next_stream        = sl[(i + 1) % n]
-        double_next_stream = sl[(i + 2) % n]
+        first_display = False
+        len_stream_list = len(stream_list)
+        prev_stream = stream_list[(stream_list.index(name) - 1) % len_stream_list]
+        double_prev_stream = stream_list[(stream_list.index(prev_stream) - 1) % len_stream_list]
+        next_stream = stream_list[(stream_list.index(name) + 1) % len_stream_list]
+        double_next_stream = stream_list[(stream_list.index(next_stream) + 1) % len_stream_list]
+
 
         image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
         draw = ImageDraw.Draw(image) 
@@ -1778,9 +1778,7 @@ try:
 
             one_liner = streams[active_name]['oneLiner']
             text = one_liner.replace('&amp;', '&').strip()
-            full_w = streams[active_name].get('oneLinerWidth') or width(text, SMALL_LIGHT)
-            long_text = full_w > (SCREEN_WIDTH - MARQUEE_X)
-            span = full_w + MARQUEE_GAP
+            long_text = width(text, SMALL_LIGHT) > (SCREEN_WIDTH - MARQUEE_X)
 
             # content changed out from under us (periodic_update swapped the oneLiner)
             text_changed = (marquee_name == active_name and text_on_screen != one_liner)
@@ -1797,6 +1795,7 @@ try:
                 # scroll the text underneath only when long and not seeking.
                 # NEVER null marquee_name here, so the offset survives dismissal.
                 if long_text and not seeking:
+                    span = width(text, SMALL_LIGHT) + MARQUEE_GAP
                     if marquee_name != active_name:
                         marquee_name = active_name
                         marquee_offset = 0
@@ -1823,7 +1822,7 @@ try:
                 # normal scrolling, and also the just-cleared tick for long text:
                 # marquee_name still equals active_name (never nulled during overlay),
                 # so the offset resumes and this frame repaints the strip, erasing the bar
-                span = streams[active_name]['oneLinerWidth'] + MARQUEE_GAP
+                span = width(text, SMALL_LIGHT) + MARQUEE_GAP
                 if marquee_name != active_name:
                     marquee_name = active_name
                     marquee_offset = 0
@@ -1848,7 +1847,7 @@ try:
         else:
             marquee_name = None
 
-        time.sleep(0.008)
+        time.sleep(0.0167)
 
 except KeyboardInterrupt:
     if mpv_process:
