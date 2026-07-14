@@ -8,6 +8,7 @@ import spidev as SPI
 import numpy as np
 import subprocess
 import threading
+import traceback
 import requests
 import platform
 import logging
@@ -293,7 +294,8 @@ def get_streams():
     
     # clean text
     for name, _ in active.items():
-        active[name]['oneLiner'] = html.unescape(active[name]['oneLiner'])
+        rendered = html.unescape(active[name]['oneLiner']).replace('&amp;', '&').strip()
+        active[name]['oneLiner'] = rendered
         if active[name]['status'] == 'Offline':
             active[name]['oneLiner'] = 'Offline'
         active[name]['oneLinerWidth'] = width(active[name]['oneLiner'], SMALL_LIGHT)
@@ -1114,10 +1116,10 @@ def switch_on():
     put_to_sleep = False
     if switch_off_time:
         if current_time - switch_off_time >= 3600:
-            if stream in stream_list:
-                play(stream)
-            else:
-                play(stream_list[0])
+            with state_lock:
+                target = stream if stream in stream_list else (stream_list[0] if stream_list else None)
+            if target:
+                play(target)
     if not muted:
         send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
@@ -1128,22 +1130,19 @@ def toggle_favorite():
     freeze_for_task = True
 
     chosen_stream = stream if not readied_stream else readied_stream
-    if chosen_stream in stream_list:
+    with state_lock:
+        if chosen_stream not in stream_list:
+            freeze_for_task = False
+            return
         prior_idx = stream_list.index(chosen_stream)
-        
-        img = cached_everything_dict[chosen_stream].copy().convert('RGBA')
-
-        action = None
-        with state_lock:
-            if chosen_stream in favorites:
-                action = 'unfavorite'
-                favorites = [i for i in favorites if i != chosen_stream]
-            else:
-                action = 'favorite'
-                favorites.append(chosen_stream)
-                favorites = list(set(favorites))
-            stream_list = get_stream_list(streams)
-            new_idx = stream_list.index(chosen_stream)
+        if chosen_stream in favorites:
+            action = 'unfavorite'
+            favorites = [i for i in favorites if i != chosen_stream]
+        else:
+            action = 'favorite'
+            favorites.append(chosen_stream)
+            favorites = list(set(favorites))
+        stream_list = get_stream_list(streams)
         sl = stream_list
         new_idx = sl.index(chosen_stream)
         set_favorites(favorites)
@@ -1165,7 +1164,7 @@ def toggle_favorite():
         
         streams_needing_refresh = [chosen_stream] + favorites
         for i in indexes_needing_refresh:
-            streams_needing_refresh.append(sl[i % len(stream_list)])
+            streams_needing_refresh.append(sl[i % len(sl)])
         streams_needing_refresh = list(set(streams_needing_refresh))
 
         print('TOGGLED. REFRESHING, ', streams_needing_refresh)
@@ -1216,8 +1215,13 @@ def refresh_everything_cache(refresh_stream_list):
     origin_stream = readied_stream if readied_stream else stream
     if origin_stream:
         ordered_refresh_list = []
-        stream_idx = stream_list.index(origin_stream)
-        forwards = stream_list[stream_idx:] + stream_list[:stream_idx]
+        with state_lock:
+            sl = stream_list
+            if origin_stream not in sl:
+                refreshing_everything_now = False
+                return
+            stream_idx = sl.index(origin_stream)
+        forwards = sl[stream_idx:] + sl[:stream_idx]
         backwards = list(reversed(forwards))
 
         curr_idx = 0
@@ -1661,8 +1665,8 @@ def handle_remote_command(command_data):
         else:
             return {'status': 'error', 'message': 'Unknown command'}
             
-    except Exception as e:
-        return {'status': 'error', 'message': str(e.with_traceback())}
+    except Exception:
+        return {'status': 'error', 'message': traceback.format_exc()}
 
 
 def control_socket_listener():
