@@ -1148,7 +1148,7 @@ def toggle_favorite():
 ready_to_display = False
 refreshing_everything_now = False
 
-def refresh_everything_cache(refresh_stream_list):
+def refresh_scroll_cache(refresh_stream_list):
     global scroll_cache_dict, refreshing_everything_now, ready_to_display
 
     refreshing_everything_now = True
@@ -1185,12 +1185,9 @@ def refresh_everything_cache(refresh_stream_list):
     
     if len(ordered_refresh_list) > 0:
         calculate_ticks()
-        with ThreadPoolExecutor(max_workers= 4) as executor:
-            future_to_name = {executor.submit(refresh_stream, name): name for name in ordered_refresh_list}
-            
-            for future in as_completed(future_to_name):
-                name, result = future.result()
-                scroll_cache_dict[name] = result
+        for name in ordered_refresh_list:
+            name, result = refresh_stream(name)
+            scroll_cache_dict[name] = result
 
     refreshing_everything_now = False
 
@@ -1275,7 +1272,7 @@ def periodic_update():
                             updated_count += 1                              
                 
                 print('Updated',updated_streams)
-                refresh_everything_cache(updated_streams)
+                refresh_scroll_cache(updated_streams)
                 logging.info(f"Successfully updated {updated_count} streams")
                 streams = fetched_streams
                 stream_list = get_stream_list(streams)
@@ -1668,7 +1665,7 @@ volume_click_button = Button(17, bounce_time=0.05)
 volume_click_button.when_pressed = wrapped_action(lambda: on_button_pressed())
     
 ## main loop
-refresh_everything_cache(stream_list)
+refresh_scroll_cache(stream_list)
 
 last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
