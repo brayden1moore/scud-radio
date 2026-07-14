@@ -580,7 +580,8 @@ def _draw_marquee_text(draw, name, offset):
     global text_on_screen
 
     """Paint the scrolled oneLiner onto an existing draw object. No push."""
-    text = streams[name]['oneLiner'].replace('&amp;', '&').strip()
+    text = calculate_text(streams[name]['oneLiner'], SMALL_LIGHT, 640, 1)[0][0]
+
     full_w = streams[name].get('oneLinerWidth') or width(text, SMALL_LIGHT)
 
     name_font = EXTRALARGE_LIGHT
