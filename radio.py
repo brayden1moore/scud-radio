@@ -1165,45 +1165,47 @@ def toggle_favorite():
         streams_needing_refresh = [chosen_stream] + favorites
         for i in indexes_needing_refresh:
             streams_needing_refresh.append(sl[i % len(sl)])
-        streams_needing_refresh = list(set(streams_needing_refresh))
+    
+    img = refresh_everything_cache[chosen_stream].copy()
+    streams_needing_refresh = list(set(streams_needing_refresh))
 
-        print('TOGGLED. REFRESHING, ', streams_needing_refresh)
-        thread = threading.Thread(target=refresh_everything_cache, args=(streams_needing_refresh,), daemon=True)
+    print('TOGGLED. REFRESHING, ', streams_needing_refresh)
+    thread = threading.Thread(target=refresh_everything_cache, args=(streams_needing_refresh,), daemon=True)
 
-        if action == 'unfavorite':
-            no_star_img = img.copy()
-            for i in list(reversed(favorite_images)):
-                img.paste(i, (0, 0), i)
-                with display_lock:
-                    disp.ShowImage(img)  
-                img = no_star_img.convert('RGBA')
-
-            img.paste(unfavorite, (0, 0), unfavorite)
+    if action == 'unfavorite':
+        no_star_img = img.copy()
+        for i in list(reversed(favorite_images)):
+            img.paste(i, (0, 0), i)
             with display_lock:
-                    disp.ShowImage(img)  
-            time.sleep(0.1)
-        else:
-            img.paste(favorite_images[0], (0, 0), favorite_images[0])
-            with display_lock:
-                    disp.ShowImage(img)  
-            for i in favorite_images:
-                img.paste(i, (0, 0), i)
-                with display_lock:
-                    disp.ShowImage(img)     
-            time.sleep(0.1)
-            with display_lock:
-                    disp.ShowImage(img)      
+                disp.ShowImage(img)  
+            img = no_star_img.convert('RGBA')
 
-        thread.start()
-        time.sleep(0.5)
-        last_input_time = time.time()
-        
-        if chosen_stream in cached_everything_dict:
-            del cached_everything_dict[chosen_stream]
-        
-        calculate_ticks()
-        display_readied_cached(chosen_stream)  
-        freeze_for_task = False
+        img.paste(unfavorite, (0, 0), unfavorite)
+        with display_lock:
+                disp.ShowImage(img)  
+        time.sleep(0.1)
+    else:
+        img.paste(favorite_images[0], (0, 0), favorite_images[0])
+        with display_lock:
+                disp.ShowImage(img)  
+        for i in favorite_images:
+            img.paste(i, (0, 0), i)
+            with display_lock:
+                disp.ShowImage(img)     
+        time.sleep(0.1)
+        with display_lock:
+                disp.ShowImage(img)      
+
+    thread.start()
+    time.sleep(0.5)
+    last_input_time = time.time()
+    
+    if chosen_stream in cached_everything_dict:
+        del cached_everything_dict[chosen_stream]
+    
+    calculate_ticks()
+    display_readied_cached(chosen_stream)  
+    freeze_for_task = False
 
 ready_to_display = False
 refreshing_everything_now = False
