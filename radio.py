@@ -1090,6 +1090,7 @@ def _refresh_worker(ordered, gen):
                 return
             if img:
                 scroll_cache_dict[name] = img
+            time.sleep(0.05)
     finally:
         if gen == refresh_generation:
             refreshing_everything_now = False
@@ -1188,6 +1189,7 @@ def refresh_scroll_cache(refresh_stream_list):
         for name in ordered_refresh_list:
             name, result = refresh_stream(name)
             scroll_cache_dict[name] = result
+            time.sleep(0.05)
 
     refreshing_everything_now = False
 
