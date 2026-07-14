@@ -1202,9 +1202,6 @@ def refresh_everything_cache(refresh_stream_list):
         stream_idx = stream_list.index(origin_stream)
         forwards = stream_list[stream_idx:] + stream_list[:stream_idx]
         backwards = list(reversed(forwards))
-        
-        #print('FORWARDS', forwards)
-        #print('BACKWARDS', backwards)   
 
         curr_idx = 0
         while len(ordered_refresh_list) < len(refresh_stream_list):
@@ -1273,10 +1270,6 @@ def display_readied_cached(name, pushed=False):
     currently_displaying = 'everything'
     if name in list(cached_everything_dict.keys()):
         image = cached_everything_dict[name]
-        #image.paste(tick_image, (0,0), mask=tick_image)
-        #draw = ImageDraw.Draw(image)
-        #draw_tick(draw, name)
-
         if image:
             if pushed:
                 image = image.copy()
@@ -1305,7 +1298,7 @@ def periodic_update():
         if sleeping:
             should_fetch = not refreshing_everything_now and ((time_since_last_update >= 120) or (time_since_last_success > 120) or len(cached_everything_dict)==0)
         else:
-            should_fetch = not refreshing_everything_now and ((time_since_last_update >= 30) or (time_since_last_success > 30) or len(cached_everything_dict)==0)
+            should_fetch = not refreshing_everything_now and ((time_since_last_update >= 10) or (time_since_last_success > 10) or len(cached_everything_dict)==0)
         if should_fetch:
             try:
                 logging.info(f"Fetching stream updates... (last successful: {time_since_last_success:.0f}s ago)")
