@@ -1748,10 +1748,13 @@ try:
         vol = volume_overlay_value if volume_overlay_showing else None
 
         on_everything = (screen_on and not sleeping
-                         and currently_displaying == 'everything'
-                         and active_name and active_name in cached_everything_dict)
+                 and currently_displaying == 'everything'
+                 and active_name and active_name in cached_everything_dict)
 
         if on_everything:
+            # snapshot to detect a seek that landed mid-iteration
+            def _still_current():
+                return (readied_stream if readied_stream else stream) == active_name
             one_liner = streams[active_name]['oneLiner']
             text = one_liner.replace('&amp;', '&').strip()
             long_text = width(text, SMALL_LIGHT) > (SCREEN_WIDTH - MARQUEE_X)
@@ -1781,10 +1784,12 @@ try:
                         if marquee_offset >= span:
                             marquee_offset = 0
                             marquee_pause_until = now + 3
-                    render_everything_frame(active_name, marquee_offset, volume=vol)
+                    if _still_current():
+                        render_everything_frame(active_name, marquee_offset, volume=vol)
                 else:
                     # short text, or seeking — bar only, leave baked-in text untouched
-                    render_everything_frame(active_name, 0, volume=vol, draw_text=False)
+                    if _still_current():
+                        render_everything_frame(active_name, marquee_offset, volume=vol)
 
             elif seeking:
                 # mid-seek, no volume — let the seek's own frames own the screen
@@ -1806,7 +1811,8 @@ try:
                     if marquee_offset >= span:
                         marquee_offset = 0
                         marquee_pause_until = now + 3
-                render_everything_frame(active_name, marquee_offset)
+                if _still_current():
+                        render_everything_frame(active_name, marquee_offset, volume=vol)
 
             elif volume_just_cleared:
                 # only reached for short text — nothing else redraws, so wipe the bar
