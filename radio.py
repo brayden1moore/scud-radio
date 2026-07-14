@@ -644,7 +644,8 @@ def display_everything(name, silent=False):
         y_offset += 20
 
         # draw tags
-        tags_start = everything_info_y + height('S', title_font) + 12
+        tags_start_y = everything_info_y + height('S', title_font) + 12
+        tags_start_x = padding
         location = streams[name]['location']
         live_status = streams[name]['status']
         stream_genres = streams[name]['genres']
@@ -664,8 +665,8 @@ def display_everything(name, silent=False):
                     fill = BLUE
                 else:
                     fill = YELLOW
-                draw.rectangle([tags_start + genre_x_offset, tags_start, tags_start + genre_x_offset + genre_width, tags_start + 1 + height('S', SMALL_LIGHT)], fill=fill) # bg
-                draw.text((tags_start + genre_x_offset, tags_start - 2), genre, font=SMALL_LIGHT, fill=BLACK)
+                draw.rectangle([tags_start_x + genre_x_offset, tags_start_y, tags_start_x + genre_x_offset + genre_width, tags_start_y + 1 + height('S', SMALL_LIGHT)], fill=fill) # bg
+                draw.text((tags_start_x + genre_x_offset, tags_start_y - 2), genre, font=SMALL_LIGHT, fill=BLACK)
                 genre_x_offset += genre_width + 5
 
         # logos
