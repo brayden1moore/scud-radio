@@ -1796,7 +1796,7 @@ try:
                 else:
                     # short text, or seeking — bar only, leave baked-in text untouched
                     if _still_current():
-                        render_everything_frame(active_name, marquee_offset, volume=vol)
+                        render_everything_frame(active_name, marquee_offset, draw_text=False, volume=vol)
 
             elif seeking:
                 # during the settle window, keep the *current* station on screen
