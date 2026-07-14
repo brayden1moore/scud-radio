@@ -1800,7 +1800,7 @@ try:
                 elif now < marquee_pause_until:
                     pass
                 else:
-                    marquee_offset += 2
+                    marquee_offset += 3
                     if marquee_offset >= span:
                         marquee_offset = 0
                         marquee_pause_until = now + 3
