@@ -263,7 +263,10 @@ def send_mpv_command(cmd, max_retries=10, retry_delay=1):
             with socket.socket(socket.AF_UNIX) as s:
                 s.settimeout(2)
                 s.connect("/tmp/mpvsocket")
-                s.sendall((json.dumps(cmd) + '\n').encode())
+                try:
+                    s.sendall((json.dumps(cmd) + '\n').encode())
+                except BrokenPipeError as e:
+                    pass
                 return True
         except (ConnectionRefusedError, FileNotFoundError, socket.timeout) as e:
             if attempt < max_retries - 1:
