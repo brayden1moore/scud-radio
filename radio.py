@@ -568,6 +568,32 @@ FONT_HEIGHTS = {
     'EXTRALARGE_LIGHT' : height('S',EXTRALARGE_LIGHT),
 }
 
+NAME_Y = 240 - 88        
+_name_metrics_cache = {}              
+
+def _name_metrics(name):
+    if name not in _name_metrics_cache:
+        _, f = calculate_text(name, EXTRALARGE_LIGHT, 10**9, 1)
+        _name_metrics_cache[name] = (f, width(name, f))
+    return _name_metrics_cache[name]
+
+def _draw_marquee_name(draw, name, offset):
+    """Paint the scrolled station name onto an existing draw object. No push."""
+    font, full_w = _name_metrics(name)
+    line_h = FONT_HEIGHTS['EXTRALARGE_LIGHT']
+    strip_bottom = NAME_Y + line_h + 9   # stops just above the oneLiner row
+
+    # clear the whole name strip (covers the baked-in truncated name)
+    draw.rectangle([0, NAME_Y - 2, SCREEN_WIDTH, strip_bottom], fill=BLACK)
+
+    span = full_w + MARQUEE_GAP
+    start = MARQUEE_X - (offset % span)
+    draw.text((start - 1, NAME_Y - 1), name, font=font, fill=WHITE)
+    draw.text((start - 1 + span, NAME_Y - 1), name, font=font, fill=WHITE)
+
+    # left gutter
+    draw.rectangle([0, NAME_Y - 2, MARQUEE_X - 1, strip_bottom], fill=BLACK)
+
 marquee_offset = 0
 marquee_name = None
 seek_token = 0
@@ -612,18 +638,19 @@ def _draw_volume_bar(draw, volume):
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
 
 
-def render_frame(name, offset=0, volume=None, draw_text=True):
+def render_frame(name, offset=0, volume=None, draw_text=True, name_offset=None):
     base = scroll_cache_dict.get(name)
     if not base:
         return
     img = base.copy()
     draw = ImageDraw.Draw(img)
+    if name_offset is not None:
+        _draw_marquee_name(draw, name, name_offset)
     if draw_text:
         _draw_marquee_text(draw, name, offset)
     if volume is not None:
         _draw_volume_bar(draw, volume)
     with display_lock:
-        # atomic re-check: if a seek changed the target while we were drawing, drop this frame
         if (readied_stream if readied_stream else stream) != name:
             return
         disp.ShowImage(img)
@@ -1673,50 +1700,52 @@ try:
 
         if on_everything:
             text = streams[active_name]['oneLiner']
-            long_text = width(text, SMALL_LIGHT) > (SCREEN_WIDTH - MARQUEE_X)
+            text_w = width(text, SMALL_LIGHT)
+            long_text = text_w > (SCREEN_WIDTH - MARQUEE_X)
 
-            # content changed out from under us (periodic_update swapped the oneLiner)
+            _, name_w = _name_metrics(active_name)
+            long_name = name_w > (SCREEN_WIDTH - MARQUEE_X)
+
+            needs_scroll = long_text or long_name
+
+            # shared clock wraps on the longer span; each strip wraps itself via modulo
+            spans = []
+            if long_text: spans.append(text_w + MARQUEE_GAP)
+            if long_name: spans.append(name_w + MARQUEE_GAP)
+            cycle_span = max(spans) if spans else 0
+
+            name_off = lambda: marquee_offset if long_name else None
+
             text_changed = (text_on_screen != text)
-
             if text_changed:
                 print('------TEXT CHANGED------')
                 marquee_offset = 0
                 marquee_pause_until = now + 3
-                marquee_name = None         
+                marquee_name = None
                 if not long_text:
-                    # short text won't be repainted by the marquee path — push a fresh frame now
                     del scroll_cache_dict[active_name]
                     displa_cached_scroll(active_name)
 
             if vol is not None:
-                # volume overlay active — always show it, even mid-seek.
-                # scroll the text underneath only when long and not seeking.
-                # NEVER null marquee_name here, so the offset survives dismissal.
-                if long_text and not seeking:
-                    span = width(text, SMALL_LIGHT) + MARQUEE_GAP
+                if needs_scroll and not seeking:
                     if marquee_name != active_name:
                         marquee_name = active_name
                         marquee_offset = 0
                         marquee_pause_until = now + 3
                     elif now >= marquee_pause_until:
                         marquee_offset += 2
-                        if marquee_offset >= span:
+                        if marquee_offset >= cycle_span:
                             marquee_offset = 0
                             marquee_pause_until = now + 3
-                    render_frame(active_name, marquee_offset, volume=vol)
+                    render_frame(active_name, marquee_offset, volume=vol,
+                                 draw_text=long_text, name_offset=name_off())
                 else:
-                    # short text, or seeking — bar only, leave baked-in text untouched
                     render_frame(active_name, 0, volume=vol, draw_text=False)
 
             elif seeking:
-                # mid-seek, no volume — let the seek's own frames own the screen
                 marquee_name = None
 
-            elif long_text:
-                # normal scrolling, and also the just-cleared tick for long text:
-                # marquee_name still equals active_name (never nulled during overlay),
-                # so the offset resumes and this frame repaints the strip, erasing the bar
-                span = width(text, SMALL_LIGHT) + MARQUEE_GAP
+            elif needs_scroll:
                 if marquee_name != active_name:
                     marquee_name = active_name
                     marquee_offset = 0
@@ -1725,13 +1754,13 @@ try:
                     pass
                 else:
                     marquee_offset += 2
-                    if marquee_offset >= span:
+                    if marquee_offset >= cycle_span:
                         marquee_offset = 0
                         marquee_pause_until = now + 3
-                render_frame(active_name, marquee_offset)
+                render_frame(active_name, marquee_offset,
+                             draw_text=long_text, name_offset=name_off())
 
             elif volume_just_cleared:
-                # only reached for short text — nothing else redraws, so wipe the bar
                 displa_cached_scroll(active_name)
                 marquee_name = None
 
