@@ -1771,8 +1771,7 @@ try:
                          and active_name and active_name in cached_everything_dict)
 
         if on_everything:
-            one_liner = streams[active_name]['oneLiner']
-            text = one_liner.replace('&amp;', '&').strip()
+            text = streams[active_name]['oneLiner']
             long_text = width(text, SMALL_LIGHT) > (SCREEN_WIDTH - MARQUEE_X)
 
             # content changed out from under us (periodic_update swapped the oneLiner)
@@ -1785,6 +1784,7 @@ try:
                 marquee_name = None         
                 if not long_text:
                     # short text won't be repainted by the marquee path — push a fresh frame now
+                    del cached_everything_dict[active_name]
                     display_readied_cached(active_name)
 
             if vol is not None:
