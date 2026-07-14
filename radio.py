@@ -645,7 +645,7 @@ def display_everything(name, silent=False):
 
         # draw tags
         tags_start_y = everything_info_y + height('S', title_font) + 12
-        tags_start_x = padding
+        tags_start_x = name_chunk_start_x
         location = streams[name]['location']
         live_status = streams[name]['status']
         stream_genres = streams[name]['genres']
@@ -654,7 +654,7 @@ def display_everything(name, silent=False):
         if stream_genres:
             genres.extend(stream_genres)
 
-        genre_x_offset = name_chunk_start_x
+        genre_x_offset = 0
         if genres:
             genre_widths = [width(g, SMALL_LIGHT) for g in genres]
             for (idx, genre), genre_width in zip(enumerate(genres), genre_widths):
