@@ -1651,7 +1651,7 @@ volume_click_button = Button(17, bounce_time=0.05)
 #volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
 volume_click_button.when_pressed = on_button_pressed
 volume_click_button.hold_time = 5
-volume_click_button.when_releaded = on_volume_button_released
+volume_click_button.when_released = on_volume_button_released
 
 ## main loop
 refresh_scroll_cache(stream_list)
