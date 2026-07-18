@@ -1631,7 +1631,7 @@ threading.Thread(target=control_socket_listener, daemon=True).start()
 from gpiozero import RotaryEncoder, Button
 
 click_button = Button(26, bounce_time=0.05)
-click_button.hold_time = 2
+click_button.hold_time = 5
 click_button.when_pressed = wrapped_action(lambda: toggle_favorite())
 #click_button.when_released = wrapped_action(lambda: on_button_released())
 click_button.when_held = safe_restart()
