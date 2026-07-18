@@ -977,7 +977,7 @@ def safe_restart():
         run(['sudo','systemctl', 'restart','radio'])
 
 
-def on_button_pressed():
+def on_volume_button_pressed():
     global button_press_time, rotated, button_press_times, held, button_released_time, last_input_time, currently_displaying, readied_stream
     held = True
     if not put_to_sleep:
@@ -986,13 +986,6 @@ def on_button_pressed():
         button_released_time = None
         play_random()
         rotated = False
-
-def on_volume_button_pressed():
-    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, muted, volume_held
-    held = False
-    current_time = time.time()
-    last_input_time = time.time()
-    button_released_time = current_time
     
 
 def on_volume_button_released():
@@ -1002,7 +995,6 @@ def on_volume_button_released():
 
 def switch_off():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, switch_off_time
-    held = False
     current_time = time.time()
     last_input_time = current_time
     button_released_time = current_time
@@ -1628,9 +1620,8 @@ threading.Thread(target=control_socket_listener, daemon=True).start()
 from gpiozero import RotaryEncoder, Button
 
 click_button = Button(26, bounce_time=0.05)
-click_button.hold_time = 5
 click_button.when_pressed = wrapped_action(lambda: toggle_favorite())
-#click_button.when_released = wrapped_action(lambda: on_button_released())
+
 CLK_PIN = 5 
 DT_PIN = 6   
 rotor = RotaryEncoder(CLK_PIN, DT_PIN)
@@ -1644,10 +1635,7 @@ volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_hand
 volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1, True)
 
 volume_click_button = Button(17, bounce_time=0.05)
-#volume_click_button.when_pressed =  wrapped_action(lambda: on_volume_button_pressed())
-#volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
-volume_click_button.when_pressed = on_button_pressed
-volume_click_button.hold_time = 5
+volume_click_button.when_pressed = on_volume_button_pressed
 volume_click_button.when_released = on_volume_button_released
 
 ## main loop
