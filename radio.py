@@ -231,9 +231,9 @@ def backlight_on():
     if disp:
         if not restarting:
             if stream:
-                if currently_displaying == 'ambient':
-                    display_ambient(stream)
-                else:
+                #if currently_displaying == 'ambient':
+                #    display_ambient(stream)
+                #else:
                     displa_cached_scroll(stream)
             else:
                 display_scud()
