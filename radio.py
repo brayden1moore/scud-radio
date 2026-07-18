@@ -74,7 +74,9 @@ def load_font(name, size, weight=400):
         font = ImageFont.truetype('assets/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf', size)   
     elif name == 'Favorit':
         font = ImageFont.truetype('assets/Favorit/ABCFavoritMono-Regular.otf', size)   
-    font.set_variation_by_axes([weight]) 
+    
+    if name != 'Favorit':
+        font.set_variation_by_axes([weight]) 
     return font
 
 SMALL_LIGHT = load_font('Favorit', 17, weight=400)  #load_font('Noto', 17, weight=400)  
