@@ -981,13 +981,12 @@ def safe_restart():
 
 def on_button_pressed():
     global button_press_time, rotated, button_press_times, held, button_released_time, last_input_time, currently_displaying, readied_stream
-    last_input_time = time.time()
-    button_press_time = time.time()
-    button_released_time = None
-
-    play_random()
-
-    rotated = False
+    if not put_to_sleep:
+        last_input_time = time.time()
+        button_press_time = time.time()
+        button_released_time = None
+        play_random()
+        rotated = False
 
 
 def on_volume_button_pressed():
@@ -1651,7 +1650,7 @@ volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotat
 volume_click_button = Button(17, bounce_time=0.05)
 #volume_click_button.when_pressed =  wrapped_action(lambda: on_volume_button_pressed())
 #volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
-volume_click_button.when_pressed = wrapped_action(lambda: on_button_pressed())
+volume_click_button.when_pressed = on_button_pressed()
 volume_click_button.hold_time = 5
 volume_click_button.when_held = safe_restart()
 
