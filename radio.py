@@ -1636,7 +1636,6 @@ click_button = Button(26, bounce_time=0.05)
 click_button.hold_time = 5
 click_button.when_pressed = wrapped_action(lambda: toggle_favorite())
 #click_button.when_released = wrapped_action(lambda: on_button_released())
-rotor.when_held = safe_restart()
 CLK_PIN = 5 
 DT_PIN = 6   
 rotor = RotaryEncoder(CLK_PIN, DT_PIN)
