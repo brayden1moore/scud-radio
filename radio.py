@@ -916,7 +916,10 @@ def seek_stream(direction):
         sl = stream_list
         cur = readied_stream if readied_stream else stream
         idx = sl.index(cur)
-        readied_stream = sl[(idx + direction) % len(sl)]
+        if currently_displaying == 'ambient':
+            readied_stream = cur
+        else: 
+            readied_stream = sl[(idx + direction) % len(sl)]
     displa_cached_scroll(readied_stream)
     confirm_seek()
 
