@@ -1650,9 +1650,9 @@ volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotat
 volume_click_button = Button(17, bounce_time=0.05)
 #volume_click_button.when_pressed =  wrapped_action(lambda: on_volume_button_pressed())
 #volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
-volume_click_button.when_pressed = on_button_pressed()
+volume_click_button.when_pressed = on_button_pressed
 volume_click_button.hold_time = 5
-volume_click_button.when_held = safe_restart()
+volume_click_button.when_held = safe_restart
 
 ## main loop
 refresh_scroll_cache(stream_list)
