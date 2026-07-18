@@ -79,10 +79,10 @@ def load_font(name, size, weight=400):
         font.set_variation_by_axes([weight]) 
     return font
 
-SMALL_LIGHT = load_font('Favorit', 17, weight=400)  #load_font('Noto', 17, weight=400)  
-MEDIUM_BOLD = load_font('Archivo',28, weight=600)
-LARGE_LIGHT = load_font('Archivo',32, weight=400)  
-EXTRALARGE_LIGHT = load_font('Favorit', 38, weight=400)#load_font('Archivo',38, weight=400)  
+SMALL_LIGHT = load_font('Noto', 17, weight=400)  
+#MEDIUM_BOLD = load_font('Archivo',28, weight=600)
+#LARGE_LIGHT = load_font('Archivo',32, weight=400)  
+EXTRALARGE_LIGHT = load_font('Archivo',38, weight=400)  
 
 def replace_font(font):
     replacement = 'Noto'
@@ -91,22 +91,16 @@ def replace_font(font):
     if font == SMALL_LIGHT:
         weight = 400
         size = 17
-    elif font == MEDIUM_BOLD:
-        weight = 600
-        size = 28
-    elif font == LARGE_LIGHT:
-        weight = 400
-        size = 32
+    #elif font == MEDIUM_BOLD:
+    #    weight = 600
+    #    size = 28
+    #elif font == LARGE_LIGHT:
+    #    weight = 400
+    #    size = 32
     elif font == EXTRALARGE_LIGHT:
         weight = 400
         size = 38
     return load_font(replacement, size, weight)
-
-ONE_INFO_FONT = SMALL_LIGHT
-EVERYTHING_NAME_FONT = MEDIUM_BOLD
-ONE_NAME_FONT = MEDIUM_BOLD
-ONE_LARGISH_FONT = LARGE_LIGHT
-ONE_LARGE_FONT = EXTRALARGE_LIGHT
 
 LIB_PATH = "/var/lib/scud-radio"
 
