@@ -72,10 +72,12 @@ def load_font(name, size, weight=400):
         font = ImageFont.truetype('assets/Archivo/Archivo-VariableFont_wdth,wght.ttf', size)
     elif name == 'Noto':
         font = ImageFont.truetype('assets/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf', size)   
+    elif name == 'Favorit':
+        font = ImageFont.truetype('assets/Favorit/ABCFavoritMono-Regular.otf', size)   
     font.set_variation_by_axes([weight]) 
     return font
 
-SMALL_LIGHT = load_font('Noto', 17, weight=400)  
+SMALL_LIGHT = load_font('Favorit', 17, weight=400)  #load_font('Noto', 17, weight=400)  
 MEDIUM_BOLD = load_font('Archivo',28, weight=600)
 LARGE_LIGHT = load_font('Archivo',32, weight=400)  
 EXTRALARGE_LIGHT = load_font('Archivo',38, weight=400)  
@@ -959,16 +961,18 @@ def show_volume_overlay(volume):
 
 def safe_restart():
     global restarting
-    restarting = True
-    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
-    bg = Image.open(f'assets/updating.png') 
-    image.paste(bg, (0, 0))
-    safe_display(image)
-    run(['sudo', '-u','scud','git', 'pull'], cwd='/home/scud/scud-radio')
-    time.sleep(4)  
-    backlight_off()
-    run(['sudo','systemctl', 'restart','api'])
-    run(['sudo','systemctl', 'restart','radio'])
+    if put_to_sleep:
+        restarting = True
+        image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
+        bg = Image.open(f'assets/updating.png') 
+        image.paste(bg, (0, 0))
+        safe_display(image)
+        backlight_on()
+        run(['sudo', '-u','scud','git', 'pull'], cwd='/home/scud/scud-radio')
+        time.sleep(4)  
+        backlight_off()
+        run(['sudo','systemctl', 'restart','api'])
+        run(['sudo','systemctl', 'restart','radio'])
 
 
 def on_button_pressed():
@@ -981,28 +985,6 @@ def on_button_pressed():
 
     rotated = False
 
-def on_button_released():
-    global button_press_times, rotated, held, button_released_time, last_input_time, currently_displaying
-
-    held = False
-    current_time = time.time()
-    last_input_time = time.time()
-    button_released_time = current_time    
-
-    if (button_released_time - button_press_time < 2):
-        if readied_stream:
-            display_one(readied_stream)
-            confirm_seek()
-    else:
-        set_last_volume(str(current_volume))
-
-        button_press_times.append(current_time)
-        button_press_times = [t for t in button_press_times if current_time - t <= 3.0]
-        
-        if len(button_press_times) >= 5:
-            button_press_times = [] 
-            safe_restart()
-            return    
 
 def on_volume_button_pressed():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, muted, volume_held
@@ -1650,8 +1632,7 @@ click_button = Button(26, bounce_time=0.05)
 click_button.hold_time = 2
 click_button.when_pressed = wrapped_action(lambda: toggle_favorite())
 #click_button.when_released = wrapped_action(lambda: on_button_released())
-#click_button.when_held = wrapped_action(lambda: toggle_confirm_on_rotate())
-
+click_button.when_held = safe_restart()
 CLK_PIN = 5 
 DT_PIN = 6   
 rotor = RotaryEncoder(CLK_PIN, DT_PIN)
