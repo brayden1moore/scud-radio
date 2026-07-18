@@ -963,7 +963,9 @@ def show_volume_overlay(volume):
 
 def safe_restart():
     global restarting
+    print("RESTARTING")
     if put_to_sleep:
+        print("NOW")
         restarting = True
         image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
         bg = Image.open(f'assets/updating.png') 
