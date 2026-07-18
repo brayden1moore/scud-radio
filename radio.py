@@ -982,13 +982,13 @@ def safe_restart():
 
 def on_button_pressed():
     global button_press_time, rotated, button_press_times, held, button_released_time, last_input_time, currently_displaying, readied_stream
+    held = True
     if not put_to_sleep:
         last_input_time = time.time()
         button_press_time = time.time()
         button_released_time = None
         play_random()
         rotated = False
-
 
 def on_volume_button_pressed():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, muted, volume_held
@@ -1001,12 +1001,7 @@ def on_volume_button_pressed():
 def on_volume_button_released():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, muted, volume_held
     held = False
-    current_time = time.time()
-    last_input_time = time.time()
-    button_released_time = current_time
-    volume_held = False
 
-    toggle_favorite()
 
 def switch_off():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, switch_off_time
@@ -1023,21 +1018,24 @@ def switch_off():
 
 def switch_on():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep
-    held = False
-    current_time = time.time()
-    last_input_time = time.time()
-    button_released_time = current_time
-    backlight_on()
-    sleeping = False
-    put_to_sleep = False
-    if switch_off_time:
-        if current_time - switch_off_time >= 3600:
-            with state_lock:
-                target = stream if stream in stream_list else (stream_list[0] if stream_list else None)
-            if target:
-                play(target)
-    if not muted:
-        send_mpv_command({"command": ["set_property", "volume", current_volume]})
+
+    if held:
+        safe_restart()
+    else:
+        current_time = time.time()
+        last_input_time = time.time()
+        button_released_time = current_time
+        backlight_on()
+        sleeping = False
+        put_to_sleep = False
+        if switch_off_time:
+            if current_time - switch_off_time >= 3600:
+                with state_lock:
+                    target = stream if stream in stream_list else (stream_list[0] if stream_list else None)
+                if target:
+                    play(target)
+        if not muted:
+            send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
 def proximity_order(sl, center):
     """[center, center-1, center+1, center-2, center+2, ...] wrapping around."""
@@ -1653,7 +1651,7 @@ volume_click_button = Button(17, bounce_time=0.05)
 #volume_click_button.when_released =  wrapped_action(lambda: on_volume_button_released())
 volume_click_button.when_pressed = on_button_pressed
 volume_click_button.hold_time = 5
-volume_click_button.when_held = safe_restart
+volume_click_button.when_releaded = on_volume_button_released
 
 ## main loop
 refresh_scroll_cache(stream_list)
