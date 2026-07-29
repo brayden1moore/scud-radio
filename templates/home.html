@@ -200,6 +200,7 @@ function updateStations() {
       .then(function(response) { return response.json(); })
       .then(function(json) {
             const allStations = JSON.parse(json['output']);
+            console.log(allStations);
             const shown = allStations["shown"];
             const hidden = allStations["hidden"];
 
