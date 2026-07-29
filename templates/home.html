@@ -227,13 +227,15 @@ function playRandom() {
 }
 
 let info;
-fetch("https://one.radio/info", {
-          method: 'GET'
-      })
-      .then(function(response) { return response.json(); })
-      .then(function(json) {
-        info = json;
-})
+function getInfo() {
+    fetch("https://one.radio/info", {
+            method: 'GET'
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            info = json;
+    })
+};
 
 let editMode = false;
 let hiddenQueue = [];
