@@ -192,6 +192,19 @@ function addStation(name, hidden) {
     stations.appendChild(container);
 }
 
+let info;
+function getInfo() {
+    fetch("https://one.radio/info", {
+            method: 'GET'
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            info = json;
+            console.log('RETRIEVED');
+            console.log(info);
+    })
+};
+
 let stationList = [];
 function updateStations() {
     fetch("/control/list", {
@@ -228,19 +241,6 @@ function playRandom() {
     const name = nonCurrentStations[randomIndex];
     handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
 }
-
-let info;
-function getInfo() {
-    fetch("https://one.radio/info", {
-            method: 'GET'
-        })
-        .then(function(response) { return response.json(); })
-        .then(function(json) {
-            info = json;
-            console.log('RETRIEVED');
-            console.log(info);
-    })
-};
 
 getInfo();
 setTimeout(getInfo, 5000);
