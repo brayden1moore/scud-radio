@@ -237,6 +237,8 @@ function getInfo() {
         .then(function(response) { return response.json(); })
         .then(function(json) {
             info = json;
+            console.log('RETRIEVED');
+            console.log(info);
     })
 };
 
