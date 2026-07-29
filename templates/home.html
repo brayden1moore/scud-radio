@@ -134,7 +134,8 @@ function updateStatus(fromHandleCall) {
           method: 'GET'
       })
       .then(function(response) { return response.json(); })
-      .then(function(json) {
+      .then(async function(json) {
+            await getInfo();
             name = json['output'].split(' - ')[0];
             status.dataset.station = name;
             status.dataset.oneliner = info[name]['oneLiner'];
@@ -228,7 +229,10 @@ function playRandom() {
     handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
 }
 
-getInfo();
+getInfo().then(() => {
+    updateStatus(true);  
+    updateStations();
+});
 
 let editMode = false;
 let hiddenQueue = [];
