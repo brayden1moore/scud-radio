@@ -746,7 +746,7 @@ def display_scroll(name, silent=False):
             this_star = star_96.copy()
             image.paste(this_star, og_logo_position, this_star)
         
-        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLUE, width=3) # border
+        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=3) # border
 
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
@@ -1212,7 +1212,7 @@ def display_cached_scroll(name, pushed=False):
                 image = image.copy()
                 draw = ImageDraw.Draw(image)
                 bg_position = og_logo_position
-                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], outline=BLUE, width=3)
+                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], outline=WHITE, width=3)
 
             with display_lock:
                 disp.ShowImage(image)
