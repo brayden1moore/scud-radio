@@ -234,7 +234,7 @@ def backlight_on():
                 #if currently_displaying == 'ambient':
                 #    display_ambient(stream)
                 #else:
-                    displa_cached_scroll(stream)
+                    display_cached_scroll(stream)
             else:
                 display_scud()
         time.sleep(0.1)
@@ -414,7 +414,7 @@ def play_random():
     with state_lock:
         available = [i for i in stream_list if i != stream and streams[i]['status'] != 'Offline']
     chosen = random.choice(available)
-    displa_cached_scroll(chosen)
+    display_cached_scroll(chosen)
     play(chosen)
     stream = chosen
     readied_stream = None
@@ -856,10 +856,10 @@ def display_ambient(name, clicked=False):
 def display_current():
 
     if currently_displaying == 'everything':
-        displa_cached_scroll(stream)
+        display_cached_scroll(stream)
 
     elif currently_displaying == 'one':
-        displa_cached_scroll(stream)
+        display_cached_scroll(stream)
 
     elif currently_displaying == 'ambient':
         display_ambient(stream, clicked=True)
@@ -920,7 +920,7 @@ def seek_stream(direction):
             readied_stream = cur
         else: 
             readied_stream = sl[(idx + direction) % len(sl)]
-    displa_cached_scroll(readied_stream)
+    display_cached_scroll(readied_stream)
     confirm_seek()
 
 def confirm_seek():
@@ -1113,7 +1113,7 @@ def toggle_favorite():
 
         calculate_ticks()
         scroll_cache_dict.clear()         
-        displa_cached_scroll(chosen_stream)  
+        display_cached_scroll(chosen_stream)  
         start_priority_refresh(chosen_stream)   
         last_input_time = time.time()
     finally:
@@ -1188,7 +1188,7 @@ def volume_handle_rotation(direction):
     last_rotation = time.time()
 
     if direction == 1: 
-        new_volume = min(150, current_volume + volume_step)
+        new_volume = min(100, current_volume + volume_step)
     else: 
         new_volume = max(0, current_volume - volume_step)
     
@@ -1197,7 +1197,7 @@ def volume_handle_rotation(direction):
     send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
 
-def displa_cached_scroll(name, pushed=False):
+def display_cached_scroll(name, pushed=False):
     ''' First looks for cached version and if not, rebuilds '''
     global scroll_cache_dict, currently_displaying, text_on_screen
     currently_displaying = 'everything'
@@ -1458,7 +1458,7 @@ def handle_remote_command(command_data):
             station_name = command_data.get('value')
             if station_name in stream_list:
                 play(station_name)
-                displa_cached_scroll(station_name)
+                display_cached_scroll(station_name)
             return {
                 'status': 'ok',
                 'station': station_name,
@@ -1630,7 +1630,7 @@ rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1), 1)
 
 CLK_PIN = 16
 DT_PIN = 12  
-volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN, bounce_time=0.05)
+volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN)
 volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_handle_rotation(-1), -1, True)
 volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1, True)
 
@@ -1645,7 +1645,7 @@ last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
 
-displa_cached_scroll(stream)
+display_cached_scroll(stream)
 
 try:
     while True:
@@ -1706,7 +1706,7 @@ try:
                 marquee_name = None
                 if not long_oneliner:
                     del scroll_cache_dict[active_name]
-                    displa_cached_scroll(active_name)
+                    display_cached_scroll(active_name)
 
             if vol is not None:
                 if needs_scroll and not seeking:
@@ -1735,7 +1735,7 @@ try:
                              draw_oneliner=long_oneliner, name_offset=n_off)
 
             elif volume_just_cleared:
-                displa_cached_scroll(active_name)
+                display_cached_scroll(active_name)
                 marquee_name = None
 
             else:
