@@ -597,7 +597,7 @@ def _mq_reset(mq, now):
     mq['pause_until'] = now + 3
 
 PIXELS_PER_SEC = 90
-WRAP_PAUSE = 3
+WRAP_PAUSE = 5
 
 def _mq_tick(mq, span, now):
     last = mq.get('last_t', now)
