@@ -47,6 +47,8 @@ current_image = None
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
 
+MAX_VOL = 150
+
 BRIGHTNESS = 1
 
 WHITE = (255,255,255)
@@ -640,7 +642,7 @@ def _draw_volume_bar(draw, volume):
     """Paint the volume bar onto an existing draw object. No push."""
     bar_top = tick_bar_start + 7
     bar_bottom = bar_top + 10
-    volume_bar_end = padding + SCREEN_WIDTH * (volume / 120)
+    volume_bar_end = padding + SCREEN_WIDTH * (volume / MAX_VOL)
     draw.rectangle([padding, bar_top - 10, SCREEN_WIDTH, bar_bottom + 10], fill=BLACK)
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], fill=RED)
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
@@ -1186,7 +1188,7 @@ def volume_handle_rotation(direction):
     last_rotation = time.time()
 
     if direction == 1: 
-        new_volume = min(120, current_volume + volume_step)
+        new_volume = min(MAX_VOL, current_volume + volume_step)
     else: 
         new_volume = max(0, current_volume - volume_step)
     
@@ -1331,7 +1333,7 @@ saved_image_while_paused = None
 play_status = 'pause'
 last_input_time = time.time()
 first_display = True
-volume_step = 5
+volume_step = 6
 button_press_time = 0
 rotated = False
 restarting = False
@@ -1361,7 +1363,7 @@ mpv_process = Popen([
     "--no-video",
     "--quiet",
     f"--volume={current_volume}",
-    "--volume-max=120",
+    f"--volume-max={MAX_VOL}",
     "--input-ipc-server=/tmp/mpvsocket",
     "--msg-level=all=info", 
     "--msg-level=ipc=no",
@@ -1445,7 +1447,7 @@ def handle_remote_command(command_data):
         
         elif cmd == 'volume':
             vol = int(command_data.get('value', 60))
-            vol = max(0, min(120, vol))
+            vol = max(0, min(MAX_VOL, vol))
             current_volume = vol
             send_mpv_command({"command": ["set_property", "volume", current_volume]})
             show_volume_overlay(current_volume)
@@ -1489,7 +1491,7 @@ def handle_remote_command(command_data):
                 'status': 'ok',
                 'station': stream,
                 'now_playing': streams[stream]['oneLiner'],
-                'volume': round(current_volume*100/120),
+                'volume': round(current_volume*100/MAX_VOL),
                 'battery': battery,
                 'charging': charging
             }
@@ -1499,7 +1501,7 @@ def handle_remote_command(command_data):
                 'status': 'ok',
                 'station': stream,
                 'now_playing': streams[stream]['oneLiner'],
-                'volume': round(current_volume*100/120),
+                'volume': round(current_volume*100/MAX_VOL),
                 'battery': battery,
                 'charging': charging
             }
