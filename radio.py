@@ -596,14 +596,18 @@ def _mq_reset(mq, now):
     mq['offset'] = 0
     mq['pause_until'] = now + 3
 
+PIXELS_PER_SEC = 90
+WRAP_PAUSE = 3
+
 def _mq_tick(mq, span, now):
-    """Advance one marquee controller. Returns current offset."""
+    last = mq.get('last_t', now)
+    mq['last_t'] = now
     if now >= mq['pause_until']:
-        mq['offset'] += 2
+        mq['offset'] += PIXELS_PER_SEC * (now - last)
         if mq['offset'] >= span:
             mq['offset'] = 0
-            mq['pause_until'] = now + 3
-    return mq['offset']
+            mq['pause_until'] = now + WRAP_PAUSE
+    return int(mq['offset'])
 
 marquee_name = None
 seek_token = 0
