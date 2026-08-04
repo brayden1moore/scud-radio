@@ -32,6 +32,7 @@ display_auto_detect=0
 disable_fw_kms_setup=1
 arm_64bit=1
 disable_overscan=1
+dtoverlay=disable-eth
 arm_boost=1
 
 [cm4]
