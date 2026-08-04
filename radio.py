@@ -243,7 +243,7 @@ def backlight_dim():
 from gpiozero import Button
 import socket
 
-def send_mpv_command(cmd, max_retries=10, retry_delay=1):
+def send_mpv_command(cmd, max_retries=2, retry_delay=0.05):
     for attempt in range(max_retries):
         try:
             with socket.socket(socket.AF_UNIX) as s:
@@ -262,7 +262,7 @@ def send_mpv_command(cmd, max_retries=10, retry_delay=1):
     return False
 
 SUMMARY_URL = 'https://one.radio/summary'
-LOGO_SIZES = ['25', '60', '96', '216']   # add '176' if the device uses it
+LOGO_SIZES = ['25', '60', '96', '216']  
  
 def _safe(name):
     return name.replace(' ', '_')
@@ -645,8 +645,7 @@ def _draw_volume_bar(draw, volume):
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], fill=RED)
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
 
-
-def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=None):
+def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=None, must_show=False):
     base = scroll_cache_dict.get(name)
     if not base:
         return
@@ -658,10 +657,19 @@ def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=No
         _draw_marquee_oneliner(draw, name, offset)
     if volume is not None:
         _draw_volume_bar(draw, volume)
-    with display_lock:
-        if (readied_stream if readied_stream else stream) != name:
-            return
-        disp.ShowImage(img)
+
+    if must_show or volume is not None:
+        acquired = display_lock.acquire(timeout=0.5)
+    else:
+        acquired = display_lock.acquire(blocking=False)
+
+    if acquired:
+        try:
+            if (readied_stream if readied_stream else stream) != name:
+                return
+            disp.ShowImage(img)
+        finally:
+            display_lock.release()
 
 def display_scroll(name, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
