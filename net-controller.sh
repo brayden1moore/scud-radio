@@ -46,20 +46,15 @@ ap_down() {
 
 # ---- connect to the strongest IN-RANGE known network ----
 connect_known() {
-  local visible="" i
-
-  # Try cached scan results first; only rescan if nothing is visible.
-  visible="$(nmcli -t -f SSID device wifi list 2>/dev/null | sed '/^$/d')"
-  if [ -z "$visible" ]; then
-    nmcli device wifi rescan 2>/dev/null || true
-    for i in 1 2 3; do
-      visible="$(nmcli -t -f SSID device wifi list 2>/dev/null | sed '/^$/d')"
-      [ -n "$visible" ] && break
-      sleep 1
-    done
-  fi
-
   nmcli device wifi rescan 2>/dev/null || true
+
+  # Wait briefly for scan results to populate.
+  local visible="" i
+  for i in 1 2 3; do
+    visible="$(nmcli -t -f SSID device wifi list 2>/dev/null | sed '/^$/d')"
+    [ -n "$visible" ] && break
+    sleep 1
+  done
 
   # Saved Wi-Fi profiles, excluding our own AP.
   mapfile -t saved < <(nmcli -t -f NAME,TYPE connection show \
