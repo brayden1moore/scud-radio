@@ -261,71 +261,87 @@ def send_mpv_command(cmd, max_retries=10, retry_delay=1):
                 return False
     return False
 
-def fetch_logos(name):
-    logos = {}
-    for i in ['25','60','96','216']:
-        resp = requests.get(f'https://internetradioprotocol.org/logos/{name.replace(' ','_')}_{i}.pkl', timeout=5)
+SUMMARY_URL = 'https://one.radio/summary'
+LOGO_SIZES = ['25', '60', '96', '216']   # add '176' if the device uses it
+ 
+def _safe(name):
+    return name.replace(' ', '_')
+ 
+def _cached_hash(name):
+    p = Path(LIB_PATH) / f'{_safe(name)}.hash'
+    try:
+        return p.read_text().strip()
+    except Exception:
+        return None
+ 
+def _write_hash(name, h):
+    (Path(LIB_PATH) / f'{_safe(name)}.hash').write_text(h)
+ 
+def _load_cached_pngs(name, target):
+    """Load all cached PNG sizes for `name` into target dict. Returns True if all present."""
+    ok = True
+    for i in LOGO_SIZES:
+        p = Path(LIB_PATH) / f'{_safe(name)}_{i}.png'
+        if p.exists():
+            target[f'logo_{i}'] = Image.open(p).convert('RGB')
+        else:
+            ok = False
+    return ok
+ 
+def fetch_logos(name, base_url, logo_hash):
+    """Download the PNG set for one station, cache to disk, return in-memory images."""
+    imgs = {}
+    for i in LOGO_SIZES:
+        resp = requests.get(f'{base_url}_{i}.png', timeout=5)
         resp.raise_for_status()
-        data = pickle.load(BytesIO(resp.content))
-        logos[i] = data
-    return name, logos
-
+        img = Image.open(BytesIO(resp.content)).convert('RGB')
+        imgs[f'logo_{i}'] = img
+        # cache to disk as PNG
+        (Path(LIB_PATH) / f'{_safe(name)}_{i}.png').write_bytes(resp.content)
+    _write_hash(name, logo_hash)
+    return name, imgs
+ 
 def get_streams():
     global hidden
-
-    info = requests.get(f'https://internetradioprotocol.org/info?cacheBuster={random.randint(0,10000)}', timeout=5).json()
-    active = {n: v for n, v in info.items() if v['hidden']!=True}
-
-    # clean text
-    for name, _ in active.items():
-        rendered = html.unescape(active[name]['oneLiner']).replace('&amp;', '&').strip()
-        active[name]['oneLiner'] = rendered
-        if active[name]['status'] == 'Offline':
-            active[name]['oneLiner'] = 'Offline'
+ 
+    Path(LIB_PATH).mkdir(parents=True, exist_ok=True)
+ 
+    summary = requests.get(
+        f'{SUMMARY_URL}?cacheBuster={random.randint(0,10000)}', timeout=5
+    ).json()
+ 
+    active = {}
+    for st in summary['stations']:
+        if st.get('hidden') is True:
+            continue
+        name = st['name']
+        active[name] = dict(st)   
         active[name]['oneLinerWidth'] = width(active[name]['oneLiner'], SMALL_LIGHT)
-        
-        if active[name]['status'] == 'Offline':
-            active[name]['oneLiner'] = 'Offline'
-    
-    # see if cached image exists. if so, read into dict. if not, add to queue.
+ 
+    # Decide which stations need a logo download: missing files or changed hash.
     need_imgs = []
-    for name, _ in active.items():
-        full_img_path = Path(LIB_PATH) / f'{name.replace(' ','_')}_216.pkl'
-
-        if not full_img_path.exists():
+    for name, v in active.items():
+        server_hash = v.get('logo_hash')
+        have_all = _load_cached_pngs(name, active[name])
+        if (not have_all) or (server_hash and server_hash != _cached_hash(name)):
             need_imgs.append(name)
-        else:
-            file_stat = full_img_path.stat()
-            file_age_seconds = time.time() - file_stat.st_mtime
-            file_age_days = file_age_seconds / (24 * 3600) 
-
-            if file_age_days > 7:  # refresh if older than 7 days
-                need_imgs.append(name)
-            else:
-                for i in ['25','60','96','216']:
-                    with open(Path(LIB_PATH) / f'{name.replace(' ','_')}_{i}.pkl', 'rb') as f:
-                        image = pickle.load(f).convert('RGB')
-                        active[name][f'logo_{i}'] = image
-
-    with ThreadPoolExecutor(max_workers=8) as exe:
-        futures = [
-            exe.submit(fetch_logos, name)
-            for name, v in active.items() if name in need_imgs
-        ]
-        for f in as_completed(futures):
-            name, logo_dict = f.result()
-            
-            # save images to lib
-            for key, val in logo_dict.items():
-                active[name][f'logo_{key}'] = val
-                entire_path = Path(LIB_PATH) / f'{name.replace(' ','_')}_{key}.pkl'
-
-                if not entire_path.exists():
-                    entire_path.touch() 
-
-                with open(entire_path, 'wb') as f:
-                    pickle.dump(val, f)
-
+ 
+    # Fetch only the ones that changed, in parallel.
+    if need_imgs:
+        with ThreadPoolExecutor(max_workers=8) as exe:
+            futures = [
+                exe.submit(fetch_logos, name,
+                           active[name]['logo_png_base'],
+                           active[name].get('logo_hash', ''))
+                for name in need_imgs
+            ]
+            for f in as_completed(futures):
+                try:
+                    name, imgs = f.result()
+                    active[name].update(imgs)
+                except Exception as e:
+                    logging.error(f'logo fetch failed: {e}')
+ 
     return active
 
 reruns = []
