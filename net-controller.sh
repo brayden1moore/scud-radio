@@ -107,6 +107,23 @@ case "${1:-boot}" in
       ap_up
     fi
     ;;
+  portal)
+    # Force the setup portal regardless of known networks.
+    # Use for bench testing, and as a "re-enter setup" path on shipped units
+    # (e.g. a long-press button or a /reset-wifi API route can call this).
+    log "forcing setup portal"
+    # If the radio is currently playing, stop it so the Welcome screen shows.
+    systemctl stop radio.service 2>/dev/null || true
+    # Drop any active client connection so the AP owns the radio.
+    active="$(nmcli -t -f NAME,TYPE connection show --active \
+              | awk -F: '$2=="802-11-wireless"{print $1}' | grep -vx "$AP_CON")"
+    if [ -n "$active" ]; then
+      while IFS= read -r c; do
+        [ -n "$c" ] && nmcli connection down "$c" 2>/dev/null || true
+      done <<< "$active"
+    fi
+    ap_up
+    ;;
   *)
     log "unknown mode: ${1:-}" ; exit 1 ;;
 esac
