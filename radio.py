@@ -82,7 +82,7 @@ def load_font(name, size, weight=400):
     return font
 
 SMALL_LIGHT = load_font('Noto', 17, weight=400)  
-EXTRALARGE_LIGHT = load_font('Archivo',38, weight=400)  
+EXTRALARGE_LIGHT = load_font('Archivo',38, weight=800)  
 
 def replace_font(font):
     replacement = 'Noto'
