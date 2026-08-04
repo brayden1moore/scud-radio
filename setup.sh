@@ -1,22 +1,34 @@
 #!/bin/bash
+# setup.sh [unit-suffix]
+#
+# Run once when preparing a unit to ship. Optional suffix sets the unit's
+# unique hostname:  ./setup.sh 3a4b  ->  radio-3a4b.local
+# With no arg, the suffix defaults to the last 4 of the Pi's serial, so every
+# unit still gets a unique hostname with zero tracking. Pass an arg to override
+# with a friendlier name, e.g. ./setup.sh kitchen -> radio-kitchen.local
 
-# Initial setup
-sudo rm /boot/firmware/config.txt
+set -e
+
+# ---------- unit identity ----------
+SUFFIX="${1:-}"
+if [ -z "$SUFFIX" ]; then
+  SUFFIX="$(grep -m1 Serial /proc/cpuinfo | awk '{print $3}' | tail -c 5)"
+fi
+HOSTNAME="radio-${SUFFIX}"
+echo "Preparing unit: hostname will be ${HOSTNAME}.local"
+
+# ---------- boot config ----------
+sudo rm -f /boot/firmware/config.txt
 sudo tee /boot/firmware/config.txt > /dev/null <<EOF
 auto_initramfs=0
-#dtoverlay=hifiberry-dac
 dtoverlay=wm8960-soundcard
 dtoverlay=disable-bt
 disable_splash=1
 
 dtparam=i2c_arm=on
-#dtparam=i2s=on
 dtparam=spi=on
-#dtparam=audio=on
-camera_auto_detect=1
+camera_auto_detect=0
 display_auto_detect=0
-#dtoverlay=vc4-kms-v3d
-#max_framebuffers=2
 disable_fw_kms_setup=1
 arm_64bit=1
 disable_overscan=1
@@ -31,50 +43,62 @@ dtoverlay=dwc2,dr_mode=host
 [all]
 EOF
 
-sudo rm /tmp/boot.conf
+# ---------- bootloader: eMMC only, no probe walk ----------
+sudo rm -f /tmp/boot.conf
 sudo tee /tmp/boot.conf > /dev/null <<EOF
 [all]
 BOOT_UART=0
 WAKE_ON_GPIO=1
 POWER_OFF_ON_HALT=0
-BOOT_ORDER=0x1
+BOOT_ORDER=0xf1
 ENABLE_SELF_UPDATE=1
 DISABLE_HDMI=0
 EOF
+sudo rpi-eeprom-config --apply /tmp/boot.conf || true
 
+# ---------- WM8960 audio (overlay baked in; disable slow Waveshare service) ----------
 cd ~/
-git clone https://github.com/waveshare/WM8960-Audio-HAT
+if [ ! -d WM8960-Audio-HAT ]; then
+  git clone https://github.com/waveshare/WM8960-Audio-HAT
+fi
 cd WM8960-Audio-HAT
 sudo chmod +x install.sh
 sudo ./install.sh -y
 cd ~/
-
 sudo ln -sf /etc/wm8960-soundcard/asound.conf /etc/asound.conf
 sudo ln -sf /etc/wm8960-soundcard/wm8960_asound.state /var/lib/alsa/asound.state
 sudo systemctl disable wm8960-soundcard.service
 
 sudo apt install mpv -y
-amixer -D pulse sset Master 100%
+amixer -D pulse sset Master 100% || true
 
-# Create wifi connect service file
-sudo tee /etc/systemd/system/wifi-connect.service > /dev/null <<EOF
+# ---------- hostname (unique per unit, for radio-<suffix>.local) ----------
+sudo hostnamectl set-hostname "$HOSTNAME"
+if grep -q '^127.0.1.1' /etc/hosts; then
+  sudo sed -i "s/^127.0.1.1.*/127.0.1.1\t${HOSTNAME}/" /etc/hosts
+else
+  echo -e "127.0.1.1\t${HOSTNAME}" | sudo tee -a /etc/hosts > /dev/null
+fi
 
+# ---------- network controller service (replaces wifi-connect + comitup) ----------
+chmod +x /home/scud/scud-radio/net-controller.sh
+sudo tee /etc/systemd/system/net-controller.service > /dev/null <<EOF
 [Unit]
-Description=Scan-first WiFi connect
+Description=Scud Radio Network Controller
 After=NetworkManager.service
 Wants=NetworkManager.service
 
 [Service]
-Type=simple
-ExecStart=/home/scud/scud-radio/wifi-connect.sh
-Restart=no
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/home/scud/scud-radio/net-controller.sh boot
+SuccessExitStatus=0 1
 
 [Install]
 WantedBy=multi-user.target
 EOF
-sudo chmod +x /home/scud/scud-radio/wifi-connect.sh
 
-# Create the splash service file
+# ---------- splash service ----------
 sudo tee /etc/systemd/system/splash.service > /dev/null <<EOF
 [Unit]
 Description=Scud Radio Splash Screen
@@ -93,30 +117,26 @@ StandardError=journal
 WantedBy=sysinit.target
 EOF
 
-# Create the launcher service file
+# ---------- launcher service (Welcome screen) ----------
 sudo tee /etc/systemd/system/launcher.service > /dev/null <<EOF
 [Unit]
 Description=Scud Radio Tuner Launcher
 After=NetworkManager.service
 Wants=NetworkManager.service
-Before=network-online.target
-After=comitup.service
 
 [Service]
 User=root
 WorkingDirectory=/home/scud/scud-radio
 ExecStart=/usr/bin/python3 /home/scud/scud-radio/launcher.py
-ExecStartPre=/bin/bash -c 'while sudo iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 888 2>/dev/null; do :; done'
 ExecStartPre=/bin/systemctl stop radio.service
 ExecStartPre=/bin/systemctl stop splash.service
-ExecStartPre=/bin/systemctl stop api.service
 Restart=no
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-# Create the radio service file
+# ---------- radio service ----------
 sudo tee /etc/systemd/system/radio.service > /dev/null <<EOF
 [Unit]
 Description=Scud Radio Tuner
@@ -137,83 +157,46 @@ StandardOutput=journal
 StandardError=journal
 EOF
 
-# Create the shutdown service file
+# ---------- shutdown service ----------
 sudo tee /etc/systemd/system/shutdown.service > /dev/null <<EOF
-
-[Unit] 
+[Unit]
 Description=Scud Radio Tuner Shutdown
 Conflicts=radio.service
 
-[Service] 
-Type=simple 
+[Service]
+Type=simple
 User=root
 WorkingDirectory=/home/scud/scud-radio
 ExecStart=/usr/bin/python3 /home/scud/scud-radio/shutdown.py
 ExecStartPre=/bin/systemctl stop radio.service
 
-[Install] 
+[Install]
 WantedBy=multi-user.target
 EOF
 
-# Create the api service file
+# ---------- api service ----------
 sudo tee /etc/systemd/system/api.service > /dev/null <<EOF
+[Unit]
+Description=Scud Radio Tuner API
+After=network.target
 
-[Unit] 
-Description=Scud Radio Tuner API 
-After=network.target 
+[Service]
+ExecStart=/usr/bin/python3 /home/scud/scud-radio/api.py
+WorkingDirectory=/home/scud/scud-radio
+User=root
+Restart=always
 
-[Service] 
-ExecStart=/usr/bin/python3 /home/scud/scud-radio/api.py 
-#ExecStart=/usr/bin/python3 -m gunicorn --worker-class eventlet --workers 1 --timeout 0 --bind 127.0.0.1:7777 api:app
-ExecStartPre=/usr/bin/sudo /usr/sbin/iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 888
-WorkingDirectory=/home/scud/scud-radio 
-User=root 
-Restart=always 
-
-[Install] 
+[Install]
 WantedBy=multi-user.target
 EOF
 
-# Reload systemd and enable the service
-sudo systemctl daemon-reload
-sudo systemctl enable splash
-sudo systemctl enable wifi-connect
-
-# Install dependencies
-sudo apt install pip -y
-sudo -H  pip install gunicorn eventlet Flask --break-system-packages
-cd scud-radio
-sudo -H pip install --break-system-packages -r requirements.txt
-
-# Networking
-sudo apt install iptables -y
-
-# Other settings
-sudo apt update
-sudo apt install comitup -y --fix-missing
-sudo apt install --fix-broken
-sudo systemctl enable comitup
-sudo systemctl disable man-db.service
-sudo systemctl disable e2scrub_reap.service
-sudo systemctl disable ModemManager.service
-sudo systemctl disable cloud-init-main.service
-sudo systemctl disable NetworkManager-wait-online.service
-sudo systemctl disable apt-daily.service apt-daily-upgrade.service apt-daily.timer apt-daily-upgrade.timer
-echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
-
-# Copy comitup templates
-sudo cp -a ~/scud-radio/comitup-templates/. /usr/share/comitup/web/templates/
-
-# add Comitup config
-sudo rm -f /etc/comitup.conf
-sudo tee /etc/comitup.conf > /dev/null <<EOF
-ap_name: Scud House
-web_service: radio.service
-external_callback: /home/scud/scud-radio/comitup-callback.sh
+# ---------- NetworkManager: never autoconnect (controller owns connections) ----------
+sudo mkdir -p /etc/NetworkManager/conf.d
+sudo tee /etc/NetworkManager/conf.d/no-autoconnect.conf > /dev/null <<EOF
+[connection]
+connection.autoconnect=false
 EOF
-chmod +x /home/scud/scud-radio/comitup-callback.sh
 
-# add NM config
 sudo rm -f /etc/NetworkManager/NetworkManager.conf
 sudo tee /etc/NetworkManager/NetworkManager.conf > /dev/null <<EOF
 [main]
@@ -224,26 +207,39 @@ managed=false
 
 [connectivity]
 enabled=false
-
-[device]
-wifi.scan-rand-mac-address=no
-
-[connectivity]
-uri=http://connectivity-check.ubuntu.com/
-interval=300
-enabled=false
 EOF
 
-if ! grep -q 'subprocess.run(\["sudo","systemctl","start","launcher"\])' /usr/share/comitup/web/comitupweb.py; then
-    sudo sed -i '1i import subprocess\nsubprocess.run(["sudo","systemctl","start","launcher"])' /usr/share/comitup/web/comitupweb.py
-fi
+# ---------- captive-portal DNS hijack (AP / shared mode only) ----------
+sudo mkdir -p /etc/NetworkManager/dnsmasq-shared.d
+sudo tee /etc/NetworkManager/dnsmasq-shared.d/captive.conf > /dev/null <<EOF
+address=/#/192.168.4.1
+EOF
 
-# Disable NM autoconnect on all saved wifi profiles (generic, no hardcoded SSIDs)
-nmcli -t -f NAME,TYPE connection show \
-  | awk -F: '$2=="802-11-wireless"{print $1}' \
-  | grep -v -E '^comitup-' \
-  | while read -r name; do
-      sudo nmcli connection modify "$name" connection.autoconnect no
-    done
+# ---------- enable services ----------
+sudo systemctl daemon-reload
+sudo systemctl enable splash
+sudo systemctl enable net-controller
+sudo systemctl enable api
 
+# ---------- dependencies ----------
+sudo apt install pip -y
+cd /home/scud/scud-radio
+sudo -H pip install --break-system-packages Flask
+sudo -H pip install --break-system-packages -r requirements.txt
+
+# ---------- networking tools ----------
+sudo apt install iptables -y
+
+# ---------- trims (unchanged from before) ----------
+sudo apt update
+sudo systemctl disable man-db.service || true
+sudo systemctl disable e2scrub_reap.service || true
+sudo systemctl disable ModemManager.service || true
+sudo systemctl disable NetworkManager-wait-online.service || true
+sudo systemctl disable apt-daily.service apt-daily-upgrade.service apt-daily.timer apt-daily-upgrade.timer || true
+# cloud-init: disable fully if present
+sudo touch /etc/cloud/cloud-init.disabled 2>/dev/null || true
+echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+
+echo "Setup complete for ${HOSTNAME}. Rebooting..."
 sudo reboot
