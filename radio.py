@@ -80,8 +80,6 @@ def load_font(name, size, weight=400):
     return font
 
 SMALL_LIGHT = load_font('Noto', 17, weight=400)  
-#MEDIUM_BOLD = load_font('Archivo',28, weight=600)
-#LARGE_LIGHT = load_font('Archivo',32, weight=400)  
 EXTRALARGE_LIGHT = load_font('Archivo',38, weight=400)  
 
 def replace_font(font):
@@ -91,12 +89,6 @@ def replace_font(font):
     if font == SMALL_LIGHT:
         weight = 400
         size = 17
-    #elif font == MEDIUM_BOLD:
-    #    weight = 600
-    #    size = 28
-    #elif font == LARGE_LIGHT:
-    #    weight = 400
-    #    size = 32
     elif font == EXTRALARGE_LIGHT:
         weight = 400
         size = 38
@@ -231,10 +223,7 @@ def backlight_on():
     if disp:
         if not restarting:
             if stream:
-                #if currently_displaying == 'ambient':
-                #    display_ambient(stream)
-                #else:
-                    display_cached_scroll(stream)
+                display_cached_scroll(stream)
             else:
                 display_scud()
         time.sleep(0.1)
@@ -245,7 +234,6 @@ def backlight_off():
     global screen_on
     if disp:
         disp.bl_DutyCycle(0)
-        #disp.clear()
         screen_on = False
 
 def backlight_dim():
@@ -258,7 +246,6 @@ import socket
 def send_mpv_command(cmd, max_retries=10, retry_delay=1):
     for attempt in range(max_retries):
         try:
-            #logging.info(f"Sending MPV command: {cmd}")
             with socket.socket(socket.AF_UNIX) as s:
                 s.settimeout(2)
                 s.connect("/tmp/mpvsocket")
@@ -269,10 +256,8 @@ def send_mpv_command(cmd, max_retries=10, retry_delay=1):
                 return True
         except (ConnectionRefusedError, FileNotFoundError, socket.timeout) as e:
             if attempt < max_retries - 1:
-                #logging.warning(f"MPV command failed (attempt {attempt + 1}/{max_retries}): {e}")
                 time.sleep(retry_delay)
             else:
-                #logging.error(f"MPV command failed after {max_retries} attempts: {e}")
                 return False
     return False
 
@@ -290,10 +275,7 @@ def get_streams():
 
     info = requests.get(f'https://internetradioprotocol.org/info?cacheBuster={random.randint(0,10000)}', timeout=5).json()
     active = {n: v for n, v in info.items() if v['hidden']!=True}
-    #hidden.extend([n for n, v in info.items() if v['hidden']==True])
-    #hidden = list(set(hidden))
-    #print('HIDDEN ON O-R', [n for n, v in info.items() if v['hidden']==True])
-    
+
     # clean text
     for name, _ in active.items():
         rendered = html.unescape(active[name]['oneLiner']).replace('&amp;', '&').strip()
@@ -384,8 +366,6 @@ def s(number):
 
 def pause(show_icon=False):
     global play_status, saved_image_while_paused, current_image
-    #send_mpv_command({"command": ["stop"]})
-    #send_mpv_command({"command": ["set_property", "volume", 0]})
     play_status = 'pause'
 
 
@@ -403,8 +383,6 @@ def play(name, toggled=False):
             first_boot = False
         else:
             send_mpv_command({"command": ["loadfile", stream_url, 'replace']})
-    #if not sleeping:
-        #send_mpv_command({"command": ["set_property", "volume", current_volume]})
 
     set_last_played(name)
 
@@ -697,7 +675,6 @@ def display_scroll(name, silent=False):
         name_line = calculate_text(name, name_font, 350, 1)[0]
         draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], name_font), name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT']], fill=BLACK) # bg
         draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line[0], font=name_font, fill=WHITE) 
-        #draw.rectangle([name_chunk_start_x, name_chunk_start + 30, name_chunk_start_x + width(name_line[0], name_font), name_chunk_start + 30], fill=WHITE) # ul
 
         # draw info
         info_font = SMALL_LIGHT
@@ -738,9 +715,6 @@ def display_scroll(name, silent=False):
         if name in favorites:
             this_star = star_96.copy()
             image.paste(this_star, og_logo_position, this_star)
-        #if streams[name]['status'] == 'Live':
-            #this_live = live_96.copy()
-            #image.paste(this_live, og_logo_position, this_live)
         
         draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLUE, width=3) # border
 
@@ -1753,5 +1727,4 @@ except KeyboardInterrupt:
     HEIGHT = disp.height
     img = Image.new("RGB", (320, 240), color="black")
     draw = ImageDraw.Draw(img)
-    #disp.display(img)
-    disp.ShowImage(img) # for 2 inch
+    disp.ShowImage(img)

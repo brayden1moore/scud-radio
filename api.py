@@ -1,31 +1,33 @@
-from flask import Flask, jsonify, request, render_template, redirect, Response
+from flask import (Flask, jsonify, request, render_template,
+                   redirect, Response, send_from_directory)
 import subprocess
+import urllib.parse
 import os
 
 # --- CONFIGURATION ---
 BASE_DIR = '/home/scud/scud-radio'
 ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
+PORTAL_STATIC = os.path.join(BASE_DIR, 'portal-static')   # css/, js/, img/ for the setup portal
 PORTAL_IP = "192.168.4.1"
 AP_CON = "scud-ap"
 CONTROLLER = os.path.join(BASE_DIR, 'net-controller.sh')
 # ---------------------
 
 app = Flask(__name__,
-            static_folder=ASSETS_DIR,
+            static_folder=ASSETS_DIR,          # your existing radio UI assets
             template_folder=os.path.join(BASE_DIR, 'templates'))
 
+
 # Persistent port-80 -> 888 redirect, scoped to wlan0. Installed once, idempotently.
-# Safe to leave up in both modes because Flask is mode-aware below: in AP mode it
-# serves the setup page + 302s captive checks; when connected it serves the normal
-# control UI + returns proper 204s, so nothing on a home LAN is hijacked.
-# Users reach the radio at http://radio-<suffix>.local (avahi) on port 80.
+# Safe in both modes because Flask is mode-aware: AP mode serves the setup portal and
+# 302s captive checks; connected mode serves the control UI and returns real 204s.
 def _ensure_redirect():
-    rule = ['-t', 'nat', 'PREROUTING', '-i', 'wlan0', '-p', 'tcp',
-            '--dport', '80', '-j', 'REDIRECT', '--to-ports', '888']
-    exists = subprocess.run(['sudo', 'iptables', rule[0], rule[1], '-C', *rule[2:]],
+    rule = ['PREROUTING', '-i', 'wlan0', '-p', 'tcp', '--dport', '80',
+            '-j', 'REDIRECT', '--to-ports', '888']
+    exists = subprocess.run(['sudo', 'iptables', '-t', 'nat', '-C', *rule],
                             stderr=subprocess.DEVNULL).returncode == 0
     if not exists:
-        subprocess.run(['sudo', 'iptables', rule[0], rule[1], '-A', *rule[2:]])
+        subprocess.run(['sudo', 'iptables', '-t', 'nat', '-A', *rule])
 
 _ensure_redirect()
 
@@ -38,45 +40,44 @@ def in_ap_mode():
     return any(line.strip() == AP_CON for line in out.splitlines())
 
 
-def list_networks():
-    """Visible SSIDs, de-duplicated, preserving signal order from nmcli."""
-    out = subprocess.run(["nmcli", "-t", "-f", "SSID", "device", "wifi", "list"],
-                         capture_output=True, text=True).stdout
-    seen, nets = set(), []
+def scan_points():
+    """
+    Build the 'points' list the index template expects.
+    Each point has: ssid, ssid_encoded, security ('encrypted' or '').
+    De-duplicated, strongest signal first.
+    """
+    out = subprocess.run(
+        ["nmcli", "-t", "-f", "SIGNAL,SECURITY,SSID", "device", "wifi", "list"],
+        capture_output=True, text=True).stdout
+
+    seen, points = set(), []
     for line in out.splitlines():
-        s = line.strip()
-        if s and s not in seen:
-            seen.add(s)
-            nets.append(s)
-    return nets
+        # nmcli -t escapes ':' inside fields as '\:'; protect those before split.
+        parts = line.replace('\\:', '\x00').split(':')
+        if len(parts) < 3:
+            continue
+        security = parts[1].replace('\x00', ':')
+        ssid = parts[2].replace('\x00', ':').strip()
+        if not ssid or ssid in seen:
+            continue
+        seen.add(ssid)
+        points.append({
+            "ssid": ssid,
+            "ssid_encoded": urllib.parse.quote(ssid, safe=''),
+            "security": "encrypted" if security and security != "--" else "",
+        })
+    return points
 
 
-def setup_page():
-    """The Wi-Fi setup page shown while in AP mode."""
-    nets = list_networks()
-    options = "".join(f'<option value="{n}">{n}</option>' for n in nets)
-    setup_tpl = os.path.join(BASE_DIR, 'templates', 'setup.html')
-    if os.path.exists(setup_tpl):
-        return render_template('setup.html', options=options)
-    # Fallback inline page if no styled template is present yet.
-    return Response(
-        "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'>"
-        "</head><body style='font-family:sans-serif;max-width:24rem;margin:2rem auto;padding:0 1rem'>"
-        "<h1>Scud Radio setup</h1>"
-        "<p>Choose your Wi-Fi network and enter its password.</p>"
-        "<form action='/connect' method='post'>"
-        f"<select name='ssid' style='width:100%;padding:.5rem'>{options}</select><br><br>"
-        "<input name='password' type='password' placeholder='Wi-Fi password' "
-        "style='width:100%;padding:.5rem;box-sizing:border-box'><br><br>"
-        "<button type='submit' style='padding:.6rem 1.2rem'>Connect</button>"
-        "</form></body></html>",
-        mimetype="text/html")
+# ---------- static assets for the setup portal ----------
+@app.route('/static/<path:filename>')
+def portal_static(filename):
+    return send_from_directory(PORTAL_STATIC, filename)
 
 
 # ---------- captive-portal probe URLs ----------
-# A 302 (instead of the empty 204 the OS expects when online) is the signal that
-# makes Android/iOS/Windows pop the "sign in to network" sheet. Only do this in
-# AP mode; when connected we return the real 204 so we never hijack a home LAN.
+# A 302 (instead of the empty 204 the OS expects when online) makes the phone pop
+# the "sign in to network" sheet. Only in AP mode; connected mode returns real 204.
 @app.route('/generate_204')
 @app.route('/gen_204')
 @app.route('/ncsi.txt')
@@ -86,37 +87,46 @@ def setup_page():
 @app.route('/redirect')
 def captive_check():
     if in_ap_mode():
-        return redirect(f"http://{PORTAL_IP}/", code=302)
+        return redirect("http://" + PORTAL_IP + "/", code=302)
     return ('', 204)
 
 
-# ---------- home ----------
+# ---------- portal: page 1, network list ----------
 @app.route('/', methods=['GET'])
 def home():
     if in_ap_mode():
-        return setup_page()
+        return render_template('index.html', points=scan_points())
     return render_template('home.html')
 
 
-# ---------- credential submission ----------
+# ---------- portal: page 2, password entry ----------
+@app.route('/confirm', methods=['GET'])
+def confirm():
+    ssid_encoded = request.args.get('ssid', '')
+    return render_template('confirm.html', ssid_encoded=ssid_encoded)
+
+
+# ---------- portal: page 3, perform connection ----------
 @app.route('/connect', methods=['POST'])
 def connect():
-    ssid = request.form.get('ssid', '')
+    ssid_encoded = request.form.get('ssid', '')
     pw = request.form.get('password', '')
+    ssid = urllib.parse.unquote(ssid_encoded)
+
     # Create the profile and attempt association (bounded so a bad password
-    # fails fast instead of hanging the request).
-    subprocess.run(["nmcli", "--wait", "20", "device", "wifi", "connect", ssid, "password", pw],
-                   capture_output=True, text=True)
-    # Hand control back to the single brain to verify + start radio, or fall back to AP.
+    # fails fast instead of hanging the page).
+    if pw:
+        subprocess.run(["nmcli", "--wait", "20", "device", "wifi", "connect",
+                        ssid, "password", pw], capture_output=True, text=True)
+    else:
+        subprocess.run(["nmcli", "--wait", "20", "device", "wifi", "connect", ssid],
+                       capture_output=True, text=True)
+
+    # Hand control to the single brain to verify + start radio, or fall back to AP.
     subprocess.Popen([CONTROLLER, "retry"])
-    return Response(
-        "<html><head><meta name='viewport' content='width=device-width,initial-scale=1'>"
-        "</head><body style='font-family:sans-serif;max-width:24rem;margin:2rem auto;padding:0 1rem'>"
-        "<h1>Connecting&hellip;</h1>"
-        "<p>If the radio joins your network it will start playing shortly. "
-        "If it doesn't, reconnect to <b>Scud House</b> and try again.</p>"
-        "</body></html>",
-        mimetype="text/html")
+
+    # Show the "attempting to connect" page (it meta-refreshes back to / after 8s).
+    return render_template('connect.html', ssid=ssid)
 
 
 # ---------- radio control (unchanged) ----------
@@ -167,5 +177,4 @@ def control(command):
 
 
 if __name__ == '__main__':
-    # threaded=True so parallel captive-probe requests from a phone don't queue.
     app.run(host='0.0.0.0', port=888, threaded=True)

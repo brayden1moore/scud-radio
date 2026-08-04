@@ -167,6 +167,17 @@ class LCD_2inch(lcdconfig.RaspberryPi):
             self.digital_write(self.DC_PIN,True)
             for i in range(0,len(pix),4096):
                 self.spi_writebyte(pix[i:i+4096])		
+
+    def ShowWindow(self, image, x0, y0):
+        img = self.np.asarray(image.convert('RGB'))
+        pix = self.np.zeros((image.height, image.width, 2), dtype=self.np.uint8)
+        pix[..., 0] = self.np.bitwise_and(img[..., 0], 0xF8) + (img[..., 1] >> 5)
+        pix[..., 1] = self.np.bitwise_and(img[..., 1] << 3, 0xE0) + (img[..., 2] >> 3)
+        pix = pix.flatten().tolist()
+        self.SetWindows(x0, y0, x0 + image.width, y0 + image.height)
+        self.digital_write(self.DC_PIN, self.GPIO.HIGH)
+        for i in range(0, len(pix), 4096):
+            self.spi_writebyte(pix[i:i + 4096])
                 
     def clear(self):
         """Clear contents of image buffer"""
