@@ -984,7 +984,7 @@ def on_volume_button_pressed():
         last_input_time = time.time()
         button_press_time = time.time()
         button_released_time = None
-        play_random()
+        toggle_favorite()
         rotated = False
     
 
@@ -1620,7 +1620,7 @@ threading.Thread(target=control_socket_listener, daemon=True).start()
 from gpiozero import RotaryEncoder, Button
 
 click_button = Button(26, bounce_time=0.01, pull_up=True)
-click_button.when_pressed = wrapped_action(lambda: toggle_favorite())
+click_button.when_pressed = wrapped_action(lambda: play_random())
 
 CLK_PIN = 5 
 DT_PIN = 6   
