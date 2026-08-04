@@ -3,7 +3,9 @@
 # Initial setup
 sudo rm /boot/firmware/config.txt
 sudo tee /boot/firmware/config.txt > /dev/null <<EOF
-dtoverlay=hifiberry-dac
+auto_initramfs=0
+#dtoverlay=hifiberry-dac
+dtoverlay=wm8960-soundcard
 dtoverlay=disable-bt
 disable_splash=1
 
@@ -13,7 +15,6 @@ dtparam=spi=on
 #dtparam=audio=on
 camera_auto_detect=1
 display_auto_detect=0
-auto_initramfs=1
 #dtoverlay=vc4-kms-v3d
 #max_framebuffers=2
 disable_fw_kms_setup=1
@@ -30,12 +31,27 @@ dtoverlay=dwc2,dr_mode=host
 [all]
 EOF
 
+sudo rm /tmp/boot.conf
+sudo tee /tmp/boot.conf > /dev/null <<EOF
+[all]
+BOOT_UART=0
+WAKE_ON_GPIO=1
+POWER_OFF_ON_HALT=0
+BOOT_ORDER=0x1
+ENABLE_SELF_UPDATE=1
+DISABLE_HDMI=0
+EOF
+
 cd ~/
 git clone https://github.com/waveshare/WM8960-Audio-HAT
 cd WM8960-Audio-HAT
 sudo chmod +x install.sh
 sudo ./install.sh -y
 cd ~/
+
+sudo ln -sf /etc/wm8960-soundcard/asound.conf /etc/asound.conf
+sudo ln -sf /etc/wm8960-soundcard/wm8960_asound.state /var/lib/alsa/asound.state
+sudo systemctl disable wm8960-soundcard.service
 
 sudo apt install mpv -y
 amixer -D pulse sset Master 100%
@@ -47,12 +63,11 @@ sudo tee /etc/systemd/system/wifi-connect.service > /dev/null <<EOF
 Description=Scan-first WiFi connect
 After=NetworkManager.service
 Wants=NetworkManager.service
-Before=comitup.service
 
 [Service]
-Type=oneshot
+Type=simple
 ExecStart=/home/scud/scud-radio/wifi-connect.sh
-RemainAfterExit=no
+Restart=no
 
 [Install]
 WantedBy=multi-user.target
