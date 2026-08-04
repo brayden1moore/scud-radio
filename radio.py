@@ -646,7 +646,7 @@ def _draw_volume_bar(draw, volume):
     """Paint the volume bar onto an existing draw object. No push."""
     bar_top = tick_bar_start + 7
     bar_bottom = bar_top + 10
-    volume_bar_end = padding + SCREEN_WIDTH * (volume / 150)
+    volume_bar_end = padding + SCREEN_WIDTH * (volume / 120)
     draw.rectangle([padding, bar_top - 10, SCREEN_WIDTH, bar_bottom + 10], fill=BLACK)
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], fill=RED)
     draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
@@ -1188,7 +1188,7 @@ def volume_handle_rotation(direction):
     last_rotation = time.time()
 
     if direction == 1: 
-        new_volume = min(100, current_volume + volume_step)
+        new_volume = min(120, current_volume + volume_step)
     else: 
         new_volume = max(0, current_volume - volume_step)
     
@@ -1363,7 +1363,7 @@ mpv_process = Popen([
     "--no-video",
     "--quiet",
     f"--volume={current_volume}",
-    "--volume-max=150",
+    "--volume-max=120",
     "--input-ipc-server=/tmp/mpvsocket",
     "--msg-level=all=info", 
     "--msg-level=ipc=no",
@@ -1447,7 +1447,7 @@ def handle_remote_command(command_data):
         
         elif cmd == 'volume':
             vol = int(command_data.get('value', 60))
-            vol = max(0, min(150, vol))
+            vol = max(0, min(120, vol))
             current_volume = vol
             send_mpv_command({"command": ["set_property", "volume", current_volume]})
             show_volume_overlay(current_volume)
@@ -1491,7 +1491,7 @@ def handle_remote_command(command_data):
                 'status': 'ok',
                 'station': stream,
                 'now_playing': streams[stream]['oneLiner'],
-                'volume': round(current_volume*100/150),
+                'volume': round(current_volume*100/120),
                 'battery': battery,
                 'charging': charging
             }
@@ -1501,7 +1501,7 @@ def handle_remote_command(command_data):
                 'status': 'ok',
                 'station': stream,
                 'now_playing': streams[stream]['oneLiner'],
-                'volume': round(current_volume*100/150),
+                'volume': round(current_volume*100/120),
                 'battery': battery,
                 'charging': charging
             }
