@@ -72,7 +72,7 @@ Restart=no
 [Install]
 WantedBy=multi-user.target
 EOF
-chmod +x /home/scud/scud-radio/wifi-connect.sh
+sudo chmod +x /home/scud/scud-radio/wifi-connect.sh
 
 # Create the splash service file
 sudo tee /etc/systemd/system/splash.service > /dev/null <<EOF
@@ -223,6 +223,12 @@ plugins=ifupdown,keyfile
 managed=false
 
 [connectivity]
+enabled=false
+
+[device]
+wifi.scan-rand-mac-address=no
+
+[connectivity]
 uri=http://connectivity-check.ubuntu.com/
 interval=300
 enabled=false
@@ -232,5 +238,12 @@ if ! grep -q 'subprocess.run(\["sudo","systemctl","start","launcher"\])' /usr/sh
     sudo sed -i '1i import subprocess\nsubprocess.run(["sudo","systemctl","start","launcher"])' /usr/share/comitup/web/comitupweb.py
 fi
 
+# Disable NM autoconnect on all saved wifi profiles (generic, no hardcoded SSIDs)
+nmcli -t -f NAME,TYPE connection show \
+  | awk -F: '$2=="802-11-wireless"{print $1}' \
+  | grep -v -E '^comitup-' \
+  | while read -r name; do
+      sudo nmcli connection modify "$name" connection.autoconnect no
+    done
 
 sudo reboot
