@@ -17,12 +17,13 @@ mapfile -t saved < <(nmcli -t -f NAME,TYPE connection show \
   | awk -F: '$2=="802-11-wireless"{print $1}' \
   | grep -v -E '^(comitup-|One-Radio)')
 
-if [ ${#saved[@]} -eq 0 ]; then exit 0; fi   # was exit 1 — nothing to do isn't a failure
+if [ ${#saved[@]} -eq 0 ]; then exit 0; fi  
 
 while IFS=: read -r signal ssid; do
   for s in "${saved[@]}"; do
     if [ "$s" = "$ssid" ]; then
       if nmcli --wait 10 connection up id "$s" 2>/dev/null; then
+        nmcli connection modify "$s" connection.autoconnect no 2>/dev/null || true
         exit 0
       fi
     fi
