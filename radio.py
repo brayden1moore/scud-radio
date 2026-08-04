@@ -1619,22 +1619,22 @@ threading.Thread(target=control_socket_listener, daemon=True).start()
 
 from gpiozero import RotaryEncoder, Button
 
-click_button = Button(26, bounce_time=0.01)
+click_button = Button(26, bounce_time=0.01, pull_up=True)
 click_button.when_pressed = wrapped_action(lambda: toggle_favorite())
 
 CLK_PIN = 5 
 DT_PIN = 6   
-rotor = RotaryEncoder(CLK_PIN, DT_PIN)
+rotor = RotaryEncoder(CLK_PIN, DT_PIN, bounce_time=0.05)
 rotor.when_rotated_counter_clockwise = wrapped_action(lambda: handle_rotation(-1), -1)
 rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1), 1)
 
 CLK_PIN = 16
 DT_PIN = 12  
-volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN)
+volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN, bounce_time=0.05)
 volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_handle_rotation(-1), -1, True)
 volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1, True)
 
-volume_click_button = Button(17, bounce_time=0.01)
+volume_click_button = Button(17, bounce_time=0.01, pull_up=True)
 volume_click_button.when_pressed = on_volume_button_pressed
 volume_click_button.when_released = on_volume_button_released
 
