@@ -4,6 +4,10 @@ import os
 # lgpio is the Bookworm default and usually the most reliable early in boot.
 os.environ.setdefault('GPIOZERO_PIN_FACTORY', 'lgpio')
 
+import lgpio
+_h = lgpio.gpiochip_open(0)
+lgpio.gpio_claim_output(_h, 13, 1)
+
 import time
 t0 = time.monotonic()
 
