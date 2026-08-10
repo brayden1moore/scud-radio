@@ -596,7 +596,7 @@ def _mq_reset(mq, now):
     mq['offset'] = 0
     mq['pause_until'] = now + 3
 
-PIXELS_PER_SEC = 80
+PIXELS_PER_SEC = 50
 WRAP_PAUSE = 5
 
 def _mq_tick(mq, span, now):
