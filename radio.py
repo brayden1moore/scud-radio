@@ -1049,15 +1049,25 @@ def proximity_order(sl, center):
 
 refresh_generation = 0
 
-def start_priority_refresh(center):
+def start_priority_refresh(refresh_list=None, center=None, run_ticks=False):
+    """Refresh scroll cache for refresh_list (default: all), nearest-first, async."""
     global refresh_generation
     with state_lock:
         refresh_generation += 1
         gen = refresh_generation
         sl = list(stream_list)
+    if not sl:
+        return
+    if center is None:
+        center = readied_stream if readied_stream else stream
     if center not in sl:
         center = sl[0]
-    ordered = proximity_order(sl, center)
+    # default to full list
+    targets = set(refresh_list) if refresh_list is not None else set(sl)
+    # proximity order over the whole list, then keep only targets
+    ordered = [n for n in proximity_order(sl, center) if n in targets]
+    if run_ticks:
+        calculate_ticks()
     threading.Thread(target=_refresh_worker, args=(ordered, gen), daemon=True).start()
 
 def _refresh_worker(ordered, gen):
@@ -1260,10 +1270,9 @@ def periodic_update():
                             updated_count += 1                              
                 
                 print('Updated',updated_streams)
-                refresh_scroll_cache(updated_streams)
-                logging.info(f"Successfully updated {updated_count} streams")
                 streams = fetched_streams
                 stream_list = get_stream_list(streams)
+                start_priority_refresh(updated_streams, run_ticks=True)
                 failed_fetches = 0
                 last_successful_fetch = time.time()
                     
@@ -1634,8 +1643,10 @@ volume_click_button.when_released = on_volume_button_released
 
 ## main loop
 print('BEGIN REFRESH',time.time())
-refresh_scroll_cache(stream_list)
-
+calculate_ticks()
+scroll_cache_dict[stream] = display_scroll(stream, silent=True)  # current one now
+start_priority_refresh()  # everything async, behind the visible UI
+display_cached_scroll(stream)
 last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
