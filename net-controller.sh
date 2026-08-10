@@ -46,16 +46,6 @@ ap_down() {
 
 # ---- connect to the strongest IN-RANGE known network ----
 connect_known() {
-  nmcli device wifi rescan 2>/dev/null || true
-
-  # Wait briefly for scan results to populate.
-  local visible="" i
-  for i in 1 2 3; do
-    visible="$(nmcli -t -f SSID device wifi list 2>/dev/null | sed '/^$/d')"
-    [ -n "$visible" ] && break
-    sleep 1
-  done
-
   # Saved Wi-Fi profiles, excluding our own AP.
   mapfile -t saved < <(nmcli -t -f NAME,TYPE connection show \
     | awk -F: '$2=="802-11-wireless"{print $1}' \
@@ -63,12 +53,34 @@ connect_known() {
 
   [ ${#saved[@]} -eq 0 ] && return 1
 
-  # Walk visible networks strongest-first; connect to the first that is also saved.
-  # We only ever try networks that appeared in the scan, so no timeout on absent ones.
+  # FAST PATH: exactly one saved network — just try to bring it up directly.
+  # No scan wait. A short --wait means an out-of-range network fails in ~8s
+  # instead of hanging, and an in-range one connects in 2-4s.
+  if [ ${#saved[@]} -eq 1 ]; then
+    if nmcli --wait 8 connection up id "${saved[0]}" 2>/dev/null; then
+      nmcli connection modify "${saved[0]}" connection.autoconnect no 2>/dev/null || true
+      return 0
+    fi
+    return 1
+  fi
+
+  # MULTI-NETWORK PATH: use cached scan results first; only rescan if empty.
+  local visible i
+  visible="$(nmcli -t -f SSID device wifi list 2>/dev/null | sed '/^$/d')"
+  if [ -z "$visible" ]; then
+    nmcli device wifi rescan 2>/dev/null || true
+    for i in 1 2 3; do
+      visible="$(nmcli -t -f SSID device wifi list 2>/dev/null | sed '/^$/d')"
+      [ -n "$visible" ] && break
+      sleep 1
+    done
+  fi
+
+  # Walk visible networks strongest-first; connect to the first that's saved.
   while IFS=: read -r signal ssid; do
     for s in "${saved[@]}"; do
       if [ "$s" = "$ssid" ]; then
-        if nmcli --wait 12 connection up id "$s" 2>/dev/null; then
+        if nmcli --wait 8 connection up id "$s" 2>/dev/null; then
           nmcli connection modify "$s" connection.autoconnect no 2>/dev/null || true
           return 0
         fi

@@ -25,6 +25,7 @@ dtoverlay=wm8960-soundcard
 dtoverlay=disable-bt
 disable_splash=1
 
+initial_turbo=20
 dtparam=i2c_arm=on
 dtparam=spi=on
 camera_auto_detect=0
@@ -44,18 +45,21 @@ dtoverlay=dwc2,dr_mode=host
 [all]
 EOF
 
-# ---------- bootloader: eMMC only, no probe walk ----------
-sudo rm -f /tmp/boot.conf
-sudo tee /tmp/boot.conf > /dev/null <<EOF
-[all]
-BOOT_UART=0
-WAKE_ON_GPIO=1
-POWER_OFF_ON_HALT=0
-BOOT_ORDER=0xf1
-ENABLE_SELF_UPDATE=1
-DISABLE_HDMI=0
-EOF
-sudo rpi-eeprom-config --apply /tmp/boot.conf || true
+# ---------- bootloader: eMMC only, DISABLE_HDMI, force fast firmware boot ----------
+# On CM4, rpi-eeprom-config is disabled by default. Enable the flashrom path first.
+echo 'RPI_EEPROM_USE_FLASHROM=1' | sudo tee -a /etc/default/rpi-eeprom-update
+echo 'CM4_ENABLE_RPI_EEPROM_UPDATE=1' | sudo tee -a /etc/default/rpi-eeprom-update
+
+# Read current EEPROM config, modify it, apply. (Read-modify-write, not a hand-authored file.)
+rpi-eeprom-config > /tmp/boot.conf
+sed -i 's/^BOOT_ORDER=.*/BOOT_ORDER=0xf1/' /tmp/boot.conf
+sed -i 's/^DISABLE_HDMI=.*/DISABLE_HDMI=1/' /tmp/boot.conf
+# if the keys don't already exist in the dumped config, append them
+grep -q '^BOOT_ORDER='  /tmp/boot.conf || echo 'BOOT_ORDER=0xf1'  >> /tmp/boot.conf
+grep -q '^DISABLE_HDMI=' /tmp/boot.conf || echo 'DISABLE_HDMI=1' >> /tmp/boot.conf
+
+# Apply — and DON'T swallow the error, so a failed flash is visible during prep.
+sudo rpi-eeprom-config --apply /tmp/boot.conf
 
 # ---------- WM8960 audio (overlay baked in; disable slow Waveshare service) ----------
 cd ~/
