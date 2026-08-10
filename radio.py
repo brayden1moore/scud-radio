@@ -1,7 +1,48 @@
-from concurrent.futures import ThreadPoolExecutor, as_completed
+## upon startup
+import time 
+import driver as LCD_2inch
 from PIL import Image, ImageDraw, ImageFont, ImageEnhance, ImageSequence, ImageOps
-from datetime import date, datetime, timezone, timedelta
+
+def display_scud():
+    global currently_displaying, current_image
+    currently_displaying = 'scud'
+
+    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
+    bg = Image.open(f'assets/success.png') 
+    image.paste(bg, (0, 0))
+    enhancer = ImageEnhance.Brightness(image)
+    image = enhancer.enhance(BRIGHTNESS)
+    disp.ShowImage(image)
+    current_image = image.copy()
+
+# 2 inch
+RST = 27
+DC = 25
+BL = 23
+bus = 0 
+device = 0 
+current_bl = 100
+disp = LCD_2inch.LCD_2inch()
+disp.Init()
+disp.bl_DutyCycle(current_bl)
+display_scud()
+
+import pytz
+import requests
+
+def get_timezone_from_ip():
+    try:
+        response = requests.get('http://ip-api.com/json/')
+        data = response.json()
+        return data['timezone']
+    except:
+        return 'UTC' 
+    
+user_tz = pytz.timezone(get_timezone_from_ip())
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from subprocess import Popen, run
+from datetime import datetime
 from pathlib import Path
 from io import BytesIO
 import spidev as SPI
@@ -9,14 +50,11 @@ import numpy as np
 import subprocess
 import threading
 import traceback
-import requests
 import platform
 import logging
 import random
 import pickle
 import signal
-import pytz
-import time
 import json
 import math
 import html
@@ -62,13 +100,6 @@ ORANGE = (255,128,0)
 PURPLE = (134,97,245)
 RED = (255,71,71)
 
-SMALL_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 13)
-MEDIUM_FONT = ImageFont.truetype("assets/Archivo-Light.ttf", 18)
-MEDIUM_FONT_BOLD = ImageFont.truetype("assets/Archivo-Bold.ttf", 18)
-LARGE_FONT = ImageFont.truetype("assets/Archivo-Light.ttf",42)
-LARGE_ISH_FONT = ImageFont.truetype("assets/Archivo-Bold.ttf",28)
-LARGE_FONT_THIN = ImageFont.truetype("assets/Archivo-Light.ttf",28) 
-
 def load_font(name, size, weight=400):
     if name == 'Archivo':
         font = ImageFont.truetype('assets/Archivo/Archivo-VariableFont_wdth,wght.ttf', size)
@@ -81,7 +112,9 @@ def load_font(name, size, weight=400):
         font.set_variation_by_axes([weight]) 
     return font
 
+print('LOADING NOTO',time.time())
 SMALL_LIGHT = load_font('Noto', 17, weight=400)  
+print('LOADING ARCHIVO',time.time())
 EXTRALARGE_LIGHT = load_font('Archivo',38, weight=800)  
 
 def replace_font(font):
@@ -99,17 +132,6 @@ def replace_font(font):
 LIB_PATH = "/var/lib/scud-radio"
 
 ## functions
-
-import driver as LCD_2inch
-
-def get_timezone_from_ip():
-    try:
-        response = requests.get('http://ip-api.com/json/')
-        data = response.json()
-        return data['timezone']
-    except:
-        return 'UTC' 
-user_tz = pytz.timezone(get_timezone_from_ip())
     
 def get_config():
     Path(LIB_PATH).mkdir(parents=True, exist_ok=True)
@@ -156,20 +178,6 @@ def set_last_played(name):
 def get_last_played():
     config = get_config()
     return config['last_played']
-
-def display_scud():
-    global currently_displaying, current_image, current_time
-    currently_displaying = 'scud'
-
-    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
-    bg = Image.open(f'assets/success.png') 
-    image.paste(bg, (0, 0))
-    enhancer = ImageEnhance.Brightness(image)
-    image = enhancer.enhance(BRIGHTNESS)
-    disp.ShowImage(image)
-    current_image = image.copy()
-    now = time.time()
-    current_time = datetime.fromtimestamp(now, tz=user_tz)
 
 def get_favorites():
     fav_path = Path(LIB_PATH)
@@ -558,7 +566,6 @@ def draw_tick(draw, name):
     )
 
 FONT_HEIGHTS = {
-    'SMALL' : height('Sg',SMALL_FONT),
     'SMALL_LIGHT' : height('Sg',SMALL_LIGHT),
     'EXTRALARGE_LIGHT' : height('Sg',EXTRALARGE_LIGHT),
 }
@@ -815,8 +822,8 @@ def display_bar(image=current_image, color=WHITE):
         draw.rectangle([0, y, 320, y+24], fill=color)
         draw.rectangle([0, y, 320, y], fill=text_color)
 
-        draw.text((13, y+2), formatted_date, font=MEDIUM_FONT, fill=text_color)
-        draw.text((SCREEN_WIDTH - width(formatted_time, MEDIUM_FONT) - 13, y+2), formatted_time, font=MEDIUM_FONT, fill=text_color)
+        draw.text((13, y+2), formatted_date, font=SMALL_LIGHT, fill=text_color)
+        draw.text((SCREEN_WIDTH - width(formatted_time, SMALL_LIGHT) - 13, y+2), formatted_time, font=SMALL_LIGHT, fill=text_color)
 
 
 def display_ambient(name, clicked=False):
@@ -1310,22 +1317,6 @@ def wrapped_action(func, direction=0, volume=False):
                 else:
                     func()
     return inner
-
-## upon startup 
-
-# 2 inch
-RST = 27
-DC = 25
-BL = 23
-bus = 0 
-device = 0 
-current_bl = 100
-disp = LCD_2inch.LCD_2inch()
-disp.Init()
-#disp.clear()
-disp.bl_DutyCycle(current_bl)
-
-display_scud()
 
 mpv_process = None
 stream = None
