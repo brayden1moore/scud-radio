@@ -1632,12 +1632,14 @@ volume_click_button.when_pressed = on_volume_button_pressed
 volume_click_button.when_released = on_volume_button_released
 
 ## main loop
+print('BEGIN REFRESH',time.time())
 refresh_scroll_cache(stream_list)
 
 last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
 
+print('DISPLAYING',time.time())
 display_cached_scroll(stream)
 
 try:
