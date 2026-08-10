@@ -43,6 +43,8 @@ try:
     disp.digital_write(disp.DC_PIN, True)
     for i in range(0, len(buf), 4096):
         disp.spi_writebyte(list(buf[i:i+4096]))
+    for i in range(0, len(buf), 4096):
+        disp.spi_writebyte(list(buf[i:i+4096]))
     log("frame written")
 
 except Exception:
