@@ -10,11 +10,9 @@ def display_scud():
     global currently_displaying, current_image
     currently_displaying = 'scud'
 
-    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=YELLOW)
+    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg = Image.open(f'assets/success.png') 
     image.paste(bg, (0, 0))
-    enhancer = ImageEnhance.Brightness(image)
-    image = enhancer.enhance(BRIGHTNESS)
     disp.ShowImage(image)
     current_image = image.copy()
 
