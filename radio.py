@@ -596,7 +596,7 @@ def _mq_reset(mq, now):
     mq['offset'] = 0
     mq['pause_until'] = now + 3
 
-PIXELS_PER_SEC = 160
+PIXELS_PER_SEC = 80
 WRAP_PAUSE = 5
 
 def _mq_tick(mq, span, now):
@@ -1747,7 +1747,7 @@ try:
         else:
             marquee_name = None
 
-        time.sleep(0.041)
+        time.sleep(0.0167)
 
 except KeyboardInterrupt:
     if mpv_process:
