@@ -1078,6 +1078,7 @@ def _refresh_worker(ordered, gen):
             if gen != refresh_generation:      # superseded by a newer pass
                 return
             one_cache.pop(name, None)
+            print(f"REFRESH WORKER RUNNING FOR {name}")
             img = display_scroll(name, silent=True)
             if gen != refresh_generation:      # check again before writing
                 return
