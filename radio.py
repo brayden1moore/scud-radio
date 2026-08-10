@@ -3,6 +3,9 @@ import time
 import driver as LCD_2inch
 from PIL import Image, ImageDraw, ImageFont, ImageEnhance, ImageSequence, ImageOps
 
+SCREEN_WIDTH = 320
+SCREEN_HEIGHT = 240
+
 def display_scud():
     global currently_displaying, current_image
     currently_displaying = 'scud'
@@ -81,9 +84,6 @@ sleeping = False
 muted = False
 put_to_sleep = False
 current_image = None
-
-SCREEN_WIDTH = 320
-SCREEN_HEIGHT = 240
 
 MAX_VOL = 150
 
