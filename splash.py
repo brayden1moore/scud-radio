@@ -6,7 +6,7 @@ os.environ.setdefault('GPIOZERO_PIN_FACTORY', 'lgpio')
 
 import lgpio
 _h = lgpio.gpiochip_open(0)
-lgpio.gpio_claim_output(_h, 13, 1)
+lgpio.gpio_claim_output(_h, 9, 1)
 
 import time
 t0 = time.monotonic()
