@@ -406,6 +406,7 @@ def play(name, toggled=False):
             send_mpv_command({"command": ["loadfile", stream_url]})
             first_boot = False
         else:
+            print("PLAYING",name)
             send_mpv_command({"command": ["loadfile", stream_url, 'replace']})
 
     set_last_played(name)
