@@ -10,7 +10,7 @@ def display_scud():
     global currently_displaying, current_image
     currently_displaying = 'scud'
 
-    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT))
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg = Image.open(f'assets/success.png') 
     image.paste(bg, (0, 0))
     disp.ShowImage(image)
@@ -521,7 +521,7 @@ tick_locations = {}
 
 def calculate_ticks():
     global tick_locations, tick_image
-    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0, 0, 0, 0))
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
     tick_locations = {}
 
@@ -569,7 +569,24 @@ FONT_HEIGHTS = {
     'EXTRALARGE_LIGHT' : height('Sg',EXTRALARGE_LIGHT),
 }
 
-NAME_Y = 240 - 88        
+NAME_Y = 240 - 88   
+ 
+# Precompute strip geometry once (module level)
+NAME_STRIP_TOP    = NAME_Y - 2
+NAME_STRIP_BOTTOM = NAME_Y + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 9
+_name_chunk_start = 240 - 88
+OL_STRIP_TOP    = _name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 5
+OL_STRIP_BOTTOM = OL_STRIP_TOP + FONT_HEIGHTS['SMALL_LIGHT'] + 5
+
+# Volume strip geometry (module level, next to the other strip constants)
+VOL_STRIP_TOP    = tick_bar_start - 3          # bar_top - 10
+VOL_STRIP_BOTTOM = tick_bar_start + 27         # bar_bottom + 10
+_vol_strip = Image.new('RGB', (SCREEN_WIDTH, VOL_STRIP_BOTTOM - VOL_STRIP_TOP), BLACK)
+
+# Persistent scratch strips (allocated once, reused)
+_name_strip = Image.new('RGB', (SCREEN_WIDTH, NAME_STRIP_BOTTOM - NAME_STRIP_TOP), BLACK)
+_ol_strip   = Image.new('RGB', (SCREEN_WIDTH, OL_STRIP_BOTTOM - OL_STRIP_TOP), BLACK)
+
 _name_metrics_cache = {}              
 
 def _name_metrics(name):
@@ -578,22 +595,6 @@ def _name_metrics(name):
         _name_metrics_cache[name] = (f, width(name, f))
     return _name_metrics_cache[name]
 
-def _draw_marquee_name(draw, name, offset):
-    """Paint the scrolled station name onto an existing draw object. No push."""
-    font, full_w = _name_metrics(name)
-    line_h = FONT_HEIGHTS['EXTRALARGE_LIGHT']
-    strip_bottom = NAME_Y + line_h + 9   # stops just above the oneLiner row
-
-    # clear the whole name strip (covers the baked-in truncated name)
-    draw.rectangle([0, NAME_Y - 2, SCREEN_WIDTH, strip_bottom], fill=BLACK)
-
-    span = full_w + MARQUEE_GAP
-    start = MARQUEE_X - (offset % span)
-    draw.text((start - 1, NAME_Y - 1), name, font=font, fill=WHITE)
-    draw.text((start - 1 + span, NAME_Y - 1), name, font=font, fill=WHITE)
-
-    # left gutter
-    draw.rectangle([0, NAME_Y - 2, MARQUEE_X - 1, strip_bottom], fill=BLACK)
 
 oneliner_mq  = {'offset': 0, 'pause_until': 0, 'needed': False}
 name_mq  = {'offset': 0, 'pause_until': 0, 'needed': False}
@@ -622,66 +623,66 @@ text_on_screen = None
 MARQUEE_X = 12 + start_x                      # name_chunk_start_x
 MARQUEE_GAP = 30                              # blank gap before the text repeats
 
-def _draw_marquee_oneliner(draw, name, offset):
-    global text_on_screen
+def _render_vol_strip(volume):
+    d = ImageDraw.Draw(_vol_strip)
+    # clear whole strip (covers x=0..padding gutter too)
+    d.rectangle([0, 0, SCREEN_WIDTH, _vol_strip.height], fill=BLACK)
+    volume_bar_end = padding + SCREEN_WIDTH * (volume / MAX_VOL)
+    # absolute bar_top/bottom minus strip origin
+    top = (tick_bar_start + 7) - VOL_STRIP_TOP      # = 10
+    bottom = top + 10                                # = 20
+    d.rectangle([padding, top, volume_bar_end, bottom], fill=RED)
+    d.rectangle([padding, top, volume_bar_end, bottom], width=1, outline=BLACK)
+    return _vol_strip
 
-    """Paint the scrolled oneLiner onto an existing draw object. No push."""
-    text = streams[name]['oneLiner'].replace('&amp;', '&').strip()
-    full_w = streams[name].get('oneLinerWidth') or width(text, SMALL_LIGHT)
-
-    name_font = EXTRALARGE_LIGHT
-    name_chunk_start = 240 - 88
-    everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 5
-    line_h = FONT_HEIGHTS['SMALL_LIGHT']
-
-    draw.rectangle([MARQUEE_X, everything_info_y + 1,
-                    SCREEN_WIDTH, everything_info_y + line_h + 4], fill=BLACK)
-
+def _render_name_strip(name, offset):
+    font, full_w = _name_metrics(name)
+    d = ImageDraw.Draw(_name_strip)
+    d.rectangle([0, 0, SCREEN_WIDTH, _name_strip.height], fill=BLACK)  # clear
     span = full_w + MARQUEE_GAP
     start = MARQUEE_X - (offset % span)
-    draw.text((start, everything_info_y), text, font=SMALL_LIGHT, fill=WHITE)
-    draw.text((start + span, everything_info_y), text, font=SMALL_LIGHT, fill=WHITE)
+    y = (NAME_Y - 1) - NAME_STRIP_TOP  # absolute y minus strip origin
+    d.text((start - 1, y), name, font=font, fill=WHITE)
+    d.text((start - 1 + span, y), name, font=font, fill=WHITE)
+    d.rectangle([0, 0, MARQUEE_X - 1, _name_strip.height], fill=BLACK)  # left gutter
+    return _name_strip
 
-    draw.rectangle([0, everything_info_y, MARQUEE_X - 1,
-                    everything_info_y + line_h + 4], fill=BLACK)
-    
-    text_on_screen = streams[name]['oneLiner']
-
-
-def _draw_volume_bar(draw, volume):
-    """Paint the volume bar onto an existing draw object. No push."""
-    bar_top = tick_bar_start + 7
-    bar_bottom = bar_top + 10
-    volume_bar_end = padding + SCREEN_WIDTH * (volume / MAX_VOL)
-    draw.rectangle([padding, bar_top - 10, SCREEN_WIDTH, bar_bottom + 10], fill=BLACK)
-    draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], fill=RED)
-    draw.rectangle([padding, bar_top, volume_bar_end, bar_bottom], width=1, outline=BLACK)
+def _render_ol_strip(name, offset):
+    text = streams[name]['oneLiner'].replace('&amp;', '&').strip()
+    full_w = streams[name].get('oneLinerWidth') or width(text, SMALL_LIGHT)
+    d = ImageDraw.Draw(_ol_strip)
+    d.rectangle([0, 0, SCREEN_WIDTH, _ol_strip.height], fill=BLACK)
+    span = full_w + MARQUEE_GAP
+    start = MARQUEE_X - (offset % span)
+    y = OL_STRIP_TOP - OL_STRIP_TOP  # = 0, oneliner sits at strip top
+    d.text((start, y), text, font=SMALL_LIGHT, fill=WHITE)
+    d.text((start + span, y), text, font=SMALL_LIGHT, fill=WHITE)
+    d.rectangle([0, 0, MARQUEE_X - 1, _ol_strip.height], fill=BLACK)
+    return _ol_strip
 
 def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=None, must_show=False):
-    base = scroll_cache_dict.get(name)
-    if not base:
+    # guard unchanged
+    if (readied_stream if readied_stream else stream) != name:
         return
-    img = base.copy()
-    draw = ImageDraw.Draw(img)
-    if name_offset is not None:
-        _draw_marquee_name(draw, name, name_offset)
-    if draw_oneliner:
-        _draw_marquee_oneliner(draw, name, offset)
-    if volume is not None:
-        _draw_volume_bar(draw, volume)
 
     if must_show or volume is not None:
         acquired = display_lock.acquire(timeout=0.5)
     else:
         acquired = display_lock.acquire(blocking=False)
-
-    if acquired:
-        try:
-            if (readied_stream if readied_stream else stream) != name:
-                return
-            disp.ShowImage(img)
-        finally:
-            display_lock.release()
+    if not acquired:
+        return
+    try:
+        if (readied_stream if readied_stream else stream) != name:
+            return
+        if name_offset is not None:
+            disp.ShowWindow(_render_name_strip(name, name_offset), 0, NAME_STRIP_TOP)
+        if draw_oneliner:
+            disp.ShowWindow(_render_ol_strip(name, offset), 0, OL_STRIP_TOP)
+        if volume is not None:
+            # volume bar strip — same treatment
+            disp.ShowWindow(_render_vol_strip(volume), 0, VOL_STRIP_TOP)
+    finally:
+        display_lock.release()
 
 def display_scroll(name, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
@@ -698,7 +699,7 @@ def display_scroll(name, silent=False):
         double_next_stream = stream_list[(stream_list.index(next_stream) + 1) % len_stream_list]
 
 
-        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
+        image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
         draw = ImageDraw.Draw(image) 
         
         if not silent:
@@ -906,7 +907,7 @@ def display_wifi(image):
     if not wifi_strength:
         get_wifi_strength()
     strength = 'low' if wifi_strength < 20 else 'med' if wifi_strength <= 50 else 'high'
-    signal = Image.open(f'assets/wifi_{strength}.png').convert('RGBA')
+    signal = Image.open(f'assets/wifi_{strength}.png').convert('RGB')
     image.paste(signal, (260, 227), signal)
 
 def toggle_stream(name):
@@ -1384,19 +1385,9 @@ favorite_images = [Image.open('assets/favorited1.png').convert('RGBA'),
                    Image.open('assets/favorited4.png').convert('RGBA'),
                    Image.open('assets/favorited5.png').convert('RGBA')]
 
-hide_img = Image.open('assets/hide_img.png').convert('RGBA')
-unhide_img = Image.open('assets/unhide_img.png').convert('RGBA')
-
 star_60 = Image.open('assets/star_60.png').convert('RGBA')
 star_96 = Image.open('assets/star_96.png').convert('RGBA')
 star_25 = Image.open('assets/star_25.png').convert('RGBA')
-
-live_60 = Image.open('assets/live_60.png').convert('RGBA')
-live_96 = Image.open('assets/live_96.png').convert('RGBA')
-live_25 = Image.open('assets/live_25.png').convert('RGBA')
-
-press_icon = Image.open('assets/press_icon.png').convert('RGBA')
-turn_icon = Image.open('assets/turn_icon.png').convert('RGBA')
 
 # switch
 switch = Button(23, pull_up=False, bounce_time=0.05)
@@ -1751,7 +1742,10 @@ try:
         else:
             marquee_name = None
 
-        time.sleep(0.01)
+        if on_everything and needs_scroll:
+            time.sleep(0.02)   
+        else:
+            time.sleep(0.15)
 
 except KeyboardInterrupt:
     if mpv_process:

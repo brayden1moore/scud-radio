@@ -174,6 +174,8 @@ class LCD_2inch(lcdconfig.RaspberryPi):
         pix[..., 0] = self.np.bitwise_and(img[..., 0], 0xF8) + (img[..., 1] >> 5)
         pix[..., 1] = self.np.bitwise_and(img[..., 1] << 3, 0xE0) + (img[..., 2] >> 3)
         pix = pix.flatten().tolist()
+        self.command(0x36)          
+        self.data(0x70)            
         self.SetWindows(x0, y0, x0 + image.width, y0 + image.height)
         self.digital_write(self.DC_PIN, self.GPIO.HIGH)
         for i in range(0, len(pix), 4096):
