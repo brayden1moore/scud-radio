@@ -15,11 +15,11 @@ class LCD_2inch(lcdconfig.RaspberryPi):
         self.spi_writebyte([val])
     def reset(self):
         self.digital_write(self.RST_PIN, True)
-        time.sleep(0.01)        # was 0.01
+        time.sleep(0.01)       
         self.digital_write(self.RST_PIN, False)
-        time.sleep(0.01)        # was 0.01
+        time.sleep(0.01)      
         self.digital_write(self.RST_PIN, True)
-        time.sleep(0.01)        # was 0.01
+        time.sleep(0.01)       
         
     def Init(self):
         """Initialize dispaly"""  
@@ -177,7 +177,7 @@ class LCD_2inch(lcdconfig.RaspberryPi):
         self.command(0x36)          
         self.data(0x70)            
         self.SetWindows(x0, y0, x0 + image.width, y0 + image.height)
-        self.digital_write(self.DC_PIN, self.GPIO.HIGH)
+        self.digital_write(self.DC_PIN, True)
         for i in range(0, len(pix), 4096):
             self.spi_writebyte(pix[i:i + 4096])
                 
