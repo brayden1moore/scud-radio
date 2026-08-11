@@ -521,7 +521,7 @@ tick_locations = {}
 
 def calculate_ticks():
     global tick_locations, tick_image
-    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0, 0, 0))
+    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
     tick_locations = {}
 
@@ -792,7 +792,7 @@ def display_scroll(name, silent=False):
             image.paste(double_next_star, double_next_position, double_next_star)
 
         # draw marks
-        image.paste(tick_image, (0,0))
+        image.paste(tick_image, (0,0), mask=tick_image)
         draw_tick(draw, name)
         
         if BRIGHTNESS != 1:
