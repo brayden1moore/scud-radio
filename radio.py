@@ -501,6 +501,11 @@ def draw_angled_text(text, font, angle, image, coords, color):
 def calculate_text_cached(text, font_name, width, lines):
     return calculate_text(text, font_name, width, lines)
 
+@lru_cache(maxsize=256)
+def _name_line_cached(name):
+    line, font = calculate_text(name, EXTRALARGE_LIGHT, 350, 1)
+    return line[0], font
+
 start_x = 0
 logo_chunk_start = 35
 logo_chunk_start_x = 12 + start_x
@@ -718,13 +723,13 @@ def display_scroll(name, silent=False):
     if not restarting:
 
         first_display = False
-
-        first_display = False
         len_stream_list = len(stream_list)
-        prev_stream = stream_list[(stream_list.index(name) - 1) % len_stream_list]
-        double_prev_stream = stream_list[(stream_list.index(prev_stream) - 1) % len_stream_list]
-        next_stream = stream_list[(stream_list.index(name) + 1) % len_stream_list]
-        double_next_stream = stream_list[(stream_list.index(next_stream) + 1) % len_stream_list]
+        i = stream_list.index(name)
+        n = len_stream_list
+        prev_stream        = stream_list[(i - 1) % n]
+        double_prev_stream = stream_list[(i - 2) % n]
+        next_stream        = stream_list[(i + 1) % n]
+        double_next_stream = stream_list[(i + 2) % n]
 
 
         image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
@@ -737,9 +742,9 @@ def display_scroll(name, silent=False):
         name_chunk_start = 240 - 88
         name_chunk_start_x = 12 + start_x
         name_font = EXTRALARGE_LIGHT
-        name_line = calculate_text(name, name_font, 350, 1)[0]
-        draw.rectangle([name_chunk_start_x, name_chunk_start - 1, name_chunk_start_x + width(name_line[0], name_font), name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT']], fill=BLACK) # bg
-        draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line[0], font=name_font, fill=WHITE) 
+
+        name_line0, name_font = _name_line_cached(name)
+        draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line0, font=name_font, fill=WHITE)
 
         # draw info
         info_font = SMALL_LIGHT
@@ -764,12 +769,13 @@ def display_scroll(name, silent=False):
         if genres:
             genre_widths = [width(g, SMALL_LIGHT) for g in genres]
             box_h = FONT_HEIGHTS['SMALL_LIGHT'] - 4
-            for (idx, genre), genre_width in zip(enumerate(genres), genre_widths):
+            for idx, genre in enumerate(genres):
+                bbox = info_font.getbbox(genre)
+                genre_width = bbox[2] - bbox[0]
+                top = bbox[1]
                 fill = RED if idx == 0 else BLUE if idx == 1 else YELLOW
                 x0 = tags_start_x + genre_x_offset
                 draw.rectangle([x0, tags_start_y, x0 + genre_width, tags_start_y + 1 + box_h], fill=fill)
-                # anchor text by its own bbox top so per-string metrics don't shift it
-                top = info_font.getbbox(genre)[1]
                 draw.text((x0, tags_start_y - top + 1), genre, font=info_font, fill=BLACK)
                 genre_x_offset += genre_width + 5
 
@@ -778,14 +784,13 @@ def display_scroll(name, silent=False):
         image.paste(logo, logo_position)
 
         if name in favorites:
-            this_star = star_96.copy()
-            image.paste(this_star, og_logo_position, this_star)
+            image.paste(star_96, og_logo_position, star_96)
         
         draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=3) # border
 
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
-        prev_next_rotation = 0
+
         prev = streams[prev_stream]['logo_60']
         next = streams[next_stream]['logo_60']
         image.paste(prev, prev_position)
@@ -794,11 +799,9 @@ def display_scroll(name, silent=False):
         draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=WHITE, width=1)
 
         if prev_stream in favorites:
-            prev_star = star_60.copy().rotate(prev_next_rotation, expand=True)
-            image.paste(prev_star, prev_position, prev_star)
+            image.paste(star_60, prev_position, star_60)
         if next_stream in favorites:
-            next_star = star_60.copy().rotate(-prev_next_rotation, expand=True)
-            image.paste(next_star, next_position, next_star)
+            image.paste(star_60, next_position, star_60)
 
         # double prev and next
         double_prev_position = (square_start, logo_chunk_start + 57 - 4)
