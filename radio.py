@@ -1197,19 +1197,20 @@ def handle_rotation(direction):
 
 
 def volume_handle_rotation(direction):
-    global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time
+    global rotated, last_rotation, last_input_time, current_volume
     rotated = True
     last_input_time = time.time()
     last_rotation = time.time()
-
-    if direction == 1: 
+    if direction == 1:
         new_volume = min(MAX_VOL, current_volume + volume_step)
-    else: 
+    else:
         new_volume = max(0, current_volume - volume_step)
-    
-    show_volume_overlay(new_volume)
     current_volume = new_volume
     send_mpv_command({"command": ["set_property", "volume", current_volume]})
+    show_volume_overlay(new_volume)
+    active = readied_stream if readied_stream else stream
+    if active in scroll_cache_dict and currently_displaying == 'everything':
+        render_frame(active, 0, volume=new_volume, draw_oneliner=False, must_show=True)
 
 
 def display_cached_scroll(name, pushed=False):
@@ -1656,20 +1657,19 @@ try:
             sleeping = True
             screen_on = False
             backlight_off()
-            
-        # ---- marquee the oneLiner on the everything screen ----
-        # expire the volume overlay after 5s of no volume rotation
-        if volume_overlay_showing and (now - last_volume_change) > 3:
-            volume_overlay_showing = False
-            volume_just_cleared = True
-        else:
-            volume_just_cleared = False
 
-        # ---- everything screen: marquee + optional volume overlay, one writer ----
+        # define active_name BEFORE anything uses it
         active_name = readied_stream if readied_stream else stream
         seeking = last_seek_rotation and (now - last_seek_rotation < 1)
-        vol = volume_overlay_value if volume_overlay_showing else None
 
+        # ---- expire the volume overlay after 3s of no volume rotation ----
+        if volume_overlay_showing and (now - last_volume_change) > 3:
+            volume_overlay_showing = False
+            if active_name in scroll_cache_dict and currently_displaying == 'everything':
+                display_cached_scroll(active_name)   # repaints ticks + name, erases the bar
+            marquee_name = None
+
+        # ---- everything screen: marquee only, volume is drawn on the rotor tick ----
         on_everything = (screen_on and not sleeping
                          and not freeze_for_task
                          and not seeking
@@ -1700,20 +1700,7 @@ try:
                     del scroll_cache_dict[active_name]
                     display_cached_scroll(active_name)
 
-            if vol is not None:
-                if needs_scroll and not seeking:
-                    if marquee_name != active_name:
-                        marquee_name = active_name
-                        _mq_reset(oneliner_mq, now)
-                        _mq_reset(name_mq, now)
-                    ol_off = _mq_tick(oneliner_mq, text_span, now) if long_oneliner else 0
-                    n_off = _mq_tick(name_mq, name_span, now) if long_name else None
-                    render_frame(active_name, ol_off, volume=vol,
-                                 draw_oneliner=long_oneliner, name_offset=n_off)
-                else:
-                    render_frame(active_name, 0, volume=vol, draw_oneliner=False)
-
-            elif seeking:
+            if seeking:
                 marquee_name = None
 
             elif needs_scroll:
@@ -1726,17 +1713,13 @@ try:
                 render_frame(active_name, ol_off,
                              draw_oneliner=long_oneliner, name_offset=n_off)
 
-            elif volume_just_cleared:
-                display_cached_scroll(active_name)
-                marquee_name = None
-
             else:
                 marquee_name = None
         else:
             marquee_name = None
 
         if on_everything and needs_scroll:
-            time.sleep(0.02)   
+            time.sleep(0.02)
         else:
             time.sleep(0.15)
 
