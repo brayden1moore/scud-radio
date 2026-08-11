@@ -521,7 +521,7 @@ tick_locations = {}
 
 def calculate_ticks():
     global tick_locations, tick_image
-    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0, 0, 0, 0))
+    image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0, 0, 0))
     draw = ImageDraw.Draw(image)
     tick_locations = {}
 
@@ -792,7 +792,7 @@ def display_scroll(name, silent=False):
             image.paste(double_next_star, double_next_position, double_next_star)
 
         # draw marks
-        image.paste(tick_image, (0,0), mask=tick_image)
+        image.paste(tick_image, (0,0))
         draw_tick(draw, name)
         
         if BRIGHTNESS != 1:
@@ -902,13 +902,6 @@ def get_wifi_strength():
         logging.info(e)
         wifi_ssid = "Not Found"
         wifi_strength = 0
-
-def display_wifi(image):
-    if not wifi_strength:
-        get_wifi_strength()
-    strength = 'low' if wifi_strength < 20 else 'med' if wifi_strength <= 50 else 'high'
-    signal = Image.open(f'assets/wifi_{strength}.png').convert('RGB')
-    image.paste(signal, (260, 227), signal)
 
 def toggle_stream(name):
     global play_status
