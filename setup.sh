@@ -22,6 +22,7 @@ sudo rm -f /boot/firmware/config.txt
 sudo tee /boot/firmware/config.txt > /dev/null <<EOF
 auto_initramfs=0
 dtoverlay=wm8960-soundcard
+enable_uart=1
 dtoverlay=disable-bt
 disable_splash=1
 
