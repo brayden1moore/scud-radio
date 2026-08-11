@@ -606,15 +606,43 @@ def _mq_reset(mq, now):
 PIXELS_PER_SEC = 50
 WRAP_PAUSE = 5
 
-def _mq_tick(mq, span, now):
-    last = mq.get('last_t', now)
-    mq['last_t'] = now
-    if now >= mq['pause_until']:
-        mq['offset'] += PIXELS_PER_SEC * (now - last)
-        if mq['offset'] >= span:
-            mq['offset'] = 0
-            mq['pause_until'] = now + WRAP_PAUSE
-    return int(mq['offset'])
+def _joint_offsets(name_span, text_span, long_name, long_oneliner, now, mq):
+    """Both tracks share one cycle clock so they restart together.
+    mq holds the shared cycle start + initial pause. Returns (name_off, ol_off)."""
+    # per-track scroll durations
+    name_scroll_t = (name_span / PIXELS_PER_SEC) if long_name else 0
+    ol_scroll_t   = (text_span / PIXELS_PER_SEC) if long_oneliner else 0
+
+    # the joint cycle: slower track's scroll, then the shared wrap pause
+    cycle_scroll = max(name_scroll_t, ol_scroll_t)
+    cycle_len = cycle_scroll + WRAP_PAUSE
+
+    # initial 3s lead-in before the very first scroll
+    start = mq.get('cycle_start')
+    if start is None:
+        mq['cycle_start'] = now + 3      # matches your old _mq_reset lead-in
+        return (0 if long_name else None), 0
+
+    t = now - mq['cycle_start']
+    if t < 0:
+        # still in lead-in pause
+        return (0 if long_name else None), 0
+
+    phase = t % cycle_len   # where we are within the shared cycle
+
+    def track_off(scroll_t, span, is_long):
+        if not is_long:
+            return None
+        if phase >= scroll_t:
+            return 0            # this track finished; wait at start for the cycle to roll
+        return int(PIXELS_PER_SEC * phase)
+
+    name_off = track_off(name_scroll_t, name_span, long_name)
+    ol_off   = track_off(ol_scroll_t,   text_span, long_oneliner)
+    # ol_off must be an int (0) not None when long_oneliner, matches render_frame's contract
+    if long_oneliner and ol_off is None:
+        ol_off = 0
+    return name_off, ol_off
 
 marquee_name = None
 seek_token = 0
@@ -1706,12 +1734,11 @@ try:
             elif needs_scroll:
                 if marquee_name != active_name:
                     marquee_name = active_name
-                    _mq_reset(oneliner_mq, now)
-                    _mq_reset(name_mq, now)
-                ol_off = _mq_tick(oneliner_mq, text_span, now) if long_oneliner else 0
-                n_off = _mq_tick(name_mq, name_span, now) if long_name else None
-                render_frame(active_name, ol_off,
-                             draw_oneliner=long_oneliner, name_offset=n_off)
+                    name_mq['cycle_start'] = None      # reset shared clock 
+                name_off, ol_off = _joint_offsets(
+                    name_span, text_span, long_name, long_oneliner, now, name_mq)
+                render_frame(active_name, ol_off if long_oneliner else 0,
+                            draw_oneliner=long_oneliner, name_offset=name_off)
 
             else:
                 marquee_name = None
