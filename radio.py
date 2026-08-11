@@ -1693,9 +1693,13 @@ try:
         # ---- expire the volume overlay after 3s of no volume rotation ----
         if volume_overlay_showing and (now - last_volume_change) > 3:
             volume_overlay_showing = False
-            if active_name in scroll_cache_dict and currently_displaying == 'everything':
-                display_cached_scroll(active_name)   # repaints ticks + name, erases the bar
-            marquee_name = None
+            base = scroll_cache_dict.get(active_name)
+            if base is not None and currently_displaying == 'everything':
+                # restore only the band the volume bar occupied, from the cached base.
+                # leaves the marquee strips (and their clock) untouched.
+                band = base.crop((0, VOL_STRIP_TOP, SCREEN_WIDTH, VOL_STRIP_BOTTOM)).convert('RGB')
+                with display_lock:
+                    disp.ShowWindow(band, 0, VOL_STRIP_TOP)
 
         # ---- everything screen: marquee only, volume is drawn on the rotor tick ----
         on_everything = (screen_on and not sleeping
