@@ -57,7 +57,7 @@ connect_known() {
   # No scan wait. A short --wait means an out-of-range network fails in ~8s
   # instead of hanging, and an in-range one connects in 2-4s.
   if [ ${#saved[@]} -eq 1 ]; then
-    if nmcli --wait 8 connection up id "${saved[0]}" 2>/dev/null; then
+    if nmcli --wait 6 connection up id "${saved[0]}" 2>/dev/null; then
       nmcli connection modify "${saved[0]}" connection.autoconnect no 2>/dev/null || true
       return 0
     fi
