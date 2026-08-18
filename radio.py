@@ -130,6 +130,24 @@ def replace_font(font):
 LIB_PATH = "/var/lib/scud-radio"
 
 ## functions
+
+import tempfile
+
+def atomic_write(path, data, mode='w'):
+    """Write data to path atomically"""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=str(path.parent), prefix='.tmp-', suffix=path.name)
+    try:
+        with os.fdopen(fd, mode) as f:
+            f.write(data)
+            f.flush()
+            os.fsync(f.fileno())       
+        os.replace(tmp, path)           
+    except:
+        try: os.unlink(tmp)
+        except OSError: pass
+        raise
     
 def get_config():
     Path(LIB_PATH).mkdir(parents=True, exist_ok=True)
@@ -150,11 +168,15 @@ def get_config():
         return default_config
     
 def set_config(config):
-    Path(LIB_PATH).mkdir(parents=True, exist_ok=True)
-    config_file_path = Path(LIB_PATH) / 'config.json'
     if isinstance(config, dict):
-        with open(config_file_path, 'w') as f:
-            json.dump(config, f)
+        atomic_write(Path(LIB_PATH) / 'config.json', json.dumps(config))
+
+def set_favorites(favorites):
+    atomic_write(Path(LIB_PATH) / 'favorites.txt', '\n'.join(favorites))
+
+def set_hidden(hidden):
+    atomic_write(Path(LIB_PATH) / 'hidden.txt', '\n'.join(hidden))
+    return hidden
 
 def get_last_volume():
     config = get_config()
@@ -190,13 +212,6 @@ def get_favorites():
         favorites = f.readlines()
     return [fav.strip() for fav in favorites]
 
-def set_favorites(favorites):
-    fav_path = Path(LIB_PATH)
-    fav_path.mkdir(parents=True, exist_ok=True)
-    
-    with open(fav_path / 'favorites.txt', 'w') as f:
-        f.write('\n'.join(favorites))
-
 def get_hidden():
     hidden_path = Path(LIB_PATH)
     hidden_path.mkdir(parents=True, exist_ok=True)
@@ -210,15 +225,6 @@ def get_hidden():
         hidden = f.readlines()
 
     return [hid.strip() for hid in hidden]
-
-def set_hidden(hidden):
-    hidden_path = Path(LIB_PATH)
-    hidden_path.mkdir(parents=True, exist_ok=True)
-    
-    with open(hidden_path / 'hidden.txt', 'w') as f:
-        f.write('\n'.join(hidden))
-    
-    return hidden
 
 def safe_display(image):
     global current_image
@@ -291,7 +297,12 @@ def _load_cached_pngs(name, target):
     for i in LOGO_SIZES:
         p = Path(LIB_PATH) / f'{_safe(name)}_{i}.png'
         if p.exists():
-            target[f'logo_{i}'] = Image.open(p).convert('RGB')
+            try:
+                target[f'logo_{i}'] = Image.open(p).convert('RGB')
+            except Exception:
+                try: p.unlink()          # delete the corrupt file so it re-downloads
+                except OSError: pass
+                ok = False
         else:
             ok = False
     return ok
@@ -305,7 +316,8 @@ def fetch_logos(name, base_url, logo_hash):
         img = Image.open(BytesIO(resp.content)).convert('RGB')
         imgs[f'logo_{i}'] = img
         # cache to disk as PNG
-        (Path(LIB_PATH) / f'{_safe(name)}_{i}.png').write_bytes(resp.content)
+        path = Path(LIB_PATH) / f'{_safe(name)}_{i}.png'
+        atomic_write(path, resp.content, mode='wb')
     _write_hash(name, logo_hash)
     return name, imgs
  
