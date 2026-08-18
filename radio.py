@@ -865,11 +865,12 @@ def display_bar(image=current_image, color=WHITE):
         draw.rectangle([0, y, 320, y+24], fill=color)
         draw.rectangle([0, y, 320, y], fill=text_color)
 
-        draw.text((13, y+2), formatted_date, font=SMALL_LIGHT, fill=text_color)
-        draw.text((SCREEN_WIDTH - width(formatted_time, SMALL_LIGHT) - 13, y+2), formatted_time, font=SMALL_LIGHT, fill=text_color)
+        draw.text((13, y + 1), stream + ': ' + text_on_screen, font=SMALL_LIGHT, fill=text_color)
+        #draw.text((13, y), formatted_date, font=SMALL_LIGHT, fill=text_color)
+        #draw.text((SCREEN_WIDTH - width(formatted_time, SMALL_LIGHT) - 13, y), formatted_time, font=SMALL_LIGHT, fill=text_color)
 
 
-def display_ambient(name, clicked=False):
+def display_ambient(name):
     global currently_displaying, last_ambient_display
 
     logo = streams[name]['logo_216']
@@ -1690,7 +1691,7 @@ try:
         if now - last_input_time > 10:
             set_last_volume(str(current_volume))
 
-        if (now - last_input_time > 300) & (now - last_ambient_display > 30):
+        if (now - last_input_time > 60) & (now - last_ambient_display > 30):
             logging.info('DISPLAYING AMBIENT VIA MAIN LOOP')
             display_ambient(stream)
             last_ambient_display = now
