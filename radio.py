@@ -589,7 +589,7 @@ FONT_HEIGHTS = {
     'EXTRALARGE_LIGHT' : height('Sg',EXTRALARGE_LIGHT),
 }
 
-NAME_Y = 240 - 120   
+NAME_Y = 240 - 88
  
 # Precompute strip geometry once (module level)
 NAME_STRIP_TOP    = NAME_Y - 2
@@ -732,6 +732,7 @@ def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=No
     finally:
         display_lock.release()
 
+NAME_Y = 
 def display_scroll(name, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
