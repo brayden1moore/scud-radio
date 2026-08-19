@@ -523,7 +523,7 @@ def _name_line_cached(name):
 start_x = 0
 logo_chunk_start = 35
 logo_chunk_start_x = 12 + start_x
-og_logo_position = (114, logo_chunk_start - 14 - 4)
+og_logo_position = (115, logo_chunk_start - 14 - 4)
 logo_position = og_logo_position
 
 tick_width = 0
@@ -845,7 +845,7 @@ def display_scroll(name, silent=False):
         if name in favorites:
             image.paste(star_96, og_logo_position, star_96)
         
-        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=3) # border
+        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLACK, width=3) # border
 
 
         # draw marks
