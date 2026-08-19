@@ -787,7 +787,7 @@ def display_scroll(name, silent=False):
                 top = bbox[1]
                 fill = RED if idx == 0 else BLUE if idx == 1 else YELLOW
                 x0 = tags_start_x + genre_x_offset
-                draw.rectangle([x0, tags_start_y, x0 + genre_width, tags_start_y + 1 + box_h], fill=fill)
+                draw.rectangle([x0, tags_start_y, x0 + genre_width, tags_start_y + 1 + box_h], fill=fill, outline=BLACK, width=3)
                 draw.text((x0, tags_start_y - top + 1), genre, font=info_font, fill=BLACK)
                 genre_x_offset += genre_width + 5
 
