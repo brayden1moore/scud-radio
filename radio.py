@@ -566,6 +566,7 @@ def calculate_ticks():
     # assign positions; draw individual ticks only for favorites
     for idx, name in enumerate(ordered):
         x = tick_start + step * idx
+        x = 158
         tick_locations[name] = round(x)
     tick_image = image
 
