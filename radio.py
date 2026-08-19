@@ -796,19 +796,11 @@ def display_scroll(name, silent=False):
                 genre_x_offset += genre_width + 5
 
         # logos
-        logo = streams[name]['logo_96']
-        image.paste(logo, logo_position)
-
-        if name in favorites:
-            image.paste(star_96, og_logo_position, star_96)
-        
-        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLACK, width=3) # border
-
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
 
-        prev_position = (og_logo_position[0] - 106, logo_chunk_start)
-        next_position = (og_logo_position[0] + 132, logo_chunk_start)        
+        prev_position = (og_logo_position[0] - 96, og_logo_position[1])
+        next_position = (og_logo_position[0] + 96, og_logo_position[1])        
 
         prev_logo_size = 96
         prev = streams[prev_stream][f'logo_{prev_logo_size}']
@@ -841,6 +833,16 @@ def display_scroll(name, silent=False):
         if double_next_stream in favorites:
             double_next_star = star_25.copy()
             image.paste(double_next_star, double_next_position, double_next_star)
+
+
+        logo = streams[name]['logo_96']
+        image.paste(logo, logo_position)
+
+        if name in favorites:
+            image.paste(star_96, og_logo_position, star_96)
+        
+        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLACK, width=3) # border
+
 
         # draw marks
         image.paste(tick_image, (0,0), mask=tick_image)
