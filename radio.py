@@ -523,7 +523,7 @@ def _name_line_cached(name):
 start_x = 0
 logo_chunk_start = 35
 logo_chunk_start_x = 12 + start_x
-og_logo_position = (114, logo_chunk_start - 14 - 4)
+og_logo_position = (114, logo_chunk_start - 14 - 8)
 logo_position = og_logo_position
 
 tick_width = 0
@@ -800,8 +800,8 @@ def display_scroll(name, silent=False):
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
 
-        prev_position = (og_logo_position[0] - 70, og_logo_position[1] + 2)
-        next_position = (og_logo_position[0] + 70, og_logo_position[1] + 2)        
+        prev_position = (og_logo_position[0] - 70, og_logo_position[1] - 2)
+        next_position = (og_logo_position[0] + 70, og_logo_position[1] - 2)        
 
         prev_logo_size = 96
         prev = streams[prev_stream][f'logo_{prev_logo_size}']
