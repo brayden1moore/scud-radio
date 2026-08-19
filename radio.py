@@ -732,7 +732,7 @@ def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=No
     finally:
         display_lock.release()
 
-NAME_Y = 
+#NAME_Y = 
 def display_scroll(name, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
