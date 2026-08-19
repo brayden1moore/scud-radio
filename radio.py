@@ -690,8 +690,8 @@ def _render_name_strip(name, offset):
     start = MARQUEE_X - (offset % span)
     y = (NAME_Y - 1) - NAME_STRIP_TOP  # absolute y minus strip origin
     d.text((start - 1, y), name, font=font, fill=BLACK)
-    d.text((start - 1 + span, y), name, font=font, fill=WHITE)
-    d.rectangle([0, 0, MARQUEE_X - 1, _name_strip.height], fill=BLACK)  # left gutter
+    d.text((start - 1 + span, y), name, font=font, fill=BLACK)
+    d.rectangle([0, 0, MARQUEE_X - 1, _name_strip.height], fill=WHITE)  # left gutter
     return _name_strip
 
 def _render_ol_strip(name, offset):
