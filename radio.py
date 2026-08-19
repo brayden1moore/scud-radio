@@ -523,7 +523,7 @@ def _name_line_cached(name):
 start_x = 0
 logo_chunk_start = 35
 logo_chunk_start_x = 12 + start_x
-og_logo_position = (114, logo_chunk_start - 14 - 8)
+og_logo_position = (114, logo_chunk_start - 14 - 12)
 logo_position = og_logo_position
 
 tick_width = 0
