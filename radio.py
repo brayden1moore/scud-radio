@@ -538,7 +538,7 @@ tick_locations = {}
 
 def calculate_ticks():
     global tick_locations, tick_image
-    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0, 0, 0, 0))
+    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(255, 255, 255, 255))
     draw = ImageDraw.Draw(image)
     tick_locations = {}
 
@@ -559,7 +559,7 @@ def calculate_ticks():
 
     # white baseline for the non-favorite region
     rest_start_x = tick_start + step * len(fav_sorted)
-    draw.rectangle([rest_start_x, line_y - 1, SCREEN_WIDTH, line_y + 1], fill=WHITE)
+    draw.rectangle([rest_start_x, line_y - 1, SCREEN_WIDTH, line_y + 1], fill=BLACK)
 
     # assign positions; draw individual ticks only for favorites
     for idx, name in enumerate(ordered):
@@ -576,8 +576,8 @@ def draw_tick(draw, name):
     bar_width = 3
     draw.rectangle(
         [mark_start - 1, tick_bar_start, mark_start + bar_width, tick_bar_start + tick_bar_height],
-        fill=WHITE,
-        outline=BLACK,
+        fill=BLACK,
+        outline=WHITE,
         width=1
     )
 
@@ -671,23 +671,23 @@ MARQUEE_GAP = 30                              # blank gap before the text repeat
 def _render_vol_strip(volume):
     d = ImageDraw.Draw(_vol_strip)
     # clear whole strip (covers x=0..padding gutter too)
-    d.rectangle([0, 0, SCREEN_WIDTH, _vol_strip.height], fill=BLACK)
+    d.rectangle([0, 0, SCREEN_WIDTH, _vol_strip.height], fill=WHITE)
     volume_bar_end = padding + SCREEN_WIDTH * (volume / MAX_VOL)
     # absolute bar_top/bottom minus strip origin
     top = (tick_bar_start + 7) - VOL_STRIP_TOP      # = 10
     bottom = top + 10                                # = 20
-    d.rectangle([padding, top, volume_bar_end, bottom], fill=WHITE)
-    d.rectangle([padding, top, volume_bar_end, bottom], width=1, outline=WHITE)
+    d.rectangle([padding, top, volume_bar_end, bottom], fill=BLACK)
+    d.rectangle([padding, top, volume_bar_end, bottom], width=1, outline=BLACK)
     return _vol_strip
 
 def _render_name_strip(name, offset):
     font, full_w = _name_metrics(name)
     d = ImageDraw.Draw(_name_strip)
-    d.rectangle([0, 0, SCREEN_WIDTH, _name_strip.height], fill=BLACK)  # clear
+    d.rectangle([0, 0, SCREEN_WIDTH, _name_strip.height], fill=WHITE)  # clear
     span = full_w + MARQUEE_GAP
     start = MARQUEE_X - (offset % span)
     y = (NAME_Y - 1) - NAME_STRIP_TOP  # absolute y minus strip origin
-    d.text((start - 1, y), name, font=font, fill=WHITE)
+    d.text((start - 1, y), name, font=font, fill=BLACK)
     d.text((start - 1 + span, y), name, font=font, fill=WHITE)
     d.rectangle([0, 0, MARQUEE_X - 1, _name_strip.height], fill=BLACK)  # left gutter
     return _name_strip
@@ -696,13 +696,13 @@ def _render_ol_strip(name, offset):
     text = streams[name]['oneLiner'].replace('&amp;', '&').strip()
     full_w = streams[name].get('oneLinerWidth') or width(text, SMALL_LIGHT)
     d = ImageDraw.Draw(_ol_strip)
-    d.rectangle([0, 0, SCREEN_WIDTH, _ol_strip.height], fill=BLACK)
+    d.rectangle([0, 0, SCREEN_WIDTH, _ol_strip.height], fill=WHITE)
     span = full_w + MARQUEE_GAP
     start = MARQUEE_X - (offset % span)
     y = OL_STRIP_TOP - OL_STRIP_TOP  # = 0, oneliner sits at strip top
-    d.text((start, y), text, font=SMALL_LIGHT, fill=WHITE)
-    d.text((start + span, y), text, font=SMALL_LIGHT, fill=WHITE)
-    d.rectangle([0, 0, MARQUEE_X - 1, _ol_strip.height], fill=BLACK)
+    d.text((start, y), text, font=SMALL_LIGHT, fill=BLACK)
+    d.text((start + span, y), text, font=SMALL_LIGHT, fill=BLACK)
+    d.rectangle([0, 0, MARQUEE_X - 1, _ol_strip.height], fill=WHITE)
     return _ol_strip
 
 def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=None, must_show=False):
@@ -744,7 +744,7 @@ def display_scroll(name, silent=False):
         double_next_stream = stream_list[(i + 2) % n]
 
 
-        image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BLACK)
+        image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
         draw = ImageDraw.Draw(image) 
         
         if not silent:
@@ -756,14 +756,14 @@ def display_scroll(name, silent=False):
         name_font = EXTRALARGE_LIGHT
 
         name_line0, name_font = _name_line_cached(name)
-        draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line0, font=name_font, fill=WHITE)
+        draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line0, font=name_font, fill=BLACK)
 
         # draw info
         info_font = SMALL_LIGHT
         y_offset = 0
         everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 5
         info_line = streams[name]['oneLiner']
-        draw.text((name_chunk_start_x, everything_info_y + y_offset), info_line, font=SMALL_LIGHT, fill=WHITE)
+        draw.text((name_chunk_start_x, everything_info_y + y_offset), info_line, font=SMALL_LIGHT, fill=BLACK)
         y_offset += 20
 
         # draw tags
@@ -798,7 +798,7 @@ def display_scroll(name, silent=False):
         if name in favorites:
             image.paste(star_96, og_logo_position, star_96)
         
-        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=3) # border
+        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=BLACK, width=2) # border
 
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
@@ -806,9 +806,9 @@ def display_scroll(name, silent=False):
         prev = streams[prev_stream]['logo_60']
         next = streams[next_stream]['logo_60']
         image.paste(prev, prev_position)
-        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + 60, prev_position[1] + 60], outline=WHITE, width=1)
+        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + 60, prev_position[1] + 60], outline=BLACK, width=1)
         image.paste(next, next_position)
-        draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=WHITE, width=1)
+        draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=BLACK, width=1)
 
         if prev_stream in favorites:
             image.paste(star_60, prev_position, star_60)
@@ -823,13 +823,13 @@ def display_scroll(name, silent=False):
         
         image.paste(double_prev, double_prev_position)
         double_size = 25
-        draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + double_size, double_prev_position[1] + double_size], outline=WHITE, width=1)
+        draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + double_size, double_prev_position[1] + double_size], outline=BLACK, width=1)
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()
             image.paste(double_prev_star, double_prev_position, double_prev_star)
 
         image.paste(double_next, double_next_position)
-        draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + double_size, double_next_position[1] + double_size], outline=WHITE, width=1)
+        draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + double_size, double_next_position[1] + double_size], outline=BLACK, width=1)
         if double_next_stream in favorites:
             double_next_star = star_25.copy()
             image.paste(double_next_star, double_next_position, double_next_star)
@@ -1270,7 +1270,7 @@ def display_cached_scroll(name, pushed=False):
                 image = image.copy()
                 draw = ImageDraw.Draw(image)
                 bg_position = og_logo_position
-                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], outline=WHITE, width=3)
+                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], outline=BLACK, width=2)
 
             with display_lock:
                 disp.ShowImage(image)
