@@ -589,7 +589,7 @@ FONT_HEIGHTS = {
     'EXTRALARGE_LIGHT' : height('Sg',EXTRALARGE_LIGHT),
 }
 
-NAME_Y = 240 - 100   
+NAME_Y = 240 - 120   
  
 # Precompute strip geometry once (module level)
 NAME_STRIP_TOP    = NAME_Y - 2
