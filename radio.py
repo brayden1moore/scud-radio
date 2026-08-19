@@ -805,15 +805,6 @@ def display_scroll(name, silent=False):
         prev_logo_size = 96
         prev = streams[prev_stream][f'logo_{prev_logo_size}']
         next = streams[next_stream][f'logo_{prev_logo_size}']
-        image.paste(prev, prev_position)
-        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + prev_logo_size, prev_position[1] + prev_logo_size], outline=BLACK, width=3)
-        image.paste(next, next_position)
-        draw.rectangle([next_position[0],next_position[1], next_position[0] + prev_logo_size, next_position[1] + prev_logo_size], outline=BLACK, width=3)
-
-        if prev_stream in favorites:
-            image.paste(star_60, prev_position, star_60)
-        if next_stream in favorites:
-            image.paste(star_60, next_position, star_60)
 
         # double prev and next
         double_prev_logo_size = 96
@@ -821,7 +812,7 @@ def display_scroll(name, silent=False):
         double_next_position = (290, logo_chunk_start + 57 - 4)  
 
         double_prev_position = (prev_position[0] - 70, og_logo_position[1])
-        double_prev_position = (next_position[0] + 70, og_logo_position[1])
+        double_next_position = (next_position[0] + 70, og_logo_position[1])
         double_prev = streams[double_prev_stream][f'logo_{double_prev_logo_size}']
         double_next = streams[double_next_stream][f'logo_{double_prev_logo_size}']
         
@@ -837,6 +828,16 @@ def display_scroll(name, silent=False):
             double_next_star = star_25.copy()
             image.paste(double_next_star, double_next_position, double_next_star)
 
+        # paste prev and next
+        image.paste(prev, prev_position)
+        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + prev_logo_size, prev_position[1] + prev_logo_size], outline=BLACK, width=3)
+        image.paste(next, next_position)
+        draw.rectangle([next_position[0],next_position[1], next_position[0] + prev_logo_size, next_position[1] + prev_logo_size], outline=BLACK, width=3)
+
+        if prev_stream in favorites:
+            image.paste(star_60, prev_position, star_60)
+        if next_stream in favorites:
+            image.paste(star_60, next_position, star_60)
 
         logo = streams[name]['logo_96']
         image.paste(logo, logo_position)
