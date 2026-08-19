@@ -1113,12 +1113,14 @@ def _refresh_worker(ordered, gen):
     refreshing_everything_now = True
     try:
         for name in ordered:
-            if gen != refresh_generation:      # superseded by a newer pass
+            if gen != refresh_generation:
                 return
+            # yield to the animation: wait while a marquee is running
+            while marquee_name is not None and gen == refresh_generation:
+                time.sleep(0.05)
             one_cache.pop(name, None)
-            logging.info(f"REFRESH WORKER RUNNING FOR {name}")
             img = display_scroll(name, silent=True)
-            if gen != refresh_generation:      # check again before writing
+            if gen != refresh_generation:
                 return
             if img:
                 scroll_cache_dict[name] = img
