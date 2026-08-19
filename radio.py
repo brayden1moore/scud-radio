@@ -112,7 +112,7 @@ def load_font(name, size, weight=400):
 
 print('LOADING SMALL',time.time())
 #SMALL_LIGHT = load_font('Noto', 17, weight=400)  
-SMALL_LIGHT = load_font('Favorit', 17, weight=400)  
+SMALL_LIGHT = load_font('Favorit', 20, weight=400)  
 
 print('LOADING LARGE',time.time())
 EXTRALARGE_LIGHT = load_font('Archivo',38, weight=800)  
