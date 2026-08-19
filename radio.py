@@ -917,7 +917,7 @@ def display_current():
         display_cached_scroll(stream)
 
     elif currently_displaying == 'ambient':
-        display_ambient(stream, clicked=True)
+        display_ambient(stream)
 
 
 def get_anchor(title, info, line_gap, section_gap, title_font, info_font):
@@ -1677,12 +1677,12 @@ calculate_ticks()
 scroll_cache_dict[stream] = display_scroll(stream, silent=True)  # current one now
 start_priority_refresh()  # everything async, behind the visible UI
 display_cached_scroll(stream)
-last_input_time = time.time()
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
 
 print('DISPLAYING',time.time())
 display_cached_scroll(stream)
+last_input_time = time.time()
 
 try:
     while True:
