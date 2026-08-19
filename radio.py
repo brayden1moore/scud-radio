@@ -799,8 +799,8 @@ def display_scroll(name, silent=False):
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
 
-        prev_position = (og_logo_position[0] - 96, og_logo_position[1])
-        next_position = (og_logo_position[0] + 96, og_logo_position[1])        
+        prev_position = (og_logo_position[0] - 70, og_logo_position[1])
+        next_position = (og_logo_position[0] + 70, og_logo_position[1])        
 
         prev_logo_size = 96
         prev = streams[prev_stream][f'logo_{prev_logo_size}']
@@ -822,13 +822,13 @@ def display_scroll(name, silent=False):
         double_prev = streams[double_prev_stream][f'logo_{double_prev_logo_size}']
         double_next = streams[double_next_stream][f'logo_{double_prev_logo_size}']
         
-        image.paste(double_prev, double_prev_position)
+        #image.paste(double_prev, double_prev_position)
         draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + double_prev_logo_size, double_prev_position[1] + double_prev_logo_size], outline=BLACK, width=3)
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()
             image.paste(double_prev_star, double_prev_position, double_prev_star)
 
-        image.paste(double_next, double_next_position)
+        #image.paste(double_next, double_next_position)
         draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + double_prev_logo_size, double_next_position[1] + double_prev_logo_size], outline=BLACK, width=3)
         if double_next_stream in favorites:
             double_next_star = star_25.copy()
