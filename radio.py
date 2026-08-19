@@ -589,7 +589,7 @@ FONT_HEIGHTS = {
     'EXTRALARGE_LIGHT' : height('Sg',EXTRALARGE_LIGHT),
 }
 
-NAME_Y = 240 - 88
+NAME_Y = 240 - 100
  
 # Precompute strip geometry once (module level)
 NAME_STRIP_TOP    = NAME_Y - 2
@@ -747,7 +747,6 @@ def display_scroll(name, silent=False):
         next_stream        = stream_list[(i + 1) % n]
         double_next_stream = stream_list[(i + 2) % n]
 
-
         image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
         draw = ImageDraw.Draw(image) 
         
@@ -755,7 +754,7 @@ def display_scroll(name, silent=False):
             currently_displaying = 'everything'
 
         # draw name and underline
-        name_chunk_start = 240 - 88
+        name_chunk_start = NAME_Y
         name_chunk_start_x = 12 + start_x
         name_font = EXTRALARGE_LIGHT
 
