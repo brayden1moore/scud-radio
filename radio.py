@@ -594,7 +594,7 @@ NAME_Y = 240 - 100
 # Precompute strip geometry once (module level)
 NAME_STRIP_TOP    = NAME_Y - 2
 NAME_STRIP_BOTTOM = NAME_Y + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 9
-_name_chunk_start = 240 - 88
+_name_chunk_start = NAME_Y
 OL_STRIP_TOP    = _name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 5
 OL_STRIP_BOTTOM = OL_STRIP_TOP + FONT_HEIGHTS['SMALL_LIGHT'] + 5
 
