@@ -780,7 +780,7 @@ def display_scroll(name, silent=False):
             genres.extend(stream_genres)
 
         genre_x_offset = 0
-        genre_padding = 3
+        genre_padding = 4
         if genres:
             genre_widths = [width(g, SMALL_LIGHT) for g in genres]
             box_h = FONT_HEIGHTS['SMALL_LIGHT'] - 4
@@ -792,7 +792,7 @@ def display_scroll(name, silent=False):
                 x0 = tags_start_x + genre_x_offset
 
                 draw.rectangle([x0, tags_start_y - genre_padding , x0 + genre_width, tags_start_y + 1 + box_h + genre_padding], fill=fill, outline=BLACK, width=3)
-                draw.text((x0, tags_start_y - top + 1), genre, font=info_font, fill=BLACK)
+                draw.text((x0 + genre_padding, tags_start_y - top + 1), genre, font=info_font, fill=BLACK)
                 genre_x_offset += genre_width + 5
 
         # logos
