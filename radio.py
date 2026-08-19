@@ -534,7 +534,7 @@ tick_start = 0
 tick_bar_height = 25
 tick_bar_start = logo_chunk_start + 90
 tick_height = 1
-tick_start_y = (tick_bar_start + tick_bar_height / 2) 
+tick_start_y = (tick_bar_start + tick_bar_height / 2) - 3
 tick_image = None
 tick_locations = {}
 
@@ -566,7 +566,7 @@ def calculate_ticks():
     # assign positions; draw individual ticks only for favorites
     for idx, name in enumerate(ordered):
         x = tick_start + step * idx
-        x = 158
+        x = 159
         tick_locations[name] = round(x)
     tick_image = image
 
