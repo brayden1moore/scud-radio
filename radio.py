@@ -807,12 +807,16 @@ def display_scroll(name, silent=False):
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
 
-        prev = streams[prev_stream]['logo_60']
-        next = streams[next_stream]['logo_60']
+        prev_position = (og_logo_position[0] - 106, logo_chunk_start)
+        next_position = (og_logo_position[0] + 132, logo_chunk_start)        
+
+        prev_logo_size = 96
+        prev = streams[prev_stream][f'logo_{prev_logo_size}']
+        next = streams[next_stream][f'logo_{prev_logo_size}']
         image.paste(prev, prev_position)
-        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + 60, prev_position[1] + 60], outline=BLACK, width=3)
+        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + prev_logo_size, prev_position[1] + prev_logo_size], outline=BLACK, width=3)
         image.paste(next, next_position)
-        draw.rectangle([next_position[0],next_position[1], next_position[0] + 60, next_position[1] + 60], outline=BLACK, width=3)
+        draw.rectangle([next_position[0],next_position[1], next_position[0] + prev_logo_size, next_position[1] + prev_logo_size], outline=BLACK, width=3)
 
         if prev_stream in favorites:
             image.paste(star_60, prev_position, star_60)
@@ -820,20 +824,20 @@ def display_scroll(name, silent=False):
             image.paste(star_60, next_position, star_60)
 
         # double prev and next
+        double_prev_logo_size = 96
         double_prev_position = (square_start, logo_chunk_start + 57 - 4)
         double_next_position = (290, logo_chunk_start + 57 - 4)     
-        double_prev = streams[double_prev_stream]['logo_25']
-        double_next = streams[double_next_stream]['logo_25']
+        double_prev = streams[double_prev_stream][f'logo_{double_prev_logo_size}']
+        double_next = streams[double_next_stream][f'logo_{double_prev_logo_size}']
         
         image.paste(double_prev, double_prev_position)
-        double_size = 25
-        draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + double_size, double_prev_position[1] + double_size], outline=BLACK, width=3)
+        draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + double_prev_logo_size, double_prev_position[1] + double_prev_logo_size], outline=BLACK, width=3)
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()
             image.paste(double_prev_star, double_prev_position, double_prev_star)
 
         image.paste(double_next, double_next_position)
-        draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + double_size, double_next_position[1] + double_size], outline=BLACK, width=3)
+        draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + double_prev_logo_size, double_next_position[1] + double_prev_logo_size], outline=BLACK, width=3)
         if double_next_stream in favorites:
             double_next_star = star_25.copy()
             image.paste(double_next_star, double_next_position, double_next_star)
