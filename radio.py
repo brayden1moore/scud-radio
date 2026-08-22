@@ -678,12 +678,12 @@ def _render_vol_strip(volume):
     d = ImageDraw.Draw(_vol_strip)
     # clear whole strip (covers x=0..padding gutter too)
     d.rectangle([0, 0, SCREEN_WIDTH, _vol_strip.height], fill=BG_COLOR)
-    volume_bar_end = padding + SCREEN_WIDTH * (volume / MAX_VOL)
+    volume_bar_end = SCREEN_WIDTH * (volume / MAX_VOL)
     # absolute bar_top/bottom minus strip origin
     top = (tick_bar_start + 7) - VOL_STRIP_TOP      # = 10
     bottom = top + 10                                # = 20
-    d.rectangle([padding, top, volume_bar_end, bottom], fill=BG_COLOR)
-    d.rectangle([padding, top, volume_bar_end, bottom], width=1, outline=SECONDARY_COLOR)
+    d.rectangle([0, top, SCREEN_WIDTH, bottom], fill=BG_COLOR, outline=SECONDARY_COLOR, width=1)
+    d.rectangle([0, top, volume_bar_end, bottom], fill=BG_COLOR, outline=SECONDARY_COLOR, width=1)
     return _vol_strip
 
 def _render_name_strip(name, offset):
@@ -881,8 +881,8 @@ def display_bar(image=current_image, color=WHITE):
 
         # bottom bar 218 y for bottom
         y = 214
-        draw.rectangle([0, y, 320, y+24], fill=color)
-        draw.rectangle([0, y, 320, y+2], fill=text_color)
+        draw.rectangle([0, y-1, 320, y+24], fill=color)
+        draw.rectangle([0, y-1, 320, y], fill=text_color)
 
         draw.text((13, y), text_on_screen, font=SMALL_LIGHT, fill=text_color)
         #draw.text((13, y), formatted_date, font=SMALL_LIGHT, fill=text_color)
