@@ -98,6 +98,9 @@ ORANGE = (255,128,0)
 PURPLE = (134,97,245)
 RED = (255,71,71)
 
+BG_COLOR = BLACK
+SECONDARY_COLOR = WHITE
+
 def load_font(name, size, weight=400):
     if name == 'Archivo':
         font = ImageFont.truetype('assets/Archivo/Archivo-VariableFont_wdth,wght.ttf', size)
@@ -540,7 +543,7 @@ tick_locations = {}
 
 def calculate_ticks():
     global tick_locations, tick_image
-    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(255, 255, 255, 0))
+    image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
     tick_locations = {}
 
@@ -561,7 +564,7 @@ def calculate_ticks():
 
     # baseline for the non-favorite region
     rest_start_x = tick_start + step * len(fav_sorted)
-    draw.rectangle([rest_start_x, line_y - 1, SCREEN_WIDTH, line_y + 1], fill=BLACK)
+    draw.rectangle([rest_start_x, line_y - 1, SCREEN_WIDTH, line_y + 1], fill=BG_COLOR)
 
     # assign positions; draw individual ticks only for favorites
     for idx, name in enumerate(ordered):
@@ -579,8 +582,8 @@ def draw_tick(draw, name):
     bar_width = 3
     draw.rectangle(
         [mark_start - 1, tick_bar_start, mark_start + bar_width, tick_bar_start + tick_bar_height],
-        fill=BLACK,
-        outline=WHITE,
+        fill=SECONDARY_COLOR,
+        outline=BG_COLOR,
         width=1
     )
 
@@ -747,7 +750,7 @@ def display_scroll(name, silent=False):
         next_stream        = stream_list[(i + 1) % n]
         double_next_stream = stream_list[(i + 2) % n]
 
-        image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=WHITE)
+        image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BG_COLOR)
         draw = ImageDraw.Draw(image) 
         
         if not silent:
@@ -759,14 +762,14 @@ def display_scroll(name, silent=False):
         name_font = EXTRALARGE_LIGHT
 
         name_line0, name_font = _name_line_cached(name)
-        draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line0, font=name_font, fill=BLACK)
+        draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line0, font=name_font, fill=SECONDARY_COLOR)
 
         # draw info
         info_font = SMALL_LIGHT
         y_offset = 0
         everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 5
         info_line = streams[name]['oneLiner']
-        draw.text((name_chunk_start_x, everything_info_y + y_offset), info_line, font=SMALL_LIGHT, fill=BLACK)
+        draw.text((name_chunk_start_x, everything_info_y + y_offset), info_line, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
         y_offset += 20
 
         # draw tags
