@@ -812,8 +812,8 @@ def display_scroll(name, silent=False):
         double_prev_position = (square_start, logo_chunk_start + 57 - 4)
         double_next_position = (290, logo_chunk_start + 57 - 4)  
 
-        double_prev_position = (prev_position[0] - 40, prev_position[1] - 15)
-        double_next_position = (next_position[0] + 40,  prev_position[1] - 15)
+        double_prev_position = (prev_position[0] - 43, prev_position[1] - 20)
+        double_next_position = (next_position[0] + 40,  prev_position[1] - 20)
         double_prev = streams[double_prev_stream][f'logo_{double_prev_logo_size}']
         double_next = streams[double_next_stream][f'logo_{double_prev_logo_size}']
         
