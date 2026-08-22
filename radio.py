@@ -603,7 +603,7 @@ OL_STRIP_BOTTOM = OL_STRIP_TOP + FONT_HEIGHTS['SMALL_LIGHT'] + 5
 
 # Volume strip geometry (module level, next to the other strip constants)
 VOL_STRIP_TOP    = tick_bar_start - 3          # bar_top - 10
-VOL_STRIP_BOTTOM = tick_bar_start + 27         # bar_bottom + 10
+VOL_STRIP_BOTTOM = tick_bar_start + 28         # bar_bottom + 10
 _vol_strip = Image.new('RGB', (SCREEN_WIDTH, VOL_STRIP_BOTTOM - VOL_STRIP_TOP), BLACK)
 
 # Persistent scratch strips (allocated once, reused)
@@ -680,8 +680,8 @@ def _render_vol_strip(volume):
     d.rectangle([0, 0, SCREEN_WIDTH, _vol_strip.height], fill=BG_COLOR)
     volume_bar_end = SCREEN_WIDTH * (volume / MAX_VOL)
     # absolute bar_top/bottom minus strip origin
-    top = (tick_bar_start + 7) - VOL_STRIP_TOP      # = 10
-    bottom = top + 10                                # = 20
+    top = (tick_bar_start + 7) - VOL_STRIP_TOP     
+    bottom = top + 11                              
     d.rectangle([0, top, SCREEN_WIDTH, bottom], fill=BG_COLOR, outline=SECONDARY_COLOR, width=1)
     d.rectangle([0, top, volume_bar_end, bottom], fill=SECONDARY_COLOR, outline=SECONDARY_COLOR, width=1)
     return _vol_strip
