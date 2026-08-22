@@ -683,7 +683,7 @@ def _render_vol_strip(volume):
     top = (tick_bar_start + 7) - VOL_STRIP_TOP      # = 10
     bottom = top + 10                                # = 20
     d.rectangle([0, top, SCREEN_WIDTH, bottom], fill=BG_COLOR, outline=SECONDARY_COLOR, width=1)
-    d.rectangle([0, top, volume_bar_end, bottom], fill=BG_COLOR, outline=SECONDARY_COLOR, width=1)
+    d.rectangle([0, top, volume_bar_end, bottom], fill=SECONDARY_COLOR, outline=SECONDARY_COLOR, width=1)
     return _vol_strip
 
 def _render_name_strip(name, offset):
