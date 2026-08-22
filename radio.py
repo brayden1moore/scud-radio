@@ -773,7 +773,7 @@ def display_scroll(name, silent=False):
         y_offset += 20
 
         # draw tags
-        tags_start_y = round(everything_info_y + FONT_HEIGHTS['SMALL_LIGHT'] + 13)
+        tags_start_y = round(everything_info_y + FONT_HEIGHTS['SMALL_LIGHT'] + 14)
         tags_start_x = name_chunk_start_x
         location = streams[name]['location']
         live_status = streams[name]['status']
