@@ -804,7 +804,7 @@ def display_scroll(name, silent=False):
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
 
         prev_position = (og_logo_position[0] - 70, og_logo_position[1] - 18)
-        next_position = (og_logo_position[0] + 72, og_logo_position[1] - 18)        
+        next_position = (og_logo_position[0] + 70, og_logo_position[1] - 18)        
 
         prev_logo_size = 96
         prev = streams[prev_stream][f'logo_{prev_logo_size}']
@@ -816,7 +816,7 @@ def display_scroll(name, silent=False):
         double_next_position = (290, logo_chunk_start + 57 - 4)  
 
         double_prev_position = (prev_position[0] - 43, prev_position[1] - 20)
-        double_next_position = (next_position[0] + 40,  prev_position[1] - 20)
+        double_next_position = (next_position[0] + 43,  prev_position[1] - 20)
         double_prev = streams[double_prev_stream][f'logo_{double_prev_logo_size}']
         double_next = streams[double_next_stream][f'logo_{double_prev_logo_size}']
         
