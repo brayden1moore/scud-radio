@@ -834,9 +834,9 @@ def display_scroll(name, silent=False):
 
         # paste prev and next
         image.paste(prev, prev_position)
-        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + prev_logo_size, prev_position[1] + prev_logo_size], outline=BLACK, width=3)
+        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + prev_logo_size, prev_position[1] + prev_logo_size], outline=SECONDARY_COLOR, width=3)
         image.paste(next, next_position)
-        draw.rectangle([next_position[0],next_position[1], next_position[0] + prev_logo_size, next_position[1] + prev_logo_size], outline=BLACK, width=3)
+        draw.rectangle([next_position[0],next_position[1], next_position[0] + prev_logo_size, next_position[1] + prev_logo_size], outline=SECONDARY_COLOR, width=3)
 
         if prev_stream in favorites:
             image.paste(star_60, prev_position, star_60)
