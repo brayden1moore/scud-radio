@@ -115,7 +115,7 @@ print('LOADING SMALL',time.time())
 SMALL_LIGHT = load_font('Favorit', 20, weight=400)  
 
 print('LOADING LARGE',time.time())
-EXTRALARGE_LIGHT = load_font('Archivo',38, weight=800)  
+EXTRALARGE_LIGHT = load_font('Archivo',42, weight=800)  
 
 def replace_font(font):
     replacement = 'Noto'
@@ -800,8 +800,8 @@ def display_scroll(name, silent=False):
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
 
-        prev_position = (og_logo_position[0] - 70, og_logo_position[1] - 15)
-        next_position = (og_logo_position[0] + 70, og_logo_position[1] - 15)        
+        prev_position = (og_logo_position[0] - 70, og_logo_position[1] - 18)
+        next_position = (og_logo_position[0] + 70, og_logo_position[1] - 18)        
 
         prev_logo_size = 96
         prev = streams[prev_stream][f'logo_{prev_logo_size}']
