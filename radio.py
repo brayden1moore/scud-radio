@@ -797,7 +797,7 @@ def display_scroll(name, silent=False):
 
                 draw.rectangle([x0, tags_start_y - genre_padding , x0 + genre_width, tags_start_y + 2 + box_h + genre_padding], fill=fill)
                 draw.text((x0 + genre_padding, tags_start_y - top + 1), genre, font=info_font, fill=BLACK)
-                genre_x_offset += genre_width + 5
+                genre_x_offset += genre_width + 6
 
         # logos
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
