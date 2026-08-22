@@ -564,7 +564,7 @@ def calculate_ticks():
 
     # baseline for the non-favorite region
     rest_start_x = tick_start + step * len(fav_sorted)
-    draw.rectangle([rest_start_x, line_y - 1, SCREEN_WIDTH, line_y + 1], fill=BG_COLOR)
+    draw.rectangle([rest_start_x, line_y - 1, SCREEN_WIDTH, line_y + 1], fill=SECONDARY_COLOR)
 
     # assign positions; draw individual ticks only for favorites
     for idx, name in enumerate(ordered):
@@ -677,38 +677,38 @@ MARQUEE_GAP = 30                              # blank gap before the text repeat
 def _render_vol_strip(volume):
     d = ImageDraw.Draw(_vol_strip)
     # clear whole strip (covers x=0..padding gutter too)
-    d.rectangle([0, 0, SCREEN_WIDTH, _vol_strip.height], fill=WHITE)
+    d.rectangle([0, 0, SCREEN_WIDTH, _vol_strip.height], fill=BG_COLOR)
     volume_bar_end = padding + SCREEN_WIDTH * (volume / MAX_VOL)
     # absolute bar_top/bottom minus strip origin
     top = (tick_bar_start + 7) - VOL_STRIP_TOP      # = 10
     bottom = top + 10                                # = 20
-    d.rectangle([padding, top, volume_bar_end, bottom], fill=BLACK)
-    d.rectangle([padding, top, volume_bar_end, bottom], width=1, outline=BLACK)
+    d.rectangle([padding, top, volume_bar_end, bottom], fill=BG_COLOR)
+    d.rectangle([padding, top, volume_bar_end, bottom], width=1, outline=SECONDARY_COLOR)
     return _vol_strip
 
 def _render_name_strip(name, offset):
     font, full_w = _name_metrics(name)
     d = ImageDraw.Draw(_name_strip)
-    d.rectangle([0, 0, SCREEN_WIDTH, _name_strip.height], fill=WHITE)  # clear
+    d.rectangle([0, 0, SCREEN_WIDTH, _name_strip.height], fill=BG_COLOR)  # clear
     span = full_w + MARQUEE_GAP
     start = MARQUEE_X - (offset % span)
     y = (NAME_Y - 1) - NAME_STRIP_TOP  # absolute y minus strip origin
-    d.text((start - 1, y), name, font=font, fill=BLACK)
-    d.text((start - 1 + span, y), name, font=font, fill=BLACK)
-    d.rectangle([0, 0, MARQUEE_X - 1, _name_strip.height], fill=WHITE)  # left gutter
+    d.text((start - 1, y), name, font=font, fill=SECONDARY_COLOR)
+    d.text((start - 1 + span, y), name, font=font, fill=SECONDARY_COLOR)
+    d.rectangle([0, 0, MARQUEE_X - 1, _name_strip.height], fill=BG_COLOR)  # left gutter
     return _name_strip
 
 def _render_ol_strip(name, offset):
     text = streams[name]['oneLiner'].replace('&amp;', '&').strip()
     full_w = streams[name].get('oneLinerWidth') or width(text, SMALL_LIGHT)
     d = ImageDraw.Draw(_ol_strip)
-    d.rectangle([0, 0, SCREEN_WIDTH, _ol_strip.height], fill=WHITE)
+    d.rectangle([0, 0, SCREEN_WIDTH, _ol_strip.height], fill=BG_COLOR)
     span = full_w + MARQUEE_GAP
     start = MARQUEE_X - (offset % span)
     y = OL_STRIP_TOP - OL_STRIP_TOP  # = 0, oneliner sits at strip top
-    d.text((start, y), text, font=SMALL_LIGHT, fill=BLACK)
-    d.text((start + span, y), text, font=SMALL_LIGHT, fill=BLACK)
-    d.rectangle([0, 0, MARQUEE_X - 1, _ol_strip.height], fill=WHITE)
+    d.text((start, y), text, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
+    d.text((start + span, y), text, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
+    d.rectangle([0, 0, MARQUEE_X - 1, _ol_strip.height], fill=BG_COLOR)
     return _ol_strip
 
 def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=None, must_show=False):
