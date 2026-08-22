@@ -1312,7 +1312,7 @@ def periodic_update():
             should_fetch = not seeking and \
                         not refreshing_everything_now and \
                             ((((oneliner_mq['offset'] == 0) | (name_mq['offset'] == 0)) and (oneliner_mq['needed']==True and name_mq['needed']==True)) or (((oneliner_mq['offset'] == 0) and (name_mq['offset'] == 0))) or (((oneliner_mq['needed'] == False) and (name_mq['needed'] == False)))) and \
-                        ((time_since_last_update >= 10) or (time_since_last_success > 10) or len(scroll_cache_dict)==0)
+                        ((time_since_last_update >= 30) or (time_since_last_success > 30) or len(scroll_cache_dict)==0)
         if should_fetch:
             logging.info('PERIODIC UPDATE OCCURRING')
             print('cache size', len(scroll_cache_dict))
