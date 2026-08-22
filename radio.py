@@ -566,7 +566,7 @@ def calculate_ticks():
     # assign positions; draw individual ticks only for favorites
     for idx, name in enumerate(ordered):
         x = tick_start + step * idx
-        x = 159
+        #x = 159
         tick_locations[name] = round(x)
     tick_image = image
 
@@ -800,8 +800,8 @@ def display_scroll(name, silent=False):
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
 
-        prev_position = (og_logo_position[0] - 70, og_logo_position[1] - 4)
-        next_position = (og_logo_position[0] + 70, og_logo_position[1] - 4)        
+        prev_position = (og_logo_position[0] - 70, og_logo_position[1] - 15)
+        next_position = (og_logo_position[0] + 70, og_logo_position[1] - 15)        
 
         prev_logo_size = 96
         prev = streams[prev_stream][f'logo_{prev_logo_size}']
@@ -812,8 +812,8 @@ def display_scroll(name, silent=False):
         double_prev_position = (square_start, logo_chunk_start + 57 - 4)
         double_next_position = (290, logo_chunk_start + 57 - 4)  
 
-        double_prev_position = (prev_position[0] - 40, prev_position[1] - 6)
-        double_next_position = (next_position[0] + 40,  prev_position[1] - 6)
+        double_prev_position = (prev_position[0] - 40, prev_position[1] - 15)
+        double_next_position = (next_position[0] + 40,  prev_position[1] - 15)
         double_prev = streams[double_prev_stream][f'logo_{double_prev_logo_size}']
         double_next = streams[double_next_stream][f'logo_{double_prev_logo_size}']
         
