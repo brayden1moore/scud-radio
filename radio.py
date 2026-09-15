@@ -281,7 +281,7 @@ def send_mpv_command(cmd, max_retries=2, retry_delay=0.05):
     return False
 
 SUMMARY_URL = 'https://one.radio/summary'
-LOGO_SIZES = ['25', '60', '96', '216']  
+LOGO_SIZES = ['25', '60', '96', '216','320']  
  
 def _safe(name):
     return name.replace(' ', '_')
@@ -528,6 +528,7 @@ logo_chunk_start = 35
 logo_chunk_start_x = 12 + start_x
 og_logo_position = (114, logo_chunk_start - 14 - 24)
 logo_position = og_logo_position
+logo_position = (0, -100)
 
 tick_width = 0
 padding = 10
@@ -846,7 +847,7 @@ def display_scroll(name, silent=False):
         if next_stream in favorites:
             image.paste(star_60, next_position, star_60)
 
-        logo = streams[name]['logo_96']
+        logo = streams[name]['logo_320']
         image.paste(logo, logo_position)
 
         if name in favorites:
