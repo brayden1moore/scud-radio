@@ -1,27 +1,64 @@
 #!/bin/bash
-# setup.sh [unit-suffix]
+# setup.sh [unit-suffix] [--dac pcm5100a|wm8960]
 #
 # Run once when preparing a unit to ship. Optional suffix sets the unit's
 # unique hostname:  ./setup.sh 3a4b  ->  radio-3a4b.local
 # With no arg, the suffix defaults to the last 4 of the Pi's serial, so every
 # unit still gets a unique hostname with zero tracking. Pass an arg to override
 # with a friendlier name, e.g. ./setup.sh kitchen -> radio-kitchen.local
+#
+# --dac selects the audio hardware. Default is pcm5100a (hifiberry-dac overlay,
+# mainline kernel driver, no vendor install). Pass --dac wm8960 for the old
+# Waveshare HAT, which needs the vendor driver build.
+#   ./setup.sh kitchen --dac wm8960
 
 set -e
 
+# ---------- args ----------
+SUFFIX=""
+DAC="pcm5100a"
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --dac)   DAC="$2"; shift 2 ;;
+    --dac=*) DAC="${1#*=}"; shift ;;
+    -h|--help)
+      echo "usage: $0 [unit-suffix] [--dac pcm5100a|wm8960]"
+      exit 0 ;;
+    -*)
+      echo "unknown option: $1" >&2; exit 1 ;;
+    *)
+      SUFFIX="$1"; shift ;;
+  esac
+done
+
+case "$DAC" in
+  pcm5100a|pcm5102a|hifiberry|hifiberry-dac) DAC="pcm5100a" ;;
+  wm8960|waveshare)                          DAC="wm8960"   ;;
+  *) echo "unknown --dac '$DAC' (expected pcm5100a or wm8960)" >&2; exit 1 ;;
+esac
+
+if [ "$DAC" = "wm8960" ]; then
+  DAC_OVERLAY="dtoverlay=wm8960-soundcard"
+  ALSA_CARD="wm8960soundcard"
+else
+  DAC_OVERLAY="dtoverlay=hifiberry-dac"
+  ALSA_CARD="sndrpihifiberry"
+fi
+
 # ---------- unit identity ----------
-SUFFIX="${1:-}"
 if [ -z "$SUFFIX" ]; then
   SUFFIX="$(grep -m1 Serial /proc/cpuinfo | awk '{print $3}' | tail -c 5)"
 fi
 HOSTNAME="radio-${SUFFIX}"
 echo "Preparing unit: hostname will be ${HOSTNAME}.local"
+echo "Audio: ${DAC} (${DAC_OVERLAY})"
 
 # ---------- boot config ----------
 sudo rm -f /boot/firmware/config.txt
 sudo tee /boot/firmware/config.txt > /dev/null <<EOF
 auto_initramfs=0
-dtoverlay=wm8960-soundcard
+${DAC_OVERLAY}
 enable_uart=1
 dtoverlay=disable-bt
 disable_splash=1
@@ -62,21 +99,59 @@ grep -q '^DISABLE_HDMI=' /tmp/boot.conf || echo 'DISABLE_HDMI=1' >> /tmp/boot.co
 # Apply — and DON'T swallow the error, so a failed flash is visible during prep.
 sudo rpi-eeprom-config --apply /tmp/boot.conf
 
-# ---------- WM8960 audio (overlay baked in; disable slow Waveshare service) ----------
-cd ~/
-if [ ! -d WM8960-Audio-HAT ]; then
-  git clone https://github.com/waveshare/WM8960-Audio-HAT
+# ---------- audio ----------
+if [ "$DAC" = "wm8960" ]; then
+  # WM8960 (overlay baked in; disable slow Waveshare service)
+  cd ~/
+  if [ ! -d WM8960-Audio-HAT ]; then
+    git clone https://github.com/waveshare/WM8960-Audio-HAT
+  fi
+  cd WM8960-Audio-HAT
+  sudo chmod +x install.sh
+  sudo ./install.sh -y
+  cd ~/
+  sudo ln -sf /etc/wm8960-soundcard/asound.conf /etc/asound.conf
+  sudo ln -sf /etc/wm8960-soundcard/wm8960_asound.state /var/lib/alsa/asound.state
+  sudo systemctl disable wm8960-soundcard.service
+else
+  # PCM5100A via hifiberry-dac: driver is in the mainline kernel, nothing to build.
+  # The chip has no I2C control port and no hardware mixer, so ALSA exposes zero
+  # volume controls. Insert a softvol plugin so "Master" exists and mpv/amixer
+  # behave the same way they did on the WM8960.
+  sudo rm -f /etc/asound.conf
+  sudo tee /etc/asound.conf > /dev/null <<EOF
+pcm.!default {
+    type plug
+    slave.pcm "softvol"
+}
+
+pcm.softvol {
+    type softvol
+    slave.pcm "plughw:CARD=${ALSA_CARD},DEV=0"
+    control {
+        name "Master"
+        card "${ALSA_CARD}"
+    }
+    min_dB -51.0
+    max_dB 0.0
+    resolution 100
+}
+
+ctl.!default {
+    type hw
+    card "${ALSA_CARD}"
+}
+EOF
+  # Nothing to restore at boot on this card; drop any stale wm8960 state link.
+  sudo rm -f /var/lib/alsa/asound.state
 fi
-cd WM8960-Audio-HAT
-sudo chmod +x install.sh
-sudo ./install.sh -y
-cd ~/
-sudo ln -sf /etc/wm8960-soundcard/asound.conf /etc/asound.conf
-sudo ln -sf /etc/wm8960-soundcard/wm8960_asound.state /var/lib/alsa/asound.state
-sudo systemctl disable wm8960-soundcard.service
 
 sudo apt install mpv -y
-amixer -D pulse sset Master 100% || true
+
+# The softvol control only materialises once the device has been opened once,
+# so prime it here. Harmless on the WM8960 path.
+aplay -d 1 /dev/zero -f cd > /dev/null 2>&1 || true
+amixer sset Master 100% > /dev/null 2>&1 || amixer -D pulse sset Master 100% || true
 
 # ---------- hostname (unique per unit, for radio-<suffix>.local) ----------
 sudo hostnamectl set-hostname "$HOSTNAME"
@@ -87,6 +162,7 @@ else
 fi
 
 # ---------- network controller service (replaces wifi-connect + comitup) ----------
+sudo chmod 600 /lib/netplan/*.yaml 2>/dev/null || true
 chmod +x /home/scud/scud-radio/net-controller.sh
 sudo tee /etc/systemd/system/net-controller.service > /dev/null <<EOF
 [Unit]
@@ -247,5 +323,5 @@ sudo systemctl disable apt-daily.service apt-daily-upgrade.service apt-daily.tim
 sudo touch /etc/cloud/cloud-init.disabled 2>/dev/null || true
 echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 
-echo "Setup complete for ${HOSTNAME}. Rebooting..."
+echo "Setup complete for ${HOSTNAME} (${DAC}). Rebooting..."
 sudo reboot
