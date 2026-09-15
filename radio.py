@@ -818,10 +818,10 @@ def display_scroll(name, silent=False):
         double_next_position = (next_position[0] + 43, prev_position[1])
 
         # back to front, so each tile's border is trimmed by the one in front
-        draw_tile(image, draw, double_prev_stream, double_prev_position, star_25)
-        draw_tile(image, draw, double_next_stream, double_next_position, star_25)
-        draw_tile(image, draw, prev_stream,        prev_position,        star_60)
-        draw_tile(image, draw, next_stream,        next_position,        star_60)
+        draw_tile(image, draw, double_prev_stream, double_prev_position, star_96)
+        draw_tile(image, draw, double_next_stream, double_next_position, star_96)
+        draw_tile(image, draw, prev_stream,        prev_position,        star_96)
+        draw_tile(image, draw, next_stream,        next_position,        star_96)
         draw_tile(image, draw, name,               logo_position,        star_96,
                   dim=False)
 
