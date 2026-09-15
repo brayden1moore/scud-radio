@@ -113,28 +113,20 @@ if [ "$DAC" = "wm8960" ]; then
   sudo ln -sf /etc/wm8960-soundcard/asound.conf /etc/asound.conf
   sudo ln -sf /etc/wm8960-soundcard/wm8960_asound.state /var/lib/alsa/asound.state
   sudo systemctl disable wm8960-soundcard.service
+  # WM8960 has a real hardware mixer that comes up attenuated; open it all the
+  # way so mpv's software volume is the only thing in the path.
+  sudo apt install mpv -y
+  amixer -D pulse sset Master 100% || amixer sset Master 100% || true
 else
-  # PCM5100A via hifiberry-dac: driver is in the mainline kernel, nothing to build.
-  # The chip has no I2C control port and no hardware mixer, so ALSA exposes zero
-  # volume controls. Insert a softvol plugin so "Master" exists and mpv/amixer
-  # behave the same way they did on the WM8960.
+  # PCM5100A via hifiberry-dac: driver is in the mainline kernel, nothing to
+  # build. The chip has no I2C control port, so ALSA exposes no mixer controls
+  # at all — that's expected, not a fault. mpv does volume in software.
+  # Point "default" at the card by name rather than relying on card 0 ordering.
   sudo rm -f /etc/asound.conf
   sudo tee /etc/asound.conf > /dev/null <<EOF
 pcm.!default {
     type plug
-    slave.pcm "softvol"
-}
-
-pcm.softvol {
-    type softvol
-    slave.pcm "plughw:CARD=${ALSA_CARD},DEV=0"
-    control {
-        name "Master"
-        card "${ALSA_CARD}"
-    }
-    min_dB -51.0
-    max_dB 0.0
-    resolution 100
+    slave.pcm "hw:CARD=${ALSA_CARD},DEV=0"
 }
 
 ctl.!default {
@@ -142,16 +134,10 @@ ctl.!default {
     card "${ALSA_CARD}"
 }
 EOF
-  # Nothing to restore at boot on this card; drop any stale wm8960 state link.
+  # Nothing to save or restore at boot on this card; drop any stale wm8960 link.
   sudo rm -f /var/lib/alsa/asound.state
+  sudo apt install mpv -y
 fi
-
-sudo apt install mpv -y
-
-# The softvol control only materialises once the device has been opened once,
-# so prime it here. Harmless on the WM8960 path.
-aplay -d 1 /dev/zero -f cd > /dev/null 2>&1 || true
-amixer sset Master 100% > /dev/null 2>&1 || amixer -D pulse sset Master 100% || true
 
 # ---------- hostname (unique per unit, for radio-<suffix>.local) ----------
 sudo hostnamectl set-hostname "$HOSTNAME"
