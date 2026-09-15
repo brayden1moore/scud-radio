@@ -528,7 +528,7 @@ logo_chunk_start = 35
 logo_chunk_start_x = 12 + start_x
 og_logo_position = (114, logo_chunk_start - 14 - 24)
 logo_position = og_logo_position
-logo_position = (0, -100)
+#logo_position = (0, -100)
 
 tick_width = 0
 padding = 10
@@ -741,7 +741,6 @@ def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=No
     finally:
         display_lock.release()
 
-#NAME_Y = 
 def display_scroll(name, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
@@ -804,15 +803,15 @@ def display_scroll(name, silent=False):
         if next_stream in favorites:
             image.paste(star_60, next_position, star_60)
 
-        logo = streams[name]['logo_320']
+        logo = streams[name]['logo_96']
         image.paste(logo, logo_position)
 
         if name in favorites:
             image.paste(star_96, og_logo_position, star_96)
         
-        #draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=3) # border
-        #draw.rectangle([og_logo_position[0] - 2, og_logo_position[1] - 2, og_logo_position[0]+96 + 2, og_logo_position[1]+96 + 2], outline=BLACK, width=3) # border
-        draw.rectangle([0, tick_bar_start, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
+        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=3) # border
+        draw.rectangle([og_logo_position[0] - 2, og_logo_position[1] - 2, og_logo_position[0]+96 + 2, og_logo_position[1]+96 + 2], outline=BLACK, width=3) # border
+        #draw.rectangle([0, tick_bar_start, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
 
         # draw name and underline
         name_chunk_start = NAME_Y
