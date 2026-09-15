@@ -806,7 +806,7 @@ def display_scroll(name, silent=False):
         if next_stream in favorites:
             image.paste(star_60, next_position, star_60)
 
-        draw.rectangle([0, 0, SCREEN_WIDTH, 100], fill=(0,0,0,20))
+        draw.rectangle([0, 0, SCREEN_WIDTH, 100], fill=(0,0,0,0.2))
         logo = streams[name]['logo_96']
         image.paste(logo, logo_position)
 
