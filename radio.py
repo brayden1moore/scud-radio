@@ -817,7 +817,7 @@ def display_scroll(name, silent=False):
 
         # double prev and next
         double_prev_logo_size = 96
-        double_prev_position = (-10, logo_chunk_start + 57 - 4)
+        double_prev_position = (-13, logo_chunk_start + 57 - 4)
         double_next_position = (290, logo_chunk_start + 57 - 4)  
 
         double_prev_position = (prev_position[0] - 43, prev_position[1] - 20)
