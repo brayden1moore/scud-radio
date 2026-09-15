@@ -1773,6 +1773,7 @@ try:
                 marquee_name = None
 
             elif needs_scroll:
+                logging.info('NEEDS SCROLL')
                 if marquee_name != active_name:
                     marquee_name = active_name
                     name_mq['cycle_start'] = None      # reset shared clock 
