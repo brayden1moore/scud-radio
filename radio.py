@@ -762,22 +762,6 @@ def display_scroll(name, silent=False):
         if not silent:
             currently_displaying = 'everything'
 
-        # draw name and underline
-        name_chunk_start = NAME_Y
-        name_chunk_start_x = 12 + start_x
-        name_font = EXTRALARGE_LIGHT
-
-        name_line0, name_font = _name_line_cached(name)
-        draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line0, font=name_font, fill=SECONDARY_COLOR)
-
-        # draw info
-        info_font = SMALL_LIGHT
-        y_offset = 0
-        everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 5
-        info_line = streams[name]['oneLiner']
-        draw.text((name_chunk_start_x, everything_info_y + y_offset), info_line, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
-        y_offset += 20
-
         # logos
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
@@ -829,6 +813,22 @@ def display_scroll(name, silent=False):
         #draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=3) # border
         #draw.rectangle([og_logo_position[0] - 2, og_logo_position[1] - 2, og_logo_position[0]+96 + 2, og_logo_position[1]+96 + 2], outline=BLACK, width=3) # border
         draw.rectangle([0, tick_bar_start, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
+
+        # draw name and underline
+        name_chunk_start = NAME_Y
+        name_chunk_start_x = 12 + start_x
+        name_font = EXTRALARGE_LIGHT
+
+        name_line0, name_font = _name_line_cached(name)
+        draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line0, font=name_font, fill=SECONDARY_COLOR)
+
+        # draw info
+        info_font = SMALL_LIGHT
+        y_offset = 0
+        everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 5
+        info_line = streams[name]['oneLiner']
+        draw.text((name_chunk_start_x, everything_info_y + y_offset), info_line, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
+        y_offset += 20
 
         # draw tags
         tags_start_y = round(everything_info_y + FONT_HEIGHTS['SMALL_LIGHT'] + 14)
