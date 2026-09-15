@@ -762,11 +762,13 @@ def display_scroll(name, silent=False):
             currently_displaying = 'everything'
 
         # logos
-        prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
-        next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
 
         prev_position = (og_logo_position[0] - 70, og_logo_position[1] - 18)
         next_position = (og_logo_position[0] + 70, og_logo_position[1] - 18)        
+
+        prev_position = (og_logo_position[0] - 70, og_logo_position[1])
+        next_position = (og_logo_position[0] + 70, og_logo_position[1])        
+
 
         prev_logo_size = 96
         prev = streams[prev_stream][f'logo_{prev_logo_size}']
@@ -775,8 +777,9 @@ def display_scroll(name, silent=False):
         # double prev and next
         double_prev_logo_size = 96
 
-        double_prev_position = (prev_position[0] - 49, prev_position[1] - 20)
-        double_next_position = (next_position[0] + 43,  prev_position[1] - 20)
+        double_prev_position = (prev_position[0] - 49, prev_position[1])
+        double_next_position = (next_position[0] + 43,  prev_position[1])
+
         double_prev = streams[double_prev_stream][f'logo_{double_prev_logo_size}']
         double_next = streams[double_next_stream][f'logo_{double_prev_logo_size}']
         
@@ -803,6 +806,7 @@ def display_scroll(name, silent=False):
         if next_stream in favorites:
             image.paste(star_60, next_position, star_60)
 
+        draw.rectangle([0, 0, SCREEN_WIDTH, 100], fill=(0,0,0,20))
         logo = streams[name]['logo_96']
         image.paste(logo, logo_position)
 
@@ -811,7 +815,6 @@ def display_scroll(name, silent=False):
         
         draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=3) # border
         draw.rectangle([og_logo_position[0] - 2, og_logo_position[1] - 2, og_logo_position[0]+96 + 2, og_logo_position[1]+96 + 2], outline=BLACK, width=3) # border
-        #draw.rectangle([0, tick_bar_start, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
 
         # draw name and underline
         name_chunk_start = NAME_Y
