@@ -741,7 +741,7 @@ def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=No
     finally:
         display_lock.release()
 
-DIM = 0.40
+DIM = 0.20
 DIM_OUTLINE = tuple(int(c * DIM) for c in SECONDARY_COLOR)
 
 _dim_cache = {}
@@ -807,22 +807,22 @@ def display_scroll(name, silent=False):
         double_next  = dim_logo(double_next_stream, 96)
         
         image.paste(double_prev, double_prev_position)
-        draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + double_prev_logo_size, double_prev_position[1] + double_prev_logo_size], outline=SECONDARY_COLOR, width=3)
+        #draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + double_prev_logo_size, double_prev_position[1] + double_prev_logo_size], outline=SECONDARY_COLOR, width=3)
         if double_prev_stream in favorites:
             double_prev_star = star_25.copy()
             image.paste(double_prev_star, double_prev_position, double_prev_star)
 
         image.paste(double_next, double_next_position)
-        draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + double_prev_logo_size, double_next_position[1] + double_prev_logo_size], outline=SECONDARY_COLOR, width=3)
+        #draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + double_prev_logo_size, double_next_position[1] + double_prev_logo_size], outline=SECONDARY_COLOR, width=3)
         if double_next_stream in favorites:
             double_next_star = star_25.copy()
             image.paste(double_next_star, double_next_position, double_next_star)
 
         # paste prev and next
         image.paste(prev, prev_position)
-        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + prev_logo_size, prev_position[1] + prev_logo_size], outline=SECONDARY_COLOR, width=3)
+        #draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + prev_logo_size, prev_position[1] + prev_logo_size], outline=SECONDARY_COLOR, width=3)
         image.paste(next, next_position)
-        draw.rectangle([next_position[0],next_position[1], next_position[0] + prev_logo_size, next_position[1] + prev_logo_size], outline=SECONDARY_COLOR, width=3)
+        #draw.rectangle([next_position[0],next_position[1], next_position[0] + prev_logo_size, next_position[1] + prev_logo_size], outline=SECONDARY_COLOR, width=3)
 
         if prev_stream in favorites:
             image.paste(star_60, prev_position, star_60)
