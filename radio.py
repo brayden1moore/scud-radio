@@ -778,33 +778,6 @@ def display_scroll(name, silent=False):
         draw.text((name_chunk_start_x, everything_info_y + y_offset), info_line, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
         y_offset += 20
 
-        # draw tags
-        tags_start_y = round(everything_info_y + FONT_HEIGHTS['SMALL_LIGHT'] + 14)
-        tags_start_x = name_chunk_start_x
-        location = streams[name]['location']
-        live_status = streams[name]['status']
-        stream_genres = streams[name]['genres']
-
-        genres = [live_status,location]
-        if stream_genres:
-            genres.extend(stream_genres)
-
-        genre_x_offset = 0
-        genre_padding = 4
-        if genres:
-            genre_widths = [width(g, SMALL_LIGHT) for g in genres]
-            box_h = FONT_HEIGHTS['SMALL_LIGHT'] - 4
-            for idx, genre in enumerate(genres):
-                bbox = info_font.getbbox(genre)
-                genre_width = bbox[2] - bbox[0] + genre_padding * 2
-                top = bbox[1]
-                fill = RED if idx == 0 else BLUE if idx == 1 else YELLOW
-                x0 = tags_start_x + genre_x_offset
-
-                draw.rectangle([x0, tags_start_y - genre_padding , x0 + genre_width, tags_start_y + 2 + box_h + genre_padding], fill=fill)
-                draw.text((x0 + genre_padding, tags_start_y - top + 1), genre, font=info_font, fill=BLACK)
-                genre_x_offset += genre_width + 6
-
         # logos
         prev_position = (og_logo_position[0] - 70, logo_chunk_start + 22 - 4)
         next_position = (og_logo_position[0] + 106, logo_chunk_start + 22 - 4)
@@ -856,6 +829,33 @@ def display_scroll(name, silent=False):
         #draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=3) # border
         #draw.rectangle([og_logo_position[0] - 2, og_logo_position[1] - 2, og_logo_position[0]+96 + 2, og_logo_position[1]+96 + 2], outline=BLACK, width=3) # border
         draw.rectangle([0, tick_bar_start, SCREEN_WIDTH, SCREEN_HEIGHT], fill=BLACK)
+
+        # draw tags
+        tags_start_y = round(everything_info_y + FONT_HEIGHTS['SMALL_LIGHT'] + 14)
+        tags_start_x = name_chunk_start_x
+        location = streams[name]['location']
+        live_status = streams[name]['status']
+        stream_genres = streams[name]['genres']
+
+        genres = [live_status,location]
+        if stream_genres:
+            genres.extend(stream_genres)
+
+        genre_x_offset = 0
+        genre_padding = 4
+        if genres:
+            genre_widths = [width(g, SMALL_LIGHT) for g in genres]
+            box_h = FONT_HEIGHTS['SMALL_LIGHT'] - 4
+            for idx, genre in enumerate(genres):
+                bbox = info_font.getbbox(genre)
+                genre_width = bbox[2] - bbox[0] + genre_padding * 2
+                top = bbox[1]
+                fill = RED if idx == 0 else BLUE if idx == 1 else YELLOW
+                x0 = tags_start_x + genre_x_offset
+
+                draw.rectangle([x0, tags_start_y - genre_padding , x0 + genre_width, tags_start_y + 2 + box_h + genre_padding], fill=fill)
+                draw.text((x0 + genre_padding, tags_start_y - top + 1), genre, font=info_font, fill=BLACK)
+                genre_x_offset += genre_width + 6
 
         # draw marks
         image.paste(tick_image, (0,0), mask=tick_image)
