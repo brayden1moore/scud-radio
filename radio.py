@@ -1071,9 +1071,9 @@ def switch_off():
     last_input_time = current_time
     button_released_time = current_time
     switch_off_time = current_time
+    backlight_off()
     send_mpv_command({"command": ["set_property", "volume", 0]})
     set_last_volume(str(current_volume))
-    backlight_off()
     sleeping = True
     put_to_sleep = True
 
