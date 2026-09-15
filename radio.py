@@ -618,6 +618,11 @@ def _name_metrics(name):
         _name_metrics_cache[name] = (f, width(name, f))
     return _name_metrics_cache[name]
 
+def _ol_text(info):
+    """Canonical one-liner string. Must be the single source of truth --
+    display_cached_scroll, the main loop, and _render_ol_strip all have to
+    agree, or text_changed fires on every pass forever."""
+    return (info.get('oneLiner') or '').replace('&amp;', '&').strip()
 
 oneliner_mq  = {'offset': 0, 'pause_until': 0, 'needed': False}
 name_mq  = {'offset': 0, 'pause_until': 0, 'needed': False}
@@ -1298,7 +1303,7 @@ def display_cached_scroll(name, pushed=False):
     else:
         scroll_cache_dict[name] = display_scroll(name)
 
-    text_on_screen = streams[name]['oneLiner']
+    text_on_screen = _ol_text(streams[name])
     
 
 def periodic_update():
@@ -1693,104 +1698,156 @@ volume_click_button.when_pressed = on_volume_button_pressed
 volume_click_button.when_released = on_volume_button_released
 
 ## main loop
-print('BEGIN REFRESH',time.time())
+print('BEGIN REFRESH', time.time())
 calculate_ticks()
-scroll_cache_dict[stream] = display_scroll(stream, silent=True)  # current one now
-start_priority_refresh()  # everything async, behind the visible UI
+scroll_cache_dict[stream] = display_scroll(stream, silent=True)
+start_priority_refresh()
 display_cached_scroll(stream)
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
-
-print('DISPLAYING',time.time())
+ 
+print('DISPLAYING', time.time())
 display_cached_scroll(stream)
 last_input_time = time.time()
-
+ 
+_last_gate_log = 0.0
+needs_scroll = False
+ 
 try:
     while True:
-        now = time.time()
-
-        if now - last_input_time > 10:
-            set_last_volume(str(current_volume))
-
-        if (now - last_input_time > 60) & (now - last_ambient_display > 30):
-            logging.info('DISPLAYING AMBIENT VIA MAIN LOOP')
-            display_ambient(stream)
-            last_ambient_display = now
-
-        if screen_on and (now - last_input_time > 600):
-            logging.info('TURNING SCREEN OFF VIA MAIN LOOP')
-            sleeping = True
-            screen_on = False
-            backlight_off()
-
-        # define active_name BEFORE anything uses it
-        active_name = readied_stream if readied_stream else stream
-        seeking = last_seek_rotation and (now - last_seek_rotation < 1)
-
-        # ---- expire the volume overlay after 3s of no volume rotation ----
-        if volume_overlay_showing and (now - last_volume_change) > 3:
-            volume_overlay_showing = False
-            base = scroll_cache_dict.get(active_name)
-            if base is not None and currently_displaying == 'everything':
-                # restore only the band the volume bar occupied, from the cached base.
-                # leaves the marquee strips (and their clock) untouched.
-                band = base.crop((0, VOL_STRIP_TOP, SCREEN_WIDTH, VOL_STRIP_BOTTOM)).convert('RGB')
-                with display_lock:
-                    disp.ShowWindow(band, 0, VOL_STRIP_TOP)
-
-        # ---- everything screen: marquee only, volume is drawn on the rotor tick ----
-        on_everything = (screen_on and not sleeping
-                         and not freeze_for_task
-                         and not seeking
-                         and currently_displaying == 'everything'
-                         and active_name and active_name in scroll_cache_dict)
-
-        if on_everything:
-            text = streams[active_name]['oneLiner']
-            text_w = width(text, SMALL_LIGHT)
-            long_oneliner = text_w > (SCREEN_WIDTH - MARQUEE_X)
-
-            _, name_w = _name_metrics(active_name)
-            long_name = name_w > (SCREEN_WIDTH - MARQUEE_X)
-
-            needs_scroll = long_oneliner or long_name
-            text_span = text_w + MARQUEE_GAP
-            name_span = name_w + MARQUEE_GAP
-
-            name_mq['needed'] = long_name
-            oneliner_mq['needed'] = long_oneliner
-
-            text_changed = (text_on_screen != text)
-            if text_changed:
-                print('------TEXT CHANGED------')
-                _mq_reset(oneliner_mq, now)
-                marquee_name = None
-                if not long_oneliner:
-                    del scroll_cache_dict[active_name]
-                    display_cached_scroll(active_name)
-
-            if seeking:
-                marquee_name = None
-
-            elif needs_scroll:
-                logging.info('NEEDS SCROLL')
-                if marquee_name != active_name:
-                    marquee_name = active_name
-                    name_mq['cycle_start'] = None      # reset shared clock 
-                name_off, ol_off = _joint_offsets(
-                    name_span, text_span, long_name, long_oneliner, now, name_mq)
-                render_frame(active_name, ol_off if long_oneliner else 0,
-                            draw_oneliner=long_oneliner, name_offset=name_off)
-
+        # Inner try so one bad frame never takes the display thread down.
+        # Without this, a KeyError here leaves mpv playing and the panel
+        # frozen on its last good frame -- which looks exactly like a
+        # driver bug and isn't one.
+        try:
+            now = time.time()
+ 
+            if now - last_input_time > 10:
+                set_last_volume(str(current_volume))
+ 
+            # 'and', not '&' -- bitwise on bools works by accident and
+            # doesn't short-circuit
+            if (now - last_input_time > 60) and (now - last_ambient_display > 30):
+                logging.info('DISPLAYING AMBIENT VIA MAIN LOOP')
+                display_ambient(stream)
+                last_ambient_display = now
+ 
+            if screen_on and (now - last_input_time > 600):
+                logging.info('TURNING SCREEN OFF VIA MAIN LOOP')
+                sleeping = True
+                screen_on = False
+                backlight_off()
+ 
+            active_name = readied_stream if readied_stream else stream
+ 
+            # Snapshot both dicts ONCE. periodic_update rebinds `streams`
+            # wholesale and toggle_favorite calls scroll_cache_dict.clear();
+            # either can land between a membership test and a lookup.
+            info = streams.get(active_name) if active_name else None
+            base_img = scroll_cache_dict.get(active_name) if active_name else None
+ 
+            seeking = bool(last_seek_rotation and (now - last_seek_rotation < 1))
+ 
+            # ---- expire the volume overlay after 3s of no volume rotation ----
+            if volume_overlay_showing and (now - last_volume_change) > 3:
+                volume_overlay_showing = False
+                if base_img is not None and currently_displaying == 'everything':
+                    band = base_img.crop(
+                        (0, VOL_STRIP_TOP, SCREEN_WIDTH, VOL_STRIP_BOTTOM)
+                    ).convert('RGB')
+                    with display_lock:
+                        disp.ShowWindow(band, 0, VOL_STRIP_TOP)
+ 
+            on_everything = bool(
+                screen_on
+                and not sleeping
+                and not freeze_for_task
+                and not seeking
+                and currently_displaying == 'everything'
+                and active_name
+                and info is not None
+                and base_img is not None
+            )
+ 
+            # Heartbeat. If this stops appearing the loop is dead; if it
+            # keeps appearing, one of these fields explains the freeze.
+            if now - _last_gate_log > 2:
+                logging.info(
+                    'GATE on_everything=%s screen_on=%s sleeping=%s freeze=%s '
+                    'seeking=%s displaying=%s active=%s info=%s cached=%s '
+                    'marquee=%s',
+                    on_everything, screen_on, sleeping, freeze_for_task,
+                    seeking, currently_displaying, active_name,
+                    info is not None, base_img is not None, marquee_name)
+                _last_gate_log = now
+ 
+            needs_scroll = False
+ 
+            if on_everything:
+                text = _ol_text(info)
+                text_w = width(text, SMALL_LIGHT)
+                long_oneliner = text_w > (SCREEN_WIDTH - MARQUEE_X)
+ 
+                _, name_w = _name_metrics(active_name)
+                long_name = name_w > (SCREEN_WIDTH - MARQUEE_X)
+ 
+                needs_scroll = long_oneliner or long_name
+                text_span = text_w + MARQUEE_GAP
+                name_span = name_w + MARQUEE_GAP
+ 
+                name_mq['needed'] = long_name
+                oneliner_mq['needed'] = long_oneliner
+ 
+                if text_on_screen != text:
+                    logging.info('TEXT CHANGED -> %r', text[:60])
+                    # Claim the new text FIRST and unconditionally. The old
+                    # code only updated it via display_cached_scroll(), which
+                    # sat behind `if not long_oneliner` -- so for long text
+                    # it never updated, text_changed stayed True forever, and
+                    # marquee_name was reset to None on every single pass.
+                    text_on_screen = text
+                    _mq_reset(oneliner_mq, now)
+                    marquee_name = None
+                    if not long_oneliner:
+                        # pop, not del: toggle_favorite may have cleared it
+                        scroll_cache_dict.pop(active_name, None)
+                        display_cached_scroll(active_name)
+ 
+                if needs_scroll:
+                    if marquee_name != active_name:
+                        logging.info('MARQUEE START %s (name=%s ol=%s)',
+                                     active_name, long_name, long_oneliner)
+                        marquee_name = active_name
+                        name_mq['cycle_start'] = None   # reset shared clock
+ 
+                    name_off, ol_off = _joint_offsets(
+                        name_span, text_span, long_name, long_oneliner,
+                        now, name_mq)
+ 
+                    # Write the offsets back. periodic_update gates fetches
+                    # on these being 0; _joint_offsets never set them, so
+                    # that guard has been inert and fetches landed mid-scroll.
+                    name_mq['offset'] = name_off or 0
+                    oneliner_mq['offset'] = ol_off or 0
+ 
+                    render_frame(active_name,
+                                 ol_off if long_oneliner else 0,
+                                 draw_oneliner=long_oneliner,
+                                 name_offset=name_off)
+                else:
+                    marquee_name = None
+                    name_mq['offset'] = 0
+                    oneliner_mq['offset'] = 0
             else:
                 marquee_name = None
-        else:
-            marquee_name = None
-
-        if on_everything and needs_scroll:
-            time.sleep(0.02)
-        else:
-            time.sleep(0.15)
+                name_mq['offset'] = 0
+                oneliner_mq['offset'] = 0
+ 
+            time.sleep(0.02 if (on_everything and needs_scroll) else 0.15)
+ 
+        except Exception:
+            logging.error('MAIN LOOP ERROR:\n%s', traceback.format_exc())
+            time.sleep(0.5)
 
 except KeyboardInterrupt:
     if mpv_process:
