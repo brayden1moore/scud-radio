@@ -741,7 +741,7 @@ def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=No
     finally:
         display_lock.release()
 
-DIM = 0.20
+DIM = 0.60
 DIM_OUTLINE = tuple(int(c * DIM) for c in SECONDARY_COLOR)
 
 _dim_cache = {}
