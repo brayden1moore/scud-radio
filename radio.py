@@ -741,6 +741,24 @@ def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=No
     finally:
         display_lock.release()
 
+DIM = 0.40
+DIM_OUTLINE = tuple(int(c * DIM) for c in SECONDARY_COLOR)
+
+_dim_cache = {}
+
+def dim_logo(name, size, factor=DIM):
+    """Darkened copy of a station logo. Cached, and keyed on the source
+    image's identity so it re-dims automatically when fetch_logos swaps
+    in a new PNG."""
+    src = streams[name][f'logo_{size}']
+    key = (name, size, factor)
+    hit = _dim_cache.get(key)
+    if hit is not None and hit[0] is src:
+        return hit[1]
+    out = ImageEnhance.Brightness(src.convert('RGB')).enhance(factor)
+    _dim_cache[key] = (src, out)
+    return out
+
 def display_scroll(name, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
@@ -782,6 +800,11 @@ def display_scroll(name, silent=False):
 
         double_prev = streams[double_prev_stream][f'logo_{double_prev_logo_size}']
         double_next = streams[double_next_stream][f'logo_{double_prev_logo_size}']
+
+        prev         = dim_logo(prev_stream, 96)
+        next         = dim_logo(next_stream, 96)
+        double_prev  = dim_logo(double_prev_stream, 96)
+        double_next  = dim_logo(double_next_stream, 96)
         
         image.paste(double_prev, double_prev_position)
         draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + double_prev_logo_size, double_prev_position[1] + double_prev_logo_size], outline=SECONDARY_COLOR, width=3)
@@ -806,7 +829,7 @@ def display_scroll(name, silent=False):
         if next_stream in favorites:
             image.paste(star_60, next_position, star_60)
 
-        draw.rectangle([0, 0, SCREEN_WIDTH, 100], fill=(0,0,0,20))
+        #draw.rectangle([0, 0, SCREEN_WIDTH, 100], fill=(0,0,0,20))
         logo = streams[name]['logo_96']
         image.paste(logo, logo_position)
 
