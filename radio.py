@@ -759,6 +759,38 @@ def dim_logo(name, size, factor=DIM):
     _dim_cache[key] = (src, out)
     return out
 
+_dim_rgba_cache = {}
+
+def dim_rgba(img, factor=DIM):
+    """Darken an RGBA overlay without touching its alpha channel.
+    ImageEnhance.Brightness scales every band, so running it on RGBA
+    directly would fade the mask and leave the star translucent."""
+    key = (id(img), factor)
+    hit = _dim_rgba_cache.get(key)
+    if hit is not None and hit[0] is img:
+        return hit[1]
+    r, g, b, a = img.split()
+    rgb = ImageEnhance.Brightness(Image.merge('RGB', (r, g, b))).enhance(factor)
+    out = Image.merge('RGBA', (*rgb.split(), a))
+    _dim_rgba_cache[key] = (img, out)
+    return out
+
+def draw_tile(image, draw, station, pos, star=None, size=96, dim=True):
+    """Logo, star, then the white-over-black double
+    border"""
+    image.paste(dim_logo(station, size) if dim
+                else streams[station][f'logo_{size}'], pos)
+
+    if star is not None and station in favorites:
+        s = dim_rgba(star) if dim else star
+        image.paste(s, pos, s)
+
+    x0, y0 = pos
+    x1, y1 = x0 + size, y0 + size
+    draw.rectangle([x0, y0, x1, y1],
+                   outline=DIM_OUTLINE if dim else WHITE, width=3)
+    draw.rectangle([x0 - 2, y0 - 2, x1 + 2, y1 + 2], outline=BLACK, width=3)
+
 def display_scroll(name, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
     
@@ -780,64 +812,18 @@ def display_scroll(name, silent=False):
             currently_displaying = 'everything'
 
         # logos
-
-        prev_position = (og_logo_position[0] - 70, og_logo_position[1] - 18)
-        next_position = (og_logo_position[0] + 70, og_logo_position[1] - 18)        
-
-        prev_position = (og_logo_position[0] - 70, og_logo_position[1])
-        next_position = (og_logo_position[0] + 70, og_logo_position[1])        
-
-
-        prev_logo_size = 96
-        prev = streams[prev_stream][f'logo_{prev_logo_size}']
-        next = streams[next_stream][f'logo_{prev_logo_size}']
-
-        # double prev and next
-        double_prev_logo_size = 96
-
+        prev_position        = (og_logo_position[0] - 70, og_logo_position[1])
+        next_position        = (og_logo_position[0] + 70, og_logo_position[1])
         double_prev_position = (prev_position[0] - 49, prev_position[1])
-        double_next_position = (next_position[0] + 43,  prev_position[1])
+        double_next_position = (next_position[0] + 43, prev_position[1])
 
-        double_prev = streams[double_prev_stream][f'logo_{double_prev_logo_size}']
-        double_next = streams[double_next_stream][f'logo_{double_prev_logo_size}']
-
-        prev         = dim_logo(prev_stream, 96)
-        next         = dim_logo(next_stream, 96)
-        double_prev  = dim_logo(double_prev_stream, 96)
-        double_next  = dim_logo(double_next_stream, 96)
-        
-        image.paste(double_prev, double_prev_position)
-        draw.rectangle([double_prev_position[0],double_prev_position[1], double_prev_position[0] + double_prev_logo_size, double_prev_position[1] + double_prev_logo_size], outline=BG_COLOR, width=3)
-        if double_prev_stream in favorites:
-            double_prev_star = star_25.copy()
-            image.paste(double_prev_star, double_prev_position, double_prev_star)
-
-        image.paste(double_next, double_next_position)
-        draw.rectangle([double_next_position[0],double_next_position[1], double_next_position[0] + double_prev_logo_size, double_next_position[1] + double_prev_logo_size], outline=BG_COLOR, width=3)
-        if double_next_stream in favorites:
-            double_next_star = star_25.copy()
-            image.paste(double_next_star, double_next_position, double_next_star)
-
-        # paste prev and next
-        image.paste(prev, prev_position)
-        draw.rectangle([prev_position[0],prev_position[1], prev_position[0] + prev_logo_size, prev_position[1] + prev_logo_size], outline=BG_COLOR, width=3)
-        image.paste(next, next_position)
-        draw.rectangle([next_position[0],next_position[1], next_position[0] + prev_logo_size, next_position[1] + prev_logo_size], outline=BG_COLOR, width=3)
-
-        if prev_stream in favorites:
-            image.paste(star_60, prev_position, star_60)
-        if next_stream in favorites:
-            image.paste(star_60, next_position, star_60)
-
-        #draw.rectangle([0, 0, SCREEN_WIDTH, 100], fill=(0,0,0,20))
-        logo = streams[name]['logo_96']
-        image.paste(logo, logo_position)
-
-        if name in favorites:
-            image.paste(star_96, og_logo_position, star_96)
-        
-        draw.rectangle([og_logo_position[0], og_logo_position[1], og_logo_position[0]+96, og_logo_position[1]+96], outline=WHITE, width=3) # border
-        draw.rectangle([og_logo_position[0] - 2, og_logo_position[1] - 2, og_logo_position[0]+96 + 2, og_logo_position[1]+96 + 2], outline=BLACK, width=3) # border
+        # back to front, so each tile's border is trimmed by the one in front
+        draw_tile(image, draw, double_prev_stream, double_prev_position, star_25)
+        draw_tile(image, draw, double_next_stream, double_next_position, star_25)
+        draw_tile(image, draw, prev_stream,        prev_position,        star_60)
+        draw_tile(image, draw, next_stream,        next_position,        star_60)
+        draw_tile(image, draw, name,               logo_position,        star_96,
+                  dim=False)
 
         # draw name and underline
         name_chunk_start = NAME_Y
