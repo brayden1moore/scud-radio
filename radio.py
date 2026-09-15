@@ -755,7 +755,7 @@ def display_scroll(name, silent=False):
         next_stream        = stream_list[(i + 1) % n]
         double_next_stream = stream_list[(i + 2) % n]
 
-        image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BG_COLOR)
+        image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=BG_COLOR)
         draw = ImageDraw.Draw(image) 
         
         if not silent:
@@ -806,7 +806,7 @@ def display_scroll(name, silent=False):
         if next_stream in favorites:
             image.paste(star_60, next_position, star_60)
 
-        draw.rectangle([0, 0, SCREEN_WIDTH, 100], fill=(0,0,0,0.2))
+        draw.rectangle([0, 0, SCREEN_WIDTH, 100], fill=(0,0,0,20))
         logo = streams[name]['logo_96']
         image.paste(logo, logo_position)
 
