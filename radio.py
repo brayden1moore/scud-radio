@@ -19,7 +19,7 @@ def display_scud():
 # 2 inch
 RST = 27
 DC = 25
-BL = 23
+BL = 9
 bus = 0 
 device = 0 
 current_bl = 100
@@ -607,6 +607,22 @@ VOL_STRIP_TOP    = tick_bar_start - 3          # bar_top - 10
 VOL_STRIP_BOTTOM = tick_bar_start + 28         # bar_bottom + 10
 _vol_strip = Image.new('RGB', (SCREEN_WIDTH, VOL_STRIP_BOTTOM - VOL_STRIP_TOP), BLACK)
 
+# ambient strip
+AMB_BAR_Y        = 214                
+AMB_STRIP_TOP    = AMB_BAR_Y - 1
+AMB_STRIP_BOTTOM = AMB_BAR_Y + 25      
+AMB_TEXT_X       = 9                  
+AMB_RULE_H       = 2                   
+_amb_strip = Image.new('RGB', (SCREEN_WIDTH, AMB_STRIP_BOTTOM - AMB_STRIP_TOP),
+                       BLACK)
+
+ambient_bar_color  = WHITE
+ambient_text_color = BLACK
+ambient_name = None
+ambient_text_on_screen = None
+ 
+ambient_mq = {'offset': 0, 'pause_until': 0, 'needed': False}
+
 # Persistent scratch strips (allocated once, reused)
 _name_strip = Image.new('RGB', (SCREEN_WIDTH, NAME_STRIP_BOTTOM - NAME_STRIP_TOP), BLACK)
 _ol_strip   = Image.new('RGB', (SCREEN_WIDTH, OL_STRIP_BOTTOM - OL_STRIP_TOP), BLACK)
@@ -716,6 +732,50 @@ def _render_ol_strip(name, offset):
     d.text((start + span, y), text, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
     d.rectangle([0, 0, MARQUEE_X - 1, _ol_strip.height], fill=BG_COLOR)
     return _ol_strip
+
+def _render_amb_strip(text, offset=None):
+    """The ambient screen's bottom bar.
+ 
+    offset=None draws the text once, flush left -- the static bar.
+    offset=N draws it twice, span apart, scrolled by N -- one marquee frame.
+    display_bar renders through this too, so the static bar and the
+    scrolling bar line up to the pixel and the handoff is invisible.
+    """
+    d = ImageDraw.Draw(_amb_strip)
+    h = _amb_strip.height
+ 
+    d.rectangle([0, 0, SCREEN_WIDTH, h], fill=ambient_bar_color)
+ 
+    y = (AMB_BAR_Y + 1) - AMB_STRIP_TOP     # absolute y minus strip origin
+ 
+    if offset is None:
+        d.text((AMB_TEXT_X, y), text, font=SMALL_LIGHT, fill=ambient_text_color)
+    else:
+        span = width(text, SMALL_LIGHT) + MARQUEE_GAP
+        start = AMB_TEXT_X - (offset % span)
+        d.text((start, y), text, font=SMALL_LIGHT, fill=ambient_text_color)
+        d.text((start + span, y), text, font=SMALL_LIGHT, fill=ambient_text_color)
+        # left gutter, so text never touches the panel edge
+        d.rectangle([0, 0, AMB_TEXT_X - 1, h], fill=ambient_bar_color)
+ 
+    # rule last, so neither the text nor the gutter can clip it
+    d.rectangle([0, 0, SCREEN_WIDTH, AMB_RULE_H - 1], fill=ambient_text_color)
+    return _amb_strip
+ 
+ 
+def render_ambient_frame(text, offset=None):
+    """Push one ambient bar frame. Non-blocking on the lock: a dropped
+    marquee frame is invisible, a stalled main loop is not."""
+    if currently_displaying != 'ambient':
+        return
+    if not display_lock.acquire(blocking=False):
+        return
+    try:
+        if currently_displaying != 'ambient':
+            return
+        disp.ShowWindow(_render_amb_strip(text, offset), 0, AMB_STRIP_TOP)
+    finally:
+        display_lock.release()
 
 def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=None, must_show=False):
     # guard unchanged
@@ -881,64 +941,61 @@ def display_scroll(name, silent=False):
         return image
         #safe_display(image)
 
-def display_bar(image=current_image, color=WHITE):
-    if image:
-        draw = ImageDraw.Draw(image)
-        now = time.time()
-        current_time = datetime.fromtimestamp(now, tz=user_tz)
-        formatted_date = current_time.strftime("%a %b %d").replace(' 0', '  ').lstrip('0')
-        formatted_time = current_time.strftime("%I:%M %p").replace(' 0', '  ').lstrip('0')
-
-        # pick text color based on how dark the bar color is
-        r, g, b = color[:3]
-        luminance = 0.299 * r + 0.587 * g + 0.114 * b
-        text_color = WHITE if luminance < 128 else BLACK
-
-        # bottom bar 218 y for bottom
-        y = 214
-        draw.rectangle([0, y-1, 320, y+24], fill=color)
-        draw.rectangle([0, y-1, 320, y], fill=text_color)
-
-        draw.text((9, y + 1), text_on_screen, font=SMALL_LIGHT, fill=text_color)
-        #draw.text((13, y), formatted_date, font=SMALL_LIGHT, fill=text_color)
-        #draw.text((SCREEN_WIDTH - width(formatted_time, SMALL_LIGHT) - 13, y), formatted_time, font=SMALL_LIGHT, fill=text_color)
-
-
+def display_bar(image, text, color=WHITE):
+    global ambient_bar_color, ambient_text_color
+    if image is None:
+        return
+ 
+    r, g, b = color[:3]
+    luminance = 0.299 * r + 0.587 * g + 0.114 * b
+    ambient_bar_color = (r, g, b)
+    ambient_text_color = WHITE if luminance < 128 else BLACK
+ 
+    image.paste(_render_amb_strip(text), (0, AMB_STRIP_TOP))
+ 
+ 
 def display_ambient(name):
     global currently_displaying, last_ambient_display
-
-    logo = streams[name]['logo_216']
+    global ambient_name, ambient_text_on_screen
+ 
+    info = streams.get(name)
+    if info is None:
+        return
+ 
+    logo = info['logo_216']
     logo_w, logo_h = logo.size
     first_pixel = logo.getpixel((4, 0))
-
+ 
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=first_pixel)
-
+ 
     first_col_strip = logo.crop((4, 0, 5, logo_h))
     last_col_strip = logo.crop((logo_w - 4, 0, logo_w - 3, logo_h))
-
-    # fill left of the logo with its first column
+ 
     for col in range(52):
         image.paste(first_col_strip, (col, 2))
-
+ 
     image.paste(logo, (52, 2))
-
-    # fill right of the logo with its last column
-    logo_right = 52 + logo_w
-    for col in range(logo_right, SCREEN_WIDTH):
+ 
+    for col in range(52 + logo_w, SCREEN_WIDTH):
         image.paste(last_col_strip, (col, 2))
-
-    image.paste(logo, (52, 2))
-    draw = ImageDraw.Draw(image)
-
+ 
     currently_displaying = 'ambient'
-    logging.info(f'DISPLAY AMBIENT BEING CALLED')
-    display_bar(image, color = first_pixel)
-
-    enhancer = ImageEnhance.Brightness(image)
-    image = enhancer.enhance(BRIGHTNESS)
-
+    ambient_name = name
+    logging.info('DISPLAY AMBIENT BEING CALLED')
+ 
+    text = _ol_text(info)
+    ambient_text_on_screen = text
+    ambient_mq['cycle_start'] = None          # marquee starts from the top
+ 
+    if BRIGHTNESS != 1:
+        image = ImageEnhance.Brightness(image).enhance(BRIGHTNESS)
+ 
+    # Bar AFTER the brightness pass. The marquee strips that replace it
+    # later are never brightness-scaled, so scaling it here would make the
+    # bar visibly jump the moment the marquee takes over.
+    display_bar(image, text, color=first_pixel)
+ 
     safe_display(image)
-
     last_ambient_display = time.time()
 
 
@@ -1738,8 +1795,8 @@ try:
             # 'and', not '&' -- bitwise on bools works by accident and
             # doesn't short-circuit
             if (now - last_input_time > 60) and (now - last_ambient_display > 30):
-                logging.info('DISPLAYING AMBIENT VIA MAIN LOOP')
-                display_ambient(stream)
+                if currently_displaying != 'ambient' or ambient_name != stream:
+                    display_ambient(stream)
                 last_ambient_display = now
  
             if screen_on and (now - last_input_time > 600):
@@ -1778,12 +1835,22 @@ try:
                 and info is not None
                 and base_img is not None
             )
+
+            on_ambient = bool(
+                screen_on
+                and not sleeping
+                and not freeze_for_task
+                and not seeking
+                and currently_displaying == 'ambient'
+                and ambient_name
+                and streams.get(ambient_name) is not None
+            )
  
             # Heartbeat. If this stops appearing the loop is dead; if it
             # keeps appearing, one of these fields explains the freeze.
             if now - _last_gate_log > 2:
                 logging.info(
-                    'GATE on_everything=%s screen_on=%s sleeping=%s freeze=%s '
+                    'GATE on_everything=%s on_ambient=%s screen_on=%s sleeping=%s freeze=%s '
                     'seeking=%s displaying=%s active=%s info=%s cached=%s '
                     'marquee=%s',
                     on_everything, screen_on, sleeping, freeze_for_task,
@@ -1848,12 +1915,39 @@ try:
                     marquee_name = None
                     name_mq['offset'] = 0
                     oneliner_mq['offset'] = 0
+            elif on_ambient:
+                amb_info = streams.get(ambient_name)
+                amb_text = _ol_text(amb_info) if amb_info else ''
+                amb_w = width(amb_text, SMALL_LIGHT)
+                amb_long = amb_w > (SCREEN_WIDTH - AMB_TEXT_X - 6)
+                needs_scroll = amb_long
+ 
+                if ambient_text_on_screen != amb_text:
+                    logging.info('AMBIENT TEXT CHANGED -> %r', amb_text[:60])
+                    ambient_text_on_screen = amb_text
+                    ambient_mq['cycle_start'] = None
+                    if not amb_long:
+                        # short text: one static redraw, no cycle needed
+                        render_ambient_frame(amb_text, None)
+ 
+                if amb_long:
+                    # one track only, so declare the name track not-long and
+                    # let _joint_offsets drive the one-liner track alone
+                    _, amb_off = _joint_offsets(
+                        0, amb_w + MARQUEE_GAP, False, True, now, ambient_mq)
+                    ambient_mq['offset'] = amb_off or 0
+                    render_ambient_frame(amb_text, amb_off)
+ 
+                marquee_name = None
+                name_mq['offset'] = 0
+                oneliner_mq['offset'] = 0
+ 
             else:
                 marquee_name = None
                 name_mq['offset'] = 0
                 oneliner_mq['offset'] = 0
  
-            time.sleep(0.02 if (on_everything and needs_scroll) else 0.15)
+            time.sleep(0.02 if needs_scroll else 0.15)
  
         except Exception:
             logging.error('MAIN LOOP ERROR:\n%s', traceback.format_exc())
