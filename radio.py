@@ -1623,7 +1623,7 @@ AIRPLAY_BG = (26, 26, 26)
 airplay_lock = threading.Lock()
 airplay = {'active': False, 'title': '', 'artist': '', 'album': '', 'sender': '',
            'art': None, 'thumb': None, 'dirty': False, 'pending': {},
-           'pict_seen': False, 'await_art': 0.0}
+           'cover_early': False, 'await_art': 0.0, 'pending_at': 0.0, 'in_bundle': False}
 AIRPLAY_ART_WAIT = 1.5     # after a track change, how long to wait for its cover before showing the AirPlay mark
 airplay_mq = {'offset': 0, 'pause_until': 0, 'needed': False}
 airplay_volume = get_config().get('airplay_volume')     # None -> start from the radio's level
@@ -1650,47 +1650,73 @@ def _prepare_cover(data):
         logging.error(f'airplay cover: {e}')
         return None, None
 
+AIRPLAY_LOOSE_COMMIT = 0.8   # track info that arrives without a closing 'mden' is applied after this long
+
+def _commit_pending():
+    """Apply the track info gathered so far (caller holds airplay_lock)."""
+    p = airplay['pending']
+    new = tuple(p.get(k, airplay[k] if p.get('_partial') else '') for k in ('title', 'artist', 'album'))
+    old = tuple(airplay[k] for k in ('title', 'artist', 'album'))
+    airplay['pending'] = {}
+    airplay['pending_at'] = 0.0
+    if new == old:
+        airplay['cover_early'] = False          # same track re-sent: any cover was for it
+        return
+    airplay.update(title=new[0], artist=new[1], album=new[2])
+    logging.info('AIRPLAY track: %s / %s', new[0], new[1])
+    early_cover = airplay['cover_early']
+    airplay['cover_early'] = False
+    if not early_cover:
+        # New track, no cover arrived ahead of its info. Shairport sends no
+        # picture at all for tracks without a cover, so the old one would stick. Hold the redraw briefly for this
+        # track's cover (it usually follows the info); airplay_tick drops to
+        # the AirPlay mark if none arrives.
+        airplay['await_art'] = time.monotonic()
+    else:
+        airplay['dirty'] = True
+
 def _airplay_event(typ, code, data):
     text = lambda: data.decode('utf-8', 'replace').strip()
+    if (typ, code) not in (('ssnc', 'prgr'), ('ssnc', 'pvol'), ('ssnc', 'clip'), ('ssnc', 'svip'),
+                           ('ssnc', 'disc'), ('ssnc', 'dapo'), ('ssnc', 'phbt'), ('ssnc', 'phb0')):
+        shown = f'{len(data)} bytes' if code == 'PICT' else text()[:60]
+        logging.info('AIRPLAY meta %s/%s %s', typ, code, shown)
     with airplay_lock:
         p = airplay['pending']
-        if typ == 'core':
-            if code == 'minm':
-                p['title'] = text()
-            elif code == 'asar':
-                p['artist'] = text()
-            elif code == 'asal':
-                p['album'] = text()
+        if typ == 'core' and code in ('minm', 'asar', 'asal'):
+            p[{'minm': 'title', 'asar': 'artist', 'asal': 'album'}[code]] = text()
+            if not airplay['in_bundle']:
+                p['_partial'] = True               # a loose update: keep fields it doesn't mention
+            airplay['pending_at'] = time.monotonic()
         elif typ == 'ssnc':
             if code == 'mdst':                       # a metadata bundle begins
                 airplay['pending'] = {}
-                airplay['pict_seen'] = False
+                airplay['pending_at'] = 0.0
+                airplay['in_bundle'] = True
             elif code == 'mden':                     # ...and ends: commit it
-                new = tuple(p.get(k, '') for k in ('title', 'artist', 'album'))
-                old = tuple(airplay[k] for k in ('title', 'artist', 'album'))
-                airplay.update(title=new[0], artist=new[1], album=new[2])
-                if new != old and not airplay['pict_seen']:
-                    # New track: shairport sends no picture at all for tracks without
-                    # a cover, so the old one would stick. Hold the redraw briefly for
-                    # this track's cover (it usually follows the bundle); airplay_tick
-                    # drops to the AirPlay mark if none arrives.
-                    airplay['await_art'] = time.monotonic()
-                else:
-                    airplay['dirty'] = True
+                airplay['in_bundle'] = False
+                _commit_pending()
             elif code == 'PICT':
                 airplay['art'], airplay['thumb'] = _prepare_cover(data) if data else (None, None)
-                airplay['pict_seen'] = True
+                # A cover that arrives while we're waiting belongs to the track just
+                # shown; one that arrives otherwise is for the info that's coming.
+                airplay['cover_early'] = not airplay['await_art']
                 airplay['await_art'] = 0.0
                 airplay['dirty'] = True
-            elif code in ('pbeg', 'prsm'):           # play begins / resumes
-                if not airplay['active']:
-                    airplay.update(active=True, title='', artist='', album='', art=None, thumb=None)
+            elif code == 'pbeg':                     # a new play session (maybe a different app or sender)
+                airplay.update(active=True, title='', artist='', album='', art=None, thumb=None,
+                               pending={}, pending_at=0.0, in_bundle=False, await_art=0.0, cover_early=False)
+                airplay['dirty'] = True
+            elif code == 'prsm':                     # resume after a pause: same track
+                airplay['active'] = True
                 airplay['dirty'] = True
             elif code == 'pend':                     # sender disconnected
                 airplay['active'] = False
                 airplay['dirty'] = True
             elif code == 'snam':
-                airplay['sender'] = text()
+                if text() != airplay['sender']:
+                    airplay['sender'] = text()
+                    airplay['dirty'] = True
 
 def _airplay_reader():
     while True:
@@ -1904,6 +1930,9 @@ def airplay_tick(now):
     else how long the main loop should sleep."""
     global airplay_vol_until
     with airplay_lock:
+        if airplay['pending_at'] and now - airplay['pending_at'] > AIRPLAY_LOOSE_COMMIT:
+            airplay['in_bundle'] = False             # bundle never closed, or loose updates (Safari etc.)
+            _commit_pending()
         if airplay['await_art'] and now - airplay['await_art'] > AIRPLAY_ART_WAIT:
             airplay.update(art=None, thumb=None, await_art=0.0, dirty=True)   # this track has no cover
         active, dirty = airplay['active'], airplay['dirty']
