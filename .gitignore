@@ -3,3 +3,4 @@ ios
 known_networks.json
 .DS_Store
 *.ipynb
+__pycache__
