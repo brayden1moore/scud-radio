@@ -209,6 +209,7 @@ def draw_text_mixed(draw, xy, text, fill):
         draw.text((x, by), t, font=f, fill=fill, anchor='ls')
         x += f.getlength(t)
 DIAL_FONT = load_font('Favorit', 14)
+TIME_FONT = load_font('Archivo', 40, weight=800)   # station local time on the settled screen
 
 
 def replace_font(font):
@@ -722,7 +723,7 @@ AMB_BAR_Y        = 214
 AMB_STRIP_TOP    = AMB_BAR_Y - 1
 AMB_STRIP_BOTTOM = AMB_BAR_Y + 25      
 AMB_TEXT_X       = 9                  
-AMB_RULE_H       = 2                   
+AMB_RULE_H       = 1                   
 _amb_strip = Image.new('RGB', (SCREEN_WIDTH, AMB_STRIP_BOTTOM - AMB_STRIP_TOP),
                        BLACK)
 
@@ -813,11 +814,11 @@ MARQUEE_GAP = 30                              # blank gap before the text repeat
 FADE_W = 28
 _fade_ramp = np.linspace(0.0, 1.0, FADE_W, dtype=np.float32)[None, :, None]
 
-def _fade_right(img, y0, y1):
-    """Fade the last FADE_W px of a row into the background, so text slides out softly."""
-    box = (SCREEN_WIDTH - FADE_W, int(y0), SCREEN_WIDTH, int(y1))
+def _fade_right(img, y0, y1, x_end=SCREEN_WIDTH, color=None):
+    """Fade the FADE_W px before x_end into `color` (default: background), so text slides out softly."""
+    box = (int(x_end) - FADE_W, int(y0), int(x_end), int(y1))
     region = np.asarray(img.crop(box).convert('RGB'), dtype=np.float32)
-    bg = np.array(BG_COLOR, dtype=np.float32)
+    bg = np.array(color if color is not None else BG_COLOR, dtype=np.float32)
     out = region * (1 - _fade_ramp) + bg * _fade_ramp
     img.paste(Image.fromarray(out.astype(np.uint8), 'RGB'), box[:2])
 
@@ -875,6 +876,91 @@ def _draw_clock_row(draw, name, origin_y=0):
     t = station_time(name)
     if t:
         draw.text((SCREEN_WIDTH - 10 - width(t, CLOCK_FONT), y), t, font=CLOCK_FONT, fill=MUTED_COLOR)
+
+SETTLED_LOGO_POS = (12, og_logo_position[1])
+PANEL_X = SETTLED_LOGO_POS[0] + TILE + 16
+PANEL_BOTTOM = og_logo_position[1] + TILE + 4
+_panel = Image.new('RGB', (SCREEN_WIDTH - PANEL_X, PANEL_BOTTOM), BLACK)
+_status_strip = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT - CLOCK_STRIP_TOP), BLACK)
+
+def station_time_parts(name):
+    tz = (streams.get(name) or {}).get('timezone')
+    if not tz:
+        return None
+    try:
+        now = datetime.now(pytz.timezone(tz))
+    except Exception:
+        return None
+    return now.strftime('%I:%M').lstrip('0'), now.strftime('%p').lower()
+
+def _draw_panel(draw, name, ox=0):
+    """Big local time, then 'in <city>' (wraps to two lines)."""
+    info = streams.get(name) or {}
+    city = (info.get('location') or '').strip()
+    x, y = PANEL_X - ox, 24
+    parts = station_time_parts(name)
+    if parts:
+        hm, ap = parts
+        draw.text((x, y), hm, font=TIME_FONT, fill=SECONDARY_COLOR)
+        baseline = y + TIME_FONT.getmetrics()[0]
+        draw.text((x + width(hm, TIME_FONT) + 5, baseline), ap, font=CLOCK_FONT,
+                  fill=SECONDARY_COLOR, anchor='ls')
+        y = baseline + 14
+        label = f'in {city}' if city else ''
+    else:
+        label = city
+    if label:
+        lines, f = calculate_text(label, CLOCK_FONT, SCREEN_WIDTH - PANEL_X - 8, 2)
+        for ln in lines:
+            draw.text((x, y), ln.strip(), font=f, fill=MUTED_COLOR)
+            y += height('Sg', f) + 5
+
+def push_panel(name):
+    """Redraw just the time panel (the minute ticked over)."""
+    d = ImageDraw.Draw(_panel)
+    d.rectangle([0, 0, _panel.width, _panel.height], fill=BG_COLOR)
+    _draw_panel(d, name, ox=PANEL_X)
+    if display_lock.acquire(timeout=0.5):
+        try:
+            disp.ShowWindow(_panel, PANEL_X, 0)
+        finally:
+            display_lock.release()
+
+def render_status_strip(name):
+    """Settled bottom row: status dot + word, then genres in muted text."""
+    d = ImageDraw.Draw(_status_strip)
+    d.rectangle([0, 0, SCREEN_WIDTH, _status_strip.height], fill=BG_COLOR)
+    info = streams.get(name) or {}
+    status = info.get('status') or 'Offline'
+    y = CLOCK_Y - CLOCK_STRIP_TOP
+    cy = y + height('Sg', CLOCK_FONT) // 2 + 2
+    cx, r = MARQUEE_X + 5, 5
+    edge = None if BG_COLOR == BLACK else (60, 60, 60)
+    if status == 'Live':
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=LIVE_COLOR, outline=edge, width=1)
+    elif status == 'Re-Run':
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=edge or LIVE_COLOR, width=1 if edge else 2)
+        if edge:
+            d.ellipse([cx - r + 1, cy - r + 1, cx + r - 1, cy + r - 1], outline=LIVE_COLOR, width=2)
+    else:
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=STATUS_OFF_COLOR)
+    x = MARQUEE_X + 17
+    d.text((x, y), status, font=CLOCK_FONT, fill=SECONDARY_COLOR)
+    genres = ' · '.join(info.get('genres') or [])
+    if genres:
+        gx = x + width(status, CLOCK_FONT) + 10
+        d.text((gx, y), genres, font=CLOCK_FONT, fill=MUTED_COLOR)
+        if gx + width(genres, CLOCK_FONT) > SCREEN_WIDTH:
+            _fade_right(_status_strip, 0, _status_strip.height)
+    return _status_strip
+
+def push_status_strip(name):
+    strip = render_status_strip(name)
+    if display_lock.acquire(timeout=0.5):
+        try:
+            disp.ShowWindow(strip, 0, CLOCK_STRIP_TOP)
+        finally:
+            display_lock.release()
 
 def render_clock_strip(name):
     d = ImageDraw.Draw(_clock_strip)
@@ -935,6 +1021,18 @@ def _render_ol_strip(name, offset):
     _fade_right(_ol_strip, 0, _ol_strip.height)
     return _ol_strip
 
+def _mix(a, b, t):
+    return tuple(round(a[k] * (1 - t) + b[k] * t) for k in range(3))
+
+def _amb_time_text():
+    parts = station_time_parts(ambient_name) if ambient_name else None
+    return (parts[0] + parts[1]) if parts else ''
+
+def _amb_seg_w():
+    """Width of the time segment at the right end of the ambient bar (0 if no time)."""
+    t = _amb_time_text()
+    return width(t, CLOCK_FONT) + 20 if t else 0
+
 def _render_amb_strip(text, offset=None):
     """The ambient screen's bottom bar.
  
@@ -958,8 +1056,21 @@ def _render_amb_strip(text, offset=None):
         # left gutter, so text never touches the panel edge
         d.rectangle([0, 0, AMB_TEXT_X - 1, h], fill=ambient_bar_color)
  
+    # station time in its own segment on the right; the one-liner fades out before it
+    rule = _mix(ambient_text_color, ambient_bar_color, 0.55)       # softer than full contrast
+    seg = _amb_seg_w()
+    if seg:
+        x0 = SCREEN_WIDTH - seg
+        _fade_right(_amb_strip, AMB_RULE_H, h, x_end=x0, color=ambient_bar_color)
+        d.rectangle([x0, 0, SCREEN_WIDTH, h], fill=ambient_bar_color)
+        d.rectangle([x0, 5, x0, h - 4], fill=rule)
+        t = _amb_time_text()
+        d.text((x0 + 10, y + 1), t, font=CLOCK_FONT, fill=ambient_text_color)
+    elif offset is not None:
+        _fade_right(_amb_strip, AMB_RULE_H, h, color=ambient_bar_color)
+
     # rule last, so neither the text nor the gutter can clip it
-    d.rectangle([0, 0, SCREEN_WIDTH, AMB_RULE_H - 1], fill=ambient_text_color)
+    d.rectangle([0, 0, SCREEN_WIDTH, AMB_RULE_H - 1], fill=rule)
     return _amb_strip
  
  
@@ -1277,23 +1388,16 @@ def _render_arrow(base, direction):
     return tile, box
 
 def clear_seek_overlay():
-    """Put back the plain strip and logo areas from the cached screen."""
+    """Knob has rested: switch from the carousel to the settled screen."""
     global seek_overlay_name
     name, seek_overlay_name = seek_overlay_name, None
-    base = scroll_cache_dict.get(name) if name else None
-    if base is None or currently_displaying != 'everything':
+    if not name or currently_displaying != 'everything':
         return
     if (readied_stream if readied_stream else stream) != name:
         return
-    if display_lock.acquire(timeout=0.5):
-        try:
-            if not volume_overlay_showing:
-                disp.ShowWindow(render_clock_strip(name), 0, VOL_STRIP_TOP)
-            for dirn in (-1, 1):
-                b = _arrow_box(dirn)
-                disp.ShowWindow(base.crop(b).convert('RGB'), b[0], b[1])
-        finally:
-            display_lock.release()
+    display_cached_scroll(name)
+    if volume_overlay_showing:
+        render_frame(name, 0, volume=current_volume, draw_oneliner=False, must_show=True)
 
 def seek_stream(direction):
     global readied_stream, seek_overlay_until, seek_overlay_name
@@ -1612,7 +1716,12 @@ def compose_frame(name, seek_direction=None):
         scroll_cache_dict[name] = base
     frame = base.copy()
     if seek_direction is None:
-        frame.paste(render_clock_strip(name), (0, VOL_STRIP_TOP))
+        # settled: only the active logo, pushed left, with the time panel beside it
+        d = ImageDraw.Draw(frame)
+        d.rectangle([0, 0, SCREEN_WIDTH, PANEL_BOTTOM], fill=BG_COLOR)
+        draw_tile(frame, d, name, SETTLED_LOGO_POS, star_96, dim=False)
+        _draw_panel(d, name)
+        frame.paste(render_status_strip(name), (0, VOL_STRIP_TOP))
     else:
         frame.paste(_render_dial_strip(name), (0, VOL_STRIP_TOP))
         if seek_direction:
@@ -1629,7 +1738,7 @@ def display_cached_scroll(name, pushed=False, seek_direction=None):
         return
     if pushed:
         draw = ImageDraw.Draw(frame)
-        p = og_logo_position
+        p = SETTLED_LOGO_POS if seek_direction is None else og_logo_position
         draw.rectangle([p[0], p[1], p[0] + TILE, p[1] + TILE], outline=BG_COLOR, width=2)
     with display_lock:
         disp.ShowImage(frame)
@@ -2042,6 +2151,7 @@ last_input_time = time.time()
  
 _last_gate_log = 0.0
 _last_clock_minute = None
+_last_amb_minute = None
 pending_last_played = None
 needs_scroll = False
  
@@ -2084,7 +2194,7 @@ try:
             if volume_overlay_showing and (now - last_volume_change) > 3:
                 volume_overlay_showing = False
                 if base_img is not None and currently_displaying == 'everything':
-                    push_clock_strip(active_name)
+                    push_status_strip(active_name)
  
             on_everything = bool(
                 screen_on
@@ -2131,7 +2241,7 @@ try:
             minute = int(now // 60)
             if on_everything and minute != _last_clock_minute and not volume_overlay_showing and not seek_overlay_name:
                 _last_clock_minute = minute
-                push_clock_strip(active_name)
+                push_panel(active_name)
 
             if on_everything:
                 text = _ol_text(info)
@@ -2192,7 +2302,7 @@ try:
                 amb_info = streams.get(ambient_name)
                 amb_text = _ol_text(amb_info) if amb_info else ''
                 amb_w = text_width(amb_text)
-                amb_long = amb_w > (SCREEN_WIDTH - AMB_TEXT_X - 6)
+                amb_long = amb_w > (SCREEN_WIDTH - AMB_TEXT_X - 6 - _amb_seg_w())
                 needs_scroll = amb_long
  
                 if ambient_text_on_screen != amb_text:
@@ -2203,6 +2313,10 @@ try:
                         # short text: one static redraw, no cycle needed
                         render_ambient_frame(amb_text, None)
  
+                if not amb_long and minute != _last_amb_minute:
+                    _last_amb_minute = minute            # keep the bar's clock current
+                    render_ambient_frame(amb_text, None)
+
                 if amb_long:
                     # one track only, so declare the name track not-long and
                     # let _joint_offsets drive the one-liner track alone
