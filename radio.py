@@ -64,6 +64,7 @@ import re
 import os
 
 from functools import lru_cache
+from collections import OrderedDict
 
 logging.basicConfig(
     level=logging.INFO,
@@ -559,6 +560,7 @@ def play(name, toggled=False):
     else:
         stream_url = streams[name]['streamLink']
         _start_tuning(name)
+        ensure_show_art(name)              # ready by the time ambient comes up
         if first_boot:
             send_mpv_command({"command": ["loadfile", stream_url]})
             first_boot = False
@@ -1153,7 +1155,10 @@ def render_ambient_frame(text, offset=None):
     try:
         if currently_displaying != 'ambient':
             return
-        disp.ShowWindow(_render_amb_strip(text, offset), 0, AMB_STRIP_TOP)
+        if ambient_show:
+            disp.ShowWindow(_render_show_l1(text, offset), SHOW_TEXT_X, SHOW_L1_Y)
+        else:
+            disp.ShowWindow(_render_amb_strip(text, offset), 0, AMB_STRIP_TOP)
     finally:
         display_lock.release()
 
@@ -1335,14 +1340,226 @@ def _mode_color(img):
     return tuple(int(c) for c in colors[counts.argmax()])
 
 
+# ---- show art on ambient ----------------------------------------------------
+# When the station publishes art for the show that's on, ambient looks like the
+# show cards in the One Radio app: the image fills the screen, a dark gradient
+# rises from the bottom, and the station logo sits in the corner beside the
+# now-playing line and the station name + local time. No art -> classic ambient.
+# /summary passes the station's own (dynamic) `showLogo` URL; we fetch it,
+# cover-crop to 320x240 here, and skip images that would look bad.
+SHOW_ART_ON = get_config().get('show_art', True)   # "show_art": false in config.json turns it off
+SHOW_LOGO = 48
+SHOW_PAD = 12
+SHOW_TEXT_X = SHOW_PAD + SHOW_LOGO + 12
+SHOW_L1_Y, SHOW_L1_H = SCREEN_HEIGHT - SHOW_PAD - SHOW_LOGO - 3, 26   # now-playing line
+SHOW_L2_Y, SHOW_L2_H = SHOW_L1_Y + SHOW_L1_H, 24                      # station + local time
+SHOW_GRAD_TOP = 100
+SHOW_SUB = (205, 205, 205)
+ART_CACHE_MAX = 12
+
+art_lock = threading.Lock()
+show_art_cache = OrderedDict()      # url -> 320x240 RGB image
+_art_inflight = set()
+_art_failed = {}                    # url -> monotonic time of the failure
+ambient_show = False                # ambient is currently in show-art mode
+ambient_art_url = None
+_show_base = None                   # art + gradient + logo, no text
+
+SHOW_ART_MAX_BYTES = 8_000_000
+
+def _prepare_show_art(data):
+    """Raw image bytes -> 320x240 cover crop, or None if it would look bad."""
+    img = Image.open(BytesIO(data))
+    img.draft('RGB', (SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2))    # JPEGs decode at reduced size (fast on the Pi)
+    img = ImageOps.exif_transpose(img)
+    if img.mode in ('RGBA', 'LA', 'P') or 'transparency' in img.info:
+        img = img.convert('RGBA')
+        img = Image.alpha_composite(Image.new('RGBA', img.size, (0, 0, 0, 255)), img)
+    img = img.convert('RGB')
+    w, h = img.size
+    if min(w, h) < 200:                  # too small: mushy full-screen
+        return None
+    if max(w, h) / min(w, h) > 2.4:      # long banners crop badly
+        return None
+    if max(w, h) > 1400:                 # big PNGs: shrink before the high-quality fit
+        img.thumbnail((1400, 1400), Image.BILINEAR)
+    img = ImageOps.fit(img, (SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
+    lo, hi = img.convert('L').getextrema()
+    if hi - lo < 12:                     # flat placeholder
+        return None
+    return img
+
+def _fetch_show_art(url):
+    try:
+        with requests.get(url, timeout=6, stream=True,
+                          headers={'User-Agent': 'Mozilla/5.0 (Otis radio)'}) as resp:
+            resp.raise_for_status()
+            data = bytearray()
+            for chunk in resp.iter_content(65536):
+                data += chunk
+                if len(data) > SHOW_ART_MAX_BYTES:
+                    raise ValueError('image too large')
+        img = _prepare_show_art(bytes(data))
+        if img is None:
+            raise ValueError('image unsuitable for full-screen')
+        with art_lock:
+            show_art_cache[url] = img
+            show_art_cache.move_to_end(url)
+            while len(show_art_cache) > ART_CACHE_MAX:
+                show_art_cache.popitem(last=False)
+    except Exception as e:
+        _art_failed[url] = time.monotonic()
+        logging.error(f'show art fetch failed ({url}): {e}')
+    finally:
+        _art_inflight.discard(url)
+
+def ensure_show_art(name):
+    """Start fetching the current show's art in the background (no-op if cached/in flight)."""
+    if not SHOW_ART_ON:
+        return
+    url = (streams.get(name) or {}).get('showLogo')
+    if not url or url in show_art_cache or url in _art_inflight:
+        return
+    if time.monotonic() - _art_failed.get(url, -1e9) < 1800:     # failed/unsuitable: wait 30 min
+        return
+    _art_inflight.add(url)
+    threading.Thread(target=_fetch_show_art, args=(url,), daemon=True).start()
+
+def show_art(name):
+    """The current show's art if it's ready, else None (and start fetching it)."""
+    if not SHOW_ART_ON:
+        return None
+    url = (streams.get(name) or {}).get('showLogo')
+    if not url:
+        return None
+    img = show_art_cache.get(url)
+    if img is None:
+        ensure_show_art(name)
+    return img
+
+_show_grad = None
+def _show_gradient():
+    """Darkening per row, like the app's card overlay: clear at the top, 70% a bit
+    past halfway down, 85% at the bottom edge."""
+    global _show_grad
+    if _show_grad is None:
+        a = np.zeros((SCREEN_HEIGHT, 1, 1), np.float32)
+        span = SCREEN_HEIGHT - SHOW_GRAD_TOP
+        for y in range(SHOW_GRAD_TOP, SCREEN_HEIGHT):
+            t = (y - SHOW_GRAD_TOP) / span
+            a[y] = 0.7 * (t / 0.55) ** 1.4 if t < 0.55 else 0.7 + 0.15 * (t - 0.55) / 0.45
+        _show_grad = a
+    return _show_grad
+
+def _compose_show_base(name, art):
+    arr = np.asarray(art.convert('RGB'), np.float32) * (1 - _show_gradient())
+    base = Image.fromarray(arr.astype(np.uint8), 'RGB')
+    base.paste(logo_at(name, SHOW_LOGO), (SHOW_PAD, SCREEN_HEIGHT - SHOW_PAD - SHOW_LOGO))
+    if BRIGHTNESS != 1:
+        base = ImageEnhance.Brightness(base).enhance(BRIGHTNESS)
+    return base
+
+_mask_tile_cache = {}
+def text_mask_tile(text, height):
+    """Like text_tile, but an alpha mask, so text can sit on a photo instead of a flat bar."""
+    key = (text, height)
+    tile = _mask_tile_cache.get(key)
+    if tile is None:
+        tile = Image.new('L', (max(1, text_width(text) + MARQUEE_GAP), height), 0)
+        draw_text_mixed(ImageDraw.Draw(tile), (0, 0), text, 255)
+        if len(_mask_tile_cache) > 32:
+            _mask_tile_cache.clear()
+        _mask_tile_cache[key] = tile
+    return tile
+
+def _fade_mask_right(mask):
+    m = np.asarray(mask, np.float32).copy()
+    m[:, -FADE_W:] *= (1 - _fade_ramp[0, :, 0])
+    return Image.fromarray(m.astype(np.uint8), 'L')
+
+def _render_show_l1(text, offset=None):
+    """The now-playing line over the art; offset=N is one marquee frame."""
+    w = SCREEN_WIDTH - SHOW_TEXT_X
+    strip = _show_base.crop((SHOW_TEXT_X, SHOW_L1_Y, SCREEN_WIDTH, SHOW_L1_Y + SHOW_L1_H))
+    tile = text_mask_tile(text, SHOW_L1_H)
+    mask = Image.new('L', (w, SHOW_L1_H), 0)
+    if offset is None:
+        mask.paste(tile, (0, 0))
+    else:
+        x = -(offset % tile.width)
+        while x < w:
+            mask.paste(tile, (int(x), 0))
+            x += tile.width
+    if offset is not None or text_width(text) > w - SHOW_PAD:
+        mask = _fade_mask_right(mask)
+    strip.paste(WHITE, (0, 0, w, SHOW_L1_H), mask)
+    return strip
+
+def _render_show_l2(name):
+    """Station name and its local time, under the now-playing line."""
+    w = SCREEN_WIDTH - SHOW_TEXT_X
+    strip = _show_base.crop((SHOW_TEXT_X, SHOW_L2_Y, SCREEN_WIDTH, SHOW_L2_Y + SHOW_L2_H))
+    parts = station_time_parts(name)
+    label = name + (f' · {parts[0]} {parts[1]}' if parts else '')
+    mask = Image.new('L', (w, SHOW_L2_H), 0)
+    ImageDraw.Draw(mask).text((0, 1), label, font=CLOCK_FONT, fill=255)
+    if width(label, CLOCK_FONT) > w - SHOW_PAD:
+        mask = _fade_mask_right(mask)
+    strip.paste(SHOW_SUB, (0, 0, w, SHOW_L2_H), mask)
+    return strip
+
+def push_show_l2(name):
+    if currently_displaying != 'ambient' or not ambient_show:
+        return
+    if not display_lock.acquire(blocking=False):
+        return
+    try:
+        if currently_displaying == 'ambient' and ambient_show:
+            disp.ShowWindow(_render_show_l2(name), SHOW_TEXT_X, SHOW_L2_Y)
+    finally:
+        display_lock.release()
+
+def _amb_avail_w():
+    """Room for the one-liner before it has to scroll."""
+    if ambient_show:
+        return SCREEN_WIDTH - SHOW_TEXT_X - SHOW_PAD
+    return SCREEN_WIDTH - AMB_TEXT_X - 6 - _amb_seg_w()
+
+def _display_show_ambient(name, info, art):
+    global currently_displaying, last_ambient_display, ambient_name, ambient_text_on_screen
+    global ambient_show, ambient_art_url, _show_base
+    _show_base = _compose_show_base(name, art)
+    text = _ol_text(info)
+    image = _show_base.copy()
+    image.paste(_render_show_l1(text), (SHOW_TEXT_X, SHOW_L1_Y))
+    image.paste(_render_show_l2(name), (SHOW_TEXT_X, SHOW_L2_Y))
+    currently_displaying = 'ambient'
+    ambient_name = name
+    ambient_show = True
+    ambient_art_url = info.get('showLogo')
+    ambient_text_on_screen = text
+    ambient_mq['cycle_start'] = None
+    logging.info('DISPLAY AMBIENT (show art) %s', name)
+    safe_display(image)
+    last_ambient_display = time.monotonic()
+
+
 def display_ambient(name):
     global currently_displaying, last_ambient_display
     global ambient_name, ambient_text_on_screen
  
+    global ambient_show, ambient_art_url
     info = streams.get(name)
     if info is None:
         return
- 
+
+    art = show_art(name)
+    if art is not None:
+        _display_show_ambient(name, info, art)
+        return
+    ambient_show = False
+    ambient_art_url = None
+
     logo = info['logo_216']
     logo_w, logo_h = logo.size
     # sides take the logo's most common edge colour; repeating the edge pixel column streaked busy logos
@@ -1847,6 +2064,8 @@ def periodic_update():
                 print('Updated',updated_streams)
                 streams = fetched_streams
                 stream_list = get_stream_list(streams)
+                if stream:
+                    ensure_show_art(stream)          # the show may have changed
                 start_priority_refresh(updated_streams, run_ticks=True)
                 failed_fetches = 0
                 last_successful_fetch = time.monotonic()
@@ -2309,7 +2528,7 @@ try:
             if seek_overlay_name and now > seek_overlay_until:
                 clear_seek_overlay()
 
-            minute = int(now // 60)
+            minute = int(time.time() // 60)        # wall clock: station clocks tick on the real minute
             if on_everything and minute != _last_clock_minute and not volume_overlay_showing and not seek_overlay_name:
                 _last_clock_minute = minute
                 push_panel(active_name)
@@ -2376,9 +2595,17 @@ try:
                     oneliner_mq['offset'] = 0
             elif on_ambient:
                 amb_info = streams.get(ambient_name)
+                if amb_info is not None and SHOW_ART_ON:
+                    # swap between show art and the classic screen as shows change
+                    want = amb_info.get('showLogo')
+                    have = want if (want and want in show_art_cache) else None
+                    if want and not have:
+                        ensure_show_art(ambient_name)
+                    if have != ambient_art_url:
+                        display_ambient(ambient_name)
                 amb_text = _ol_text(amb_info) if amb_info else ''
                 amb_w = text_width(amb_text)
-                amb_long = amb_w > (SCREEN_WIDTH - AMB_TEXT_X - 6 - _amb_seg_w())
+                amb_long = amb_w > _amb_avail_w()
                 needs_scroll = amb_long
  
                 if ambient_text_on_screen != amb_text:
@@ -2389,9 +2616,12 @@ try:
                         # short text: one static redraw, no cycle needed
                         render_ambient_frame(amb_text, None)
  
-                if not amb_long and minute != _last_amb_minute:
-                    _last_amb_minute = minute            # keep the bar's clock current
-                    render_ambient_frame(amb_text, None)
+                if minute != _last_amb_minute:
+                    _last_amb_minute = minute            # keep the station clock current
+                    if ambient_show:
+                        push_show_l2(ambient_name)
+                    elif not amb_long:
+                        render_ambient_frame(amb_text, None)
 
                 if amb_long:
                     # one track only, so declare the name track not-long and
