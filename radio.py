@@ -209,7 +209,7 @@ def draw_text_mixed(draw, xy, text, fill):
         draw.text((x, by), t, font=f, fill=fill, anchor='ls')
         x += f.getlength(t)
 DIAL_FONT = load_font('Favorit', 14)
-TIME_FONT = load_font('Archivo', 40, weight=800)   # station local time on the settled screen
+TIME_FONT = load_font('Archivo', 48, weight=800)   # station local time on the settled screen
 
 
 def replace_font(font):
@@ -897,7 +897,7 @@ def _draw_panel(draw, name, ox=0):
     """Big local time, then 'in <city>' (wraps to two lines)."""
     info = streams.get(name) or {}
     city = (info.get('location') or '').strip()
-    x, y = PANEL_X - ox, 24
+    x, y = PANEL_X - ox, 18
     parts = station_time_parts(name)
     if parts:
         hm, ap = parts
@@ -905,7 +905,7 @@ def _draw_panel(draw, name, ox=0):
         baseline = y + TIME_FONT.getmetrics()[0]
         draw.text((x + width(hm, TIME_FONT) + 5, baseline), ap, font=CLOCK_FONT,
                   fill=SECONDARY_COLOR, anchor='ls')
-        y = baseline + 14
+        y = baseline + 13
         label = f'in {city}' if city else ''
     else:
         label = city
@@ -945,11 +945,11 @@ def render_status_strip(name):
     else:
         d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=STATUS_OFF_COLOR)
     x = MARQUEE_X + 17
-    d.text((x, y), status, font=CLOCK_FONT, fill=SECONDARY_COLOR)
+    d.text((x, y - 1), status, font=CLOCK_FONT, fill=SECONDARY_COLOR)
     genres = ' · '.join(info.get('genres') or [])
     if genres:
         gx = x + width(status, CLOCK_FONT) + 10
-        d.text((gx, y), genres, font=CLOCK_FONT, fill=MUTED_COLOR)
+        d.text((gx, y - 1), genres, font=CLOCK_FONT, fill=MUTED_COLOR)
         if gx + width(genres, CLOCK_FONT) > SCREEN_WIDTH:
             _fade_right(_status_strip, 0, _status_strip.height)
     return _status_strip
