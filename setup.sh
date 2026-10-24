@@ -122,18 +122,8 @@ else
   # build. The chip has no I2C control port, so ALSA exposes no mixer controls
   # at all — that's expected, not a fault. mpv does volume in software.
   # Point "default" at the card by name rather than relying on card 0 ordering.
-  sudo rm -f /etc/asound.conf
-  sudo tee /etc/asound.conf > /dev/null <<EOF
-pcm.!default {
-    type plug
-    slave.pcm "hw:CARD=${ALSA_CARD},DEV=0"
-}
-
-ctl.!default {
-    type hw
-    card "${ALSA_CARD}"
-}
-EOF
+  #
+  # (asound.conf -- shared dmix + AirPlay soft volume -- is written by tools/install_airplay.sh)
   # Nothing to save or restore at boot on this card; drop any stale wm8960 link.
   sudo rm -f /var/lib/alsa/asound.state
   sudo apt install mpv -y
@@ -298,6 +288,10 @@ sudo -H pip install --break-system-packages -r requirements.txt
 # ---------- networking tools ----------
 sudo apt install iptables -y
 sudo apt install fonts-noto-cjk -y   # Chinese/Japanese/Korean glyphs for the one-liner
+
+# ---------- AirPlay + shared audio device ----------
+bash /home/scud/scud-radio/tools/install_airplay.sh --dac "$DAC"
+cd /home/scud/scud-radio
 
 # ---------- trims (unchanged from before) ----------
 sudo apt update

@@ -61,6 +61,7 @@ import math
 import html
 import sys
 import re
+import base64
 import os
 
 from functools import lru_cache
@@ -334,7 +335,9 @@ def backlight_on():
     global screen_on
     if disp:
         if not restarting:
-            if stream:
+            if currently_displaying == 'airplay':
+                display_airplay()
+            elif stream:
                 display_cached_scroll(stream)
             else:
                 display_scud()
@@ -551,7 +554,9 @@ def pause(show_icon=False):
 
 
 def play(name, toggled=False):
-    global play_status, stream, first_boot
+    global play_status, stream, first_boot, currently_displaying
+    if not toggled and airplay_drop():
+        currently_displaying = 'everything'
     play_status = 'play'
     stream = name
 
@@ -1600,6 +1605,317 @@ def display_ambient(name):
     last_ambient_display = time.monotonic()
 
 
+# ---- AirPlay (shairport-sync) ------------------------------------------------
+# shairport-sync receives AirPlay and plays through its own ALSA device
+# ("airplay" in /etc/asound.conf: a soft-volume control in front of the shared
+# dmix), so it never fights mpv for the DAC. We read its metadata pipe for
+# play begin/end, track info and cover art. While AirPlay plays, the radio
+# steps aside: mpv stops, the screen shows the cover in the show-art layout,
+# the volume knob sets the AirPlay level, and the station knob (or picking a
+# station anywhere) ends the session and brings the radio back.
+AIRPLAY_PIPE = '/tmp/shairport-sync-metadata'
+AIRPLAY_CARD = 'sndrpihifiberry'
+AIRPLAY_CONTROL = 'AirPlay'
+AIRPLAY_BG = (26, 26, 26)
+
+airplay_lock = threading.Lock()
+airplay = {'active': False, 'title': '', 'artist': '', 'album': '', 'sender': '',
+           'art': None, 'dirty': False, 'pending': {}}
+airplay_mq = {'offset': 0, 'pause_until': 0, 'needed': False}
+airplay_volume = get_config().get('airplay_volume')     # None -> start from the radio's level
+airplay_vol_until = 0.0
+_airplay_t1 = ''
+
+_AP_ITEM = re.compile(r'<type>([0-9a-f]{8})</type><code>([0-9a-f]{8})</code><length>(\d+)</length>'
+                      r'(?:\s*<data encoding="base64">\s*(.*?)</data>)?', re.S)
+
+def _ap_word(hexstr):
+    return bytes.fromhex(hexstr).decode('latin-1')
+
+def _prepare_cover(data):
+    """Cover art bytes -> 320x240 full-bleed crop (same treatment as show art)."""
+    try:
+        img = Image.open(BytesIO(data))
+        img.draft('RGB', (SCREEN_WIDTH * 2, SCREEN_WIDTH * 2))
+        img = img.convert('RGB')
+        if min(img.size) < 32:
+            return None
+        return ImageOps.fit(img, (SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
+    except Exception as e:
+        logging.error(f'airplay cover: {e}')
+        return None
+
+def _airplay_event(typ, code, data):
+    text = lambda: data.decode('utf-8', 'replace').strip()
+    with airplay_lock:
+        p = airplay['pending']
+        if typ == 'core':
+            if code == 'minm':
+                p['title'] = text()
+            elif code == 'asar':
+                p['artist'] = text()
+            elif code == 'asal':
+                p['album'] = text()
+        elif typ == 'ssnc':
+            if code == 'mdst':                       # a metadata bundle begins
+                airplay['pending'] = {}
+            elif code == 'mden':                     # ...and ends: commit it
+                for k in ('title', 'artist', 'album'):
+                    airplay[k] = p.get(k, '')
+                airplay['dirty'] = True
+            elif code == 'PICT':
+                airplay['art'] = _prepare_cover(data) if data else None
+                airplay['dirty'] = True
+            elif code in ('pbeg', 'prsm'):           # play begins / resumes
+                if not airplay['active']:
+                    airplay.update(active=True, title='', artist='', album='', art=None)
+                airplay['dirty'] = True
+            elif code == 'pend':                     # sender disconnected
+                airplay['active'] = False
+                airplay['dirty'] = True
+            elif code == 'snam':
+                airplay['sender'] = text()
+
+def _airplay_reader():
+    while True:
+        try:
+            if not os.path.exists(AIRPLAY_PIPE):
+                time.sleep(2)
+                continue
+            with open(AIRPLAY_PIPE, 'r', encoding='ascii', errors='ignore') as f:   # blocks until shairport writes
+                buf = ''
+                for line in f:
+                    buf += line
+                    while '</item>' in buf:
+                        item, buf = buf.split('</item>', 1)
+                        m = _AP_ITEM.search(item)
+                        if not m:
+                            continue
+                        data = b''
+                        if m.group(4):
+                            try:
+                                data = base64.b64decode(re.sub(r'\s', '', m.group(4)))
+                            except Exception:
+                                pass
+                        _airplay_event(_ap_word(m.group(1)), _ap_word(m.group(2)), data)
+            time.sleep(0.5)        # shairport closed the pipe (restart): reopen
+        except Exception as e:
+            logging.error(f'airplay reader: {e}')
+            time.sleep(2)
+
+def _bg(cmd):
+    try:
+        Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception as e:
+        logging.error(f'{cmd[0]}: {e}')
+
+def _set_airplay_volume(v):
+    """Knob units (0..MAX_VOL, same notches as the radio) -> AirPlay soft volume.
+    Same cubic curve mpv uses, so a notch sounds alike on radio and AirPlay;
+    above 100 there's no headroom to boost, so it stays at 0 dB."""
+    if v <= 0:
+        level = '0%'
+    else:
+        level = f'{max(-60.0, 60 * math.log10(min(v, 100) / 100)):.1f}dB'
+    _bg(['amixer', '-q', '-c', AIRPLAY_CARD, 'sset', AIRPLAY_CONTROL, '--', level])
+
+def _airplay_init_volume():
+    """The soft-volume control only exists once its device has been opened, so
+    open it with a second of silence at startup, then set the saved level --
+    otherwise the first AirPlay track could start at full volume."""
+    try:
+        run(['aplay', '-q', '-D', 'airplay', '-f', 'S16_LE', '-r', '44100', '-c', '2', '-d', '1', '/dev/zero'],
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=5)
+    except Exception:
+        pass
+    _set_airplay_volume(airplay_volume if airplay_volume is not None else current_volume)
+
+def _airplay_glyph(draw, box, color, width):
+    """The AirPlay mark: a screen with a triangle rising into its bottom edge."""
+    x0, y0, x1, y1 = box
+    w, h = x1 - x0, y1 - y0
+    sy1 = y0 + round(h * 0.68)
+    draw.rounded_rectangle([x0, y0, x1, sy1], radius=max(2, w // 12), outline=color, width=width)
+    cx, tw = (x0 + x1) / 2, w * 0.46
+    gap = width + 2
+    halo = [(cx, y0 + h * 0.50 - gap), (cx + tw / 2 + gap * 1.4, y1 + 1), (cx - tw / 2 - gap * 1.4, y1 + 1)]
+    return halo, [(cx, y0 + h * 0.50), (cx + tw / 2, y1), (cx - tw / 2, y1)]
+
+def _airplay_tile(size):
+    t = Image.new('RGB', (size, size), WHITE)
+    d = ImageDraw.Draw(t)
+    m = round(size * 0.2)
+    halo, tri = _airplay_glyph(d, (m, m + 1, size - m - 1, size - m), BLACK, max(2, size // 16))
+    d.polygon(halo, fill=WHITE)
+    d.polygon(tri, fill=BLACK)
+    return t
+
+def _compose_airplay_base(art):
+    if art is None:                           # no cover yet / none sent: big faint AirPlay mark
+        art = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), AIRPLAY_BG)
+        d = ImageDraw.Draw(art)
+        halo, tri = _airplay_glyph(d, (110, 34, 210, 124), (70, 70, 70), 6)
+        d.polygon(halo, fill=AIRPLAY_BG)
+        d.polygon(tri, fill=(70, 70, 70))
+    arr = np.asarray(art.convert('RGB'), np.float32) * (1 - _show_gradient())
+    base = Image.fromarray(arr.astype(np.uint8), 'RGB')
+    base.paste(_airplay_tile(SHOW_LOGO), (SHOW_PAD, SCREEN_HEIGHT - SHOW_PAD - SHOW_LOGO))
+    if BRIGHTNESS != 1:
+        base = ImageEnhance.Brightness(base).enhance(BRIGHTNESS)
+    return base
+
+_small_fallbacks = None
+def _render_ap_l2(text):
+    """Artist line under the title: Favorit 17 like the station line, with
+    per-glyph fallback (artists are often Japanese, Korean, Cyrillic...)."""
+    global _small_fallbacks
+    if _small_fallbacks is None:
+        _small_fallbacks = [f for f in (_load_fallback(p, 16) for p in (
+            'assets/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf',
+            '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
+            '/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc')) if f is not None]
+    w = SCREEN_WIDTH - SHOW_TEXT_X
+    strip = _show_base.crop((SHOW_TEXT_X, SHOW_L2_Y, SCREEN_WIDTH, SHOW_L2_Y + SHOW_L2_H))
+    mask = Image.new('L', (w, SHOW_L2_H), 0)
+    d = ImageDraw.Draw(mask)
+    x, base_y = 0, 1 + CLOCK_FONT.getmetrics()[0]
+    for ch in text:
+        f = CLOCK_FONT if _has_glyph(CLOCK_FONT, ch) else next(
+            (f for f in _small_fallbacks if _has_glyph(f, ch)), CLOCK_FONT)
+        d.text((x, base_y), ch, font=f, fill=255, anchor='ls')
+        x += f.getlength(ch)
+        if x > w:
+            break
+    if x > w - SHOW_PAD:
+        mask = _fade_mask_right(mask)
+    strip.paste(SHOW_SUB, (0, 0, w, SHOW_L2_H), mask)
+    return strip
+
+def _render_ap_vol(v):
+    """Volume wedge beside the AirPlay tile, in place of the title/artist."""
+    x0, y0 = SHOW_TEXT_X, SHOW_L1_Y
+    region = _show_base.crop((x0, y0, SCREEN_WIDTH, SHOW_L2_Y + SHOW_L2_H))
+    d = ImageDraw.Draw(region)
+    cells = max(1, MAX_VOL // volume_step)
+    lit = round(v / volume_step)
+    gap = 3
+    cw = (SCREEN_WIDTH - x0 - SHOW_PAD - (cells - 1) * gap) // cells
+    bottom = region.height - 8
+    for k in range(cells):
+        ch = 5 + round(25 * k / max(1, cells - 1))
+        x = k * (cw + gap)
+        d.rectangle([x, bottom - ch, x + cw - 1, bottom], fill=WHITE if k < lit else (85, 85, 85))
+    return region
+
+def display_airplay():
+    global currently_displaying, _show_base, _airplay_t1
+    with airplay_lock:
+        art, title, artist, sender = airplay['art'], airplay['title'], airplay['artist'], airplay['sender']
+    _show_base = _compose_airplay_base(art)
+    _airplay_t1 = title or 'AirPlay'
+    t2 = artist or (f'from {sender}' if sender and not title else '')
+    image = _show_base.copy()
+    if airplay_vol_until:
+        image.paste(_render_ap_vol(airplay_volume or 0), (SHOW_TEXT_X, SHOW_L1_Y))
+    else:
+        image.paste(_render_show_l1(_airplay_t1), (SHOW_TEXT_X, SHOW_L1_Y))
+        image.paste(_render_ap_l2(t2), (SHOW_TEXT_X, SHOW_L2_Y))
+    currently_displaying = 'airplay'
+    airplay_mq['cycle_start'] = None
+    safe_display(image)
+
+def _push_window(img, x, y):
+    if not display_lock.acquire(blocking=False):
+        return
+    try:
+        if currently_displaying == 'airplay':
+            disp.ShowWindow(img, x, y)
+    finally:
+        display_lock.release()
+
+def airplay_volume_step(direction):
+    global airplay_volume, airplay_vol_until, last_input_time
+    if airplay_volume is None:
+        airplay_volume = current_volume
+    airplay_volume = min(MAX_VOL, max(0, airplay_volume + direction * volume_step))
+    _set_airplay_volume(airplay_volume)
+    airplay_vol_until = time.monotonic() + 3
+    last_input_time = time.monotonic()
+    if _show_base is not None:
+        _push_window(_render_ap_vol(airplay_volume), SHOW_TEXT_X, SHOW_L1_Y)
+
+def airplay_drop():
+    """The listener picked the radio: end the AirPlay session (the phone just
+    sees the speaker disconnect). Returns True if a session was playing."""
+    with airplay_lock:
+        if not airplay['active']:
+            return False
+        airplay['active'] = False
+    logging.info('AIRPLAY DROPPED for the radio')
+    _bg(['systemctl', 'restart', 'shairport-sync'])
+    return True
+
+def _airplay_enter():
+    global currently_displaying, last_input_time, seek_overlay_name, readied_stream
+    logging.info('AIRPLAY START')
+    send_mpv_command({"command": ["stop"]})
+    tuning['state'] = None
+    seek_overlay_name = None
+    readied_stream = None
+    last_input_time = time.monotonic()
+    _set_airplay_volume(airplay_volume if airplay_volume is not None else current_volume)
+    currently_displaying = 'airplay'
+    if not screen_on:
+        wake_screen()                         # redraws through display_current
+    else:
+        display_airplay()
+
+def _airplay_resume_radio():
+    logging.info('AIRPLAY END -> radio')
+    with state_lock:
+        target = stream if stream in streams else (stream_list[0] if stream_list else None)
+    if target is None:
+        return
+    display_cached_scroll(target)
+    if not put_to_sleep:
+        play(target)
+
+def airplay_tick(now):
+    """Called every main-loop pass. Returns None when AirPlay isn't involved,
+    else how long the main loop should sleep."""
+    global airplay_vol_until
+    with airplay_lock:
+        active, dirty = airplay['active'], airplay['dirty']
+        airplay['dirty'] = False
+    showing = currently_displaying == 'airplay'
+    if active and not showing:
+        _airplay_enter()
+        return 0.15
+    if not active:
+        if showing:
+            _airplay_resume_radio()
+        return None
+    if not screen_on or sleeping or freeze_for_task:
+        return 0.15
+    if airplay_vol_until and now > airplay_vol_until:
+        airplay_vol_until = 0.0
+        cfg = get_config()
+        cfg['airplay_volume'] = airplay_volume
+        set_config(cfg)
+        dirty = True
+    if dirty:
+        display_airplay()
+        return 0.05
+    if airplay_vol_until:
+        return 0.1
+    w = text_width(_airplay_t1)
+    if w > SCREEN_WIDTH - SHOW_TEXT_X - SHOW_PAD:
+        _, off = _joint_offsets(0, w + MARQUEE_GAP, False, True, now, airplay_mq)
+        _push_window(_render_show_l1(_airplay_t1, off), SHOW_TEXT_X, SHOW_L1_Y)
+        return 0.02
+    return 0.15
+
+
 def display_current():
 
     if currently_displaying == 'everything':
@@ -1610,6 +1926,9 @@ def display_current():
 
     elif currently_displaying == 'ambient':
         display_ambient(stream)
+
+    elif currently_displaying == 'airplay':
+        display_airplay()
 
 
 def get_anchor(title, info, line_gap, section_gap, title_font, info_font):
@@ -1786,7 +2105,7 @@ def on_volume_button_released():
 
 
 def switch_off():
-    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, switch_off_time
+    global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, switch_off_time, currently_displaying
     current_time = time.monotonic()
     last_input_time = current_time
     button_released_time = current_time
@@ -1796,6 +2115,13 @@ def switch_off():
     set_last_volume(str(current_volume))
     sleeping = True
     put_to_sleep = True
+    # off means off: stop AirPlay too, so Otis also leaves the phone's AirPlay list
+    with airplay_lock:
+        was_airplay = airplay['active']
+        airplay['active'] = False
+    _bg(['systemctl', 'stop', 'shairport-sync'])
+    if was_airplay or currently_displaying == 'airplay':
+        currently_displaying = 'everything'     # switching back on shows the radio
 
 def switch_on():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep
@@ -1806,6 +2132,7 @@ def switch_on():
         current_time = time.monotonic()
         last_input_time = time.monotonic()
         button_released_time = current_time
+        _bg(['systemctl', 'start', 'shairport-sync'])
         backlight_on()
         sleeping = False
         put_to_sleep = False
@@ -1974,6 +2301,11 @@ def refresh_scroll_cache(refresh_stream_list):
 
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time, last_seek_rotation, volume_overlay_showing, marquee_name, marquee_offset, seeking
+    if currently_displaying == 'airplay' or airplay['active']:
+        last_input_time = time.monotonic()
+        airplay_drop()
+        _airplay_resume_radio()             # first click just brings the radio back
+        return
     seeking = True
     now = time.monotonic()
     last_input_time = now
@@ -1988,6 +2320,9 @@ def handle_rotation(direction):
 
 def volume_handle_rotation(direction):
     global rotated, last_rotation, last_input_time, current_volume
+    if currently_displaying == 'airplay':
+        airplay_volume_step(direction)
+        return
     rotated = True
     last_input_time = time.monotonic()
     last_rotation = time.monotonic()
@@ -2105,10 +2440,12 @@ def periodic_update():
         time.sleep(1)
 
 def wake_screen():
-    global screen_on, last_input_time, current_image
+    global screen_on, last_input_time, current_image, sleeping
     last_input_time = time.monotonic()
     if (not screen_on):
         screen_on = True
+        if not put_to_sleep:
+            sleeping = False
 
         display_current()
         time.sleep(0.05)
@@ -2436,6 +2773,9 @@ volume_click_button = Button(17, bounce_time=0.1, pull_up=True)
 volume_click_button.when_pressed = on_volume_button_pressed
 volume_click_button.when_released = on_volume_button_released
 
+threading.Thread(target=_airplay_reader, daemon=True).start()
+threading.Thread(target=_airplay_init_volume, daemon=True).start()
+
 ## main loop
 print('BEGIN REFRESH', time.monotonic())
 calculate_ticks()
@@ -2467,6 +2807,16 @@ try:
  
             if now - last_input_time > 10:
                 set_last_volume(str(current_volume))
+
+            ap_wait = airplay_tick(now)
+            if ap_wait is not None:              # AirPlay owns the screen: no ambient, no radio drawing
+                if screen_on and (now - last_input_time > 600):
+                    logging.info('TURNING SCREEN OFF (AirPlay)')
+                    sleeping = True
+                    screen_on = False
+                    backlight_off()
+                time.sleep(ap_wait)
+                continue
  
             # 'and', not '&' -- bitwise on bools works by accident and
             # doesn't short-circuit
