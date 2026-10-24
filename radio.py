@@ -1622,7 +1622,9 @@ AIRPLAY_BG = (26, 26, 26)
 
 airplay_lock = threading.Lock()
 airplay = {'active': False, 'title': '', 'artist': '', 'album': '', 'sender': '',
-           'art': None, 'thumb': None, 'dirty': False, 'pending': {}}
+           'art': None, 'thumb': None, 'dirty': False, 'pending': {},
+           'pict_seen': False, 'await_art': 0.0}
+AIRPLAY_ART_WAIT = 1.5     # after a track change, how long to wait for its cover before showing the AirPlay mark
 airplay_mq = {'offset': 0, 'pause_until': 0, 'needed': False}
 airplay_volume = get_config().get('airplay_volume')     # None -> start from the radio's level
 airplay_vol_until = 0.0
@@ -1662,12 +1664,23 @@ def _airplay_event(typ, code, data):
         elif typ == 'ssnc':
             if code == 'mdst':                       # a metadata bundle begins
                 airplay['pending'] = {}
+                airplay['pict_seen'] = False
             elif code == 'mden':                     # ...and ends: commit it
-                for k in ('title', 'artist', 'album'):
-                    airplay[k] = p.get(k, '')
-                airplay['dirty'] = True
+                new = tuple(p.get(k, '') for k in ('title', 'artist', 'album'))
+                old = tuple(airplay[k] for k in ('title', 'artist', 'album'))
+                airplay.update(title=new[0], artist=new[1], album=new[2])
+                if new != old and not airplay['pict_seen']:
+                    # New track: shairport sends no picture at all for tracks without
+                    # a cover, so the old one would stick. Hold the redraw briefly for
+                    # this track's cover (it usually follows the bundle); airplay_tick
+                    # drops to the AirPlay mark if none arrives.
+                    airplay['await_art'] = time.monotonic()
+                else:
+                    airplay['dirty'] = True
             elif code == 'PICT':
                 airplay['art'], airplay['thumb'] = _prepare_cover(data) if data else (None, None)
+                airplay['pict_seen'] = True
+                airplay['await_art'] = 0.0
                 airplay['dirty'] = True
             elif code in ('pbeg', 'prsm'):           # play begins / resumes
                 if not airplay['active']:
@@ -1891,6 +1904,8 @@ def airplay_tick(now):
     else how long the main loop should sleep."""
     global airplay_vol_until
     with airplay_lock:
+        if airplay['await_art'] and now - airplay['await_art'] > AIRPLAY_ART_WAIT:
+            airplay.update(art=None, thumb=None, await_art=0.0, dirty=True)   # this track has no cover
         active, dirty = airplay['active'], airplay['dirty']
         airplay['dirty'] = False
     showing = currently_displaying == 'airplay'
