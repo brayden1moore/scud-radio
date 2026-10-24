@@ -1184,7 +1184,7 @@ def draw_tile(image, draw, station, pos, star=None, size=TILE, dim=True, fade=No
     x0, y0 = pos
     x1, y1 = x0 + size, y0 + size
     outline = tuple(round(SECONDARY_COLOR[k] * (1 - amount) + BG_COLOR[k] * amount) for k in range(3))
-    draw.rectangle([x0, y0, x1, y1], outline=outline, width=3)
+    draw.rectangle([x0, y0, x1, y1], outline=outline, width=1)   # hairline frame
     draw.rectangle([x0 - 2, y0 - 2, x1 + 2, y1 + 2], outline=BG_COLOR, width=3)
 
 def display_scroll(name, silent=False):
