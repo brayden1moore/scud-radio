@@ -517,7 +517,8 @@ def play(name, toggled=False):
             logging.info(f"PLAYING {name}")
             send_mpv_command({"command": ["loadfile", stream_url, 'replace']})
 
-    set_last_played(name)
+    global pending_last_played
+    pending_last_played = name          # written once tuning settles (main loop)
 
 
 def play_random():
@@ -617,7 +618,8 @@ def _name_line_cached(name):
 start_x = 0
 logo_chunk_start = 35
 logo_chunk_start_x = 12 + start_x
-og_logo_position = (114, logo_chunk_start - 14 - 20)
+TILE = 120                                   # station logo tile size
+og_logo_position = (100, logo_chunk_start - 14 - 20)
 logo_position = og_logo_position
 #logo_position = (0, -100)
 
@@ -645,7 +647,6 @@ def _dial_glyph(name):
     c = name[:1].upper()
     return c if c.isalpha() else '#'
 
-DIAL_Y = tick_bar_start + 4      # top of the dial letters
 dial_slots = {}                  # glyph -> (x0, x1, centre x)
 
 def calculate_ticks():
@@ -709,8 +710,11 @@ OL_STRIP_TOP    = _name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 5
 OL_STRIP_BOTTOM = OL_STRIP_TOP + FONT_HEIGHTS['SMALL_LIGHT'] + 5
 
 # Volume strip geometry (module level, next to the other strip constants)
-VOL_STRIP_TOP    = tick_bar_start - 3          # bar_top - 10
-VOL_STRIP_BOTTOM = tick_bar_start + 28         # bar_bottom + 10
+# bottom row: station clock when idle, alphabet dial while tuning, volume wedge while turning volume
+CLOCK_Y = round(OL_STRIP_TOP + FONT_HEIGHTS['SMALL_LIGHT'] + 14) + 1
+VOL_STRIP_TOP    = CLOCK_Y - 4
+VOL_STRIP_BOTTOM = SCREEN_HEIGHT
+DIAL_Y = VOL_STRIP_TOP + 2       # top of the dial letters
 _vol_strip = Image.new('RGB', (SCREEN_WIDTH, VOL_STRIP_BOTTOM - VOL_STRIP_TOP), BLACK)
 
 # ambient strip
@@ -824,20 +828,19 @@ def _render_vol_strip(volume):
     d.rectangle([0, 0, SCREEN_WIDTH, h], fill=BG_COLOR)
     cells = max(1, MAX_VOL // volume_step)
     lit = round(volume / volume_step)
-    gap = 3
+    gap = 4
     cw = (SCREEN_WIDTH - 2 * padding - (cells - 1) * gap) // cells
     x0 = (SCREEN_WIDTH - (cells * cw + (cells - 1) * gap)) // 2
-    bottom = h - 5
+    bottom = h - 3
     for k in range(cells):
-        ch = 4 + round(20 * k / max(1, cells - 1))
+        ch = 4 + round(16 * k / max(1, cells - 1))
         x = x0 + k * (cw + gap)
         d.rectangle([x, bottom - ch, x + cw - 1, bottom],
                     fill=SECONDARY_COLOR if k < lit else WEDGE_OFF_COLOR)
     return _vol_strip
 
 # ---- station clock row: status dot + city, local time at the station ----
-CLOCK_Y = round(OL_STRIP_TOP + FONT_HEIGHTS['SMALL_LIGHT'] + 14) + 1
-CLOCK_STRIP_TOP = CLOCK_Y - 4
+CLOCK_STRIP_TOP = VOL_STRIP_TOP
 CLOCK_STRIP_BOTTOM = SCREEN_HEIGHT
 _clock_strip = Image.new('RGB', (SCREEN_WIDTH, CLOCK_STRIP_BOTTOM - CLOCK_STRIP_TOP), BLACK)
 
@@ -873,14 +876,18 @@ def _draw_clock_row(draw, name, origin_y=0):
     if t:
         draw.text((SCREEN_WIDTH - 10 - width(t, CLOCK_FONT), y), t, font=CLOCK_FONT, fill=MUTED_COLOR)
 
-def push_clock_strip(name):
-    """Redraw only the clock row, e.g. when the minute changes."""
+def render_clock_strip(name):
     d = ImageDraw.Draw(_clock_strip)
     d.rectangle([0, 0, SCREEN_WIDTH, _clock_strip.height], fill=BG_COLOR)
     _draw_clock_row(d, name, origin_y=CLOCK_STRIP_TOP)
+    return _clock_strip
+
+def push_clock_strip(name):
+    """Redraw only the clock row, e.g. when the minute changes."""
+    strip = render_clock_strip(name)
     if display_lock.acquire(timeout=0.5):
         try:
-            disp.ShowWindow(_clock_strip, 0, CLOCK_STRIP_TOP)
+            disp.ShowWindow(strip, 0, CLOCK_STRIP_TOP)
         finally:
             display_lock.release()
 
@@ -982,13 +989,28 @@ def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=No
 DIM = 0.40                     # default fade amount toward the background
 FADE = {1: 0.45, 2: 0.72}      # neighbours, then the outer pair
 
+_logo_size_cache = {}
+def logo_at(name, size):
+    """Station logo at `size`; sizes the server doesn't ship are scaled from the 216px PNG."""
+    info = streams[name]
+    key = f'logo_{size}'
+    if key in info:
+        return info[key]
+    src = info['logo_216']
+    hit = _logo_size_cache.get((name, size))
+    if hit is not None and hit[0] is src:
+        return hit[1]
+    out = src.resize((size, size), Image.LANCZOS)
+    _logo_size_cache[(name, size)] = (src, out)
+    return out
+
 _dim_cache = {}
 
 def dim_logo(name, size, factor=DIM):
     """Darkened copy of a station logo. Cached, and keyed on the source
     image's identity so it re-dims automatically when fetch_logos swaps
     in a new PNG."""
-    src = streams[name][f'logo_{size}']
+    src = logo_at(name, size)
     key = (name, size, factor)
     hit = _dim_cache.get(key)
     if hit is not None and hit[0] is src:
@@ -1013,15 +1035,15 @@ def dim_rgba(img, factor=DIM):
     _dim_rgba_cache[key] = (img, out)
     return out
 
-def draw_tile(image, draw, station, pos, star=None, size=96, dim=True, fade=None):
+def draw_tile(image, draw, station, pos, star=None, size=TILE, dim=True, fade=None):
     """Logo (faded toward the background unless active), star, then the double border."""
     amount = 0 if not dim else (FADE[1] if fade is None else fade)
     image.paste(dim_logo(station, size, amount) if amount
-                else streams[station][f'logo_{size}'], pos)
+                else logo_at(station, size), pos)
 
     if star is not None and station in favorites:
         s = dim_rgba(star, amount) if amount else star
-        image.paste(s, pos, s)
+        image.paste(s, (pos[0] + size - s.width, pos[1]), s)   # star stays top-right
 
     x0, y0 = pos
     x1, y1 = x0 + size, y0 + size
@@ -1208,9 +1230,9 @@ seek_overlay_until = 0
 seek_overlay_name = None
 _dial_strip = Image.new('RGB', (SCREEN_WIDTH, VOL_STRIP_BOTTOM - VOL_STRIP_TOP), BLACK)
 ARROW_W, ARROW_H = 7, 24                      # small, thin, shallow chevron
-ARROW_CY = og_logo_position[1] + 48
+ARROW_CY = og_logo_position[1] + TILE // 2
 LEFT_ARROW_X = og_logo_position[0] - 15       # over the neighbour, just outside the active tile
-RIGHT_ARROW_X = og_logo_position[0] + 96 + 8
+RIGHT_ARROW_X = og_logo_position[0] + TILE + 8
 
 def _render_dial_strip(name):
     if tick_image is None or not dial_slots:
@@ -1239,24 +1261,6 @@ def _render_arrow(base, direction):
     d.line(pts, fill=SECONDARY_COLOR, width=2, joint='curve')
     return tile, box
 
-def show_seek_overlay(name, direction):
-    global seek_overlay_until, seek_overlay_name
-    base = scroll_cache_dict.get(name)
-    if base is None:
-        return
-    strip = _render_dial_strip(name)
-    arrow, box = _render_arrow(base, direction) if direction else (None, None)
-    if display_lock.acquire(timeout=0.5):
-        try:
-            if not volume_overlay_showing:
-                disp.ShowWindow(strip, 0, VOL_STRIP_TOP)
-            if arrow is not None:
-                disp.ShowWindow(arrow, box[0], box[1])
-        finally:
-            display_lock.release()
-    seek_overlay_until = time.time() + SEEK_OVERLAY_SECS
-    seek_overlay_name = name
-
 def clear_seek_overlay():
     """Put back the plain strip and logo areas from the cached screen."""
     global seek_overlay_name
@@ -1269,7 +1273,7 @@ def clear_seek_overlay():
     if display_lock.acquire(timeout=0.5):
         try:
             if not volume_overlay_showing:
-                disp.ShowWindow(base.crop((0, VOL_STRIP_TOP, SCREEN_WIDTH, VOL_STRIP_BOTTOM)).convert('RGB'), 0, VOL_STRIP_TOP)
+                disp.ShowWindow(render_clock_strip(name), 0, VOL_STRIP_TOP)
             for dirn in (-1, 1):
                 b = _arrow_box(dirn)
                 disp.ShowWindow(base.crop(b).convert('RGB'), b[0], b[1])
@@ -1277,7 +1281,7 @@ def clear_seek_overlay():
             display_lock.release()
 
 def seek_stream(direction):
-    global readied_stream
+    global readied_stream, seek_overlay_until, seek_overlay_name
     if freeze_for_task:
         return
     with state_lock:
@@ -1288,8 +1292,10 @@ def seek_stream(direction):
             readied_stream = cur
         else: 
             readied_stream = sl[(idx + direction) % len(sl)]
-    display_cached_scroll(readied_stream)
-    show_seek_overlay(readied_stream, direction if currently_displaying == 'everything' else 0)
+    arrow_dir = direction if currently_displaying == 'everything' else 0
+    display_cached_scroll(readied_stream, seek_direction=arrow_dir)
+    seek_overlay_until = time.time() + SEEK_OVERLAY_SECS
+    seek_overlay_name = readied_stream
     confirm_seek()
 
 def confirm_seek():
@@ -1580,28 +1586,39 @@ def volume_handle_rotation(direction):
         render_frame(active, 0, volume=new_volume, draw_oneliner=False, must_show=True)
 
 
-def display_cached_scroll(name, pushed=False):
-    ''' First looks for cached version and if not, rebuilds '''
-    global scroll_cache_dict, currently_displaying, text_on_screen
-    currently_displaying = 'everything'
-    if name in list(scroll_cache_dict.keys()):
-        image = scroll_cache_dict[name]
-        if image:
-            if pushed:
-                image = image.copy()
-                draw = ImageDraw.Draw(image)
-                bg_position = og_logo_position
-                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], outline=BG_COLOR, width=2)
-
-            with display_lock:
-                disp.ShowImage(image)
-        else:
-            scroll_cache_dict[name] = display_scroll(name)
+def compose_frame(name, seek_direction=None):
+    """Cached screen + live bottom row (clock, or dial and arrow while seeking),
+    composed in memory so the panel gets a single write -- no flash."""
+    base = scroll_cache_dict.get(name)
+    if base is None:
+        base = display_scroll(name, silent=True)
+        if base is None:
+            return None
+        scroll_cache_dict[name] = base
+    frame = base.copy()
+    if seek_direction is None:
+        frame.paste(render_clock_strip(name), (0, VOL_STRIP_TOP))
     else:
-        scroll_cache_dict[name] = display_scroll(name)
+        frame.paste(_render_dial_strip(name), (0, VOL_STRIP_TOP))
+        if seek_direction:
+            arrow, box = _render_arrow(base, seek_direction)
+            frame.paste(arrow, box[:2])
+    return frame
 
+def display_cached_scroll(name, pushed=False, seek_direction=None):
+    ''' Shows the cached screen (building it if needed) in one write '''
+    global currently_displaying, text_on_screen
+    currently_displaying = 'everything'
+    frame = compose_frame(name, seek_direction)
+    if frame is None:
+        return
+    if pushed:
+        draw = ImageDraw.Draw(frame)
+        p = og_logo_position
+        draw.rectangle([p[0], p[1], p[0] + TILE, p[1] + TILE], outline=BG_COLOR, width=2)
+    with display_lock:
+        disp.ShowImage(frame)
     text_on_screen = _ol_text(streams[name])
-    push_clock_strip(name)
     
 
 def periodic_update():
@@ -1700,7 +1717,7 @@ saved_image_while_paused = None
 play_status = 'pause'
 last_input_time = time.time()
 first_display = True
-volume_step = 6
+volume_step = 10                # 15 clicks from 0 to MAX_VOL; one wedge cell per click
 button_press_time = 0
 rotated = False
 restarting = False
@@ -2010,6 +2027,7 @@ last_input_time = time.time()
  
 _last_gate_log = 0.0
 _last_clock_minute = None
+pending_last_played = None
 needs_scroll = False
  
 try:
@@ -2051,11 +2069,7 @@ try:
             if volume_overlay_showing and (now - last_volume_change) > 3:
                 volume_overlay_showing = False
                 if base_img is not None and currently_displaying == 'everything':
-                    band = base_img.crop(
-                        (0, VOL_STRIP_TOP, SCREEN_WIDTH, VOL_STRIP_BOTTOM)
-                    ).convert('RGB')
-                    with display_lock:
-                        disp.ShowWindow(band, 0, VOL_STRIP_TOP)
+                    push_clock_strip(active_name)
  
             on_everything = bool(
                 screen_on
@@ -2092,11 +2106,15 @@ try:
  
             needs_scroll = False
  
+            if pending_last_played and now - last_input_time > 3:
+                set_last_played(pending_last_played)
+                pending_last_played = None
+
             if seek_overlay_name and now > seek_overlay_until:
                 clear_seek_overlay()
 
             minute = int(now // 60)
-            if on_everything and minute != _last_clock_minute:
+            if on_everything and minute != _last_clock_minute and not volume_overlay_showing and not seek_overlay_name:
                 _last_clock_minute = minute
                 push_clock_strip(active_name)
 
