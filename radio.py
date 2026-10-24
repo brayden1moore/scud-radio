@@ -944,13 +944,24 @@ def station_time_parts(name):
     return now.strftime('%I:%M').lstrip('0'), now.strftime('%p').lower()
 
 def _draw_panel(draw, name, ox=0):
-    """Big local time, then 'in <city>' (wraps to two lines); the whole block is
+    """Big local time, then 'in <city>' (wraps to two lines) and 'from <guest city>'
+    when a show comes from somewhere else; the whole block is
     vertically centred against the logo, so one- and two-line cities both sit right."""
     info = streams.get(name) or {}
     city = (info.get('homeLocation') or info.get('location') or '').strip()
     parts = station_time_parts(name)
     label = (f'in {city}' if city else '') if parts else city
-    lines, f = calculate_text(label, CLOCK_FONT, SCREEN_WIDTH - PANEL_X - 8, 2) if label else ([], CLOCK_FONT)
+    max_w = SCREEN_WIDTH - PANEL_X - 8
+    lines, f = calculate_text(label, CLOCK_FONT, max_w, 2) if label else ([], CLOCK_FONT)
+    # where tonight's show is coming from, when it isn't the station's home (NTS guests)
+    guest = (info.get('location') or '').strip()
+    if guest and city and guest.casefold() != city.casefold():
+        g = f'from {guest}'
+        if width(g, f) > max_w and ',' in guest:
+            g = f"from {guest.split(',')[0].strip()}"      # 'Rio de Janeiro, Brazil' -> 'Rio de Janeiro'
+        while width(g, f) > max_w and len(g) > 6:
+            g = g[:-4].rstrip(' ,') + '...'
+        lines = list(lines) + [g]
     line_h = height('Sg', f) + 5
 
     # lay out relative to y = 0, measure the inked block, then shift it to centre
