@@ -894,26 +894,36 @@ def station_time_parts(name):
     return now.strftime('%I:%M').lstrip('0'), now.strftime('%p').lower()
 
 def _draw_panel(draw, name, ox=0):
-    """Big local time, then 'in <city>' (wraps to two lines)."""
+    """Big local time, then 'in <city>' (wraps to two lines); the whole block is
+    vertically centred against the logo, so one- and two-line cities both sit right."""
     info = streams.get(name) or {}
     city = (info.get('location') or '').strip()
-    x, y = PANEL_X - ox, 18
     parts = station_time_parts(name)
+    label = (f'in {city}' if city else '') if parts else city
+    lines, f = calculate_text(label, CLOCK_FONT, SCREEN_WIDTH - PANEL_X - 8, 2) if label else ([], CLOCK_FONT)
+    line_h = height('Sg', f) + 5
+
+    # lay out relative to y = 0, measure the inked block, then shift it to centre
     if parts:
         hm, ap = parts
-        draw.text((x, y), hm, font=TIME_FONT, fill=SECONDARY_COLOR)
-        baseline = y + TIME_FONT.getmetrics()[0]
-        draw.text((x + width(hm, TIME_FONT) + 5, baseline), ap, font=CLOCK_FONT,
-                  fill=SECONDARY_COLOR, anchor='ls')
-        y = baseline + 13
-        label = f'in {city}' if city else ''
+        top = TIME_FONT.getbbox(hm)[1]
+        baseline = TIME_FONT.getmetrics()[0]
+        city_y = baseline + 13
+        bottom = baseline
     else:
-        label = city
-    if label:
-        lines, f = calculate_text(label, CLOCK_FONT, SCREEN_WIDTH - PANEL_X - 8, 2)
-        for ln in lines:
-            draw.text((x, y), ln.strip(), font=f, fill=MUTED_COLOR)
-            y += height('Sg', f) + 5
+        top, city_y, bottom = f.getbbox('Sg')[1], 0, 0
+    if lines:
+        bottom = city_y + (len(lines) - 1) * line_h + f.getbbox(lines[-1].strip())[3]   # real ink, not a descender guess
+    centre = SETTLED_LOGO_POS[1] + TILE / 2
+    y0 = round(centre - (bottom - top) / 2 - top)
+
+    x = PANEL_X - ox
+    if parts:
+        draw.text((x, y0), hm, font=TIME_FONT, fill=SECONDARY_COLOR)
+        draw.text((x + width(hm, TIME_FONT) + 5, y0 + baseline), ap, font=CLOCK_FONT,
+                  fill=SECONDARY_COLOR, anchor='ls')
+    for i, ln in enumerate(lines):
+        draw.text((x, y0 + city_y + i * line_h), ln.strip(), font=f, fill=MUTED_COLOR)
 
 def push_panel(name):
     """Redraw just the time panel (the minute ticked over)."""
