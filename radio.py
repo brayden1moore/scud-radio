@@ -904,17 +904,34 @@ def _render_name_strip(name, offset):
     _fade_right(_name_strip, 0, _name_strip.height)
     return _name_strip
 
+_text_tile_cache = {}
+
+def text_tile(text, height, fg, bg):
+    """The text rendered ONCE into its own image (advance width + MARQUEE_GAP).
+    Marquee frames just paste this bitmap at an offset -- no font rendering per
+    frame, which is what made Cyrillic/CJK (fallback fonts) scroll choppily."""
+    key = (text, height, fg, bg)
+    tile = _text_tile_cache.get(key)
+    if tile is None:
+        tile = Image.new('RGB', (max(1, text_width(text) + MARQUEE_GAP), height), bg)
+        draw_text_mixed(ImageDraw.Draw(tile), (0, 0), text, fg)
+        if len(_text_tile_cache) > 64:
+            _text_tile_cache.clear()
+        _text_tile_cache[key] = tile
+    return tile
+
+def _paste_marquee(strip, tile, start, y=0):
+    x = start
+    while x < SCREEN_WIDTH:
+        strip.paste(tile, (int(x), y))
+        x += tile.width
+
 def _render_ol_strip(name, offset):
-    text = streams[name]['oneLiner'].replace('&amp;', '&').strip()
-    full_w = streams[name].get('oneLinerWidth') or text_width(text)
-    d = ImageDraw.Draw(_ol_strip)
-    d.rectangle([0, 0, SCREEN_WIDTH, _ol_strip.height], fill=BG_COLOR)
-    span = full_w + MARQUEE_GAP
-    start = MARQUEE_X - (offset % span)
-    y = OL_STRIP_TOP - OL_STRIP_TOP  # = 0, oneliner sits at strip top
-    draw_text_mixed(d, (start, y), text, SECONDARY_COLOR)
-    draw_text_mixed(d, (start + span, y), text, SECONDARY_COLOR)
-    d.rectangle([0, 0, MARQUEE_X - 1, _ol_strip.height], fill=BG_COLOR)
+    text = _ol_text(streams[name])
+    tile = text_tile(text, _ol_strip.height, SECONDARY_COLOR, BG_COLOR)
+    _ol_strip.paste(BG_COLOR, (0, 0, SCREEN_WIDTH, _ol_strip.height))
+    _paste_marquee(_ol_strip, tile, MARQUEE_X - (offset % tile.width))
+    _ol_strip.paste(BG_COLOR, (0, 0, MARQUEE_X, _ol_strip.height))      # left gutter
     _fade_right(_ol_strip, 0, _ol_strip.height)
     return _ol_strip
 
@@ -936,10 +953,8 @@ def _render_amb_strip(text, offset=None):
     if offset is None:
         draw_text_mixed(d, (AMB_TEXT_X, y), text, ambient_text_color)
     else:
-        span = text_width(text) + MARQUEE_GAP
-        start = AMB_TEXT_X - (offset % span)
-        draw_text_mixed(d, (start, y), text, ambient_text_color)
-        draw_text_mixed(d, (start + span, y), text, ambient_text_color)
+        tile = text_tile(text, h - y, ambient_text_color, ambient_bar_color)
+        _paste_marquee(_amb_strip, tile, AMB_TEXT_X - (offset % tile.width), y)
         # left gutter, so text never touches the panel edge
         d.rectangle([0, 0, AMB_TEXT_X - 1, h], fill=ambient_bar_color)
  
