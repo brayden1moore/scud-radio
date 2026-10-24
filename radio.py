@@ -132,11 +132,11 @@ def load_font(name, size, weight=400):
         font.set_variation_by_axes([weight]) 
     return font
 
-print('LOADING SMALL',time.time())
+print('LOADING SMALL',time.monotonic())
 #SMALL_LIGHT = load_font('Noto', 17, weight=400)  
 SMALL_LIGHT = load_font('Favorit', 20, weight=400)  
 
-print('LOADING LARGE',time.time())
+print('LOADING LARGE',time.monotonic())
 EXTRALARGE_LIGHT = load_font('Archivo',42, weight=800)  
 CLOCK_FONT = load_font('Favorit', 17)
 
@@ -379,8 +379,8 @@ def mpv_get(prop, timeout=0.3):
             sk.settimeout(timeout)
             sk.connect("/tmp/mpvsocket")
             sk.sendall((json.dumps({"command": ["get_property", prop], "request_id": 7}) + '\n').encode())
-            buf, deadline = b'', time.time() + timeout
-            while time.time() < deadline:
+            buf, deadline = b'', time.monotonic() + timeout
+            while time.monotonic() < deadline:
                 chunk = sk.recv(4096)
                 if not chunk:
                     break
@@ -402,7 +402,7 @@ TUNING_TIMEOUT = 12                     # seconds before we say the station isn'
 tuning = {'name': None, 'since': 0.0, 'state': None}     # state: None | 'tuning' | 'failed'
 
 def _start_tuning(name):
-    tuning.update(name=name, since=time.time(), state='tuning')
+    tuning.update(name=name, since=time.monotonic(), state='tuning')
 
 def _update_tuning(now, active_name, can_draw):
     """Called from the main loop a few times a second while a station is tuning."""
@@ -997,7 +997,7 @@ def render_status_strip(name):
     tstate = tuning['state'] if tuning['name'] == name else None
     if tstate:
         if tstate == 'tuning':
-            lit = int(time.time() * 2.5) % 2 == 0                      # gentle pulse
+            lit = int(time.monotonic() * 2.5) % 2 == 0                      # gentle pulse
             dot = LIVE_COLOR if lit else _mix(LIVE_COLOR, BG_COLOR, 0.7)
             label = 'Tuning in...'
         else:
@@ -1369,7 +1369,7 @@ def display_ambient(name):
     display_bar(image, text, color=first_pixel)
  
     safe_display(image)
-    last_ambient_display = time.time()
+    last_ambient_display = time.monotonic()
 
 
 def display_current():
@@ -1483,7 +1483,7 @@ def seek_stream(direction):
             readied_stream = sl[(idx + direction) % len(sl)]
     arrow_dir = direction if currently_displaying == 'everything' else 0
     display_cached_scroll(readied_stream, seek_direction=arrow_dir)
-    seek_overlay_until = time.time() + SEEK_OVERLAY_SECS
+    seek_overlay_until = time.monotonic() + SEEK_OVERLAY_SECS
     seek_overlay_name = readied_stream
     confirm_seek()
 
@@ -1498,7 +1498,7 @@ def confirm_seek():
 
 def toggle_confirm_on_rotate():
     global confirm_on_rotate, current_image, confirm_overlay_showing, last_input_time
-    last_input_time = time.time()
+    last_input_time = time.monotonic()
 
     if confirm_on_rotate:
         confirm_on_rotate = False
@@ -1521,7 +1521,7 @@ def show_volume_overlay(volume):
     global volume_overlay_showing, volume_overlay_value, last_volume_change
     volume_overlay_value = volume
     volume_overlay_showing = True
-    last_volume_change = time.time()
+    last_volume_change = time.monotonic()
 
 def safe_restart():
     global restarting
@@ -1545,8 +1545,8 @@ def on_volume_button_pressed():
     global button_press_time, rotated, button_press_times, held, button_released_time, last_input_time, currently_displaying, readied_stream
     held = True
     if not put_to_sleep:
-        last_input_time = time.time()
-        button_press_time = time.time()
+        last_input_time = time.monotonic()
+        button_press_time = time.monotonic()
         button_released_time = None
         toggle_favorite()
         rotated = False
@@ -1559,7 +1559,7 @@ def on_volume_button_released():
 
 def switch_off():
     global button_press_times, rotated, held, button_released_time, last_input_time, current_volume, screen_on, sleeping, put_to_sleep, switch_off_time
-    current_time = time.time()
+    current_time = time.monotonic()
     last_input_time = current_time
     button_released_time = current_time
     switch_off_time = current_time
@@ -1575,8 +1575,8 @@ def switch_on():
     if held:
         safe_restart()
     else:
-        current_time = time.time()
-        last_input_time = time.time()
+        current_time = time.monotonic()
+        last_input_time = time.monotonic()
         button_released_time = current_time
         backlight_on()
         sleeping = False
@@ -1692,7 +1692,7 @@ def toggle_favorite():
         scroll_cache_dict.clear()         
         display_cached_scroll(chosen_stream)  
         start_priority_refresh(chosen_stream)   
-        last_input_time = time.time()
+        last_input_time = time.monotonic()
     finally:
         freeze_for_task = False
 
@@ -1747,7 +1747,7 @@ def refresh_scroll_cache(refresh_stream_list):
 def handle_rotation(direction):
     global rotated, current_volume, button_press_time, last_rotation, screen_on, last_input_time, last_seek_rotation, volume_overlay_showing, marquee_name, marquee_offset, seeking
     seeking = True
-    now = time.time()
+    now = time.monotonic()
     last_input_time = now
     rotated = True
     last_rotation = now
@@ -1761,8 +1761,8 @@ def handle_rotation(direction):
 def volume_handle_rotation(direction):
     global rotated, last_rotation, last_input_time, current_volume
     rotated = True
-    last_input_time = time.time()
-    last_rotation = time.time()
+    last_input_time = time.monotonic()
+    last_rotation = time.monotonic()
     if direction == 1:
         new_volume = min(MAX_VOL, current_volume + volume_step)
     else:
@@ -1819,7 +1819,7 @@ def periodic_update():
     global screen_on, failed_fetches, time_since_last_update, last_successful_fetch, streams, stream_list, scroll_cache_dict, sleeping
     while True:
 
-        time_since_last_success = time.time() - last_successful_fetch
+        time_since_last_success = time.monotonic() - last_successful_fetch
         if sleeping:
             should_fetch = not refreshing_everything_now and ((time_since_last_update >= 120) or (time_since_last_success > 120) or len(scroll_cache_dict)==0)
         else:
@@ -1849,7 +1849,7 @@ def periodic_update():
                 stream_list = get_stream_list(streams)
                 start_priority_refresh(updated_streams, run_ticks=True)
                 failed_fetches = 0
-                last_successful_fetch = time.time()
+                last_successful_fetch = time.monotonic()
                     
             except requests.Timeout:
                 failed_fetches += 1
@@ -1876,7 +1876,7 @@ def periodic_update():
 
 def wake_screen():
     global screen_on, last_input_time, current_image
-    last_input_time = time.time()
+    last_input_time = time.monotonic()
     if (not screen_on):
         screen_on = True
 
@@ -1909,7 +1909,7 @@ last_seek_rotation = None
 screen_on = True
 saved_image_while_paused = None
 play_status = 'pause'
-last_input_time = time.time()
+last_input_time = time.monotonic()
 first_display = True
 volume_step = 10                # 15 clicks from 0 to MAX_VOL; one wedge cell per click
 button_press_time = 0
@@ -1926,7 +1926,7 @@ volume_overlay_value = 0
 last_volume_change = 0
 marquee_pause_until = 0
 confirm_overlay_showing = False
-last_ambient_display = time.time()
+last_ambient_display = time.monotonic()
 switch_off_time = None
 confirm_on_rotate = get_config()['confirm_on_rotate']
 seeking = False
@@ -1974,7 +1974,7 @@ else:
 favorites = get_favorites()
 hidden = get_hidden()
 
-button_released_time = time.time()
+button_released_time = time.monotonic()
 currently_displaying = 'scud'
 button_press_times = []
 
@@ -1985,7 +1985,7 @@ one_cache = {}
 scroll_cache_dict = {}
 
 streams = get_streams()
-last_successful_fetch = time.time()
+last_successful_fetch = time.monotonic()
 stream_list = get_stream_list(streams)
 calculate_ticks()
 
@@ -2170,7 +2170,7 @@ def control_socket_listener():
                 command = json.loads(data)
                 response = handle_remote_command(command)
                 conn.sendall((json.dumps(response) + '\n').encode('utf-8'))
-                last_input_time = time.time()
+                last_input_time = time.monotonic()
             conn.close()
             
         except socket.timeout:
@@ -2207,7 +2207,7 @@ volume_click_button.when_pressed = on_volume_button_pressed
 volume_click_button.when_released = on_volume_button_released
 
 ## main loop
-print('BEGIN REFRESH', time.time())
+print('BEGIN REFRESH', time.monotonic())
 calculate_ticks()
 scroll_cache_dict[stream] = display_scroll(stream, silent=True)
 start_priority_refresh()
@@ -2215,9 +2215,9 @@ display_cached_scroll(stream)
 update_thread = threading.Thread(target=periodic_update, daemon=True)
 update_thread.start()
  
-print('DISPLAYING', time.time())
+print('DISPLAYING', time.monotonic())
 display_cached_scroll(stream)
-last_input_time = time.time()
+last_input_time = time.monotonic()
  
 _last_gate_log = 0.0
 _last_clock_minute = None
@@ -2233,7 +2233,7 @@ try:
         # frozen on its last good frame -- which looks exactly like a
         # driver bug and isn't one.
         try:
-            now = time.time()
+            now = time.monotonic()
  
             if now - last_input_time > 10:
                 set_last_volume(str(current_volume))
