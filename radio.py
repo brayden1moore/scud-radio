@@ -372,6 +372,53 @@ def send_mpv_command(cmd, max_retries=2, retry_delay=0.05):
                 return False
     return False
 
+def mpv_get(prop, timeout=0.3):
+    """Read an mpv property over the IPC socket; None if mpv doesn't answer."""
+    try:
+        with socket.socket(socket.AF_UNIX) as sk:
+            sk.settimeout(timeout)
+            sk.connect("/tmp/mpvsocket")
+            sk.sendall((json.dumps({"command": ["get_property", prop], "request_id": 7}) + '\n').encode())
+            buf, deadline = b'', time.time() + timeout
+            while time.time() < deadline:
+                chunk = sk.recv(4096)
+                if not chunk:
+                    break
+                buf += chunk
+                while b'\n' in buf:
+                    line, buf = buf.split(b'\n', 1)
+                    try:
+                        msg = json.loads(line)
+                    except ValueError:
+                        continue                      # an event line, not our reply
+                    if msg.get('request_id') == 7:
+                        return msg.get('data') if msg.get('error') == 'success' else None
+    except (OSError, socket.timeout):
+        return None
+    return None
+
+# "Tuning in..." -- from loadfile until mpv is actually playing audio
+TUNING_TIMEOUT = 12                     # seconds before we say the station isn't answering
+tuning = {'name': None, 'since': 0.0, 'state': None}     # state: None | 'tuning' | 'failed'
+
+def _start_tuning(name):
+    tuning.update(name=name, since=time.time(), state='tuning')
+
+def _update_tuning(now, active_name, can_draw):
+    """Called from the main loop a few times a second while a station is tuning."""
+    name, state = tuning['name'], tuning['state']
+    # playing = mpv has OUR stream loaded and its core isn't idle (core-idle goes
+    # False once audio actually flows); the path check ignores the old stream's tail
+    url = (streams.get(name) or {}).get('streamLink')
+    playing = mpv_get('core-idle') is False and mpv_get('path') == url
+    if playing:
+        tuning['state'] = None
+    elif state == 'tuning' and now - tuning['since'] > TUNING_TIMEOUT:
+        tuning['state'] = 'failed'
+    changed = tuning['state'] != state
+    if can_draw and active_name == name and (changed or tuning['state'] == 'tuning'):
+        push_status_strip(name)                        # 'tuning' redraws each tick to pulse the dot
+
 SUMMARY_URL = 'https://one.radio/summary'
 LOGO_SIZES = ['25', '60', '96', '216','320']  
  
@@ -511,6 +558,7 @@ def play(name, toggled=False):
         safe_display(saved_image_while_paused)
     else:
         stream_url = streams[name]['streamLink']
+        _start_tuning(name)
         if first_boot:
             send_mpv_command({"command": ["loadfile", stream_url]})
             first_boot = False
@@ -946,6 +994,17 @@ def render_status_strip(name):
     cy = y + height('Sg', CLOCK_FONT) // 2 + 2
     cx, r = MARQUEE_X + 5, 5
     edge = None if BG_COLOR == BLACK else (60, 60, 60)
+    tstate = tuning['state'] if tuning['name'] == name else None
+    if tstate:
+        if tstate == 'tuning':
+            lit = int(time.time() * 2.5) % 2 == 0                      # gentle pulse
+            dot = LIVE_COLOR if lit else _mix(LIVE_COLOR, BG_COLOR, 0.7)
+            label = 'Tuning in...'
+        else:
+            dot, label = STATUS_OFF_COLOR, "Station isn't answering"
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=dot, outline=edge, width=1)
+        d.text((MARQUEE_X + 17, y - 1), label, font=CLOCK_FONT, fill=MUTED_COLOR)
+        return _status_strip
     if status == 'Live':
         d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=LIVE_COLOR, outline=edge, width=1)
     elif status == 'Re-Run':
@@ -2163,6 +2222,7 @@ last_input_time = time.time()
 _last_gate_log = 0.0
 _last_clock_minute = None
 _last_amb_minute = None
+last_tune_check = 0.0
 pending_last_played = None
 needs_scroll = False
  
@@ -2253,6 +2313,11 @@ try:
             if on_everything and minute != _last_clock_minute and not volume_overlay_showing and not seek_overlay_name:
                 _last_clock_minute = minute
                 push_panel(active_name)
+
+            if tuning['state'] and now - last_tune_check > 0.3:
+                last_tune_check = now
+                _update_tuning(now, active_name,
+                               on_everything and not volume_overlay_showing and not seek_overlay_name)
 
             if on_everything:
                 text = _ol_text(info)

@@ -17,7 +17,7 @@ set -u
 
 IFACE="wlan0"
 AP_CON="scud-ap"
-AP_SSID="Scud House"          # constant across all units (branding)
+AP_SSID="Otis-Setup"          # constant across all units (branding); matches hello.png
 AP_ADDR="192.168.4.1/24"
 PORTAL_PORT="888"
 

@@ -297,6 +297,7 @@ sudo -H pip install --break-system-packages -r requirements.txt
 
 # ---------- networking tools ----------
 sudo apt install iptables -y
+sudo apt install fonts-noto-cjk -y   # Chinese/Japanese/Korean glyphs for the one-liner
 
 # ---------- trims (unchanged from before) ----------
 sudo apt update
