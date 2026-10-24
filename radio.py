@@ -905,23 +905,23 @@ def station_time(name):
         return ''
 
 def _draw_clock_row(draw, name, origin_y=0):
-    """Live = yellow dot, Re-Run = yellow ring, anything else = grey dot."""
+    """Live = yellow square, Re-Run = yellow outline square, anything else = grey square."""
     info = streams.get(name) or {}
     y = CLOCK_Y - origin_y
     cy = y + height('Sg', CLOCK_FONT) // 2 + 2
-    cx, r = MARQUEE_X + 5, 5
+    cx, r = MARQUEE_X + 5, 4          # 9 px square: same visual weight as the old 11 px dot
     status = info.get('status')
     edge = None if BG_COLOR == BLACK else (60, 60, 60)
     if status == 'Live':
-        draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=LIVE_COLOR, outline=edge, width=1)
+        draw.rectangle([cx - r, cy - r, cx + r, cy + r], fill=LIVE_COLOR, outline=edge, width=1)
     elif status == 'Re-Run':
         if edge:
-            draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=edge, width=1)
-            draw.ellipse([cx - r + 1, cy - r + 1, cx + r - 1, cy + r - 1], outline=LIVE_COLOR, width=2)
+            draw.rectangle([cx - r, cy - r, cx + r, cy + r], outline=edge, width=1)
+            draw.rectangle([cx - r + 1, cy - r + 1, cx + r - 1, cy + r - 1], outline=LIVE_COLOR, width=2)
         else:
-            draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=LIVE_COLOR, width=2)
+            draw.rectangle([cx - r, cy - r, cx + r, cy + r], outline=LIVE_COLOR, width=2)
     else:
-        draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=STATUS_OFF_COLOR)
+        draw.rectangle([cx - r, cy - r, cx + r, cy + r], fill=STATUS_OFF_COLOR)
     draw.text((MARQUEE_X + 17, y), info.get('location') or '', font=CLOCK_FONT, fill=SECONDARY_COLOR)
     t = station_time(name)
     if t:
@@ -987,14 +987,14 @@ def push_panel(name):
             display_lock.release()
 
 def render_status_strip(name):
-    """Settled bottom row: status dot + word, then genres in muted text."""
+    """Settled bottom row: status square + word, then genres in muted text."""
     d = ImageDraw.Draw(_status_strip)
     d.rectangle([0, 0, SCREEN_WIDTH, _status_strip.height], fill=BG_COLOR)
     info = streams.get(name) or {}
     status = info.get('status') or 'Offline'
     y = CLOCK_Y - CLOCK_STRIP_TOP
     cy = y + height('Sg', CLOCK_FONT) // 2 + 2
-    cx, r = MARQUEE_X + 5, 5
+    cx, r = MARQUEE_X + 5, 4          # 9 px square: same visual weight as the old 11 px dot
     edge = None if BG_COLOR == BLACK else (60, 60, 60)
     tstate = tuning['state'] if tuning['name'] == name else None
     if tstate:
@@ -1004,17 +1004,17 @@ def render_status_strip(name):
             label = 'Tuning in...'
         else:
             dot, label = STATUS_OFF_COLOR, "Station isn't answering"
-        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=dot, outline=edge, width=1)
+        d.rectangle([cx - r, cy - r, cx + r, cy + r], fill=dot, outline=edge, width=1)
         d.text((MARQUEE_X + 17, y - 1), label, font=CLOCK_FONT, fill=MUTED_COLOR)
         return _status_strip
     if status == 'Live':
-        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=LIVE_COLOR, outline=edge, width=1)
+        d.rectangle([cx - r, cy - r, cx + r, cy + r], fill=LIVE_COLOR, outline=edge, width=1)
     elif status == 'Re-Run':
-        d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=edge or LIVE_COLOR, width=1 if edge else 2)
+        d.rectangle([cx - r, cy - r, cx + r, cy + r], outline=edge or LIVE_COLOR, width=1 if edge else 2)
         if edge:
-            d.ellipse([cx - r + 1, cy - r + 1, cx + r - 1, cy + r - 1], outline=LIVE_COLOR, width=2)
+            d.rectangle([cx - r + 1, cy - r + 1, cx + r - 1, cy + r - 1], outline=LIVE_COLOR, width=2)
     else:
-        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=STATUS_OFF_COLOR)
+        d.rectangle([cx - r, cy - r, cx + r, cy + r], fill=STATUS_OFF_COLOR)
     x = MARQUEE_X + 17
     d.text((x, y - 1), status, font=CLOCK_FONT, fill=SECONDARY_COLOR)
     genres = ' · '.join(info.get('genres') or [])
