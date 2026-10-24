@@ -1612,7 +1612,9 @@ def display_ambient(name):
 # play begin/end, track info and cover art. While AirPlay plays, the radio
 # steps aside: mpv stops, the screen shows the cover in the show-art layout,
 # the volume knob sets the AirPlay level, and the station knob (or picking a
-# station anywhere) ends the session and brings the radio back.
+# station anywhere) ends the session and brings the radio back. When the phone
+# pauses or disconnects, nothing happens: the last track stays on screen and
+# the radio stays quiet until someone touches it.
 AIRPLAY_PIPE = '/tmp/shairport-sync-metadata'
 AIRPLAY_CARD = 'sndrpihifiberry'
 AIRPLAY_CONTROL = 'AirPlay'
@@ -1620,7 +1622,7 @@ AIRPLAY_BG = (26, 26, 26)
 
 airplay_lock = threading.Lock()
 airplay = {'active': False, 'title': '', 'artist': '', 'album': '', 'sender': '',
-           'art': None, 'dirty': False, 'pending': {}}
+           'art': None, 'thumb': None, 'dirty': False, 'pending': {}}
 airplay_mq = {'offset': 0, 'pause_until': 0, 'needed': False}
 airplay_volume = get_config().get('airplay_volume')     # None -> start from the radio's level
 airplay_vol_until = 0.0
@@ -1633,17 +1635,18 @@ def _ap_word(hexstr):
     return bytes.fromhex(hexstr).decode('latin-1')
 
 def _prepare_cover(data):
-    """Cover art bytes -> 320x240 full-bleed crop (same treatment as show art)."""
+    """Cover art bytes -> (320x240 full-bleed crop, uncropped square for the corner tile)."""
     try:
         img = Image.open(BytesIO(data))
         img.draft('RGB', (SCREEN_WIDTH * 2, SCREEN_WIDTH * 2))
         img = img.convert('RGB')
         if min(img.size) < 32:
-            return None
-        return ImageOps.fit(img, (SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS)
+            return None, None
+        return (ImageOps.fit(img, (SCREEN_WIDTH, SCREEN_HEIGHT), Image.LANCZOS),
+                ImageOps.fit(img, (SHOW_LOGO, SHOW_LOGO), Image.LANCZOS))
     except Exception as e:
         logging.error(f'airplay cover: {e}')
-        return None
+        return None, None
 
 def _airplay_event(typ, code, data):
     text = lambda: data.decode('utf-8', 'replace').strip()
@@ -1664,11 +1667,11 @@ def _airplay_event(typ, code, data):
                     airplay[k] = p.get(k, '')
                 airplay['dirty'] = True
             elif code == 'PICT':
-                airplay['art'] = _prepare_cover(data) if data else None
+                airplay['art'], airplay['thumb'] = _prepare_cover(data) if data else (None, None)
                 airplay['dirty'] = True
             elif code in ('pbeg', 'prsm'):           # play begins / resumes
                 if not airplay['active']:
-                    airplay.update(active=True, title='', artist='', album='', art=None)
+                    airplay.update(active=True, title='', artist='', album='', art=None, thumb=None)
                 airplay['dirty'] = True
             elif code == 'pend':                     # sender disconnected
                 airplay['active'] = False
@@ -1750,7 +1753,7 @@ def _airplay_tile(size):
     d.polygon(tri, fill=BLACK)
     return t
 
-def _compose_airplay_base(art):
+def _compose_airplay_base(art, thumb=None):
     if art is None:                           # no cover yet / none sent: big faint AirPlay mark
         art = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), AIRPLAY_BG)
         d = ImageDraw.Draw(art)
@@ -1759,7 +1762,9 @@ def _compose_airplay_base(art):
         d.polygon(tri, fill=(70, 70, 70))
     arr = np.asarray(art.convert('RGB'), np.float32) * (1 - _show_gradient())
     base = Image.fromarray(arr.astype(np.uint8), 'RGB')
-    base.paste(_airplay_tile(SHOW_LOGO), (SHOW_PAD, SCREEN_HEIGHT - SHOW_PAD - SHOW_LOGO))
+    # the cover itself in the corner (uncropped), the AirPlay mark only when there's no cover
+    corner = thumb if thumb is not None else _airplay_tile(SHOW_LOGO)
+    base.paste(corner, (SHOW_PAD, SCREEN_HEIGHT - SHOW_PAD - SHOW_LOGO))
     if BRIGHTNESS != 1:
         base = ImageEnhance.Brightness(base).enhance(BRIGHTNESS)
     return base
@@ -1810,8 +1815,9 @@ def _render_ap_vol(v):
 def display_airplay():
     global currently_displaying, _show_base, _airplay_t1
     with airplay_lock:
-        art, title, artist, sender = airplay['art'], airplay['title'], airplay['artist'], airplay['sender']
-    _show_base = _compose_airplay_base(art)
+        art, thumb = airplay['art'], airplay['thumb']
+        title, artist, sender = airplay['title'], airplay['artist'], airplay['sender']
+    _show_base = _compose_airplay_base(art, thumb)
     _airplay_t1 = title or 'AirPlay'
     t2 = artist or (f'from {sender}' if sender and not title else '')
     image = _show_base.copy()
@@ -1891,10 +1897,11 @@ def airplay_tick(now):
     if active and not showing:
         _airplay_enter()
         return 0.15
-    if not active:
-        if showing:
-            _airplay_resume_radio()
+    if not active and not showing:
         return None
+    # Not active but still showing: the phone paused or disconnected. Leave the
+    # last track on screen and the radio silent until someone touches a knob
+    # (handle_rotation / play() bring the radio back).
     if not screen_on or sleeping or freeze_for_task:
         return 0.15
     if airplay_vol_until and now > airplay_vol_until:
