@@ -118,6 +118,7 @@ MUTED_COLOR = THEME['muted']          # station time
 FAINT_COLOR = THEME['faint']          # unlit dial letters
 WEDGE_OFF_COLOR = THEME['wedge_off']  # unlit volume cells
 STATUS_OFF_COLOR = (120, 120, 120)    # offline dot
+LIVE_COLOR = YELLOW                   # live dot / re-run ring
 
 def load_font(name, size, weight=400):
     if name == 'Archivo':
@@ -138,25 +139,77 @@ SMALL_LIGHT = load_font('Favorit', 20, weight=400)
 print('LOADING LARGE',time.time())
 EXTRALARGE_LIGHT = load_font('Archivo',42, weight=800)  
 CLOCK_FONT = load_font('Favorit', 17)
+
+# ---- one-liner font fallback: Favorit first, then Noto Sans (Cyrillic, Greek,
+# extended Latin), then a CJK font if one is installed (apt: fonts-noto-cjk) ----
+def _load_fallback(path, size, weight=400):
+    try:
+        f = ImageFont.truetype(path, size)
+    except Exception:
+        return None
+    try:
+        axes = f.get_variation_axes()
+        f.set_variation_by_axes([weight if a['name'] in (b'Weight', 'Weight') else a['default'] for a in axes])
+    except Exception:
+        pass                                  # static font, nothing to set
+    return f
+
+OL_FONTS = [SMALL_LIGHT]
+for _path, _size in [
+    ('assets/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf', 19),
+    ('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc', 18),
+    ('/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc', 18),
+    ('/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc', 18),
+]:
+    _f = _load_fallback(_path, _size)
+    if _f is not None:
+        OL_FONTS.append(_f)
+OL_BASELINE = SMALL_LIGHT.getmetrics()[0]     # every run shares Favorit's baseline
+
+_tofu_masks = {}
+_glyph_cache = {}
+def _has_glyph(font, ch):
+    key = (id(font), ch)
+    hit = _glyph_cache.get(key)
+    if hit is None:
+        if ch.isspace():
+            hit = True
+        else:
+            tofu = _tofu_masks.get(id(font))
+            if tofu is None:
+                tofu = _tofu_masks[id(font)] = bytes(font.getmask('\uffff'))
+            try:
+                hit = bytes(font.getmask(ch)) != tofu
+            except Exception:
+                hit = False
+        _glyph_cache[key] = hit
+    return hit
+
+@lru_cache(maxsize=512)
+def _runs(text):
+    """Split text into (chunk, font) runs, using the first font that has each glyph."""
+    runs = []
+    for ch in text:
+        f = next((f for f in OL_FONTS if _has_glyph(f, ch)), OL_FONTS[0])
+        if runs and runs[-1][1] is f:
+            runs[-1][0] += ch
+        else:
+            runs.append([ch, f])
+    return tuple((t, f) for t, f in runs)
+
+@lru_cache(maxsize=512)
+def text_width(text):
+    return round(sum(f.getlength(t) for t, f in _runs(text or '')))
+
+def draw_text_mixed(draw, xy, text, fill):
+    """Draw like draw.text(xy, text, font=SMALL_LIGHT) but with per-glyph fallback."""
+    x, y = xy
+    by = y + OL_BASELINE
+    for t, f in _runs(text or ''):
+        draw.text((x, by), t, font=f, fill=fill, anchor='ls')
+        x += f.getlength(t)
 DIAL_FONT = load_font('Favorit', 14)
 
-_archivo_cache = {}
-def _archivo_size(size):
-    if size not in _archivo_cache:
-        _archivo_cache[size] = load_font('Archivo', size, weight=800)
-    return _archivo_cache[size]
-
-_name_font_cache = {}
-def _fit_name_font(name, max_w=SCREEN_WIDTH - 20):
-    """Largest Archivo size (42 down to 32) that fits; longer names still marquee at 32."""
-    if name not in _name_font_cache:
-        font = EXTRALARGE_LIGHT
-        for size in (42, 40, 38, 36, 34, 32):
-            font = EXTRALARGE_LIGHT if size == 42 else _archivo_size(size)
-            if width(name, font) <= max_w:
-                break
-        _name_font_cache[name] = font
-    return _name_font_cache[name]
 
 def replace_font(font):
     replacement = 'Noto'
@@ -379,7 +432,7 @@ def get_streams():
             continue
         name = st['name']
         active[name] = dict(st)   
-        active[name]['oneLinerWidth'] = width(active[name]['oneLiner'], SMALL_LIGHT)
+        active[name]['oneLinerWidth'] = text_width(active[name]['oneLiner'].replace('&amp;', '&').strip())
  
     # Decide which stations need a logo download: missing files or changed hash.
     need_imgs = []
@@ -614,8 +667,8 @@ def calculate_ticks():
         for k, g in enumerate(glyphs):
             cx = 12 + k * step
             if g == '★':
-                _star(draw, cx, DIAL_Y + 9, 7, FAINT_COLOR)
-                x0, x1 = cx - 6, cx + 6
+                _star(draw, cx, DIAL_Y + 9, 5, FAINT_COLOR)
+                x0, x1 = cx - 5, cx + 5
             else:
                 w = width(g, DIAL_FONT)
                 x0 = cx - w / 2
@@ -626,7 +679,7 @@ def calculate_ticks():
     tick_image = image
 
 
-def draw_tick(draw, name):
+def draw_tick(draw, name, origin_y=0):
     """Light the current station's glyph and underline it."""
     g = '★' if name in favorites else _dial_glyph(name)
     if g not in dial_slots:
@@ -634,11 +687,12 @@ def draw_tick(draw, name):
         if g not in dial_slots:
             return
     x0, x1, cx = dial_slots[g]
+    y = DIAL_Y - origin_y
     if g == '★':
-        _star(draw, cx, DIAL_Y + 9, 7, SECONDARY_COLOR)
+        _star(draw, cx, y + 9, 5, SECONDARY_COLOR)
     else:
-        draw.text((x0, DIAL_Y), g, font=DIAL_FONT, fill=SECONDARY_COLOR)
-    draw.rectangle([x0 - 2, DIAL_Y + 19, x1 + 2, DIAL_Y + 21], fill=SECONDARY_COLOR)
+        draw.text((x0, y), g, font=DIAL_FONT, fill=SECONDARY_COLOR)
+    draw.rectangle([x0 - 2, y + 19, x1 + 2, y + 21], fill=SECONDARY_COLOR)
 
 FONT_HEIGHTS = {
     'SMALL_LIGHT' : height('Sg',SMALL_LIGHT),
@@ -684,8 +738,6 @@ _name_metrics_cache = {}
 def _name_metrics(name):
     if name not in _name_metrics_cache:
         _, f = calculate_text(name, EXTRALARGE_LIGHT, 10**9, 1)
-        if f is EXTRALARGE_LIGHT:          # keep the Noto fallback for non-Latin names
-            f = _fit_name_font(name)
         _name_metrics_cache[name] = (f, width(name, f))
     return _name_metrics_cache[name]
 
@@ -799,16 +851,21 @@ def station_time(name):
         return ''
 
 def _draw_clock_row(draw, name, origin_y=0):
-    """Live = red dot, Re-Run = red ring, anything else = grey dot."""
+    """Live = yellow dot, Re-Run = yellow ring, anything else = grey dot."""
     info = streams.get(name) or {}
     y = CLOCK_Y - origin_y
     cy = y + height('Sg', CLOCK_FONT) // 2 + 2
     cx, r = MARQUEE_X + 5, 5
     status = info.get('status')
+    edge = None if BG_COLOR == BLACK else (60, 60, 60)
     if status == 'Live':
-        draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=RED)
+        draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=LIVE_COLOR, outline=edge, width=1)
     elif status == 'Re-Run':
-        draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=RED, width=2)
+        if edge:
+            draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=edge, width=1)
+            draw.ellipse([cx - r + 1, cy - r + 1, cx + r - 1, cy + r - 1], outline=LIVE_COLOR, width=2)
+        else:
+            draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=LIVE_COLOR, width=2)
     else:
         draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=STATUS_OFF_COLOR)
     draw.text((MARQUEE_X + 17, y), info.get('location') or '', font=CLOCK_FONT, fill=SECONDARY_COLOR)
@@ -842,14 +899,14 @@ def _render_name_strip(name, offset):
 
 def _render_ol_strip(name, offset):
     text = streams[name]['oneLiner'].replace('&amp;', '&').strip()
-    full_w = streams[name].get('oneLinerWidth') or width(text, SMALL_LIGHT)
+    full_w = streams[name].get('oneLinerWidth') or text_width(text)
     d = ImageDraw.Draw(_ol_strip)
     d.rectangle([0, 0, SCREEN_WIDTH, _ol_strip.height], fill=BG_COLOR)
     span = full_w + MARQUEE_GAP
     start = MARQUEE_X - (offset % span)
     y = OL_STRIP_TOP - OL_STRIP_TOP  # = 0, oneliner sits at strip top
-    d.text((start, y), text, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
-    d.text((start + span, y), text, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
+    draw_text_mixed(d, (start, y), text, SECONDARY_COLOR)
+    draw_text_mixed(d, (start + span, y), text, SECONDARY_COLOR)
     d.rectangle([0, 0, MARQUEE_X - 1, _ol_strip.height], fill=BG_COLOR)
     _fade_right(_ol_strip, 0, _ol_strip.height)
     return _ol_strip
@@ -870,12 +927,12 @@ def _render_amb_strip(text, offset=None):
     y = (AMB_BAR_Y + 1) - AMB_STRIP_TOP     # absolute y minus strip origin
  
     if offset is None:
-        d.text((AMB_TEXT_X, y), text, font=SMALL_LIGHT, fill=ambient_text_color)
+        draw_text_mixed(d, (AMB_TEXT_X, y), text, ambient_text_color)
     else:
-        span = width(text, SMALL_LIGHT) + MARQUEE_GAP
+        span = text_width(text) + MARQUEE_GAP
         start = AMB_TEXT_X - (offset % span)
-        d.text((start, y), text, font=SMALL_LIGHT, fill=ambient_text_color)
-        d.text((start + span, y), text, font=SMALL_LIGHT, fill=ambient_text_color)
+        draw_text_mixed(d, (start, y), text, ambient_text_color)
+        draw_text_mixed(d, (start + span, y), text, ambient_text_color)
         # left gutter, so text never touches the panel edge
         d.rectangle([0, 0, AMB_TEXT_X - 1, h], fill=ambient_bar_color)
  
@@ -1021,17 +1078,16 @@ def display_scroll(name, silent=False):
         y_offset = 0
         everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 5
         info_line = streams[name]['oneLiner']
-        draw.text((name_chunk_start_x, everything_info_y + y_offset), info_line, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
-        if name_chunk_start_x + width(info_line, SMALL_LIGHT) > SCREEN_WIDTH:
+        info_line = _ol_text(streams[name])
+        draw_text_mixed(draw, (name_chunk_start_x, everything_info_y + y_offset), info_line, SECONDARY_COLOR)
+        if name_chunk_start_x + text_width(info_line) > SCREEN_WIDTH:
             _fade_right(image, OL_STRIP_TOP, OL_STRIP_BOTTOM)
         y_offset += 20
 
         # station clock row (replaces the tags)
         _draw_clock_row(draw, name)
 
-        # draw marks
-        image.paste(tick_image, (0,0), mask=tick_image)
-        draw_tick(draw, name)
+        # the alphabet dial and seek arrows are overlays, shown only while scrolling (show_seek_overlay)
         
         if BRIGHTNESS != 1:
             image = ImageEnhance.Brightness(image).enhance(BRIGHTNESS)
@@ -1146,6 +1202,80 @@ def toggle_stream(name):
             play(name, toggled=True)
 
 freeze_for_task = False
+# ---- seek overlay: alphabet dial + a direction arrow, only while scrolling ----
+SEEK_OVERLAY_SECS = 1.5
+seek_overlay_until = 0
+seek_overlay_name = None
+_dial_strip = Image.new('RGB', (SCREEN_WIDTH, VOL_STRIP_BOTTOM - VOL_STRIP_TOP), BLACK)
+ARROW_W, ARROW_H = 7, 24                      # small, thin, shallow chevron
+ARROW_CY = og_logo_position[1] + 48
+LEFT_ARROW_X = og_logo_position[0] - 15       # over the neighbour, just outside the active tile
+RIGHT_ARROW_X = og_logo_position[0] + 96 + 8
+
+def _render_dial_strip(name):
+    if tick_image is None or not dial_slots:
+        calculate_ticks()
+    d = ImageDraw.Draw(_dial_strip)
+    d.rectangle([0, 0, SCREEN_WIDTH, _dial_strip.height], fill=BG_COLOR)
+    layer = tick_image.crop((0, VOL_STRIP_TOP, SCREEN_WIDTH, VOL_STRIP_BOTTOM))
+    _dial_strip.paste(layer, (0, 0), layer)
+    draw_tick(d, name, origin_y=VOL_STRIP_TOP)
+    return _dial_strip
+
+def _arrow_box(direction):
+    x = RIGHT_ARROW_X if direction > 0 else LEFT_ARROW_X
+    return (x - 4, ARROW_CY - ARROW_H // 2 - 4, x + ARROW_W + 4, ARROW_CY + ARROW_H // 2 + 5)
+
+def _render_arrow(base, direction):
+    box = _arrow_box(direction)
+    tile = base.crop(box).convert('RGB')
+    d = ImageDraw.Draw(tile)
+    x0, cy, half = 4, ARROW_CY - box[1], ARROW_H // 2
+    if direction > 0:
+        pts = [(x0, cy - half), (x0 + ARROW_W, cy), (x0, cy + half)]
+    else:
+        pts = [(x0 + ARROW_W, cy - half), (x0, cy), (x0 + ARROW_W, cy + half)]
+    d.line(pts, fill=BG_COLOR, width=6, joint='curve')         # halo so it reads over any logo
+    d.line(pts, fill=SECONDARY_COLOR, width=2, joint='curve')
+    return tile, box
+
+def show_seek_overlay(name, direction):
+    global seek_overlay_until, seek_overlay_name
+    base = scroll_cache_dict.get(name)
+    if base is None:
+        return
+    strip = _render_dial_strip(name)
+    arrow, box = _render_arrow(base, direction) if direction else (None, None)
+    if display_lock.acquire(timeout=0.5):
+        try:
+            if not volume_overlay_showing:
+                disp.ShowWindow(strip, 0, VOL_STRIP_TOP)
+            if arrow is not None:
+                disp.ShowWindow(arrow, box[0], box[1])
+        finally:
+            display_lock.release()
+    seek_overlay_until = time.time() + SEEK_OVERLAY_SECS
+    seek_overlay_name = name
+
+def clear_seek_overlay():
+    """Put back the plain strip and logo areas from the cached screen."""
+    global seek_overlay_name
+    name, seek_overlay_name = seek_overlay_name, None
+    base = scroll_cache_dict.get(name) if name else None
+    if base is None or currently_displaying != 'everything':
+        return
+    if (readied_stream if readied_stream else stream) != name:
+        return
+    if display_lock.acquire(timeout=0.5):
+        try:
+            if not volume_overlay_showing:
+                disp.ShowWindow(base.crop((0, VOL_STRIP_TOP, SCREEN_WIDTH, VOL_STRIP_BOTTOM)).convert('RGB'), 0, VOL_STRIP_TOP)
+            for dirn in (-1, 1):
+                b = _arrow_box(dirn)
+                disp.ShowWindow(base.crop(b).convert('RGB'), b[0], b[1])
+        finally:
+            display_lock.release()
+
 def seek_stream(direction):
     global readied_stream
     if freeze_for_task:
@@ -1159,6 +1289,7 @@ def seek_stream(direction):
         else: 
             readied_stream = sl[(idx + direction) % len(sl)]
     display_cached_scroll(readied_stream)
+    show_seek_overlay(readied_stream, direction if currently_displaying == 'everything' else 0)
     confirm_seek()
 
 def confirm_seek():
@@ -1961,6 +2092,9 @@ try:
  
             needs_scroll = False
  
+            if seek_overlay_name and now > seek_overlay_until:
+                clear_seek_overlay()
+
             minute = int(now // 60)
             if on_everything and minute != _last_clock_minute:
                 _last_clock_minute = minute
@@ -1968,7 +2102,7 @@ try:
 
             if on_everything:
                 text = _ol_text(info)
-                text_w = width(text, SMALL_LIGHT)
+                text_w = text_width(text)
                 long_oneliner = text_w > (SCREEN_WIDTH - MARQUEE_X)
  
                 _, name_w = _name_metrics(active_name)
@@ -2024,7 +2158,7 @@ try:
             elif on_ambient:
                 amb_info = streams.get(ambient_name)
                 amb_text = _ol_text(amb_info) if amb_info else ''
-                amb_w = width(amb_text, SMALL_LIGHT)
+                amb_w = text_width(amb_text)
                 amb_long = amb_w > (SCREEN_WIDTH - AMB_TEXT_X - 6)
                 needs_scroll = amb_long
  
