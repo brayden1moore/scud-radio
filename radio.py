@@ -922,7 +922,7 @@ def _draw_clock_row(draw, name, origin_y=0):
             draw.rectangle([cx - r, cy - r, cx + r, cy + r], outline=LIVE_COLOR, width=2)
     else:
         draw.rectangle([cx - r, cy - r, cx + r, cy + r], fill=STATUS_OFF_COLOR)
-    draw.text((MARQUEE_X + 17, y), info.get('location') or '', font=CLOCK_FONT, fill=SECONDARY_COLOR)
+    draw.text((MARQUEE_X + 17, y), info.get('homeLocation') or info.get('location') or '', font=CLOCK_FONT, fill=SECONDARY_COLOR)
     t = station_time(name)
     if t:
         draw.text((SCREEN_WIDTH - 10 - width(t, CLOCK_FONT), y), t, font=CLOCK_FONT, fill=MUTED_COLOR)
@@ -947,7 +947,7 @@ def _draw_panel(draw, name, ox=0):
     """Big local time, then 'in <city>' (wraps to two lines); the whole block is
     vertically centred against the logo, so one- and two-line cities both sit right."""
     info = streams.get(name) or {}
-    city = (info.get('location') or '').strip()
+    city = (info.get('homeLocation') or info.get('location') or '').strip()
     parts = station_time_parts(name)
     label = (f'in {city}' if city else '') if parts else city
     lines, f = calculate_text(label, CLOCK_FONT, SCREEN_WIDTH - PANEL_X - 8, 2) if label else ([], CLOCK_FONT)
