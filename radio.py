@@ -98,8 +98,26 @@ ORANGE = (255,128,0)
 PURPLE = (134,97,245)
 RED = (255,71,71)
 
-BG_COLOR = BLACK
-SECONDARY_COLOR = WHITE
+# ---- theme: "dark" (default) or "light"; set "theme" in /var/lib/scud-radio/config.json ----
+THEMES = {
+    'dark':  {'bg': BLACK,      'fg': WHITE, 'muted': (150, 150, 150), 'faint': (90, 90, 90),   'wedge_off': (45, 45, 45)},
+    'light': {'bg': DARK_WHITE, 'fg': BLACK, 'muted': (95, 95, 95),    'faint': (175, 175, 175), 'wedge_off': (215, 215, 215)},
+}
+
+def _startup_theme():
+    try:
+        with open('/var/lib/scud-radio/config.json') as f:
+            return json.load(f).get('theme', 'dark')
+    except Exception:
+        return 'dark'
+
+THEME = THEMES.get(_startup_theme(), THEMES['dark'])
+BG_COLOR = THEME['bg']
+SECONDARY_COLOR = THEME['fg']
+MUTED_COLOR = THEME['muted']          # station time
+FAINT_COLOR = THEME['faint']          # unlit dial letters
+WEDGE_OFF_COLOR = THEME['wedge_off']  # unlit volume cells
+STATUS_OFF_COLOR = (120, 120, 120)    # offline dot
 
 def load_font(name, size, weight=400):
     if name == 'Archivo':
@@ -119,6 +137,26 @@ SMALL_LIGHT = load_font('Favorit', 20, weight=400)
 
 print('LOADING LARGE',time.time())
 EXTRALARGE_LIGHT = load_font('Archivo',42, weight=800)  
+CLOCK_FONT = load_font('Favorit', 17)
+DIAL_FONT = load_font('Favorit', 14)
+
+_archivo_cache = {}
+def _archivo_size(size):
+    if size not in _archivo_cache:
+        _archivo_cache[size] = load_font('Archivo', size, weight=800)
+    return _archivo_cache[size]
+
+_name_font_cache = {}
+def _fit_name_font(name, max_w=SCREEN_WIDTH - 20):
+    """Largest Archivo size (42 down to 32) that fits; longer names still marquee at 32."""
+    if name not in _name_font_cache:
+        font = EXTRALARGE_LIGHT
+        for size in (42, 40, 38, 36, 34, 32):
+            font = EXTRALARGE_LIGHT if size == 42 else _archivo_size(size)
+            if width(name, font) <= max_w:
+                break
+        _name_font_cache[name] = font
+    return _name_font_cache[name]
 
 def replace_font(font):
     replacement = 'Noto'
@@ -542,51 +580,65 @@ tick_start_y = (tick_bar_start + tick_bar_height / 2)
 tick_image = None
 tick_locations = {}
 
+def _star(draw, cx, cy, r, fill):
+    pts = []
+    for k in range(10):
+        a = -math.pi / 2 + k * math.pi / 5
+        rr = r if k % 2 == 0 else r * 0.45
+        pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a)))
+    draw.polygon(pts, fill=fill)
+
+def _dial_glyph(name):
+    c = name[:1].upper()
+    return c if c.isalpha() else '#'
+
+DIAL_Y = tick_bar_start + 4      # top of the dial letters
+dial_slots = {}                  # glyph -> (x0, x1, centre x)
+
 def calculate_ticks():
-    global tick_locations, tick_image
+    """Alphabet dial: a star for favourites (they sort first), then the first
+    letters of the remaining stations in list order. Unlit layer only."""
+    global tick_image, dial_slots
     image = Image.new('RGBA', (SCREEN_WIDTH, SCREEN_HEIGHT), color=(0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
-    tick_locations = {}
-
-    total_ticks = len(stream_list)
-    step = total_span / total_ticks        
-
-    fav_sorted = sorted(favorites, key=str.casefold)
-    rest = [i for i in stream_list if i not in favorites]
-    ordered = fav_sorted + rest
-
-    line_y = tick_start_y
-
-    # yellow highlight block behind the favorites region
-    if fav_sorted:
-        fav_start_x = tick_start
-        fav_end_x = tick_start + step * len(fav_sorted)
-        draw.rectangle([fav_start_x, line_y - 3, fav_end_x, line_y + 3], fill=YELLOW)
-
-    # baseline for the non-favorite region
-    rest_start_x = tick_start + step * len(fav_sorted)
-    draw.rectangle([rest_start_x, line_y - 1, SCREEN_WIDTH, line_y + 1], fill=SECONDARY_COLOR)
-
-    # assign positions; draw individual ticks only for favorites
-    for idx, name in enumerate(ordered):
-        x = tick_start + step * idx
-        #x = 159
-        tick_locations[name] = round(x)
+    glyphs = ['★'] if favorites else []
+    for s in stream_list:
+        if s in favorites:
+            continue
+        g = _dial_glyph(s)
+        if g not in glyphs:
+            glyphs.append(g)
+    slots = {}
+    if glyphs:
+        step = (SCREEN_WIDTH - 24) / max(1, len(glyphs) - 1)
+        for k, g in enumerate(glyphs):
+            cx = 12 + k * step
+            if g == '★':
+                _star(draw, cx, DIAL_Y + 9, 7, FAINT_COLOR)
+                x0, x1 = cx - 6, cx + 6
+            else:
+                w = width(g, DIAL_FONT)
+                x0 = cx - w / 2
+                x1 = x0 + w
+                draw.text((x0, DIAL_Y), g, font=DIAL_FONT, fill=FAINT_COLOR)
+            slots[g] = (x0, x1, cx)
+    dial_slots = slots
     tick_image = image
 
 
 def draw_tick(draw, name):
-    if name not in tick_locations:
+    """Light the current station's glyph and underline it."""
+    g = '★' if name in favorites else _dial_glyph(name)
+    if g not in dial_slots:
         calculate_ticks()
-
-    mark_start = tick_locations[name]
-    bar_width = 3
-    draw.rectangle(
-        [mark_start - 1, tick_bar_start, mark_start + bar_width, tick_bar_start + tick_bar_height],
-        fill=SECONDARY_COLOR,
-        outline=BG_COLOR,
-        width=1
-    )
+        if g not in dial_slots:
+            return
+    x0, x1, cx = dial_slots[g]
+    if g == '★':
+        _star(draw, cx, DIAL_Y + 9, 7, SECONDARY_COLOR)
+    else:
+        draw.text((x0, DIAL_Y), g, font=DIAL_FONT, fill=SECONDARY_COLOR)
+    draw.rectangle([x0 - 2, DIAL_Y + 19, x1 + 2, DIAL_Y + 21], fill=SECONDARY_COLOR)
 
 FONT_HEIGHTS = {
     'SMALL_LIGHT' : height('Sg',SMALL_LIGHT),
@@ -632,8 +684,14 @@ _name_metrics_cache = {}
 def _name_metrics(name):
     if name not in _name_metrics_cache:
         _, f = calculate_text(name, EXTRALARGE_LIGHT, 10**9, 1)
+        if f is EXTRALARGE_LIGHT:          # keep the Noto fallback for non-Latin names
+            f = _fit_name_font(name)
         _name_metrics_cache[name] = (f, width(name, f))
     return _name_metrics_cache[name]
+
+def _name_dy(font):
+    """Smaller name sizes shift down so every name sits on the 42px baseline."""
+    return FONT_HEIGHTS['EXTRALARGE_LIGHT'] - height('Sg', font)
 
 def _ol_text(info):
     """Canonical one-liner string. Must be the single source of truth --
@@ -696,17 +754,78 @@ text_on_screen = None
 MARQUEE_X = 12 + start_x                      # name_chunk_start_x
 MARQUEE_GAP = 30                              # blank gap before the text repeats
 
+FADE_W = 28
+_fade_ramp = np.linspace(0.0, 1.0, FADE_W, dtype=np.float32)[None, :, None]
+
+def _fade_right(img, y0, y1):
+    """Fade the last FADE_W px of a row into the background, so text slides out softly."""
+    box = (SCREEN_WIDTH - FADE_W, int(y0), SCREEN_WIDTH, int(y1))
+    region = np.asarray(img.crop(box).convert('RGB'), dtype=np.float32)
+    bg = np.array(BG_COLOR, dtype=np.float32)
+    out = region * (1 - _fade_ramp) + bg * _fade_ramp
+    img.paste(Image.fromarray(out.astype(np.uint8), 'RGB'), box[:2])
+
 def _render_vol_strip(volume):
+    """Volume wedge: one cell per click of the knob, growing taller toward max."""
     d = ImageDraw.Draw(_vol_strip)
-    # clear whole strip (covers x=0..padding gutter too)
-    d.rectangle([0, 0, SCREEN_WIDTH, _vol_strip.height], fill=BG_COLOR)
-    volume_bar_end = SCREEN_WIDTH * (volume / MAX_VOL)
-    # absolute bar_top/bottom minus strip origin
-    top = (tick_bar_start + 7) - VOL_STRIP_TOP     
-    bottom = top + 11                              
-    d.rectangle([0, top, SCREEN_WIDTH, bottom], fill=BG_COLOR, outline=SECONDARY_COLOR, width=1)
-    d.rectangle([0, top, volume_bar_end, bottom], fill=SECONDARY_COLOR, outline=SECONDARY_COLOR, width=1)
+    h = _vol_strip.height
+    d.rectangle([0, 0, SCREEN_WIDTH, h], fill=BG_COLOR)
+    cells = max(1, MAX_VOL // volume_step)
+    lit = round(volume / volume_step)
+    gap = 3
+    cw = (SCREEN_WIDTH - 2 * padding - (cells - 1) * gap) // cells
+    x0 = (SCREEN_WIDTH - (cells * cw + (cells - 1) * gap)) // 2
+    bottom = h - 5
+    for k in range(cells):
+        ch = 4 + round(20 * k / max(1, cells - 1))
+        x = x0 + k * (cw + gap)
+        d.rectangle([x, bottom - ch, x + cw - 1, bottom],
+                    fill=SECONDARY_COLOR if k < lit else WEDGE_OFF_COLOR)
     return _vol_strip
+
+# ---- station clock row: status dot + city, local time at the station ----
+CLOCK_Y = round(OL_STRIP_TOP + FONT_HEIGHTS['SMALL_LIGHT'] + 14) + 1
+CLOCK_STRIP_TOP = CLOCK_Y - 4
+CLOCK_STRIP_BOTTOM = SCREEN_HEIGHT
+_clock_strip = Image.new('RGB', (SCREEN_WIDTH, CLOCK_STRIP_BOTTOM - CLOCK_STRIP_TOP), BLACK)
+
+def station_time(name):
+    tz = (streams.get(name) or {}).get('timezone')
+    if not tz:
+        return ''
+    try:
+        return datetime.now(pytz.timezone(tz)).strftime('%I:%M%p').lstrip('0').lower()
+    except Exception:
+        return ''
+
+def _draw_clock_row(draw, name, origin_y=0):
+    """Live = red dot, Re-Run = red ring, anything else = grey dot."""
+    info = streams.get(name) or {}
+    y = CLOCK_Y - origin_y
+    cy = y + height('Sg', CLOCK_FONT) // 2 + 2
+    cx, r = MARQUEE_X + 5, 5
+    status = info.get('status')
+    if status == 'Live':
+        draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=RED)
+    elif status == 'Re-Run':
+        draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=RED, width=2)
+    else:
+        draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=STATUS_OFF_COLOR)
+    draw.text((MARQUEE_X + 17, y), info.get('location') or '', font=CLOCK_FONT, fill=SECONDARY_COLOR)
+    t = station_time(name)
+    if t:
+        draw.text((SCREEN_WIDTH - 10 - width(t, CLOCK_FONT), y), t, font=CLOCK_FONT, fill=MUTED_COLOR)
+
+def push_clock_strip(name):
+    """Redraw only the clock row, e.g. when the minute changes."""
+    d = ImageDraw.Draw(_clock_strip)
+    d.rectangle([0, 0, SCREEN_WIDTH, _clock_strip.height], fill=BG_COLOR)
+    _draw_clock_row(d, name, origin_y=CLOCK_STRIP_TOP)
+    if display_lock.acquire(timeout=0.5):
+        try:
+            disp.ShowWindow(_clock_strip, 0, CLOCK_STRIP_TOP)
+        finally:
+            display_lock.release()
 
 def _render_name_strip(name, offset):
     font, full_w = _name_metrics(name)
@@ -714,10 +833,11 @@ def _render_name_strip(name, offset):
     d.rectangle([0, 0, SCREEN_WIDTH, _name_strip.height], fill=BG_COLOR)  # clear
     span = full_w + MARQUEE_GAP
     start = MARQUEE_X - (offset % span)
-    y = (NAME_Y - 1) - NAME_STRIP_TOP  # absolute y minus strip origin
+    y = (NAME_Y - 1) - NAME_STRIP_TOP + _name_dy(font)  # absolute y minus strip origin
     d.text((start - 1, y), name, font=font, fill=SECONDARY_COLOR)
     d.text((start - 1 + span, y), name, font=font, fill=SECONDARY_COLOR)
     d.rectangle([0, 0, MARQUEE_X - 1, _name_strip.height], fill=BG_COLOR)  # left gutter
+    _fade_right(_name_strip, 0, _name_strip.height)
     return _name_strip
 
 def _render_ol_strip(name, offset):
@@ -731,6 +851,7 @@ def _render_ol_strip(name, offset):
     d.text((start, y), text, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
     d.text((start + span, y), text, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
     d.rectangle([0, 0, MARQUEE_X - 1, _ol_strip.height], fill=BG_COLOR)
+    _fade_right(_ol_strip, 0, _ol_strip.height)
     return _ol_strip
 
 def _render_amb_strip(text, offset=None):
@@ -801,8 +922,8 @@ def render_frame(name, offset=0, volume=None, draw_oneliner=True, name_offset=No
     finally:
         display_lock.release()
 
-DIM = 0.60
-DIM_OUTLINE = tuple(int(c * DIM) for c in SECONDARY_COLOR)
+DIM = 0.40                     # default fade amount toward the background
+FADE = {1: 0.45, 2: 0.72}      # neighbours, then the outer pair
 
 _dim_cache = {}
 
@@ -815,7 +936,7 @@ def dim_logo(name, size, factor=DIM):
     hit = _dim_cache.get(key)
     if hit is not None and hit[0] is src:
         return hit[1]
-    out = ImageEnhance.Brightness(src.convert('RGB')).enhance(factor)
+    out = Image.blend(src.convert('RGB'), Image.new('RGB', src.size, BG_COLOR), factor)
     _dim_cache[key] = (src, out)
     return out
 
@@ -830,26 +951,26 @@ def dim_rgba(img, factor=DIM):
     if hit is not None and hit[0] is img:
         return hit[1]
     r, g, b, a = img.split()
-    rgb = ImageEnhance.Brightness(Image.merge('RGB', (r, g, b))).enhance(factor)
+    rgb = Image.blend(Image.merge('RGB', (r, g, b)), Image.new('RGB', img.size, BG_COLOR), factor)
     out = Image.merge('RGBA', (*rgb.split(), a))
     _dim_rgba_cache[key] = (img, out)
     return out
 
-def draw_tile(image, draw, station, pos, star=None, size=96, dim=True):
-    """Logo, star, then the white-over-black double
-    border"""
-    image.paste(dim_logo(station, size) if dim
+def draw_tile(image, draw, station, pos, star=None, size=96, dim=True, fade=None):
+    """Logo (faded toward the background unless active), star, then the double border."""
+    amount = 0 if not dim else (FADE[1] if fade is None else fade)
+    image.paste(dim_logo(station, size, amount) if amount
                 else streams[station][f'logo_{size}'], pos)
 
     if star is not None and station in favorites:
-        s = dim_rgba(star) if dim else star
+        s = dim_rgba(star, amount) if amount else star
         image.paste(s, pos, s)
 
     x0, y0 = pos
     x1, y1 = x0 + size, y0 + size
-    draw.rectangle([x0, y0, x1, y1],
-                   outline=DIM_OUTLINE if dim else WHITE, width=3)
-    draw.rectangle([x0 - 2, y0 - 2, x1 + 2, y1 + 2], outline=BLACK, width=3)
+    outline = tuple(round(SECONDARY_COLOR[k] * (1 - amount) + BG_COLOR[k] * amount) for k in range(3))
+    draw.rectangle([x0, y0, x1, y1], outline=outline, width=3)
+    draw.rectangle([x0 - 2, y0 - 2, x1 + 2, y1 + 2], outline=BG_COLOR, width=3)
 
 def display_scroll(name, silent=False):
     global streams, play_status, first_display, selector, start_x, currently_displaying
@@ -878,8 +999,8 @@ def display_scroll(name, silent=False):
         double_next_position = (next_position[0] + 43, prev_position[1])
 
         # back to front, so each tile's border is trimmed by the one in front
-        draw_tile(image, draw, double_prev_stream, double_prev_position, star_96)
-        draw_tile(image, draw, double_next_stream, double_next_position, star_96)
+        draw_tile(image, draw, double_prev_stream, double_prev_position, star_96, fade=FADE[2])
+        draw_tile(image, draw, double_next_stream, double_next_position, star_96, fade=FADE[2])
         draw_tile(image, draw, prev_stream,        prev_position,        star_96)
         draw_tile(image, draw, next_stream,        next_position,        star_96)
         draw_tile(image, draw, name,               logo_position,        star_96,
@@ -890,8 +1011,10 @@ def display_scroll(name, silent=False):
         name_chunk_start_x = 12 + start_x
         name_font = EXTRALARGE_LIGHT
 
-        name_line0, name_font = _name_line_cached(name)
-        draw.text((name_chunk_start_x - 1, name_chunk_start - 1), name_line0, font=name_font, fill=SECONDARY_COLOR)
+        name_font, name_w = _name_metrics(name)
+        draw.text((name_chunk_start_x - 1, name_chunk_start - 1 + _name_dy(name_font)), name, font=name_font, fill=SECONDARY_COLOR)
+        if name_chunk_start_x + name_w > SCREEN_WIDTH:
+            _fade_right(image, NAME_STRIP_TOP, NAME_STRIP_BOTTOM)
 
         # draw info
         info_font = SMALL_LIGHT
@@ -899,34 +1022,12 @@ def display_scroll(name, silent=False):
         everything_info_y = name_chunk_start + FONT_HEIGHTS['EXTRALARGE_LIGHT'] + 5
         info_line = streams[name]['oneLiner']
         draw.text((name_chunk_start_x, everything_info_y + y_offset), info_line, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
+        if name_chunk_start_x + width(info_line, SMALL_LIGHT) > SCREEN_WIDTH:
+            _fade_right(image, OL_STRIP_TOP, OL_STRIP_BOTTOM)
         y_offset += 20
 
-        # draw tags
-        tags_start_y = round(everything_info_y + FONT_HEIGHTS['SMALL_LIGHT'] + 14)
-        tags_start_x = name_chunk_start_x
-        location = streams[name]['location']
-        live_status = streams[name]['status']
-        stream_genres = streams[name]['genres']
-
-        genres = [live_status,location]
-        if stream_genres:
-            genres.extend(stream_genres)
-
-        genre_x_offset = 0
-        genre_padding = 4
-        if genres:
-            genre_widths = [width(g, SMALL_LIGHT) for g in genres]
-            box_h = FONT_HEIGHTS['SMALL_LIGHT'] - 4
-            for idx, genre in enumerate(genres):
-                bbox = info_font.getbbox(genre)
-                genre_width = bbox[2] - bbox[0] + genre_padding * 2
-                top = bbox[1]
-                fill = RED if idx == 0 else BLUE if idx == 1 else YELLOW
-                x0 = tags_start_x + genre_x_offset
-
-                draw.rectangle([x0, tags_start_y - genre_padding , x0 + genre_width, tags_start_y + 2 + box_h + genre_padding], fill=fill)
-                draw.text((x0 + genre_padding, tags_start_y - top + 1), genre, font=info_font, fill=BLACK)
-                genre_x_offset += genre_width + 6
+        # station clock row (replaces the tags)
+        _draw_clock_row(draw, name)
 
         # draw marks
         image.paste(tick_image, (0,0), mask=tick_image)
@@ -954,6 +1055,12 @@ def display_bar(image, text, color=WHITE):
     image.paste(_render_amb_strip(text), (0, AMB_STRIP_TOP))
  
  
+def _mode_color(img):
+    arr = np.asarray(img.convert('RGB')).reshape(-1, 3)
+    colors, counts = np.unique(arr, axis=0, return_counts=True)
+    return tuple(int(c) for c in colors[counts.argmax()])
+
+
 def display_ambient(name):
     global currently_displaying, last_ambient_display
     global ambient_name, ambient_text_on_screen
@@ -964,20 +1071,12 @@ def display_ambient(name):
  
     logo = info['logo_216']
     logo_w, logo_h = logo.size
-    first_pixel = logo.getpixel((4, 0))
- 
+    # sides take the logo's most common edge colour; repeating the edge pixel column streaked busy logos
+    first_pixel = _mode_color(logo.crop((0, 0, 3, logo_h)))
+    right_color = _mode_color(logo.crop((logo_w - 3, 0, logo_w, logo_h)))
     image = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT), color=first_pixel)
- 
-    first_col_strip = logo.crop((4, 0, 5, logo_h))
-    last_col_strip = logo.crop((logo_w - 4, 0, logo_w - 3, logo_h))
- 
-    for col in range(52):
-        image.paste(first_col_strip, (col, 2))
- 
+    ImageDraw.Draw(image).rectangle([52 + logo_w, 0, SCREEN_WIDTH, SCREEN_HEIGHT], fill=right_color)
     image.paste(logo, (52, 2))
- 
-    for col in range(52 + logo_w, SCREEN_WIDTH):
-        image.paste(last_col_strip, (col, 2))
  
     currently_displaying = 'ambient'
     ambient_name = name
@@ -1361,7 +1460,7 @@ def display_cached_scroll(name, pushed=False):
                 image = image.copy()
                 draw = ImageDraw.Draw(image)
                 bg_position = og_logo_position
-                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], outline=BLACK, width=2)
+                draw.rectangle([bg_position[0], bg_position[1], bg_position[0] + 96, bg_position[1] + 96], outline=BG_COLOR, width=2)
 
             with display_lock:
                 disp.ShowImage(image)
@@ -1371,6 +1470,7 @@ def display_cached_scroll(name, pushed=False):
         scroll_cache_dict[name] = display_scroll(name)
 
     text_on_screen = _ol_text(streams[name])
+    push_clock_strip(name)
     
 
 def periodic_update():
@@ -1778,6 +1878,7 @@ display_cached_scroll(stream)
 last_input_time = time.time()
  
 _last_gate_log = 0.0
+_last_clock_minute = None
 needs_scroll = False
  
 try:
@@ -1860,6 +1961,11 @@ try:
  
             needs_scroll = False
  
+            minute = int(now // 60)
+            if on_everything and minute != _last_clock_minute:
+                _last_clock_minute = minute
+                push_clock_strip(active_name)
+
             if on_everything:
                 text = _ol_text(info)
                 text_w = width(text, SMALL_LIGHT)
