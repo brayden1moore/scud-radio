@@ -45,7 +45,7 @@ header { display: flex; flex-wrap: wrap; justify-content: space-between; align-i
 
 .layout { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
 nav.menu { flex: 1 1 190px; max-width: 100%; display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; }
-nav.menu button { flex: 1 1 170px; display: flex; align-items: center; gap: 12px; text-align: left; min-height: 46px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--surface); }
+nav.menu button { flex: 1 1 170px; display: flex; align-items: center; gap: 12px; text-align: left; min-height: 46px; padding: 0 14px; border: 0; border-radius: 6px; background: var(--surface); }
 nav.menu button .n { font-size: 12px; color: var(--muted); }
 nav.menu button .l { font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
 nav.menu button[aria-current="page"] { background: var(--ink); color: var(--paper); }
@@ -61,7 +61,7 @@ h1 { margin: 0; font-family: var(--sans); font-size: 40px; font-weight: 800; let
 .hint { font-size: 13px; color: var(--soft); }
 .title { font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
 
-.card { background: var(--surface); border-radius: 14px; }
+.card { background: var(--surface); border-radius: 6px; }
 .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px 18px; }
 .card .row + .row { border-top: 1px solid #E0E0E0; }
 .row .text { flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
@@ -135,8 +135,8 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
 .themes button[aria-checked="true"] .sw { outline: 3px solid var(--ink); outline-offset: 2px; }
 
 /* wifi */
-.netcard { background: var(--ink); color: #fff; padding: 18px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
-.netcard .big { font-family: var(--sans); font-size: 26px; font-weight: 800; letter-spacing: -0.03em; overflow-wrap: anywhere; }
+.netcard { background: #fff; color: #000; padding: 18px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; border:1px solid var(--line); border-radius: 6px;}
+.netcard .big { font-family: var(--sans); font-size: 26px; font-weight: 400; letter-spacing: -0.03em; overflow-wrap: anywhere; }
 .netcard .small { font-size: 13px; color: #CFCFCF; }
 .netcard .btn { background: transparent; color: #fff; border: 1px solid #fff; border-radius: 0; min-height: 44px; font-size: 14px; }
 .net { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 4px; min-height: 52px; border: 0; border-top: 1px solid var(--line); background: var(--paper); text-align: left; }
@@ -193,7 +193,6 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
       <img src="/assets/otis.png" alt="Otis">
       <div>
         <div class="name" id="dev-name">Otis</div>
-        <div class="host" id="dev-host">online</div>
       </div>
     </div>
     <div class="pill" id="pill" aria-live="polite">
@@ -315,9 +314,8 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
       <section id="wifi" class="narrow" aria-label="Wi-Fi" hidden>
         <div><h1>Wi-Fi</h1><p class="lede">Switch networks without going back through setup.</p></div>
         <div class="netcard">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFFF3D" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10.5 10.5 0 0 1 14 0"/><path d="M8.5 15.5a5.5 5.5 0 0 1 7 0"/><circle cx="12" cy="19" r="1.2" fill="#FFFF3D"/></svg>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10.5 10.5 0 0 1 14 0"/><path d="M8.5 15.5a5.5 5.5 0 0 1 7 0"/><circle cx="12" cy="19" r="1.2" fill="#FFFF3D"/></svg>
           <div style="flex:1 1 200px;min-width:0;display:flex;flex-direction:column;gap:4px">
-            <div class="small">Connected to</div>
             <div class="big" id="net-name">…</div>
             <div class="small" id="net-meta"></div>
           </div>
@@ -326,7 +324,7 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
         <div id="join-status" class="hint" aria-live="polite"></div>
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8px">
-            <div class="h2">Other networks</div>
+            <div class="title">Other networks</div>
             <button class="btn" id="net-scan">Scan again</button>
           </div>
           <div id="net-list"></div>
@@ -405,7 +403,6 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
   const SECTIONS = [['remote', 'Remote'], ['stations', 'Stations'], ['screen', 'Screen'], ['sound', 'Sound'], ['wifi', 'Wi-Fi'], ['device', 'Device'], ['listening', 'Listening']];
   SECTIONS.forEach(([id, label], i) => {
     const b = el('button'); b.dataset.s = id;
-    b.append(el('span', 'n', String(i + 1).padStart(2, '0')), el('span', 'l', label));
     b.onclick = () => { location.hash = id; };
     $('menu').append(b);
   });
