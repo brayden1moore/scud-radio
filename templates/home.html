@@ -666,7 +666,7 @@ text-transform: uppercase;}
     try {
       const w = await api('/api/wifi' + (rescan ? '?rescan=1' : ''));
       $('net-name').textContent = w.current ? w.current.ssid : 'Not connected';
-      $('net-meta').textContent = [w.current ? signalWord(w.current.signal) + ' signal' : '', w.ip, w.hostname].filter(Boolean).join(' · ');
+      $('net-meta').textContent = [w.current ? signalWord(w.current.signal) + '' : ''].filter(Boolean).join(' · ');
       $('net-forget').disabled = !w.current;
       const list = $('net-list'); list.textContent = '';
       if (!w.networks.length) list.append(el('div', 'hint', 'No other networks in range.'));
