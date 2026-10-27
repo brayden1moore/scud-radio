@@ -36,7 +36,7 @@ header { display: flex; flex-wrap: wrap; justify-content: space-between; align-i
 .brand .name { font-family: var(--sans); font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
 .brand .host { font-size: 13px; color: var(--muted); }
 .for-or { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; color: var(--ink); text-decoration: none; }
-.for-or .face { width: 60px; height: 60px; background: var(--yellow); display: flex; align-items: center; justify-content: center; }
+.for-or .face { background: var(--yellow); display: flex; align-items: center; justify-content: center; }
 .for-or .face img { width: 46px; height: 46px; object-fit: contain; }
 .for-or .for { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
 .pill { display: flex; align-items: center; gap: 10px; background: var(--yellow); border-radius: 6px; padding: 6px 14px 6px 6px; min-width: 0; max-width: 100%; }
@@ -135,7 +135,7 @@ text-transform: uppercase;}
 .grid {
   /* adaptive tiles, like the app: a logo tile is 2 columns wide, a show tile 4,
      so show art gets exactly double the width at the same height. Dense flow back-fills gaps. */
-  --u: 56px; --g: 4px;
+  --u: 56px; --g: 8px;
   display: grid; grid-template-columns: repeat(auto-fill, var(--u)); grid-auto-flow: row dense; gap: 12px var(--g);
 }
 .grid .tile { grid-column: span 2; }
@@ -145,7 +145,12 @@ text-transform: uppercase;}
 .tile .badge img, .tile .badge .ph { width: 100%; height: 100%; object-fit: cover; font-size: 14px; }
 .tile { padding: 0; border: 0; border-radius: 6px; background: transparent; text-align: left; display: flex; flex-direction: column; gap: 6px; min-width: 0; transition: none; }
 .tile[aria-current="true"] { background: var(--yellow); }   /* playing stays yellow */
-@media (hover: hover) { .tile:hover { background: var(--yellow); } }   /* instant, no fade; mouse only, so taps don't leave a stuck highlight on phones */
+@media (hover: hover) { .tile:hover { background: var(--yellow); } .tile:hover .play { display: flex; } }   /* instant, no fade; mouse only, so taps don't leave a stuck highlight on phones */
+/* play button on hover, same as one.radio's tiles */
+.tile .play { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; z-index: 2; pointer-events: none; }
+.tile .play svg { width: 46%; height: 46%; max-width: 72px; max-height: 72px; }
+/* name + show line scroll when they don't fit (no padding on the card, so nothing gets cut off) */
+.tile .nm, .tile .sub { display: block; }
 .tile .logo { position: relative; display: block; width: 100%; aspect-ratio: 1 / 1; background: var(--surface); border-radius: 6px; overflow: hidden; }
 .tile .logo img { width: 100%; height: 100%; object-fit: cover; }
 .tile .star { position: absolute; top: 0; right: 0; width: 26px; height: 26px; background: var(--yellow); display: flex; align-items: center; justify-content: center; }
@@ -203,7 +208,7 @@ text-transform: uppercase;}
   .now .station { font-size: 30px; }
   /* phones: exactly 8 columns across the full width (4 logos, or 2 shows, or 1 show + 2 logos),
      sized from the grid's own width so nothing is left over on the right */
-  .grid { --g: 4px; row-gap: 10px; container-type: inline-size; grid-template-columns: repeat(8, minmax(0, 1fr)); }
+  .grid { --g: 6px; row-gap: 10px; container-type: inline-size; grid-template-columns: repeat(8, minmax(0, 1fr)); }
   .grid .tile .logo { height: calc((100cqw - 7 * var(--g)) / 4 + var(--g)); }
   /* one swipeable row of sections, so the remote is on the first screen */
   .layout { gap: 18px; }
@@ -441,6 +446,7 @@ text-transform: uppercase;}
     const known = SECTIONS.some((s) => s[0] === id) ? id : 'remote';
     SECTIONS.forEach(([s]) => { $(s).hidden = s !== known; });
     document.querySelectorAll('#menu button').forEach((b) => b.setAttribute('aria-current', b.dataset.s === known ? 'page' : 'false'));
+    if (known === 'remote') requestAnimationFrame(() => document.querySelectorAll('#grid .nm, #grid .sub').forEach((e) => marqueeText(e, e._mqWant, { speed: 20, gap: 30, pause: 2 })));
     if (known === 'wifi') loadWifi();
     if (known === 'device') loadDevice();
     if (known === 'listening') loadStats();
@@ -515,12 +521,24 @@ text-transform: uppercase;}
     if (filter === 'favs') list = list.filter((s) => favs.has(s.name));
     else if (filter !== 'all') list = list.filter((s) => s.status === filter);
     if (q) list = list.filter((s) => (s.name + ' ' + s.city + ' ' + (s.genres || []).join(' ')).toLowerCase().includes(q));
-    const g = $('grid'); g.textContent = '';
+    const g = $('grid');
+    const playing = state && !(state.airplay || {}).showing ? state.station : null;
+    // Rebuild only when the tiles themselves change. The state poll every 3 s
+    // just moves the "playing" highlight, so the marquees keep running.
+    const sig = JSON.stringify(list.map((s) => [s.name, s.oneLiner, s.showLogo, s.status, favs.has(s.name)]));
+    if (sig === g._sig) {
+      g.querySelectorAll('.tile').forEach((t) => t.setAttribute('aria-current', String(t.dataset.name === playing)));
+      return;
+    }
+    g._sig = sig;
+    clearMarquees(g);
+    g.textContent = '';
     if (!list.length) { g.append(el('div', 'hint', q ? 'No stations match.' : 'Nothing here yet.')); return; }
     list.forEach((s) => {
       const b = el('button', 'tile' + (s.status === 'Offline' ? ' offline' : ''));
       b.setAttribute('aria-label', 'Play ' + s.name);
-      b.setAttribute('aria-current', String(state && s.name === state.station && !(state.airplay || {}).showing));
+      b.dataset.name = s.name;
+      b.setAttribute('aria-current', String(s.name === playing));
       const box = el('span', 'logo');
       if (s.showLogo) {
         // show on now: show art fills the tile, station logo as a badge (falls back to the logo if the art won't load)
@@ -533,11 +551,54 @@ text-transform: uppercase;}
         box.append(logoImg(s.name, 216));
       }
       if (favs.has(s.name)) { const st = el('span', 'star'); st.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#000" aria-hidden="true"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.3L12 17.5 6.4 20.4l1.1-6.3L3 9.7l6.2-.9z"/></svg>'; box.append(st); }
-      b.append(box, el('span', 'nm', s.name), el('span', 'sub', s.oneLiner || s.city));
+      const play = el('span', 'play');
+      play.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="30,20 30,80 75,50" fill="white" stroke="black" stroke-width="2"/></svg>';
+      box.append(play);
+      const nm = el('span', 'nm'), sub = el('span', 'sub');
+      nm._mqWant = s.name; sub._mqWant = s.oneLiner || s.city;
+      nm.textContent = nm._mqWant; sub.textContent = sub._mqWant;
+      b.append(box, nm, sub);
       b.onclick = () => act(() => control('play', s.name), (st) => { st.station = s.name; st.now_playing = s.oneLiner; st.station_status = s.status; st.city = s.city; st.airplay = Object.assign({}, st.airplay, { showing: false }); });
       g.append(b);
     });
+    requestAnimationFrame(() => g.querySelectorAll('.nm, .sub').forEach((e) => marqueeText(e, e._mqWant, { speed: 20, gap: 30, pause: 2 })));
   }
+
+  /* marquee, ported from one.radio's marqueeText: scrolls only when the text overflows */
+  function marqueeText(node, text, opts) {
+    const { speed = 25, gap = 40, pause = 3 } = opts || {};
+    if (node._mqText === text && node.clientWidth === node._mqWidth) return;
+    node._mqText = text; node._mqWidth = node.clientWidth;
+    if (node._mqStyle) { node._mqStyle.remove(); node._mqStyle = null; }
+    node.textContent = '';
+    node.style.whiteSpace = 'nowrap'; node.style.overflow = 'hidden'; node.style.textOverflow = 'clip';
+    const probe = document.createElement('span');
+    probe.style.cssText = 'white-space:nowrap; visibility:hidden; position:absolute;';
+    probe.textContent = text; node.appendChild(probe);
+    const overflow = probe.offsetWidth > node.clientWidth;
+    node.removeChild(probe);
+    if (!overflow) { node.textContent = text; return; }
+    const scroller = document.createElement('span');
+    scroller.style.cssText = 'display:inline-flex; white-space:nowrap; will-change:transform;';
+    const a = document.createElement('span'); a.style.marginRight = gap + 'px'; a.textContent = text;
+    const b = a.cloneNode(true); b.setAttribute('aria-hidden', 'true');
+    scroller.append(a, b); node.appendChild(scroller);
+    const distance = a.offsetWidth + gap, total = distance / speed + pause, hold = (pause / total) * 100;
+    const name = 'mq-' + Math.random().toString(36).slice(2, 8);
+    const style = document.createElement('style');
+    style.textContent = '@keyframes ' + name + '{0%{transform:translateX(0)}' + hold + '%{transform:translateX(0)}100%{transform:translateX(-' + distance + 'px)}}';
+    document.head.appendChild(style);
+    scroller.style.animation = name + ' ' + total + 's linear infinite';
+    node._mqStyle = style;
+  }
+  function clearMarquees(root) {
+    root.querySelectorAll('.nm, .sub').forEach((e) => { if (e._mqStyle) e._mqStyle.remove(); });
+  }
+  let mqResize = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(mqResize);
+    mqResize = setTimeout(() => document.querySelectorAll('#grid .nm, #grid .sub').forEach((e) => marqueeText(e, e._mqWant, { speed: 20, gap: 30, pause: 2 })), 200);
+  });
 
   // optimistic update, then the real state from the radio
   async function act(fn, optimistic) {
