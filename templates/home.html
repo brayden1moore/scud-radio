@@ -118,7 +118,7 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
 .wedge button:disabled span { background: repeating-linear-gradient(135deg, #EDEDED 0 3px, #FFFFFF 3px 6px); }
 .search { display: flex; align-items: center; gap: 10px; background: var(--surface); padding: 0 12px; min-height: 44px; flex: 0 1 280px; }
 .search input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font-size: 18px; min-height: 42px; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 16px 14px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 16px 14px; }
 .tile { padding: 0; border: 0; background: transparent; text-align: left; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .tile .logo { position: relative; display: block; width: 100%; aspect-ratio: 1 / 1; background: var(--surface); }
 .tile .logo img { width: 100%; height: 100%; object-fit: cover; }
@@ -126,7 +126,7 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
 .tile .nm { font-family: var(--sans); font-weight: 700; font-size: 15px; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tile .sub { font-size: 13px; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: -4px; }
 .tile.offline { opacity: 0.4; }
-.tile[aria-current="true"] .logo { outline: 3px solid var(--ink); outline-offset: 2px; }
+.tile[aria-current="true"] .logo { outline: 2px solid var(--yellow); outline-offset: 2px; }
 
 /* themes */
 .themes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
