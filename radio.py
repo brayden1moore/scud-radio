@@ -62,6 +62,7 @@ import html
 import sys
 import re
 import base64
+import sqlite3
 import os
 
 from functools import lru_cache
@@ -342,8 +343,8 @@ def backlight_on():
             else:
                 display_scud()
         time.sleep(0.1)
-        disp.bl_DutyCycle(100)
         screen_on = True
+        apply_backlight(force=True)
 
 def backlight_off():
     global screen_on
@@ -519,10 +520,14 @@ def get_stream_list(stream_dict):
     reruns = [i for i in stream_list if stream_dict[i]['status'] == 'Re-Run']
     
     if favorites:
-        stream_list =  sorted([i for i in favorites if i in stream_list], key=str.casefold) + sorted([i for i in stream_list if i not in favorites], key=str.casefold)
+        # favourites first, in the order the listener set (portal can reorder)
+        stream_list = [i for i in favorites if i in stream_list] + [i for i in stream_list if i not in favorites]
     
     if hidden:
         stream_list = [i for i in stream_list if i not in hidden]
+
+    if setting('skip_offline'):
+        stream_list = [i for i in stream_list if stream_dict[i].get('status') != 'Offline' or i == stream]
 
     return stream_list
 
@@ -565,6 +570,7 @@ def play(name, toggled=False):
     else:
         stream_url = streams[name]['streamLink']
         _start_tuning(name)
+        listen_start(name)
         ensure_show_art(name)              # ready by the time ambient comes up
         if first_boot:
             send_mpv_command({"command": ["loadfile", stream_url]})
@@ -581,6 +587,12 @@ def play_random():
     global stream, play_status, readied_stream
     with state_lock:
         available = [i for i in stream_list if i != stream and streams[i]['status'] != 'Offline']
+        if setting('surprise_favorites'):
+            favs = [i for i in available if i in favorites]
+            if favs:
+                available = favs
+    if not available:
+        return
     chosen = random.choice(available)
     display_cached_scroll(chosen)
     play(chosen)
@@ -1363,7 +1375,7 @@ def _mode_color(img):
 # now-playing line and the station name + local time. No art -> classic ambient.
 # /summary passes the station's own (dynamic) `showLogo` URL; we fetch it,
 # cover-crop to 320x240 here, and skip images that would look bad.
-SHOW_ART_ON = get_config().get('show_art', True)   # "show_art": false in config.json turns it off
+SHOW_ART_ON = get_config().get('show_art', True)   # portal setting; kept current by apply_settings
 SHOW_LOGO = 48
 SHOW_PAD = 12
 SHOW_TEXT_X = SHOW_PAD + SHOW_LOGO + 12
@@ -1680,7 +1692,7 @@ def _airplay_event(typ, code, data):
     if (typ, code) not in (('ssnc', 'prgr'), ('ssnc', 'pvol'), ('ssnc', 'clip'), ('ssnc', 'svip'),
                            ('ssnc', 'disc'), ('ssnc', 'dapo'), ('ssnc', 'phbt'), ('ssnc', 'phb0')):
         shown = f'{len(data)} bytes' if code == 'PICT' else text()[:60]
-        logging.info('AIRPLAY meta %s/%s %s', typ, code, shown)
+        logging.debug('AIRPLAY meta %s/%s %s', typ, code, shown)   # set to info to trace the metadata pipe
     with airplay_lock:
         p = airplay['pending']
         if typ == 'core' and code in ('minm', 'asar', 'asal'):
@@ -1882,7 +1894,7 @@ def airplay_volume_step(direction):
     global airplay_volume, airplay_vol_until, last_input_time
     if airplay_volume is None:
         airplay_volume = current_volume
-    airplay_volume = min(MAX_VOL, max(0, airplay_volume + direction * volume_step))
+    airplay_volume = min(VOL_CAP, max(0, airplay_volume + direction * volume_step))
     _set_airplay_volume(airplay_volume)
     airplay_vol_until = time.monotonic() + 3
     last_input_time = time.monotonic()
@@ -1910,8 +1922,10 @@ def _airplay_enter():
     last_input_time = time.monotonic()
     _set_airplay_volume(airplay_volume if airplay_volume is not None else current_volume)
     currently_displaying = 'airplay'
+    listen_start('AirPlay', source='airplay')
     if not screen_on:
-        wake_screen()                         # redraws through display_current
+        if setting('airplay_wake'):
+            wake_screen()                     # redraws through display_current
     else:
         display_airplay()
 
@@ -1943,6 +1957,9 @@ def airplay_tick(now):
         return 0.15
     if not active and not showing:
         return None
+    if not active and setting('airplay_resume'):
+        _airplay_resume_radio()               # the listener chose 'back to the radio when AirPlay stops'
+        return None
     # Not active but still showing: the phone paused or disconnected. Leave the
     # last track on screen and the radio silent until someone touches a knob
     # (handle_rotation / play() bring the radio back).
@@ -1965,6 +1982,413 @@ def airplay_tick(now):
         _push_window(_render_show_l1(_airplay_t1, off), SHOW_TEXT_X, SHOW_L1_Y)
         return 0.02
     return 0.15
+
+
+# ---- settings (set from the web portal) -------------------------------------
+# Everything lives in config.json next to the radio's own state (volume,
+# last_played...). The portal changes them through the control socket
+# ('set_settings'), so the radio applies each change at once, no restart.
+SETTING_DEFAULTS = {
+    'theme': 'dark',               # dark | light | auto (light 7am-7pm local)
+    'brightness': 100,             # backlight %, 10-100
+    'night_dim': False,            # dim between night_from and night_to
+    'night_from': '22:00',
+    'night_to': '07:00',
+    'night_level': 15,             # backlight % at night
+    'ambient_after': 60,           # seconds idle before ambient, 0 = never
+    'screen_off_after': 600,       # seconds idle before the screen sleeps, 0 = never
+    'show_art': True,              # show art on ambient
+    'skip_offline': False,         # leave offline stations off the dial
+    'surprise_favorites': False,   # random button picks from favorites
+    'volume_limit': 15,            # notches, 1-15
+    'start_volume': 'last',        # last | quiet | fixed
+    'start_volume_level': 60,      # knob units, for 'fixed'
+    'airplay': True,
+    'airplay_wake': True,          # wake the screen when AirPlay starts
+    'airplay_resume': False,       # back to the radio when AirPlay stops
+    'device_name': 'Otis',         # AirPlay name + portal header
+    'timezone': None,              # the listener's IANA zone, sent by the portal
+}
+_SETTING_TYPES = {k: type(v) for k, v in SETTING_DEFAULTS.items() if v is not None}
+
+def _load_settings():
+    cfg = get_config()
+    out = dict(SETTING_DEFAULTS)
+    for k in SETTING_DEFAULTS:
+        if k in cfg:
+            out[k] = cfg[k]
+    return out
+
+settings = _load_settings()
+SHOW_ART_ON = settings['show_art']
+VOL_CAP = max(1, min(15, int(settings['volume_limit']))) * 10
+
+def setting(k):
+    return settings.get(k, SETTING_DEFAULTS.get(k))
+
+def local_now():
+    tz = setting('timezone')
+    if tz:
+        try:
+            return datetime.now(pytz.timezone(tz))
+        except Exception:
+            pass
+    return datetime.now()
+
+def _in_window(now, start, end):
+    def mins(hhmm):
+        h, m = (int(x) for x in str(hhmm).split(':')[:2])
+        return h * 60 + m
+    try:
+        t, a, b = now.hour * 60 + now.minute, mins(start), mins(end)
+    except Exception:
+        return False
+    return a <= t < b if a <= b else (t >= a or t < b)
+
+def backlight_level():
+    lvl = int(setting('brightness') or 100)
+    if setting('night_dim') and _in_window(local_now(), setting('night_from'), setting('night_to')):
+        lvl = min(lvl, int(setting('night_level') or 15))
+    return max(5, min(100, lvl))
+
+_bl_applied = None
+def apply_backlight(force=False):
+    global _bl_applied
+    if not disp or not screen_on:
+        return
+    lvl = backlight_level()
+    if force or lvl != _bl_applied:
+        disp.bl_DutyCycle(lvl)
+        _bl_applied = lvl
+
+def _theme_for(name):
+    if name == 'auto':
+        return 'light' if 7 <= local_now().hour < 19 else 'dark'
+    return name if name in THEMES else 'dark'
+
+active_theme = _startup_theme() if _startup_theme() in THEMES else 'dark'
+
+def apply_theme(name, redraw=True):
+    """Switch dark/light without a restart: swap the colour globals, drop every
+    cached render that baked the old background in, and redraw."""
+    global THEME, BG_COLOR, SECONDARY_COLOR, MUTED_COLOR, FAINT_COLOR, WEDGE_OFF_COLOR, active_theme
+    name = _theme_for(name)
+    if name == active_theme:
+        return False
+    THEME = THEMES[name]
+    BG_COLOR, SECONDARY_COLOR = THEME['bg'], THEME['fg']
+    MUTED_COLOR, FAINT_COLOR, WEDGE_OFF_COLOR = THEME['muted'], THEME['faint'], THEME['wedge_off']
+    active_theme = name
+    for cache in (_text_tile_cache, _dim_cache, _dim_rgba_cache):
+        cache.clear()
+    scroll_cache_dict.clear()
+    logging.info('THEME -> %s', name)
+    if redraw:
+        try:
+            calculate_ticks()
+            if stream and screen_on and currently_displaying in ('everything', 'one'):
+                display_cached_scroll(stream)
+            start_priority_refresh(run_ticks=True)
+        except Exception:
+            logging.error('theme redraw: %s', traceback.format_exc())
+    return True
+
+def startup_volume(last):
+    mode = setting('start_volume')
+    if mode == 'quiet':
+        v = 3 * volume_step
+    elif mode == 'fixed':
+        v = int(setting('start_volume_level') or 60)
+    else:
+        v = int(last if last is not None else 60)
+    return max(0, min(VOL_CAP, v))
+
+def _set_airplay_name(name):
+    """AirPlay shows the device name; rewrite it in shairport's config."""
+    path = '/etc/shairport-sync.conf'
+    try:
+        txt = open(path).read()
+        safe = str(name).replace('"', "'").strip()[:40] or 'Otis'
+        new = re.sub(r'(\bname\s*=\s*)"[^"]*"', lambda m: m.group(1) + '"' + safe + '"', txt, count=1)
+        if new != txt:
+            atomic_write(Path(path), new)
+            return True
+    except Exception as e:
+        logging.error(f'airplay name: {e}')
+    return False
+
+def apply_settings(old, new):
+    global SHOW_ART_ON, VOL_CAP, current_volume, stream_list, airplay_volume
+    changed = {k for k in new if new.get(k) != old.get(k)}
+    if not changed:
+        return
+    logging.info('SETTINGS changed: %s', ', '.join(sorted(changed)))
+    if 'theme' in changed or 'timezone' in changed:
+        apply_theme(new['theme'])
+    if changed & {'brightness', 'night_dim', 'night_from', 'night_to', 'night_level', 'timezone'}:
+        apply_backlight(force=True)
+    if 'show_art' in changed:
+        SHOW_ART_ON = bool(new['show_art'])
+    if 'volume_limit' in changed:
+        VOL_CAP = max(1, min(15, int(new['volume_limit']))) * volume_step
+        if current_volume > VOL_CAP:
+            current_volume = VOL_CAP
+            send_mpv_command({"command": ["set_property", "volume", current_volume]})
+        if airplay_volume is not None and airplay_volume > VOL_CAP:
+            airplay_volume = VOL_CAP
+            _set_airplay_volume(airplay_volume)
+    if changed & {'skip_offline'}:
+        _refresh_dial()
+    if 'device_name' in changed:
+        if _set_airplay_name(new['device_name']) and new.get('airplay', True):
+            _bg(['systemctl', 'restart', 'shairport-sync'])
+    if 'airplay' in changed:
+        if new['airplay']:
+            _bg(['systemctl', 'enable', '--now', 'shairport-sync'])
+        else:
+            if airplay_drop():
+                _airplay_resume_radio()
+            _bg(['systemctl', 'disable', '--now', 'shairport-sync'])
+
+def update_settings(patch):
+    """Validate a partial update from the portal, save it, apply it."""
+    global settings
+    clean = {}
+    for k, v in (patch or {}).items():
+        if k not in SETTING_DEFAULTS:
+            continue
+        want = _SETTING_TYPES.get(k)
+        if want is bool:
+            v = bool(v)
+        elif want is int:
+            try:
+                v = int(v)
+            except (TypeError, ValueError):
+                continue
+        elif v is not None:
+            v = str(v)[:64]
+        clean[k] = v
+    if 'theme' in clean and clean['theme'] not in ('dark', 'light', 'auto'):
+        del clean['theme']
+    if 'start_volume' in clean and clean['start_volume'] not in ('last', 'quiet', 'fixed'):
+        del clean['start_volume']
+    if 'timezone' in clean and clean['timezone']:
+        try:
+            pytz.timezone(clean['timezone'])
+        except Exception:
+            del clean['timezone']
+    for k, lo, hi in (('brightness', 10, 100), ('night_level', 5, 100), ('volume_limit', 1, 15),
+                      ('ambient_after', 0, 3600), ('screen_off_after', 0, 86400), ('start_volume_level', 0, MAX_VOL)):
+        if k in clean:
+            clean[k] = max(lo, min(hi, clean[k]))
+    with state_lock:
+        cfg = get_config()
+        cfg.update(clean)
+        set_config(cfg)
+        old = settings
+        settings = dict(old, **clean)
+    apply_settings(old, settings)
+    return settings
+
+def _refresh_dial():
+    """Recompute the dial after favourites/hidden/skip-offline change."""
+    global stream_list, scroll_cache_dict
+    with state_lock:
+        stream_list = get_stream_list(streams)
+    calculate_ticks()
+    scroll_cache_dict.clear()
+    if stream and screen_on and currently_displaying in ('everything', 'one'):
+        display_cached_scroll(stream)
+    start_priority_refresh(run_ticks=True)
+
+# ---- sleep timer ---------------------------------------------------------------
+sleep_timer_until = 0.0
+timer_slept = False             # the timer put Otis to rest; any touch brings it back
+
+def set_sleep_timer(minutes):
+    global sleep_timer_until
+    minutes = max(0, int(minutes or 0))
+    sleep_timer_until = time.monotonic() + minutes * 60 if minutes else 0.0
+    return minutes
+
+def _sleep_timer_fire():
+    global timer_slept, sleep_timer_until
+    sleep_timer_until = 0.0
+    logging.info('SLEEP TIMER: fading out')
+    if airplay_drop():
+        pass
+    start = current_volume
+    for k in range(20, -1, -1):                 # ~20 s fade
+        send_mpv_command({"command": ["set_property", "volume", round(start * k / 20)]})
+        time.sleep(1)
+    send_mpv_command({"command": ["stop"]})
+    send_mpv_command({"command": ["set_property", "volume", current_volume]})
+    listen_end()
+    timer_slept = True
+    backlight_off()
+
+def wake_from_timer():
+    """Called on the first touch after the sleep timer: bring the station back."""
+    global timer_slept
+    if not timer_slept:
+        return
+    timer_slept = False
+    if stream and not put_to_sleep:
+        play(stream)
+
+# ---- listening log (for the portal's Listening page) ----------------------------
+# One row per stretch of listening, in /var/lib/scud-radio/listening.db.
+# Stays on the device; the portal reads it through api.py.
+LISTEN_DB = str(Path(LIB_PATH) / 'listening.db')
+_db_lock = threading.Lock()
+_db_con = None
+_listen = {'row': None, 't0': 0.0, 'flushed': 0.0, 'source': None}
+
+def _db():
+    global _db_con
+    if _db_con is None:
+        con = sqlite3.connect(LISTEN_DB, timeout=5, check_same_thread=False)
+        con.execute('PRAGMA journal_mode=WAL')
+        con.execute('CREATE TABLE IF NOT EXISTS plays (id INTEGER PRIMARY KEY, station TEXT, city TEXT, '
+                    'genres TEXT, status TEXT, source TEXT, started REAL, seconds REAL)')
+        con.execute('CREATE INDEX IF NOT EXISTS plays_started ON plays(started)')
+        _db_con = con
+    return _db_con
+
+def listen_start(station, source='radio'):
+    listen_end()
+    info = streams.get(station) or {}
+    try:
+        with _db_lock:
+            con = _db()
+            cur = con.execute('INSERT INTO plays (station, city, genres, status, source, started, seconds) VALUES (?,?,?,?,?,?,0)',
+                              (station, info.get('homeLocation') or info.get('location') or '',
+                               json.dumps(info.get('genres') or []), info.get('status') or '', source, time.time()))
+            con.commit()
+        now = time.monotonic()
+        _listen.update(row=cur.lastrowid, t0=now, flushed=now, source=source)
+    except Exception as e:
+        logging.error(f'listen log: {e}')
+
+def _listen_flush(final=False):
+    row = _listen['row']
+    if not row:
+        return
+    secs = time.monotonic() - _listen['t0']
+    try:
+        with _db_lock:
+            con = _db()
+            if final and secs < 15:           # a quick flick past a station isn't listening
+                con.execute('DELETE FROM plays WHERE id=?', (row,))
+            else:
+                con.execute('UPDATE plays SET seconds=? WHERE id=?', (round(secs, 1), row))
+            con.commit()
+    except Exception as e:
+        logging.error(f'listen log: {e}')
+    _listen['flushed'] = time.monotonic()
+
+def listen_end():
+    if _listen['row']:
+        _listen_flush(final=True)
+        _listen.update(row=None, source=None)
+
+_last_settings_tick = 0.0
+def settings_tick(now):
+    """Once a second-ish from the main loop: timers, night dimming, auto theme, log flush."""
+    global _last_settings_tick
+    if sleep_timer_until and now > sleep_timer_until:
+        threading.Thread(target=_sleep_timer_fire, daemon=True).start()
+        set_sleep_timer(0)
+    if now - _last_settings_tick < 20:
+        return
+    _last_settings_tick = now
+    if setting('theme') == 'auto':
+        apply_theme('auto')
+    apply_backlight()
+    if _listen['source'] == 'airplay' and not airplay['active']:
+        listen_end()
+    elif _listen['row'] and now - _listen['flushed'] > 60:
+        _listen_flush()
+
+def radio_state():
+    info = streams.get(stream) or {}
+    with airplay_lock:
+        ap = {k: airplay[k] for k in ('active', 'title', 'artist', 'album', 'sender')}
+    ap['showing'] = currently_displaying == 'airplay'
+    parts = station_time_parts(stream) if stream else None
+    home = info.get('homeLocation') or info.get('location') or ''
+    guest = (info.get('location') or '').strip()
+    return {
+        'status': 'ok',
+        'station': stream,
+        'now_playing': info.get('oneLiner', ''),
+        'station_status': info.get('status', ''),
+        'city': home,
+        'from': guest if guest and home and guest.casefold() != home.casefold() else '',
+        'genres': info.get('genres') or [],
+        'station_time': (parts[0] + ' ' + parts[1]) if parts else '',
+        'favorite': stream in favorites,
+        'volume': round(current_volume / volume_step),
+        'airplay_volume': round((airplay_volume if airplay_volume is not None else current_volume) / volume_step),
+        'volume_limit': VOL_CAP // volume_step,
+        'muted': muted,
+        'screen_on': screen_on,
+        'asleep': bool(put_to_sleep),
+        'resting': bool(timer_slept),
+        'sleep_timer': max(0, round((sleep_timer_until - time.monotonic()) / 60)) if sleep_timer_until else 0,
+        'airplay': ap,
+        'device_name': setting('device_name'),
+    }
+
+def stations_payload():
+    with state_lock:
+        dial = list(stream_list)
+        names = sorted(streams.keys(), key=str.casefold)
+        out = []
+        for n in names:
+            v = streams[n]
+            out.append({'name': n, 'city': v.get('homeLocation') or v.get('location') or '',
+                        'status': v.get('status', ''), 'oneLiner': v.get('oneLiner', ''),
+                        'genres': v.get('genres') or [], 'favorite': n in favorites, 'hidden': n in hidden})
+    return {'status': 'ok', 'dial': dial, 'favorites': list(favorites), 'hidden': list(hidden), 'stations': out}
+
+def set_favorites_list(names):
+    global favorites
+    with state_lock:
+        favorites = [n for n in dict.fromkeys(names or []) if n in streams]
+        set_favorites(favorites)
+    _refresh_dial()
+    return favorites
+
+def set_hidden_list(names):
+    global hidden
+    with state_lock:
+        hidden = [n for n in dict.fromkeys(names or []) if n in streams]
+        set_hidden(hidden)
+    _refresh_dial()
+    return hidden
+
+def toggle_mute():
+    global muted
+    muted = not muted
+    send_mpv_command({"command": ["set_property", "volume", 0 if muted else current_volume]})
+    if currently_displaying == 'airplay':
+        _set_airplay_volume(0 if muted else (airplay_volume if airplay_volume is not None else current_volume))
+    return muted
+
+def set_volume_notch(n):
+    global current_volume, muted, airplay_volume
+    v = max(0, min(VOL_CAP, int(n) * volume_step))
+    if currently_displaying == 'airplay':
+        airplay_volume = v
+        _set_airplay_volume(v)
+        return v
+    muted = False
+    current_volume = v
+    send_mpv_command({"command": ["set_property", "volume", current_volume]})
+    show_volume_overlay(current_volume)
+    set_last_volume(str(current_volume))
+    return v
 
 
 def display_current():
@@ -2166,6 +2590,7 @@ def switch_off():
     set_last_volume(str(current_volume))
     sleeping = True
     put_to_sleep = True
+    listen_end()
     # off means off: stop AirPlay too, so Otis also leaves the phone's AirPlay list
     with airplay_lock:
         was_airplay = airplay['active']
@@ -2183,7 +2608,9 @@ def switch_on():
         current_time = time.monotonic()
         last_input_time = time.monotonic()
         button_released_time = current_time
-        _bg(['systemctl', 'start', 'shairport-sync'])
+        if setting('airplay'):
+            _bg(['systemctl', 'start', 'shairport-sync'])
+        current_volume = startup_volume(current_volume)
         backlight_on()
         sleeping = False
         put_to_sleep = False
@@ -2264,7 +2691,7 @@ def toggle_favorite():
                 favorites = [i for i in favorites if i != chosen_stream]
             else:
                 action = 'favorite'
-                favorites = list(set(favorites + [chosen_stream]))
+                favorites = favorites + [chosen_stream]          # keep the listener's order
             set_favorites(favorites)
             stream_list = get_stream_list(streams)
 
@@ -2378,7 +2805,7 @@ def volume_handle_rotation(direction):
     last_input_time = time.monotonic()
     last_rotation = time.monotonic()
     if direction == 1:
-        new_volume = min(MAX_VOL, current_volume + volume_step)
+        new_volume = min(VOL_CAP, current_volume + volume_step)
     else:
         new_volume = max(0, current_volume - volume_step)
     current_volume = new_volume
@@ -2497,6 +2924,7 @@ def wake_screen():
         screen_on = True
         if not put_to_sleep:
             sleeping = False
+        wake_from_timer()
 
         display_current()
         time.sleep(0.05)
@@ -2549,7 +2977,7 @@ switch_off_time = None
 confirm_on_rotate = get_config()['confirm_on_rotate']
 seeking = False
 
-current_volume = get_last_volume()
+current_volume = startup_volume(get_last_volume())
 
 mpv_process = Popen([
     "mpv",
@@ -2752,6 +3180,40 @@ def handle_remote_command(command_data):
         elif cmd == 'restart':
             safe_restart()
 
+        elif cmd == 'state':
+            return radio_state()
+
+        elif cmd == 'stations':
+            return stations_payload()
+
+        elif cmd == 'get_settings':
+            return {'status': 'ok', 'settings': dict(settings)}
+
+        elif cmd == 'set_settings':
+            return {'status': 'ok', 'settings': update_settings(command_data.get('value') or {})}
+
+        elif cmd == 'set_favorites':
+            return {'status': 'ok', 'favorites': set_favorites_list(command_data.get('value'))}
+
+        elif cmd == 'set_hidden':
+            return {'status': 'ok', 'hidden': set_hidden_list(command_data.get('value'))}
+
+        elif cmd == 'set_volume_notch':
+            set_volume_notch(command_data.get('value', 6))
+            return radio_state()
+
+        elif cmd == 'mute_toggle':
+            toggle_mute()
+            return radio_state()
+
+        elif cmd == 'sleep_timer':
+            set_sleep_timer(command_data.get('value', 0))
+            return radio_state()
+
+        elif cmd == 'wake':
+            wake_screen()
+            return radio_state()
+
         elif cmd == 'toggle':
             if play_status == 'play':
                 send_mpv_command({"command": ["set_property", "volume", 0]})
@@ -2782,7 +3244,14 @@ def control_socket_listener():
     while True:
         try:
             conn, _ = sock.accept()
-            data = conn.recv(1024).decode('utf-8').strip()
+            conn.settimeout(2)
+            buf = b''
+            while not buf.endswith(b'\n'):            # commands are one JSON line; can exceed 1 KB
+                chunk = conn.recv(65536)
+                if not chunk:
+                    break
+                buf += chunk
+            data = buf.decode('utf-8').strip()
             
             if data:
                 command = json.loads(data)
@@ -2859,9 +3328,12 @@ try:
             if now - last_input_time > 10:
                 set_last_volume(str(current_volume))
 
+            settings_tick(now)
+
             ap_wait = airplay_tick(now)
             if ap_wait is not None:              # AirPlay owns the screen: no ambient, no radio drawing
-                if screen_on and (now - last_input_time > 600):
+                off_after = setting('screen_off_after')
+                if off_after and screen_on and (now - last_input_time > off_after):
                     logging.info('TURNING SCREEN OFF (AirPlay)')
                     sleeping = True
                     screen_on = False
@@ -2871,12 +3343,14 @@ try:
  
             # 'and', not '&' -- bitwise on bools works by accident and
             # doesn't short-circuit
-            if (now - last_input_time > 60) and (now - last_ambient_display > 30):
+            amb_after = setting('ambient_after')
+            if amb_after and (now - last_input_time > amb_after) and (now - last_ambient_display > 30):
                 if currently_displaying != 'ambient' or ambient_name != stream:
                     display_ambient(stream)
                 last_ambient_display = now
  
-            if screen_on and (now - last_input_time > 600):
+            off_after = setting('screen_off_after')
+            if off_after and screen_on and (now - last_input_time > off_after):
                 logging.info('TURNING SCREEN OFF VIA MAIN LOOP')
                 sleeping = True
                 screen_on = False

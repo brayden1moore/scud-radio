@@ -1,622 +1,838 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<link rel="icon" type="image/png" href="/assets/favicon/favicon-96x96.png" sizes="96x96" />
-<link rel="icon" type="image/svg+xml" href="/assets/favicon/favicon.svg" />
-<link rel="shortcut icon" href="/assets/favicon/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png" />
-<meta name="apple-mobile-web-app-title" content="Radio" />
-<link rel="manifest" href="/assets/favicon/site.webmanifest" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Otis</title>
+<link rel="icon" type="image/png" href="/assets/favicon/favicon-96x96.png" sizes="96x96">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon/favicon.svg">
+<link rel="shortcut icon" href="/assets/favicon/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Otis">
+<link rel="manifest" href="/assets/favicon/site.webmanifest">
+<style>
+@font-face { font-family: 'Favorit Mono'; src: url('/assets/Favorit/ABCFavoritMono-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Archivo'; src: url('/assets/Archivo/Archivo-VariableFont_wdth,wght.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
 
-<meta name="viewport" content="width=device-width, initial-scale=0.85">
- <title>Otis Remote</title>
-</head> 
+:root {
+  --ink: #000; --paper: #fff; --surface: #F2F2F2; --line: #E6E6E6; --muted: #595959; --soft: #666;
+  --yellow: #FFFF3D; --blue: #3DA9FC; --red: #F0584C; --redsoft: #FBD3CF;
+  --mono: 'Favorit Mono', ui-monospace, Menlo, monospace;
+  --sans: 'Archivo', system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--paper); color: var(--ink); }
+body { font-family: var(--mono); font-size: 16px; -webkit-text-size-adjust: 100%; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+img { display: block; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-<body style="font-family:Archivo Light;">
+.page { max-width: 1200px; margin: 0 auto; padding: 24px 24px 72px; display: flex; flex-direction: column; gap: 28px; }
+header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px 24px; padding-bottom: 20px; border-bottom: 2px solid var(--ink); }
+.brand { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.brand img { height: 60px; width: auto; }
+.brand .name { font-family: var(--sans); font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+.brand .host { font-size: 13px; color: var(--muted); }
+.pill { display: flex; align-items: center; gap: 10px; background: var(--surface); border-radius: 999px; padding: 6px 14px 6px 6px; min-width: 0; max-width: 100%; }
+.pill img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #ddd; }
+.pill span:last-child { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sq { width: 9px; height: 9px; display: inline-block; flex: 0 0 auto; border: 2px solid var(--ink); }
+.sq.live { background: var(--yellow); }
+.sq.rerun { background: transparent; }
+.sq.offline { background: #8A8A8A; border-color: #8A8A8A; }
 
-<div id="main-div">
-    <div id="antenna-container-container">
-        <div id="antenna-container">
-                <div id="antenna">
-                <div id="antenna-fill">
-                    <div id="antenna-top"></div>
-                </div>
-                </div>
+.layout { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+nav.menu { flex: 1 1 190px; max-width: 100%; display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; }
+nav.menu button { flex: 1 1 170px; display: flex; align-items: center; gap: 12px; text-align: left; min-height: 46px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--surface); }
+nav.menu button .n { font-size: 12px; color: var(--muted); }
+nav.menu button .l { font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
+nav.menu button[aria-current="page"] { background: var(--ink); color: var(--paper); }
+nav.menu button[aria-current="page"] .n { color: var(--yellow); }
+main { flex: 999 1 560px; min-width: 0; }
+section[hidden] { display: none !important; }
+section { display: flex; flex-direction: column; gap: 22px; }
+section.narrow { max-width: 760px; }
+
+h1 { margin: 0; font-family: var(--sans); font-size: 40px; font-weight: 800; letter-spacing: -0.035em; }
+.lede { margin: 6px 0 0; font-size: 16px; color: var(--soft); }
+.h2 { font-size: 20px; }
+.hint { font-size: 13px; color: var(--soft); }
+.title { font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
+
+.card { background: var(--surface); border-radius: 14px; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px 18px; }
+.card .row + .row { border-top: 1px solid #E0E0E0; }
+.row .text { flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.row .text .hint { color: var(--muted); }
+.list .item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.list .item img { width: 44px; height: 44px; object-fit: cover; background: var(--surface); flex: 0 0 auto; }
+.list .item .text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+
+.btn { min-height: 40px; padding: 0 12px; border: 0; border-radius: 8px; background: var(--surface); font-family: var(--mono); font-size: 13px; text-transform: uppercase; }
+.btn.dark { background: var(--ink); color: var(--paper); border-radius: 0; min-height: 44px; font-size: 14px; }
+.btn.danger { background: var(--red); }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.icon-btn { width: 40px; min-height: 40px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+
+.seg { display: flex; flex-wrap: wrap; gap: 4px; }
+.seg button { min-height: 38px; padding: 0 10px; border: 0; background: var(--paper); font-family: var(--mono); font-size: 14px; }
+.seg button[aria-checked="true"], .seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips button { min-height: 36px; padding: 0 12px; border: 0; background: var(--surface); font-family: var(--mono); font-size: 16px; }
+.chips button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.chips button.status { background: var(--redsoft); }
+.chips button.status[aria-pressed="true"] { background: var(--red); color: var(--ink); }
+
+.switch { flex: 0 0 auto; width: 52px; height: 30px; border-radius: 999px; border: 0; padding: 3px; background: #C4C4C4; display: flex; justify-content: flex-start; }
+.switch::after { content: ''; width: 24px; height: 24px; border-radius: 50%; background: var(--paper); }
+.switch[aria-checked="true"] { background: var(--ink); justify-content: flex-end; }
+.switch[aria-checked="true"]::after { background: var(--yellow); }
+
+input[type="range"] { width: 100%; accent-color: var(--ink); }
+.field { min-height: 48px; padding: 0 12px; border: 0; background: var(--surface); font-size: 18px; width: 100%; }
+input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: var(--paper); }
+
+/* remote */
+.now { background: #0B0B0B; color: #fff; border-radius: 18px; padding: 22px; display: flex; flex-wrap: wrap; gap: 22px; align-items: center; }
+.now .art { width: 132px; height: 132px; border: 2px solid #fff; object-fit: cover; flex: 0 0 auto; background: #222; display: flex; align-items: center; justify-content: center; }
+.now .meta { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.now .status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #CFCFCF; }
+.now .status .sq { border-color: var(--yellow); }
+.now .status .sq.offline { border-color: #8A8A8A; }
+.now .station { font-family: var(--sans); font-size: 40px; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.now .ol { font-size: 15px; color: #E6E6E6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.now .wake { align-self: flex-start; background: var(--yellow); color: #000; border: 0; min-height: 44px; padding: 0 16px; font-family: var(--mono); text-transform: uppercase; font-size: 14px; }
+.transport { display: flex; flex-wrap: wrap; gap: 8px; }
+.transport button { flex: 1 1 64px; min-height: 56px; border-radius: 12px; border: 0; background: var(--surface); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; text-transform: uppercase; }
+.transport .surprise { background: var(--yellow); }
+.transport button[aria-pressed="true"].fav { background: var(--yellow); }
+.transport button[aria-pressed="true"].fav svg { fill: #000; }
+.transport button[aria-pressed="true"].mute { background: var(--ink); color: var(--paper); }
+.wedge { display: flex; align-items: flex-end; gap: 5px; height: 48px; }
+.wedge button { flex: 1 1 0; min-width: 0; height: 48px; padding: 0; border: 0; background: transparent; display: flex; align-items: flex-end; }
+.wedge button span { display: block; width: 100%; background: #E0E0E0; }
+.wedge button.lit span { background: var(--ink); }
+.wedge button:disabled { cursor: default; }
+.wedge button:disabled span { background: repeating-linear-gradient(135deg, #EDEDED 0 3px, #FFFFFF 3px 6px); }
+.search { display: flex; align-items: center; gap: 10px; background: var(--surface); padding: 0 12px; min-height: 44px; flex: 0 1 280px; }
+.search input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font-size: 18px; min-height: 42px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 16px 14px; }
+.tile { padding: 0; border: 0; background: transparent; text-align: left; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.tile .logo { position: relative; display: block; width: 100%; aspect-ratio: 1 / 1; background: var(--surface); }
+.tile .logo img { width: 100%; height: 100%; object-fit: cover; }
+.tile .star { position: absolute; top: 0; right: 0; width: 26px; height: 26px; background: var(--yellow); display: flex; align-items: center; justify-content: center; }
+.tile .nm { font-family: var(--sans); font-weight: 700; font-size: 15px; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile .sub { font-size: 13px; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: -4px; }
+.tile.offline { opacity: 0.4; }
+.tile[aria-current="true"] .logo { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+/* themes */
+.themes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.themes button { padding: 0; border: 0; background: transparent; text-align: left; display: flex; flex-direction: column; gap: 6px; }
+.themes .sw { display: block; width: 100%; aspect-ratio: 4 / 3; box-shadow: inset 0 0 0 1px var(--line); }
+.themes button[aria-checked="true"] .sw { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+/* wifi */
+.netcard { background: var(--ink); color: #fff; padding: 18px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.netcard .big { font-family: var(--sans); font-size: 26px; font-weight: 800; letter-spacing: -0.03em; overflow-wrap: anywhere; }
+.netcard .small { font-size: 13px; color: #CFCFCF; }
+.netcard .btn { background: transparent; color: #fff; border: 1px solid #fff; border-radius: 0; min-height: 44px; font-size: 14px; }
+.net { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 4px; min-height: 52px; border: 0; border-top: 1px solid var(--line); background: var(--paper); text-align: left; }
+.net[aria-expanded="true"] { background: var(--surface); }
+.join { padding: 16px; background: var(--surface); display: flex; flex-direction: column; gap: 10px; }
+
+/* stats */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.kpi { border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 6px; background: var(--surface); }
+.kpi .v { font-family: var(--sans); font-size: 42px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+.kpi.dark { background: var(--ink); color: var(--paper); }
+.kpi.yellow { background: var(--yellow); }
+.cols { display: flex; flex-wrap: wrap; gap: 28px; }
+.cols > div { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.bar { height: 8px; background: var(--surface); }
+.bar div { height: 8px; background: var(--ink); }
+.hours { display: flex; align-items: flex-end; gap: 3px; height: 120px; }
+.hours div { flex: 1 1 0; min-width: 0; background: #C4C4C4; }
+.hours div.peak { background: var(--ink); }
+.tag { padding: 6px 10px; font-size: 16px; }
+.tag.city { background: var(--blue); }
+.tag.genre { background: var(--yellow); }
+.tag span { opacity: 0.75; }
+.empty { background: var(--surface); border-radius: 14px; padding: 24px; }
+
+#toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 12px 16px; font-size: 14px; max-width: calc(100% - 32px); display: none; z-index: 10; }
+#toast.show { display: block; }
+.offline-banner { background: var(--red); padding: 12px 16px; font-size: 14px; display: none; }
+.offline-banner.show { display: block; }
+
+@media (max-width: 560px) {
+  .page { padding: 16px 16px 72px; gap: 20px; }
+  .brand img { height: 44px; }
+  h1 { font-size: 32px; }
+  .now .art { width: 96px; height: 96px; }
+  .now .station { font-size: 30px; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 12px 10px; }
+  /* one swipeable row of sections, so the remote is on the first screen */
+  .layout { gap: 18px; }
+  nav.menu { flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; gap: 6px; margin: 0 -16px; padding: 0 16px 4px; scrollbar-width: none; }
+  nav.menu::-webkit-scrollbar { display: none; }
+  nav.menu button { flex: 0 0 auto; min-height: 42px; padding: 0 12px; gap: 8px; }
+  nav.menu button .n { display: none; }
+  .transport { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .transport .surprise span { display: none; }
+}
+.ph { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; background: #E6E6E6; color: #595959; font-family: var(--sans); font-weight: 800; font-size: 28px; letter-spacing: -0.03em; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="brand">
+      <img src="/assets/otis.png" alt="Otis">
+      <div>
+        <div class="name" id="dev-name">Otis</div>
+        <div class="host" id="dev-host">online</div>
+      </div>
+    </div>
+    <div class="pill" id="pill" aria-live="polite">
+      <img id="pill-logo" alt="">
+      <span class="sq" id="pill-sq"></span>
+      <span id="pill-name">…</span>
+    </div>
+  </header>
+
+  <div class="offline-banner" id="offline">Can't reach the radio right now. It may be restarting. This page will reconnect by itself.</div>
+
+  <div class="layout">
+    <nav class="menu" aria-label="Sections" id="menu"></nav>
+
+    <main>
+      <!-- REMOTE -->
+      <section id="remote" aria-label="Remote">
+        <div class="now" id="now">
+          <img class="art" id="now-art" alt="">
+          <div class="meta">
+            <div class="status"><span class="sq" id="now-sq"></span><span id="now-status"></span><span aria-hidden="true">·</span><span id="now-city"></span></div>
+            <div class="station" id="now-station">…</div>
+            <div class="ol" id="now-ol"></div>
+            <button class="wake" id="now-wake" hidden>Wake Otis</button>
+          </div>
         </div>
-    </div>
 
-    <div id="scud-logo">
-        <img id="scud-logo-img" src="assets/otis.png" alt="Otis">
-    </div>
-    <div id="info-div">
-        <div id="status">
-            <div id="station-name"></div>
-            <div id="one-liner"></div>
+        <div class="transport">
+          <button id="b-prev" aria-label="Previous station"><svg width="26" height="26" viewBox="0 0 24 24" fill="#000" aria-hidden="true"><path d="M11 6v12L3 12zM20 6v12l-8-6z"/></svg></button>
+          <button id="b-next" aria-label="Next station"><svg width="26" height="26" viewBox="0 0 24 24" fill="#000" aria-hidden="true"><path d="M13 6v12l8-6zM4 6v12l8-6z"/></svg></button>
+          <button id="b-random" class="surprise" aria-label="Surprise me"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg><span>Surprise me</span></button>
+          <button id="b-fav" class="fav" aria-label="Favorite this station" aria-pressed="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.3L12 17.5 6.4 20.4l1.1-6.3L3 9.7l6.2-.9z"/></svg></button>
+          <button id="b-mute" class="mute" aria-label="Mute" aria-pressed="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6"/><path d="M21 9l-4 6"/></svg></button>
         </div>
-    </div>
-    <div id="controls">
-            <div class="control" id="prev" title="Previous" onClick="handleCall('/control/prev')"><img class="icon"src="assets/prev_icon_web.svg"></div>
-            <div class="control" id="next" title="Next" onClick="handleCall('/control/next')"><img class="icon"src="assets/next_icon_web.svg"></div>
-            <div class="control" id="down" title="Volume down" onClick="handleCall('/control/down')"><img class="icon"src="assets/down_icon_web.svg"></div>        
-            <div class="control" id="up" title="Volume up" onClick="handleCall('/control/up')"><img class="icon" src="assets/up_icon_web.svg"></div>
-            <div class="control" id="restart" title="Mute" onClick="handleCall('/control/mute')"><img class="icon" src="assets/mute_icon_web.svg"></div>
-            <div class="control" id="favorite" title="Favorite / Unfavorite" onClick="handleCall('/control/favorite')"><img class="icon" src="assets/favorite_icon_web.svg"></div>            
-            <div class="control" id="random" title="Play random" onClick="playRandom()"><img class="icon" src="assets/random_icon_web.svg"></div>
-            <div class="control" id="edit" title="Edit stations" onClick="toggleEditMode()"><img class="icon" src="assets/edit_icon_web.svg"></div>
-    </div>
-    <div id="stations"></div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:17px"><span id="vol-title">Volume</span><span class="hint" id="vol-label"></span></div>
+          <div class="wedge" role="group" aria-label="Volume" id="wedge"></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between">
+            <div class="h2" id="dial-title">On the dial</div>
+            <label class="search"><span class="sr">Search stations</span><input type="search" id="q" placeholder="Search" autocomplete="off"></label>
+          </div>
+          <div class="chips" id="filters">
+            <button data-f="all" aria-pressed="true">All</button>
+            <button data-f="favs" aria-pressed="false">Favorites</button>
+            <button data-f="Live" class="status" aria-pressed="false">Live</button>
+            <button data-f="Re-Run" class="status" aria-pressed="false">Re-Run</button>
+          </div>
+          <div class="grid" id="grid"></div>
+        </div>
+      </section>
+
+      <!-- STATIONS -->
+      <section id="stations" class="narrow" aria-label="Stations" hidden>
+        <div><h1>Stations</h1><p class="lede">What's on the dial, and in what order.</p></div>
+        <div class="list">
+          <div class="h2" style="padding-bottom:6px" id="fav-title">Favorites</div>
+          <div id="fav-list"></div>
+        </div>
+        <div class="list">
+          <div class="h2" style="padding-bottom:6px" id="hid-title">Hidden from the dial</div>
+          <div id="hid-list"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--line)">
+            <label class="sr" for="hide-pick">Station to hide</label>
+            <select id="hide-pick" class="field" style="flex:1 1 220px;font-size:16px"></select>
+            <button class="btn dark" id="hide-btn">Hide</button>
+          </div>
+        </div>
+        <div class="card" id="station-toggles"></div>
+      </section>
+
+      <!-- SCREEN -->
+      <section id="screen" class="narrow" aria-label="Screen" hidden>
+        <div><h1>Screen</h1><p class="lede">How Otis looks, and when it rests.</p></div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="h2">Theme</div>
+          <div class="themes" role="radiogroup" aria-label="Theme" id="themes">
+            <button role="radio" data-v="dark"><span class="sw" style="background:#0B0B0B"></span><span class="title" style="font-size:15px">Dark</span><span class="hint">Default</span></button>
+            <button role="radio" data-v="light"><span class="sw" style="background:#F4F4F4"></span><span class="title" style="font-size:15px">Light</span><span class="hint">For bright rooms</span></button>
+            <button role="radio" data-v="auto"><span class="sw" style="background:linear-gradient(90deg,#F4F4F4 50%,#0B0B0B 50%)"></span><span class="title" style="font-size:15px">Automatic</span><span class="hint">Light 7am to 7pm</span></button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><label for="bright" class="h2">Brightness</label><span class="hint" id="bright-v"></span></div>
+          <input id="bright" type="range" min="10" max="100" step="5">
+        </div>
+        <div class="card" id="screen-rows"></div>
+        <div class="card">
+          <div class="row"><div class="text"><div class="title">Show art on ambient</div><div class="hint">Uses the show image when a station has one.</div></div><button class="switch" role="switch" data-k="show_art" aria-label="Show art on ambient"></button></div>
+          <div class="row"><div class="text"><div class="title">Dim at night</div><div class="hint">Lower brightness between these times.</div></div><button class="switch" role="switch" data-k="night_dim" aria-label="Dim at night"></button></div>
+          <div class="row" style="padding-top:0">
+            <label class="hint" style="display:flex;align-items:center;gap:8px">from <input type="time" id="night-from"></label>
+            <label class="hint" style="display:flex;align-items:center;gap:8px">to <input type="time" id="night-to"></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- SOUND -->
+      <section id="sound" class="narrow" aria-label="Sound" hidden>
+        <div><h1>Sound</h1><p class="lede">Limits, timers, and AirPlay.</p></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><label for="vlimit" class="h2">Volume limit</label><span class="hint" id="vlimit-v"></span></div>
+          <input id="vlimit" type="range" min="1" max="15" step="1">
+          <div class="hint">The knob and the remote stop here. Handy for small rooms and kids.</div>
+        </div>
+        <div class="card" id="sound-rows"></div>
+        <div class="list">
+          <div class="h2" style="padding-bottom:6px">AirPlay</div>
+          <div class="item"><div class="text"><div class="title">AirPlay</div><div class="hint">Otis shows up on iPhones and Macs on this network.</div></div><button class="switch" role="switch" data-k="airplay" aria-label="AirPlay"></button></div>
+          <div class="item"><div class="text"><div class="title">Wake the screen for AirPlay</div><div class="hint">Shows the album art when someone starts playing.</div></div><button class="switch" role="switch" data-k="airplay_wake" aria-label="Wake the screen for AirPlay"></button></div>
+          <div class="item"><div class="text"><div class="title">Back to the radio when AirPlay stops</div><div class="hint">Off: Otis stays quiet until someone touches it.</div></div><button class="switch" role="switch" data-k="airplay_resume" aria-label="Back to the radio when AirPlay stops"></button></div>
+        </div>
+      </section>
+
+      <!-- WI-FI -->
+      <section id="wifi" class="narrow" aria-label="Wi-Fi" hidden>
+        <div><h1>Wi-Fi</h1><p class="lede">Switch networks without going back through setup.</p></div>
+        <div class="netcard">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFFF3D" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10.5 10.5 0 0 1 14 0"/><path d="M8.5 15.5a5.5 5.5 0 0 1 7 0"/><circle cx="12" cy="19" r="1.2" fill="#FFFF3D"/></svg>
+          <div style="flex:1 1 200px;min-width:0;display:flex;flex-direction:column;gap:4px">
+            <div class="small">Connected to</div>
+            <div class="big" id="net-name">…</div>
+            <div class="small" id="net-meta"></div>
+          </div>
+          <button class="btn" id="net-forget">Forget</button>
+        </div>
+        <div id="join-status" class="hint" aria-live="polite"></div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8px">
+            <div class="h2">Other networks</div>
+            <button class="btn" id="net-scan">Scan again</button>
+          </div>
+          <div id="net-list"></div>
+        </div>
+      </section>
+
+      <!-- DEVICE -->
+      <section id="device" class="narrow" aria-label="Device" hidden>
+        <div><h1>Device</h1><p class="lede">Name, updates, and the buttons you hope you never need.</p></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <label for="dname" class="h2">Name</label>
+          <input id="dname" class="field" type="text" maxlength="40" autocomplete="off">
+          <div class="hint">Shown in AirPlay and at the top of this page.</div>
+        </div>
+        <div class="row" style="padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+          <div class="text"><div class="title">Software</div><div class="hint" id="sw-v">…</div></div>
+          <button class="btn dark" id="sw-btn">Check for updates</button>
+        </div>
+        <div class="kpis" id="health"></div>
+        <div class="list">
+          <div class="item"><div class="text"><div class="title">Restart Otis</div><div class="hint">Takes about 30 seconds.</div></div><button class="btn" id="d-restart">Restart</button></div>
+          <div class="item"><div class="text"><div class="title">Set up Wi-Fi again</div><div class="hint">Forgets every network and brings back "Otis-Setup".</div></div><button class="btn" id="d-setup">Start setup</button></div>
+          <div class="item"><div class="text"><div class="title">Reset everything</div><div class="hint">Favorites, hidden stations, settings and listening history. Wi-Fi stays.</div></div><button class="btn danger" id="d-reset">Reset</button></div>
+        </div>
+      </section>
+
+      <!-- LISTENING -->
+      <section id="listening" aria-label="Listening" hidden>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between">
+          <div><h1>Listening</h1><p class="lede">Kept on your Otis. Never sent anywhere.</p></div>
+          <div class="seg" role="radiogroup" aria-label="Period" id="periods">
+            <button role="radio" data-p="week" aria-checked="true">Week</button>
+            <button role="radio" data-p="month" aria-checked="false">Month</button>
+            <button role="radio" data-p="year" aria-checked="false">Year</button>
+          </div>
+        </div>
+        <div id="stats"></div>
+      </section>
+    </main>
+  </div>
 </div>
-
-
-</body>
+<div id="toast" role="status" aria-live="polite"></div>
 
 <script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const logo = (name, size) => '/api/logo?size=' + (size || 96) + '&name=' + encodeURIComponent(name);
+  // a logo the radio hasn't cached yet: show the station's initials instead of a broken image
+  const initials = (name) => (name || '?').replace(/[^\p{L}\p{N} ]/gu, '').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase() || '?';
+  function logoImg(name, size) {
+    const img = el('img'); img.alt = ''; img.loading = 'lazy'; img.src = logo(name, size);
+    img.onerror = () => { const ph = el('span', 'ph', initials(name)); ph.style.width = img.style.width || ''; ph.style.height = img.style.height || ''; img.replaceWith(ph); };
+    return img;
+  }
+  const sqClass = (status) => status === 'Live' ? 'live' : status === 'Re-Run' ? 'rerun' : 'offline';
 
-const status = document.getElementById('status');
-const stationName = document.getElementById('station-name');
-const oneLiner = document.getElementById('one-liner');
-const stations = document.getElementById('stations');
-const controls = document.querySelectorAll('.control');
-controls.forEach((control) => { 
-    control.addEventListener('mousedown', () => {
-       // control.classList.add('touched'); 
-    })
-    control.addEventListener('mouseup', () => {
-        //control.classList.remove('touched'); 
-    })
-});
+  let state = null, stations = null, settings = null, filter = 'all', period = 'week';
+  let toastTimer = null;
+  function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3500); }
 
-function handleCall(endpoint) {
-    antennaBlip();
-    if (endpoint.includes('play?')) {
-        const station = document.getElementById(endpoint);
-        const name = new URLSearchParams(endpoint.split('?')[1]).get('station');
-        status.dataset.station = name;
-        stationName.textContent = name;
-        oneLiner.textContent = info[name]['oneLiner'];
-        status.dataset.station = name;
+  async function api(path, body, method) {
+    const opts = body !== undefined ? { method: method || 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : { method: method || 'GET' };
+    const r = await fetch(path, opts);
+    let data = {};
+    try { data = await r.json(); } catch (e) {}
+    if (!r.ok || data.status === 'error') {
+      const m = String(data.message || '');
+      throw new Error(m && !m.includes('Traceback') && m.length < 160 ? m : 'Otis couldn’t do that just now. Try again in a moment.');
     }
-    else if (endpoint.includes('prev')) {
-        const currentIndex = stationList.indexOf(status.dataset.station);
-        const prevIndex = (currentIndex - 1 + stationList.length) % stationList.length;
-        const prev = stationList[prevIndex];
-        status.dataset.station = prev;
-        stationName.textContent = prev;
-        oneLiner.textContent = info[prev]['oneLiner'];
-        status.dataset.station = prev;
-    }
-    else if (endpoint.includes('next')) {
-        const currentIndex = stationList.indexOf(status.dataset.station);
-        const nextIndex = (currentIndex + 1) % stationList.length;
-        const next = stationList[nextIndex];
-        stationName.textContent = next;
-        oneLiner.textContent = info[next]['oneLiner'];
-        status.dataset.station = next;
-    }
-    else if (endpoint.includes('restart')) {
-        stationName.textContent = 'Updating';
-        oneLiner.textContent = 'Refresh this page once it has started.';
-    }  
+    return data;
+  }
+  const control = (cmd, value) => api('/api/control', value === undefined ? { cmd } : { cmd, value });
 
-    fetch(endpoint).then(() => {
-        if (endpoint=="/control/favorite") {
-            updateStations();
-        }
-        else {
-            //updateStatus(fromHandleCall=true);
-        }
-    });
+  /* ---------- menu ---------- */
+  const SECTIONS = [['remote', 'Remote'], ['stations', 'Stations'], ['screen', 'Screen'], ['sound', 'Sound'], ['wifi', 'Wi-Fi'], ['device', 'Device'], ['listening', 'Listening']];
+  SECTIONS.forEach(([id, label], i) => {
+    const b = el('button'); b.dataset.s = id;
+    b.append(el('span', 'n', String(i + 1).padStart(2, '0')), el('span', 'l', label));
+    b.onclick = () => { location.hash = id; };
+    $('menu').append(b);
+  });
+  function show() {
+    const id = (location.hash || '#remote').slice(1);
+    const known = SECTIONS.some((s) => s[0] === id) ? id : 'remote';
+    SECTIONS.forEach(([s]) => { $(s).hidden = s !== known; });
+    document.querySelectorAll('#menu button').forEach((b) => b.setAttribute('aria-current', b.dataset.s === known ? 'page' : 'false'));
+    if (known === 'wifi') loadWifi();
+    if (known === 'device') loadDevice();
+    if (known === 'listening') loadStats();
+  }
+  window.addEventListener('hashchange', show);
 
-    //controls.forEach((control) => {
-    //    control.classList.remove('hovered');
-    //});
-}
-
-var blips = 0;
-const antennaTop = document.getElementById('antenna-top');
-const antennaFill = document.getElementById('antenna-fill');
-
-function antennaBlip() {
-    const antennaBlipElement = antennaTop.cloneNode(true); // true for deep clone
-    antennaFill.appendChild(antennaBlipElement);
-    antennaBlipElement.classList.add('blip');
-    blips++;
-    console.log(blips);
-    antennaBlipElement.style.top = (-10 - (25 * blips)) + "px";
-    console.log(antennaBlipElement.style.top);
-}
-
-function updateStatus(fromHandleCall) {
-    if (fromHandleCall!==true) {
-        antennaBlip();
-    }
-      fetch("/control/status", {
-          method: 'GET'
-      })
-      .then(function(response) { return response.json(); })
-      .then(async function(json) {
-            await getInfo();
-            name = json['output'].split(' - ')[0];
-            status.dataset.station = name;
-            status.dataset.oneliner = info[name]['oneLiner'];
-            stationName.textContent = name;
-            stationName.classList.add('fade-in-element');
-            oneLiner.classList.add('fade-in-element');
-            oneLiner.textContent = info[name]['oneLiner'];
-      });
-}
-
-function addStation(name, hidden) {
-    container = document.createElement('div'); 
-    container.classList.add('a-station-and-overlay');
-    station = document.createElement('img');
-    station.classList.add('a-station');
-    console.log('Adding Station')
-    console.log(name)
-    station.src = info[name]['logo'];
-    station.dataset.name = name;
-    station.dataset.oneLiner = info[name]['oneLiner'];
-    station.title = info[name]['oneLiner'];
-    container.id = name;
-    station.classList.add('fade-in-element');
-    container.dataset.hidden = hidden;
-    container.dataset.name = name;
-    if (hidden) {
-        container.style.display = 'none';
-    }
-    container.appendChild(station);
-
-    // hide button
-    editOverlay = document.createElement('div'); 
-    editOverlay.classList.add('edit-overlay');
-    xBackground = document.createElement('div'); 
-    xBackground.classList.add('x-background');
-    xBackground.dataset.station = name;
-    xBackground.addEventListener('click', (e) => addToOrRemoveFromHiddenQueue(e.currentTarget));
-    editOverlay.appendChild(xBackground);
-    container.appendChild(editOverlay);
-
-    // play button
-    overlay = document.createElement('div'); 
-    overlay.classList.add('play-overlay');
-    overlay.innerHTML = `
-        <svg viewBox="0 0 100 100" width="60%" height="60%">
-            <polygon points="30,20 30,80 75,50" fill="white" stroke="black" stroke-width="2"></polygon>
-        </svg>
-    `;
-    overlay.title = info[name]['oneLiner'];
-    overlay.addEventListener('click', ()=> {
-        handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
-    });
-    container.appendChild(overlay);
-
-    stations.appendChild(container);
-}
-
-let info;
-function getInfo() {
-    return fetch("https://one.radio/info", { method: 'GET' })
-        .then(response => response.json())
-        .then(json => { info = json; });
-}
-
-let stationList = [];
-function updateStations() {
-    fetch("/control/list", { method: 'GET' })
-      .then(response => response.json())
-      .then(async function(json) {
-            await getInfo();             
-            const allStations = JSON.parse(json['output']);
-            const shown = allStations["shown"];
-            const hidden = allStations["hidden"];
-
-            stations.innerHTML = "";
-            stationList = [];             
-            shown.forEach(shownStation => {
-                addStation(shownStation, false);
-                stationList.push(shownStation);
-            });
-            hidden.forEach(hiddenStation => {
-                addStation(hiddenStation, true);
-            });
-      });
-}
-
-function playRandom() {
-    let nonCurrentStations = stationList.filter(station => station != status.dataset.station);
-    const randomIndex = Math.floor(Math.random() * nonCurrentStations.length);
-    const name = nonCurrentStations[randomIndex];
-    handleCall(`/control/play?station=${name.replace(/ /g, "+")}`);
-}
-
-getInfo().then(() => {
-    updateStatus(true);  
-    updateStations();
-});
-
-let editMode = false;
-let hiddenQueue = [];
-
-const editButton = document.getElementById('edit').querySelector('.icon');
-function toggleEditMode() {
-    const stationsToEdit = document.querySelectorAll('.a-station-and-overlay');
-
-    if (editMode) {
-        editMode = false;
-
-        editButton.src = 'assets/edit_icon_web.svg';
-
-        stationName.textContent = status.dataset.station;
-        oneLiner.textContent = status.dataset.oneliner;
-
-        stationsToEdit.forEach(station => {
-            const editOverlay = station.querySelector('.edit-overlay');
-            editOverlay.style.display = 'none';
-        })
-
-        confirmHideAndUnhide();
-    }
-    else {
-        editMode = true;
-        editButton.src = 'assets/confirm_icon_web.svg';
-
-        stationName.textContent = 'Editing stations';
-        oneLiner.textContent = 'Changes take effect next time you restart.';
-
-        stationsToEdit.forEach(station => {
-            station.style.display = 'block';
-            const editOverlay = station.querySelector('.edit-overlay');
-            editOverlay.style.display = 'flex';
-
-            if (station.dataset.hidden == "true") {
-                station.style.display = 'block';
-                hiddenQueue.push(station.dataset.name)
-                const xbg = editOverlay.querySelector('.x-background');
-                xbg.style.background = '#FF4747';
-            }
-        })
-    }
-}
-
-function addToOrRemoveFromHiddenQueue(element) {
-    const station = element.dataset.station;
-    if (hiddenQueue.includes(station)) {      
-        hiddenQueue = hiddenQueue.filter(s => s !== station); 
-        element.style.background = '#00BBFF';
+  /* ---------- remote ---------- */
+  function renderState() {
+    if (!state) return;
+    const ap = state.airplay || {};
+    const onAirplay = ap.showing;
+    // the wordmark already says Otis; only show a name line once the listener has renamed it
+    const named = state.device_name && state.device_name !== 'Otis';
+    $('dev-name').textContent = named ? state.device_name : '';
+    $('dev-name').hidden = !named;
+    // pill
+    $('pill-name').textContent = state.asleep ? 'Off' : onAirplay ? (ap.title || 'AirPlay') : (state.station || '…');
+    $('pill-logo').src = onAirplay ? '/assets/otis_face.png' : (state.station ? logo(state.station, 96) : '');
+    $('pill-sq').className = 'sq ' + (onAirplay ? 'live' : sqClass(state.station_status));
+    // now playing card
+    const art = $('now-art');
+    if (onAirplay) {
+      art.src = '/assets/otis_face.png'; art.style.background = '#FFFF3D'; art.style.objectFit = 'contain';
+      $('now-station').textContent = ap.title || 'AirPlay';
+      $('now-ol').textContent = [ap.artist, ap.album].filter(Boolean).join(' · ') || (ap.sender ? 'from ' + ap.sender : '');
+      $('now-status').textContent = 'AirPlay'; $('now-city').textContent = ap.sender || '';
+      $('now-sq').className = 'sq live';
     } else {
-        hiddenQueue.push(station);
-        element.style.background = '#FF4747';
+      art.src = state.station ? logo(state.station, 216) : ''; art.style.background = '#222'; art.style.objectFit = 'cover';
+      art.alt = (state.station || '') + ' logo';
+      $('now-station').textContent = state.station || '…';
+      $('now-ol').textContent = state.now_playing || '';
+      $('now-status').textContent = state.station_status || '';
+      $('now-city').textContent = state.city + (state.station_time ? ' · ' + state.station_time : '') + (state.from ? ' · from ' + state.from : '');
+      $('now-sq').className = 'sq ' + sqClass(state.station_status);
     }
-    console.log(hiddenQueue);
-}
-
-function confirmHideAndUnhide() {
-    hiddenQueue.forEach(station => {
-        thisStation = document.getElementById(station);
-        thisStation.style.display = 'none';
-    })
-
-    const hiddenList = hiddenQueue.join(';');
-    if (hiddenList.length == 0) {
-        handleCall(`/control/hide?station=<None>`);
-    }
-    else {
-        handleCall(`/control/hide?station=${hiddenList.replace(/ /g, "+")}`);
-    }
-    hiddenQueue = [];
-    antennaBlip();
-}
-
-updateStatus();
-updateStations();
-
-</script>
-
-<style>
-
-@font-face {font-family: "Archivo Light";src: url("assets/Archivo-Light.ttf") format("truetype");}
-@font-face {font-family: "Archivo SemiBold";src: url("assets/Archivo-SemiBold.ttf") format("truetype");}
-
-
-#station-name {
-    font-size: 24pt;
-    transition: height 0.2s ease-in-out;
-    font-family: 'Archivo SemiBold';
-}
-
-#one-liner {
-    font-size: 12pt;
-    transition: height 0.2s ease-in-out;
-}
-
-#antenna-container-container {
-position: relative;
-display: flex;
-justify-content: end;
-left: -36px !important;
-}
-
-#antenna-top {
-    width: 25px;
-    height: 25px;
-    top: -10px;
-    left: -5.5px;
-    background: radial-gradient(circle at 30% 30%, #ff4d4d, #b30000 66%, #4d0000 100%);
-    border-radius: 50%;
-    position: relative;
-}
-
-#antenna-base {
-    width: 40px;
-    height: 25px;
-    background-color: #00BBFF;
-    border-bottom: none;
-    /* border-left: 4px solid black; */
-}
-
-#antenna {
-    width: 46px;
-    height: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#antenna-fill {
-    background-color: #00E7C0;
-    width: 14px;
-    height: 70px;
-    border: 1px solid grey;
-    border-bottom: none;
-    background: linear-gradient(
-    90deg,
-    #aaa 5%,
-    #ccc 10%,
-    #ddd 30%,
-    #fff 50%,
-    #ddd 70%,
-    #ccc 80%,
-    #aaa 95%
-    );
-}
-
-.control:hover {
-    background-color: white !important;
-}
-
-#scud-logo-img {
-    height: 30px;
-    width: auto;
-}
-
-#scud-logo {
-    border: 1px solid grey;
-    border-bottom: none;
-    background: linear-gradient(
-        90deg,
-        #999 5%,
-        #fff 10%,
-        #ccc 30%,
-        #ddd 50%,
-        #ccc 70%,
-        #fff 80%,
-        #999 95%
-    );
-    padding-top: 30px;
-    padding-bottom: 25px;
-    border-radius: 40px 40px 0px 0px;
-}
-
-#status {
-    padding: 15px;
-}
-
-#stations {
-    background-color: #1f1f1f;
-    display: flex;
-    flex-wrap: wrap;
-    width: calc((81px * 4));
-    height: 400px;
-    border-left: 5px solid black;
-    border-right: 5px solid black;
-    border-bottom: 5px solid black;
-    overflow-y: scroll;
-    border-radius: 0px 0px 40px 40px;
-}
-
-.play-overlay {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    position: relative;
-    cursor:pointer;
-    top: -80px;
-}
-
-.edit-overlay {
-    font-size: 26px;
-    display: none;
-    /* left: -5px; */
-    justify-content: right;
-    width: 100%;
-    height: 100%;
-    position: relative;
-    cursor: default;
-    top: -83px;
-    overflow-y: hidden;
-}
-
-.x-background {
-    padding: 3px;
-    width: 12px;
-    position: relative;
-    background-color: #00bbff;
-    height: 25px;
-    top: -8px;
-    cursor: pointer;
-    border-radius: 30px;
-    border: 0.5px solid black;
-}
-
-.x-background:hover{
-    background-color: #FF4747;
-}
-
-.a-station-and-overlay {
-    overflow: hidden;
-    touch-action: manipulation;
-    height: 80px;
-    width: 80px;
-    border: 1px solid black;
-    border-top: none;
-    border-left: none;
-    position: relative;
-}
-
-.a-station-and-overlay:hover:not(:has(.edit-overlay:hover)) .play-overlay {
-    display: flex;
-}
-
-.a-station {
-    touch-action: manipulation;
-    height: 80px;
-    width: 80px;
-    border: none;
-    border-top: none;
-    cursor:pointer;
-    border-left: none;
-}
-
-.touched {
-    background-color: #4b4b4b !important;
-}
-
-body {
-    background-color: #FFFFFF;
-    margin-top: 4vh;
-    display: flex;
-    justify-items: center;
-    text-align: center;
-    justify-content: center;
-    align-items: center;    
-}
-
-#main-div {
-    align-items: right;
-    justify-content: end;
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
+    const wake = $('now-wake');
+    if (state.asleep) { wake.hidden = false; wake.disabled = true; wake.textContent = 'Switched off'; }
+    else if (state.resting || !state.screen_on) { wake.hidden = false; wake.disabled = false; wake.textContent = state.resting ? 'Wake Otis' : 'Wake the screen'; }
+    else wake.hidden = true;
+    $('b-fav').setAttribute('aria-pressed', String(!!state.favorite));
+    $('b-fav').disabled = onAirplay;
+    $('b-mute').setAttribute('aria-pressed', String(!!state.muted));
+    renderWedge();
+    if (stations) renderGrid();
   }
-  100% {
-    opacity: 1;
+
+  function renderWedge() {
+    const w = $('wedge'); w.textContent = '';
+    const ap = state.airplay && state.airplay.showing;
+    const level = ap ? state.airplay_volume : state.volume;
+    const limit = state.volume_limit || 15;
+    $('vol-title').textContent = ap ? 'AirPlay volume' : 'Volume';
+    $('vol-label').textContent = state.muted ? 'Muted' : level + ' of 15' + (limit < 15 ? ' · limit ' + limit : '');
+    for (let k = 1; k <= 15; k++) {
+      const b = el('button'); b.setAttribute('aria-label', 'Volume ' + k);
+      const bar = el('span'); bar.style.height = (8 + Math.round(40 * (k - 1) / 14)) + 'px'; b.append(bar);
+      if (!state.muted && k <= level) b.classList.add('lit');
+      if (k > limit) b.disabled = true;
+      b.onclick = () => act(() => control('volume', k), (s) => { s.volume = k; s.muted = false; });
+      w.append(b);
+    }
   }
-}
 
-.fade-in-element {
-  animation-name: fadeIn;
-  animation-duration: 0.5s;
-  animation-timing-function: ease-out; 
-  animation-fill-mode: forwards; 
-}
+  function dialStations() {
+    if (!stations) return [];
+    const by = {}; stations.stations.forEach((s) => { by[s.name] = s; });
+    return stations.dial.map((n) => by[n]).filter(Boolean);
+  }
 
-#info-div {
-    transition: height 0.2s ease-in-out;
-    min-height: 82px;
-    border-left: 5px solid black;
-    border-right: 5px solid black;
-    border-bottom: none;
-    background-color: black;
-    color: white;
-    /* overflow: scroll; */
-    width: calc((81px * 4));
-    justify-items: left;
-    text-align: left;
-    font-size: 16pt;
-    transition: 0.2s ease;
-}
+  function renderGrid() {
+    const q = $('q').value.trim().toLowerCase();
+    const favs = new Set(stations.favorites);
+    let list = dialStations();
+    $('dial-title').textContent = 'On the dial (' + list.length + ')';
+    if (filter === 'favs') list = list.filter((s) => favs.has(s.name));
+    else if (filter !== 'all') list = list.filter((s) => s.status === filter);
+    if (q) list = list.filter((s) => (s.name + ' ' + s.city + ' ' + (s.genres || []).join(' ')).toLowerCase().includes(q));
+    const g = $('grid'); g.textContent = '';
+    if (!list.length) { g.append(el('div', 'hint', q ? 'No stations match.' : 'Nothing here yet.')); return; }
+    list.forEach((s) => {
+      const b = el('button', 'tile' + (s.status === 'Offline' ? ' offline' : ''));
+      b.setAttribute('aria-label', 'Play ' + s.name);
+      b.setAttribute('aria-current', String(state && s.name === state.station && !(state.airplay || {}).showing));
+      const box = el('span', 'logo');
+      box.append(logoImg(s.name, 216));
+      if (favs.has(s.name)) { const st = el('span', 'star'); st.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#000" aria-hidden="true"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.3L12 17.5 6.4 20.4l1.1-6.3L3 9.7l6.2-.9z"/></svg>'; box.append(st); }
+      b.append(box, el('span', 'nm', s.name), el('span', 'sub', s.oneLiner || s.city));
+      b.onclick = () => act(() => control('play', s.name), (st) => { st.station = s.name; st.now_playing = s.oneLiner; st.station_status = s.status; st.city = s.city; st.airplay = Object.assign({}, st.airplay, { showing: false }); });
+      g.append(b);
+    });
+  }
 
-.icon {
-    width: 80px;
-    height: 40px;
-}
+  // optimistic update, then the real state from the radio
+  async function act(fn, optimistic) {
+    if (state && optimistic) { optimistic(state); renderState(); }
+    try { const r = await fn(); if (r && r.station !== undefined && r.volume !== undefined) { state = r; renderState(); } else setTimeout(poll, 400); }
+    catch (e) { toast(e.message); poll(); }
+  }
 
-#controls {
-    border: 1px solid black;
-    display: flex;
-    flex-wrap: wrap;
-    width: calc(81px * 4);
-    border-right: 5px solid black;
-    border-left: 5px solid black;
-    border-bottom: none;
-}
+  $('b-prev').onclick = () => act(() => control('prev'));
+  $('b-next').onclick = () => act(() => control('next'));
+  $('b-random').onclick = () => act(() => control('random'));
+  $('b-mute').onclick = () => act(() => control('mute'), (s) => { s.muted = !s.muted; });
+  $('b-fav').onclick = () => act(async () => { const r = await control('favorite'); await loadStations(); return r; }, (s) => { s.favorite = !s.favorite; });
+  $('now-wake').onclick = () => act(() => control('wake'));
+  $('q').addEventListener('input', () => stations && renderGrid());
+  document.querySelectorAll('#filters button').forEach((b) => b.onclick = () => {
+    filter = (filter === b.dataset.f && b.classList.contains('status')) ? 'all' : b.dataset.f;
+    document.querySelectorAll('#filters button').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.f === filter)));
+    renderGrid();
+  });
 
-.control {
-    touch-action: manipulation;
-    display: flex;
-    justify-items: center;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    height: 40px;
-    width: 80px;
-    cursor: pointer;
-    border-right: 1px solid black;
-    border-bottom: 1px solid black;
-}
+  async function poll() {
+    try {
+      state = await api('/api/state');
+      $('offline').classList.remove('show');
+      renderState();
+    } catch (e) { $('offline').classList.add('show'); }
+  }
+  async function loadStations() {
+    try { stations = await api('/api/stations'); renderGrid(); renderStationLists(); } catch (e) {}
+  }
 
-#edit, #restart {
-    background-color: #D9D9D9;
-}
+  /* ---------- stations page ---------- */
+  function renderStationLists() {
+    if (!stations) return;
+    const by = {}; stations.stations.forEach((s) => { by[s.name] = s; });
+    const favs = stations.favorites.filter((n) => by[n]);
+    $('fav-title').textContent = 'Favorites (' + favs.length + ')';
+    const fl = $('fav-list'); fl.textContent = '';
+    if (!favs.length) fl.append(el('div', 'hint', 'Press the volume knob on a station, or the star on the Remote, to add one.'));
+    favs.forEach((n, i) => {
+      const s = by[n]; const row = el('div', 'item');
+      const img = logoImg(n, 96); img.style.width = '44px'; img.style.height = '44px';
+      const t = el('div', 'text'); t.append(el('div', 'title', n), el('div', 'hint', [s.city, s.status].filter(Boolean).join(' · ')));
+      const up = el('button', 'btn icon-btn', '↑'); up.setAttribute('aria-label', 'Move ' + n + ' up'); up.disabled = i === 0;
+      const dn = el('button', 'btn icon-btn', '↓'); dn.setAttribute('aria-label', 'Move ' + n + ' down'); dn.disabled = i === favs.length - 1;
+      const rm = el('button', 'btn', 'Remove');
+      const save = (list) => api('/api/control', { cmd: 'favorites', value: list }).then(loadStations).then(poll).catch((e) => toast(e.message));
+      up.onclick = () => { const l = favs.slice(); [l[i - 1], l[i]] = [l[i], l[i - 1]]; save(l); };
+      dn.onclick = () => { const l = favs.slice(); [l[i + 1], l[i]] = [l[i], l[i + 1]]; save(l); };
+      rm.onclick = () => save(favs.filter((x) => x !== n));
+      row.append(img, t, up, dn, rm); fl.append(row);
+    });
+    const hid = stations.hidden.filter((n) => by[n]);
+    $('hid-title').textContent = 'Hidden from the dial (' + hid.length + ')';
+    const hl = $('hid-list'); hl.textContent = '';
+    hid.forEach((n) => {
+      const row = el('div', 'item'); const img = logoImg(n, 96); img.style.width = '44px'; img.style.height = '44px'; img.style.opacity = '0.5';
+      const t = el('div', 'text'); t.append(el('div', 'title', n));
+      const b = el('button', 'btn', 'Show again');
+      b.onclick = () => api('/api/control', { cmd: 'hidden', value: hid.filter((x) => x !== n) }).then(loadStations).catch((e) => toast(e.message));
+      row.append(img, t, b); hl.append(row);
+    });
+    const pick = $('hide-pick'); const keep = pick.value; pick.textContent = '';
+    pick.append(new Option('Pick a station to hide', ''));
+    stations.stations.filter((s) => !s.hidden).forEach((s) => pick.append(new Option(s.name, s.name)));
+    pick.value = keep;
+  }
+  $('hide-btn').onclick = () => {
+    const n = $('hide-pick').value; if (!n) return;
+    api('/api/control', { cmd: 'hidden', value: stations.hidden.concat([n]) }).then(loadStations).then(() => toast(n + ' is off the dial.')).catch((e) => toast(e.message));
+  };
 
-#up, #down {
-    background-color: #FF4747;
-}
+  /* ---------- settings ---------- */
+  function segRow(container, label, hint, key, opts) {
+    const row = el('div', 'row');
+    const t = el('div', 'text'); t.append(el('div', 'title', label), el('div', 'hint', hint));
+    const seg = el('div', 'seg'); seg.setAttribute('role', 'radiogroup'); seg.setAttribute('aria-label', label);
+    opts.forEach(([v, l]) => {
+      const b = el('button', null, l); b.setAttribute('role', 'radio'); b.dataset.k = key; b.dataset.v = String(v);
+      b.onclick = () => save({ [key]: v });
+      seg.append(b);
+    });
+    row.append(t, seg); container.append(row);
+  }
+  function switchRow(container, label, hint, key) {
+    const row = el('div', 'row'); const t = el('div', 'text'); t.append(el('div', 'title', label), el('div', 'hint', hint));
+    const s = el('button', 'switch'); s.setAttribute('role', 'switch'); s.dataset.k = key; s.setAttribute('aria-label', label);
+    row.append(t, s); container.append(row);
+  }
+  switchRow($('station-toggles'), 'Skip offline stations', 'Leaves them off the dial until they are back.', 'skip_offline');
+  switchRow($('station-toggles'), 'Surprise me from favorites only', 'The knob press and the remote both use it.', 'surprise_favorites');
+  segRow($('screen-rows'), 'Ambient after', 'The big logo and show art view, when nobody is touching it.', 'ambient_after', [[30, '30 s'], [60, '1 min'], [300, '5 min'], [0, 'Never']]);
+  segRow($('screen-rows'), 'Screen off after', 'The radio keeps playing.', 'screen_off_after', [[600, '10 min'], [1800, '30 min'], [3600, '1 hr'], [0, 'Never']]);
+  segRow($('sound-rows'), 'Volume when Otis wakes', 'After the switch, or a restart. Quiet is 3 notches.', 'start_volume', [['last', 'Last used'], ['quiet', 'Quiet'], ['fixed', 'Fixed']]);
+  segRow($('sound-rows'), 'Sleep timer', 'Fades out and rests the screen. Touch a knob to wake.', '_sleep', [[0, 'Off'], [15, '15 min'], [30, '30 min'], [60, '1 hr']]);
 
-#next, #prev {
-    background-color: #00BBFF;
-}
-
-#favorite {
-    background-color: #FFFF00;
-}
-
-#random {
-        background-color: #00E7C0;
-}
-
-.blip {
-z-index: -10;
-  left: -5.5px !important;
-  animation-duration: 0.5s;
-  animation-name: blip-anim;
-  border: none !important;
-}
-
-@keyframes blip-anim {
-    from {
-        scale: 100%;
-        opacity: 1;
+  function renderSettings() {
+    if (!settings) return;
+    document.querySelectorAll('.switch[data-k]').forEach((s) => s.setAttribute('aria-checked', String(!!settings[s.dataset.k])));
+    document.querySelectorAll('.seg button[data-k]').forEach((b) => {
+      const cur = b.dataset.k === '_sleep' ? sleepChoice() : settings[b.dataset.k];
+      b.setAttribute('aria-checked', String(String(cur) === b.dataset.v));
+    });
+    document.querySelectorAll('#themes button').forEach((b) => b.setAttribute('aria-checked', String(settings.theme === b.dataset.v)));
+    if (document.activeElement !== $('bright')) $('bright').value = settings.brightness;
+    $('bright-v').textContent = settings.brightness + '%';
+    if (document.activeElement !== $('vlimit')) $('vlimit').value = settings.volume_limit;
+    $('vlimit-v').textContent = settings.volume_limit + ' of 15 notches';
+    if (document.activeElement !== $('night-from')) $('night-from').value = settings.night_from;
+    if (document.activeElement !== $('night-to')) $('night-to').value = settings.night_to;
+    if (document.activeElement !== $('dname')) $('dname').value = settings.device_name || 'Otis';
+  }
+  function sleepChoice() {
+    const m = state ? state.sleep_timer : 0;
+    if (!m) return 0;
+    return [15, 30, 60].reduce((a, b) => Math.abs(b - m) < Math.abs(a - m) ? b : a, 15);
+  }
+  async function save(patch) {
+    if ('_sleep' in patch) {
+      try { state = await control('sleep_timer', patch._sleep); renderState(); renderSettings(); toast(patch._sleep ? 'Otis will fade out in ' + patch._sleep + ' minutes.' : 'Sleep timer off.'); }
+      catch (e) { toast(e.message); }
+      return;
     }
-    to {
-        scale: 400%;
-        opacity: 0;
-    }
+    if (settings) { settings = Object.assign({}, settings, patch); renderSettings(); }
+    try { const r = await api('/api/settings', patch); settings = r.settings; renderSettings(); if ('device_name' in patch || 'volume_limit' in patch) poll(); if ('skip_offline' in patch) loadStations(); }
+    catch (e) { toast(e.message); loadSettings(); }
+  }
+  async function loadSettings() {
+    try {
+      settings = (await api('/api/settings')).settings; renderSettings();
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;   // for night dimming, auto theme and stats
+      if (tz && settings.timezone !== tz) save({ timezone: tz });
+    } catch (e) {}
+  }
+  document.querySelectorAll('.switch[data-k]').forEach((s) => s.onclick = () => save({ [s.dataset.k]: !(settings && settings[s.dataset.k]) }));
+  document.querySelectorAll('#themes button').forEach((b) => b.onclick = () => save({ theme: b.dataset.v }));
+  $('bright').oninput = () => { $('bright-v').textContent = $('bright').value + '%'; };
+  $('bright').onchange = () => save({ brightness: +$('bright').value });
+  $('vlimit').oninput = () => { $('vlimit-v').textContent = $('vlimit').value + ' of 15 notches'; };
+  $('vlimit').onchange = () => save({ volume_limit: +$('vlimit').value });
+  $('night-from').onchange = () => save({ night_from: $('night-from').value });
+  $('night-to').onchange = () => save({ night_to: $('night-to').value });
+  const saveName = () => { const v = $('dname').value.trim(); if (v && settings && v !== settings.device_name) save({ device_name: v }).then(() => toast('Renamed. AirPlay shows the new name in a moment.')); };
+  $('dname').onchange = saveName;
+  $('dname').onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); $('dname').blur(); } };
 
-}
-
-@media (min-aspect-ratio: 10/10) {
-        #info-div,#controls,#stations {
-            width: calc(81px * 8);
+  /* ---------- wi-fi ---------- */
+  const signalWord = (s) => s >= 70 ? 'Strong' : s >= 45 ? 'Good' : s >= 25 ? 'Fair' : 'Weak';
+  let joinPoll = null, openNet = null;
+  async function loadWifi(rescan) {
+    try {
+      const w = await api('/api/wifi' + (rescan ? '?rescan=1' : ''));
+      $('net-name').textContent = w.current ? w.current.ssid : 'Not connected';
+      $('net-meta').textContent = [w.current ? signalWord(w.current.signal) + ' signal' : '', w.ip, w.hostname].filter(Boolean).join(' · ');
+      $('net-forget').disabled = !w.current;
+      const list = $('net-list'); list.textContent = '';
+      if (!w.networks.length) list.append(el('div', 'hint', 'No other networks in range.'));
+      w.networks.forEach((n) => {
+        const b = el('button', 'net'); b.setAttribute('aria-expanded', String(openNet === n.ssid));
+        const nm = el('span', 'title', n.ssid); nm.style.flex = '1'; nm.style.minWidth = '0'; nm.style.overflowWrap = 'anywhere';
+        b.append(nm, el('span', 'hint', signalWord(n.signal) + (w.saved.includes(n.ssid) ? ' · saved' : '')));
+        if (n.locked) { const lock = el('span'); lock.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.2" stroke-linecap="round" role="img" aria-label="Password protected"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>'; b.append(lock); }
+        b.onclick = () => { openNet = openNet === n.ssid ? null : n.ssid; loadWifi(); };
+        list.append(b);
+        if (openNet === n.ssid) {
+          const j = el('div', 'join');
+          const needsPw = n.locked && !w.saved.includes(n.ssid);
+          let pw = null;
+          if (needsPw) {
+            const lab = el('label', null, 'Password for ' + n.ssid); lab.htmlFor = 'wpw'; lab.style.fontSize = '15px';
+            pw = el('input', 'field'); pw.type = 'password'; pw.id = 'wpw'; pw.autocomplete = 'off'; pw.style.background = '#fff';
+            j.append(lab, pw);
+          }
+          const go = el('button', 'btn dark', 'Join'); go.style.alignSelf = 'flex-start';
+          go.onclick = () => join(n.ssid, pw ? pw.value : '');
+          j.append(go, el('div', 'hint', 'Otis tries the new network and goes back to this one if it can’t connect.'));
+          list.append(j);
+          if (pw) setTimeout(() => pw.focus(), 0);
         }
+      });
+      if (w.job && w.job.state === 'joining') watchJoin();
+    } catch (e) { toast(e.message); }
+  }
+  async function join(ssid, password) {
+    try {
+      await api('/api/wifi/join', { ssid, password });
+      $('join-status').textContent = 'Joining ' + ssid + '… This page may drop for a few seconds.';
+      watchJoin();
+    } catch (e) { toast(e.message); }
+  }
+  function watchJoin() {
+    clearInterval(joinPoll);
+    joinPoll = setInterval(async () => {
+      try {
+        const w = await api('/api/wifi'); const j = w.job || {};
+        if (j.state === 'joined') { clearInterval(joinPoll); openNet = null; $('join-status').textContent = 'Joined ' + j.ssid + '. If your phone is on a different network, switch to it and reopen ' + w.hostname + '.'; loadWifi(); }
+        else if (j.state === 'failed') { clearInterval(joinPoll); $('join-status').textContent = j.message; loadWifi(); }
+      } catch (e) { $('join-status').textContent = 'Otis is switching networks. If it moved to a network your phone isn’t on, join that one and reopen this page.'; }
+    }, 2500);
+  }
+  $('net-scan').onclick = () => { $('net-scan').disabled = true; loadWifi(true).finally(() => { $('net-scan').disabled = false; }); };
+  $('net-forget').onclick = async () => {
+    if (!confirm('Forget ' + $('net-name').textContent + '? Otis joins another saved network if one is in range, or opens "Otis-Setup".')) return;
+    try { await api('/api/wifi/forget', {}); $('join-status').textContent = 'Forgotten. Otis is looking for another network.'; } catch (e) { toast(e.message); }
+  };
 
-}
+  /* ---------- device ---------- */
+  async function loadDevice() {
+    try {
+      const d = await api('/api/device');
+      $('sw-v').textContent = d.version ? 'Version ' + d.version + (d.version_date ? ' · ' + d.version_date : '') : 'Version unknown';
+      $('dev-host').textContent = d.hostname + ' · online';
+      const h = $('health'); h.textContent = '';
+      let wifi = '';
+      try { const w = await api('/api/wifi'); wifi = w.current ? signalWord(w.current.signal) : 'No Wi-Fi'; } catch (e) {}
+      [['Wi-Fi signal', wifi], ['Up for', d.uptime], ['Temperature', d.temperature], ['On the dial', stations ? String(stations.dial.length) : '']].forEach(([l, v]) => {
+        if (!v) return; const k = el('div', 'kpi'); k.append(el('div', 'hint', l)); const vv = el('div', 'v', v); vv.style.fontSize = '24px'; k.append(vv); h.append(k);
+      });
+    } catch (e) { toast(e.message); }
+  }
+  let updateReady = 0;
+  $('sw-btn').onclick = async () => {
+    const b = $('sw-btn'); b.disabled = true;
+    try {
+      if (!updateReady) {
+        b.textContent = 'Checking…';
+        const r = await api('/api/device/update');
+        updateReady = r.available;
+        b.textContent = updateReady ? 'Install update' : 'Check for updates';
+        toast(updateReady ? 'An update is ready.' : 'Otis is up to date.');
+      } else {
+        b.textContent = 'Installing…';
+        const r = await api('/api/device/update', {});
+        toast(r.installed ? 'Updated. Otis is restarting.' : (r.message || 'Already up to date.'));
+        updateReady = 0; b.textContent = 'Check for updates';
+        setTimeout(() => location.reload(), 12000);
+      }
+    } catch (e) { toast(e.message); b.textContent = 'Check for updates'; updateReady = 0; }
+    b.disabled = false;
+  };
+  $('d-restart').onclick = async () => { if (!confirm('Restart Otis? The music stops for about 30 seconds.')) return; try { await api('/api/device/restart', {}); toast('Restarting…'); } catch (e) { toast(e.message); } };
+  $('d-setup').onclick = async () => { if (!confirm('Forget every Wi-Fi network and start setup again? You’ll join "Otis-Setup" from your phone to finish.')) return; try { await api('/api/device/setup', {}); toast('Starting setup. Join "Otis-Setup" on your phone.'); } catch (e) { toast(e.message); } };
+  $('d-reset').onclick = async () => { if (!confirm('Reset favorites, hidden stations, settings and listening history? Wi-Fi stays.')) return; try { await api('/api/device/reset', {}); toast('Reset. Otis is restarting.'); setTimeout(() => location.reload(), 12000); } catch (e) { toast(e.message); } };
 
+  /* ---------- listening ---------- */
+  document.querySelectorAll('#periods button').forEach((b) => b.onclick = () => {
+    period = b.dataset.p;
+    document.querySelectorAll('#periods button').forEach((x) => x.setAttribute('aria-checked', String(x.dataset.p === period)));
+    loadStats();
+  });
+  const fmtH = (h) => h >= 10 ? Math.round(h) + ' h' : h + ' h';
+  async function loadStats() {
+    const box = $('stats');
+    try {
+      const s = await api('/api/stats?period=' + period);
+      box.textContent = '';
+      if (s.empty) { const e = el('div', 'empty'); e.append(el('div', 'title', 'Nothing yet for this ' + period + '.'), el('div', 'hint', 'Otis counts as you listen. Check back after a few shows.')); box.append(e); return; }
+      const wrap = el('div'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:22px';
+      const kp = el('div', 'kpis');
+      const kpi = (cls, label, value, sub) => { const k = el('div', 'kpi ' + cls); k.append(el('div', null, label), el('div', 'v', value), el('div', null, sub)); k.firstChild.style.fontSize = '13px'; k.lastChild.style.fontSize = '13px'; kp.append(k); };
+      const change = s.has_previous ? ((s.hours_change >= 0 ? '+' : '') + s.hours_change + ' h on last ' + period) : 'this ' + period;
+      kpi('dark', 'Listened', fmtH(s.hours), change);
+      kpi('', 'Stations', String(s.stations), stations ? 'of ' + stations.dial.length + ' on the dial' : '');
+      kpi('yellow', 'New to you', String(s.new.length), s.new.length ? s.new.slice(0, 2).join(', ') + (s.new.length > 2 ? '…' : '') : 'first listens');
+      kpi('', 'Live', s.live_share + '%', 'live, not re-runs');
+      wrap.append(kp);
 
-</style>
+      const cols = el('div', 'cols');
+      const left = el('div'); left.append(el('div', 'h2', 'Most played'));
+      const max = s.top.length ? s.top[0].hours : 1;
+      s.top.forEach((t) => {
+        const r = el('div'); r.style.cssText = 'display:flex;align-items:center;gap:12px';
+        const img = logoImg(t.name, 96); img.style.cssText = 'width:44px;height:44px;object-fit:cover;background:#F2F2F2;flex:0 0 auto';
+        const c = el('div'); c.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:6px';
+        const top = el('div'); top.style.cssText = 'display:flex;justify-content:space-between;gap:8px';
+        const nm = el('span', 'title', t.name); nm.style.cssText += ';font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+        top.append(nm, el('span', 'hint', fmtH(t.hours)));
+        const bar = el('div', 'bar'); const fill = el('div'); fill.style.width = Math.max(2, Math.round(100 * t.hours / max)) + '%'; bar.append(fill);
+        c.append(top, bar); r.append(img, c); left.append(r);
+      });
+      const right = el('div');
+      const head = el('div'); head.style.cssText = 'display:flex;justify-content:space-between;align-items:baseline'; head.append(el('div', 'h2', 'When you listen'), el('div', 'hint', 'your local time'));
+      const hrs = el('div', 'hours'); hrs.setAttribute('role', 'img');
+      const hmax = Math.max(1, ...s.by_hour);
+      const peak = s.by_hour.indexOf(hmax);
+      const lbl = (h) => (h % 12 || 12) + (h < 12 ? 'am' : 'pm');
+      hrs.setAttribute('aria-label', 'Listening by hour of day. Most listening around ' + lbl(peak) + '.');
+      s.by_hour.forEach((m, i) => { const d = el('div', Math.abs(i - peak) <= 1 && m > hmax * 0.6 ? 'peak' : ''); d.style.height = Math.max(3, Math.round(120 * m / hmax)) + 'px'; hrs.append(d); });
+      const axis = el('div'); axis.style.cssText = 'display:flex;justify-content:space-between;font-size:12px;color:#666';
+      ['12a', '6a', '12p', '6p', '11p'].forEach((t) => axis.append(el('span', null, t)));
+      const split = el('div'); split.style.cssText = 'display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px solid #E6E6E6';
+      const sb = el('div'); sb.style.cssText = 'display:flex;height:16px';
+      const a = el('div'); a.style.cssText = 'background:#000;width:' + (100 - s.airplay_share) + '%';
+      const b = el('div'); b.style.cssText = 'background:#FFFF3D;width:' + s.airplay_share + '%';
+      sb.append(a, b);
+      const sl = el('div'); sl.style.cssText = 'display:flex;justify-content:space-between;font-size:13px;color:#595959';
+      sl.append(el('span', null, 'Radio ' + (100 - s.airplay_share) + '%'), el('span', null, 'AirPlay ' + s.airplay_share + '%'));
+      split.append(el('div', null, 'Radio and AirPlay'), sb, sl);
+      right.append(head, hrs, axis, split);
+      cols.append(left, right); wrap.append(cols);
 
+      const where = el('div'); where.style.cssText = 'display:flex;flex-direction:column;gap:10px';
+      where.append(el('div', 'h2', 'Where it came from'));
+      const cities = el('div'); cities.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px';
+      s.cities.forEach((c) => { const t = el('span', 'tag city', c.city + ' '); t.append(el('span', null, fmtH(c.hours))); cities.append(t); });
+      const genres = el('div'); genres.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px';
+      s.genres.forEach((g) => genres.append(el('span', 'tag genre', g)));
+      where.append(cities, genres);
+      let line = s.city_count + (s.city_count === 1 ? ' city.' : ' cities.');
+      if (s.longest && s.longest.minutes >= 20) {
+        const m = s.longest.minutes; line += ' Longest stretch: ' + (m >= 60 ? Math.floor(m / 60) + ' h ' + (m % 60) + ' m' : m + ' m') + ' of ' + s.longest.station + ' on ' + s.longest.day + '.';
+      }
+      where.append(el('div', 'hint', line));
+      wrap.append(where);
+      box.append(wrap);
+    } catch (e) { box.textContent = ''; box.append(el('div', 'hint', e.message)); }
+  }
+
+  /* ---------- go ---------- */
+  show();
+  poll(); loadStations(); loadSettings();
+  setInterval(() => { if (document.visibilityState === 'visible') poll(); }, 3000);
+  setInterval(() => { if (document.visibilityState === 'visible') loadStations(); }, 60000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { poll(); loadStations(); } });
+  fetch('/api/device').then((r) => r.json()).then((d) => { if (d.hostname) $('dev-host').textContent = d.hostname + ' · online'; }).catch(() => {});
+})();
+</script>
+</body>
 </html>
