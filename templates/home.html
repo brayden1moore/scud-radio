@@ -15,7 +15,7 @@
 @font-face { font-family: 'Archivo'; src: url('/assets/Archivo/Archivo-VariableFont_wdth,wght.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
 
 :root {
-  --ink: #000; --paper: #fff; --surface: #F2F2F2; --line: #E6E6E6; --muted: #595959; --soft: #666;
+  --ink: #000; --paper: #fff; --surface: rgb(243,243,243); --line: #E6E6E6; --muted: #595959; --soft: #666;
   --yellow: #FFFF00; --blue: #3DA9FC; --red: #F0584C; --redsoft: #FBD3CF;
   --mono: 'Favorit Mono', ui-monospace, Menlo, monospace;
   --sans: 'Archivo', system-ui, -apple-system, sans-serif;
@@ -105,7 +105,17 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
 .now .ol { font-size: 15px; color: #E6E6E6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .now .wake { align-self: flex-start; background: var(--yellow); color: #000; border: 0; min-height: 44px; padding: 0 16px; font-family: var(--mono); text-transform: uppercase; font-size: 14px; }
 .transport { display: flex; flex-wrap: wrap; gap: 8px; }
-.transport button { flex: 1 1 64px; min-height: 56px; border-radius: 12px; border: 0; background: var(--surface); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; text-transform: uppercase; }
+.transport button { flex: 1 1 64px;
+min-height: 56px;
+border-radius: 6px;
+border: 2px solid var(--paper);
+background-color: var(--surface);
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+font-size: 14px;
+text-transform: uppercase;}
 .transport .surprise { background: var(--yellow); }
 .transport button[aria-pressed="true"].fav { background: var(--yellow); }
 .transport button[aria-pressed="true"].fav svg { fill: #000; }
