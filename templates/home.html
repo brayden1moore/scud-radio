@@ -44,11 +44,7 @@ header { display: flex; flex-wrap: wrap; justify-content: space-between; align-i
 .sq.offline { background: #8A8A8A; border-color: #8A8A8A; }
 
 .layout { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
-nav.menu { max-width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        align-content: flex-start;}
+nav.menu { flex: 1 1 190px; max-width: 100%; display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; }
 nav.menu button { border: 0; text-transform: uppercase; flex: 1 1 170px; display: flex; align-items: center; gap: 12px; text-align: left; min-height: 38px; padding: 0 14px; border-radius: 6px; background: var(--paper); }
 nav.menu button .n { font-size: 12px; color: var(--muted); }
 nav.menu button .l { font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
@@ -112,7 +108,7 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
 .transport button { flex: 1 1 64px;
 min-height: 56px;
 border-radius: 6px;
-border: 0;
+border:0;
 background-color: var(--paper);
 display: flex;
 align-items: center;
