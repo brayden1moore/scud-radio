@@ -312,7 +312,7 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
 
       <!-- WI-FI -->
       <section id="wifi" class="narrow" aria-label="Wi-Fi" hidden>
-        <div><h1>Wi-Fi</h1><p class="lede">Switch networks without going back through setup.</p></div>
+        <div><h1>Wi-Fi</h1></div>
         <div class="netcard">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10.5 10.5 0 0 1 14 0"/><path d="M8.5 15.5a5.5 5.5 0 0 1 7 0"/><circle cx="12" cy="19" r="1.2" fill="#FFFF3D"/></svg>
           <div style="flex:1 1 200px;min-width:0;display:flex;flex-direction:column;gap:4px">
@@ -403,6 +403,7 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
   const SECTIONS = [['remote', 'Remote'], ['stations', 'Stations'], ['screen', 'Screen'], ['sound', 'Sound'], ['wifi', 'Wi-Fi'], ['device', 'Device'], ['listening', 'Listening']];
   SECTIONS.forEach(([id, label], i) => {
     const b = el('button'); b.dataset.s = id;
+    b.textContent = label;
     b.onclick = () => { location.hash = id; };
     $('menu').append(b);
   });
