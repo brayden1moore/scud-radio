@@ -128,7 +128,17 @@ text-transform: uppercase;}
 .wedge button:disabled span { background: repeating-linear-gradient(135deg, #EDEDED 0 3px, #FFFFFF 3px 6px); }
 .search { display: flex; align-items: center; gap: 10px; background: var(--surface); padding: 0 12px; min-height: 44px; flex: 0 1 280px; }
 .search input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font-size: 18px; min-height: 42px; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 16px 14px; }
+.grid {
+  /* adaptive tiles, like the app: a logo tile is 2 columns wide, a show tile 3,
+     so show art gets ~1.5x the width at the same height. Dense flow back-fills gaps. */
+  --u: 52px; --g: 14px;
+  display: grid; grid-template-columns: repeat(auto-fill, var(--u)); grid-auto-flow: row dense; gap: 16px var(--g);
+}
+.grid .tile { grid-column: span 2; }
+.grid .tile.wide { grid-column: span 3; }
+.grid .tile .logo { aspect-ratio: auto; width: 100%; height: calc(2 * var(--u) + var(--g)); }
+.tile .badge { position: absolute; left: 8px; bottom: 8px; width: 50%; max-width: calc(var(--u) + var(--g) / 2); aspect-ratio: 1 / 1; border-radius: 4px; overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,0.12); background: var(--paper); }
+.tile .badge img, .tile .badge .ph { width: 100%; height: 100%; object-fit: cover; font-size: 14px; }
 .tile { padding: 0; border: 0; background: transparent; text-align: left; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .tile .logo { position: relative; display: block; width: 100%; aspect-ratio: 1 / 1; background: var(--surface); }
 .tile .logo img { width: 100%; height: 100%; object-fit: cover; }
@@ -183,7 +193,7 @@ text-transform: uppercase;}
   h1 { font-size: 32px; }
   .now .art { width: 96px; height: 96px; }
   .now .station { font-size: 30px; }
-  .grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 12px 10px; }
+  .grid { --u: 40px; --g: 10px; row-gap: 12px; }
   /* one swipeable row of sections, so the remote is on the first screen */
   .layout { gap: 18px; }
   nav.menu { flex: 1 1 152px !important; flex-wrap: nowrap; overflow-x: auto; gap: 8px; margin: 0 -16px; padding: 0 16px 4px; scrollbar-width: none; }
@@ -497,7 +507,16 @@ text-transform: uppercase;}
       b.setAttribute('aria-label', 'Play ' + s.name);
       b.setAttribute('aria-current', String(state && s.name === state.station && !(state.airplay || {}).showing));
       const box = el('span', 'logo');
-      box.append(logoImg(s.name, 216));
+      if (s.showLogo) {
+        // show on now: show art fills the tile, station logo as a badge (falls back to the logo if the art won't load)
+        b.classList.add('wide');
+        const art = el('img'); art.alt = ''; art.loading = 'lazy'; art.src = s.showLogo;
+        art.onerror = () => { b.classList.remove('wide'); badge.remove(); art.replaceWith(logoImg(s.name, 216)); };
+        const badge = el('span', 'badge'); badge.append(logoImg(s.name, 96));
+        box.append(art, badge);
+      } else {
+        box.append(logoImg(s.name, 216));
+      }
       if (favs.has(s.name)) { const st = el('span', 'star'); st.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#000" aria-hidden="true"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.3L12 17.5 6.4 20.4l1.1-6.3L3 9.7l6.2-.9z"/></svg>'; box.append(st); }
       b.append(box, el('span', 'nm', s.name), el('span', 'sub', s.oneLiner || s.city));
       b.onclick = () => act(() => control('play', s.name), (st) => { st.station = s.name; st.now_playing = s.oneLiner; st.station_status = s.status; st.city = s.city; st.airplay = Object.assign({}, st.airplay, { showing: false }); });
