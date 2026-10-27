@@ -39,8 +39,8 @@ header { display: flex; flex-wrap: wrap; justify-content: space-between; align-i
 .for-or .face { background: var(--yellow); display: flex; align-items: center; justify-content: center; }
 .for-or .face img { width: 46px; height: 46px; object-fit: contain; }
 .for-or .for { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
-.pill { display: flex; align-items: center; gap: 10px; background: var(--yellow); border-radius: 6px; padding: 6px 14px 6px 6px; min-width: 0; max-width: 100%; }
-.pill img { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; background: #ddd; }
+.pill { display: flex; align-items: center; gap: 10px; background: var(--yellow); padding: 6px 14px 6px 6px; min-width: 0; max-width: 100%; }
+.pill img { width: 32px; height: 32px; object-fit: cover; background: #ddd; }
 .pill span:last-child { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sq { width: 9px; height: 9px; display: inline-block; flex: 0 0 auto; border: 2px solid var(--ink); }
 .sq.live { background: var(--yellow); }
@@ -49,7 +49,7 @@ header { display: flex; flex-wrap: wrap; justify-content: space-between; align-i
 
 .layout { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
 nav.menu { flex: 1 1 152px; max-width: 100%; display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
-nav.menu button { border: 0; text-transform: uppercase; flex: 1 1 170px; display: flex; align-items: center; gap: 12px; text-align: left; min-height: 38px; padding: 0 14px; border-radius: 6px; background: var(--paper); }
+nav.menu button { border: 0; text-transform: uppercase; flex: 1 1 170px; display: flex; align-items: center; gap: 12px; text-align: left; min-height: 38px; padding: 0 14px; background: var(--paper); }
 nav.menu button .n { font-size: 12px; color: var(--muted); }
 nav.menu button .l { font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
 nav.menu button[aria-current="page"] { background: var(--ink); color: var(--paper); }
@@ -65,17 +65,18 @@ h1 { margin: 0; font-family: var(--sans); font-size: 40px; font-weight: 800; let
 .hint { font-size: 13px; color: var(--soft); }
 .title { font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
 
-.card { background: var(--surface); border-radius: 6px; }
+.card { background: var(--paper); }
+.card .seg button, .card input[type="time"] { background: var(--surface); }   /* controls inside a white card */
 .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px 18px; }
 .card .row + .row { border-top: 1px solid #E0E0E0; }
 .row .text { flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .row .text .hint { color: var(--muted); }
 .list .item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
-.list .item img, .list .item .ph { width: 44px; height: 44px; object-fit: cover; background: var(--surface); flex: 0 0 auto; border-radius: 6px; }
+.list .item img, .list .item .ph { width: 44px; height: 44px; object-fit: cover; background: var(--paper); flex: 0 0 auto; }
 .list .item .text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 
-.btn { min-height: 40px; padding: 0 12px; border: 0; border-radius: 8px; background: var(--surface); font-family: var(--mono); font-size: 13px; text-transform: uppercase; }
-.btn.dark { background: var(--ink); color: var(--paper); border-radius: 0; min-height: 44px; font-size: 14px; }
+.btn { min-height: 40px; padding: 0 12px; border: 0; background: var(--paper); font-family: var(--mono); font-size: 13px; text-transform: uppercase; }
+.btn.dark { background: var(--ink); color: var(--paper); min-height: 44px; font-size: 14px; }
 .btn.danger { background: var(--red); }
 .btn:disabled { opacity: 0.45; cursor: default; }
 .icon-btn { width: 40px; min-height: 40px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
@@ -84,23 +85,23 @@ h1 { margin: 0; font-family: var(--sans); font-size: 40px; font-weight: 800; let
 .seg button { min-height: 38px; padding: 0 10px; border: 0; background: var(--paper); font-family: var(--mono); font-size: 14px; }
 .seg button[aria-checked="true"], .seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chips button { min-height: 36px; padding: 0 12px; border: 0; background: var(--surface); font-family: var(--mono); font-size: 16px; }
+.chips button { min-height: 36px; padding: 0 12px; border: 0; background: var(--paper); font-family: var(--mono); font-size: 16px; }
 .chips button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 .chips button.status { background: var(--redsoft); }
 .chips button.status[aria-pressed="true"] { background: var(--red); color: var(--ink); }
 
-.switch { flex: 0 0 auto; width: 52px; height: 30px; border-radius: 999px; border: 0; padding: 3px; background: #C4C4C4; display: flex; justify-content: flex-start; }
-.switch::after { content: ''; width: 24px; height: 24px; border-radius: 50%; background: var(--paper); }
+.switch { flex: 0 0 auto; width: 52px; height: 30px; border: 0; padding: 3px; background: #C4C4C4; display: flex; justify-content: flex-start; }
+.switch::after { content: ''; width: 24px; height: 24px; background: var(--paper); }
 .switch[aria-checked="true"] { background: var(--ink); justify-content: flex-end; }
 .switch[aria-checked="true"]::after { background: var(--yellow); }
 
 input[type="range"] { width: 100%; accent-color: var(--ink); }
-.field { min-height: 48px; padding: 0 12px; border: 0; background: var(--surface); font-size: 18px; width: 100%; }
+.field { min-height: 48px; padding: 0 12px; border: 0; background: var(--paper); font-size: 18px; width: 100%; }
 input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: var(--paper); }
 
 /* remote */
-.now { background: #0B0B0B; color: #fff; border-radius: 6px; padding: 22px; display: flex; flex-wrap: wrap; gap: 22px; align-items: center; }
-.now .art { width: 132px; height: 132px; border-radius: 6px; border: 2px solid #fff; object-fit: cover; flex: 0 0 auto; background: #222; display: flex; align-items: center; justify-content: center; }
+.now { background: #0B0B0B; color: #fff; padding: 22px; display: flex; flex-wrap: wrap; gap: 22px; align-items: center; }
+.now .art { width: 132px; height: 132px; border: 2px solid #fff; object-fit: cover; flex: 0 0 auto; background: #222; display: flex; align-items: center; justify-content: center; }
 .now .meta { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
 .now .status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #ffffff; }
 .now .status .sq { border-color: var(--yellow); }
@@ -111,7 +112,6 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
 .transport { display: flex; flex-wrap: wrap; gap: 8px; }
 .transport button { flex: 1 1 64px;
 min-height: 56px;
-border-radius: 6px;
 border:0;
 background-color: var(--paper);
 display: flex;
@@ -125,13 +125,13 @@ text-transform: uppercase;}
 .transport button[aria-pressed="true"].fav svg { fill: #000; }
 .transport button[aria-pressed="true"].mute { background: var(--ink); color: var(--paper); }
 .wedge { display: flex; align-items: flex-end; gap: 5px; height: 48px; }
-.wedge button { flex: 1 1 0; min-width: 0; height: 48px; padding: 0; border: 0; border-radius: 6px; background: transparent; display: flex; align-items: flex-end; }
+.wedge button { flex: 1 1 0; min-width: 0; height: 48px; padding: 0; border: 0; background: transparent; display: flex; align-items: flex-end; }
 .wedge button span { display: block; width: 100%; background: #E0E0E0; }
 .wedge button.lit span { background: var(--ink); }
 .wedge button:disabled { cursor: default; }
 .wedge button:disabled span { background: repeating-linear-gradient(135deg, #EDEDED 0 3px, #FFFFFF 3px 6px); }
-.search { display: flex; align-items: center; gap: 10px; background: var(--surface); padding: 0 12px; min-height: 44px; flex: 0 1 280px; }
-.search input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font-size: 18px; min-height: 42px; }
+.search { display: flex; align-items: center; gap: 10px; background: var(--paper); padding: 0 12px; min-height: 36px; flex: 1 1 220px; max-width: 360px; }
+.search input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font-size: 16px; min-height: 34px; }
 .grid {
   /* adaptive tiles, like the app: a logo tile is 2 columns wide, a show tile 4,
      so show art gets exactly double the width at the same height. Dense flow back-fills gaps. */
@@ -141,9 +141,9 @@ text-transform: uppercase;}
 .grid .tile { grid-column: span 2; }
 .grid .tile.wide { grid-column: span 4; }
 .grid .tile .logo { aspect-ratio: auto; width: 100%; height: calc(2 * var(--u) + var(--g)); }
-.tile .badge { position: absolute; left: 8px; bottom: 8px; width: 25%; max-width: calc(var(--u) + var(--g) / 2); aspect-ratio: 1 / 1; border-radius: 6px; overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,0.12); background: var(--paper); }
+.tile .badge { position: absolute; left: 8px; bottom: 8px; width: 25%; max-width: calc(var(--u) + var(--g) / 2); aspect-ratio: 1 / 1; overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,0.12); background: var(--paper); }
 .tile .badge img, .tile .badge .ph { width: 100%; height: 100%; object-fit: cover; font-size: 14px; }
-.tile { padding: 0; border: 0; border-radius: 6px; background: transparent; text-align: left; display: flex; flex-direction: column; gap: 6px; min-width: 0; transition: none; }
+.tile { padding: 0; border: 0; background: transparent; text-align: left; display: flex; flex-direction: column; gap: 6px; min-width: 0; transition: none; }
 .tile[aria-current="true"] { background: var(--yellow); }   /* playing stays yellow */
 @media (hover: hover) { .tile:hover { background: var(--yellow); } .tile:hover .play { display: flex; } }   /* instant, no fade; mouse only, so taps don't leave a stuck highlight on phones */
 /* play button on hover, same as one.radio's tiles */
@@ -151,7 +151,7 @@ text-transform: uppercase;}
 .tile .play svg { width: 46%; height: 46%; max-width: 72px; max-height: 72px; }
 /* name + show line scroll when they don't fit (no padding on the card, so nothing gets cut off) */
 .tile .nm, .tile .sub { display: block; }
-.tile .logo { position: relative; display: block; width: 100%; aspect-ratio: 1 / 1; background: var(--surface); border-radius: 6px; overflow: hidden; }
+.tile .logo { position: relative; display: block; width: 100%; aspect-ratio: 1 / 1; background: var(--paper); overflow: hidden; }
 .tile .logo img { width: 100%; height: 100%; object-fit: cover; }
 .tile .star { position: absolute; top: 0; right: 0; width: 26px; height: 26px; background: var(--yellow); display: flex; align-items: center; justify-content: center; }
 .tile .nm { font-family: var(--sans); font-weight: 700; font-size: 15px; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -161,27 +161,27 @@ text-transform: uppercase;}
 /* themes */
 .themes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .themes button { padding: 0; border: 0; background: transparent; text-align: left; display: flex; flex-direction: column; gap: 6px; }
-.themes .sw { display: block; width: 100%; aspect-ratio: 4 / 3; box-shadow: inset 0 0 0 1px var(--line); }
+.themes .sw { display: block; width: 100%; aspect-ratio: 4 / 3; box-shadow: inset 0 0 0 1px #CFCFCF; }   /* visible edge for the light swatch on the grey page */
 .themes button[aria-checked="true"] .sw { outline: 3px solid var(--ink); outline-offset: 2px; }
 
 /* wifi */
-.netcard { background: #fff; color: #000; padding: 18px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; border:1px solid var(--line); border-radius: 6px;}
+.netcard { background: #fff; color: #000; padding: 18px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; border:1px solid var(--line);}
 .netcard .big { font-family: var(--sans); font-size: 26px; font-weight: 400; letter-spacing: -0.03em; overflow-wrap: anywhere; }
 .netcard .small { font-size: 13px; color: #CFCFCF; }
-.netcard .btn { background: transparent; color: #fff; border: 1px solid #fff; border-radius: 0; min-height: 44px; font-size: 14px; }
+.netcard .btn { background: transparent; color: var(--ink); border: 1px solid var(--ink); min-height: 44px; font-size: 14px; }
 .net { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 4px; min-height: 52px; border: 0; border-top: 1px solid var(--line); background: var(--paper); text-align: left; }
-.net[aria-expanded="true"] { background: var(--surface); }
-.join { padding: 16px; background: var(--surface); display: flex; flex-direction: column; gap: 10px; }
+.net[aria-expanded="true"] { background: var(--paper); font-weight: 700; }
+.join { padding: 16px; background: var(--paper); border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
 
 /* stats */
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
-.kpi { border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 6px; background: var(--surface); }
+.kpi { padding: 16px; display: flex; flex-direction: column; gap: 6px; background: var(--paper); }
 .kpi .v { font-family: var(--sans); font-size: 42px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
 .kpi.dark { background: var(--ink); color: var(--paper); }
 .kpi.yellow { background: var(--yellow); }
 .cols { display: flex; flex-wrap: wrap; gap: 28px; }
 .cols > div { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
-.bar { height: 8px; background: var(--surface); }
+.bar { height: 8px; background: var(--paper); }
 .bar div { height: 8px; background: var(--ink); }
 .hours { display: flex; align-items: flex-end; gap: 3px; height: 120px; }
 .hours div { flex: 1 1 0; min-width: 0; background: #C4C4C4; }
@@ -190,7 +190,7 @@ text-transform: uppercase;}
 .tag.city { background: var(--blue); }
 .tag.genre { background: var(--yellow); }
 .tag span { opacity: 0.75; }
-.empty { background: var(--surface); border-radius: 14px; padding: 24px; }
+.empty { background: var(--paper); padding: 24px; }
 
 #toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 12px 16px; font-size: 14px; max-width: calc(100% - 32px); display: none; z-index: 10; }
 #toast.show { display: block; }
@@ -219,7 +219,7 @@ text-transform: uppercase;}
   .transport { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .transport .surprise span { display: none; }
 }
-.ph { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; border-radius: 6px; background: #E6E6E6; color: #595959; font-family: var(--sans); font-weight: 800; font-size: 28px; letter-spacing: -0.03em; }
+.ph { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; background: #E6E6E6; color: #595959; font-family: var(--sans); font-weight: 800; font-size: 28px; letter-spacing: -0.03em; }
 </style>
 </head>
 <body>
@@ -268,15 +268,12 @@ text-transform: uppercase;}
         </div>
 
         <div style="display:flex;flex-direction:column;gap:14px">
-          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between">
-            <div class="h2" id="dial-title">On the dial</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
             <label class="search"><span class="sr">Search stations</span><input type="search" id="q" placeholder="Search" autocomplete="off"></label>
-          </div>
-          <div class="chips" id="filters">
-            <button data-f="all" aria-pressed="true">All</button>
-            <button data-f="favs" aria-pressed="false">Favorites</button>
-            <button data-f="Live" class="status" aria-pressed="false">Live</button>
-            <button data-f="Re-Run" class="status" aria-pressed="false">Re-Run</button>
+            <div class="chips" id="filters">
+              <button data-f="all" aria-pressed="true">All</button>
+              <button data-f="favs" aria-pressed="false">Favorites</button>
+            </div>
           </div>
           <div class="grid" id="grid"></div>
         </div>
@@ -517,7 +514,6 @@ text-transform: uppercase;}
     const q = $('q').value.trim().toLowerCase();
     const favs = new Set(stations.favorites);
     let list = dialStations();
-    $('dial-title').textContent = 'On the dial (' + list.length + ')';
     if (filter === 'favs') list = list.filter((s) => favs.has(s.name));
     else if (filter !== 'all') list = list.filter((s) => s.status === filter);
     if (q) list = list.filter((s) => (s.name + ' ' + s.city + ' ' + (s.genres || []).join(' ')).toLowerCase().includes(q));
@@ -771,7 +767,7 @@ text-transform: uppercase;}
           let pw = null;
           if (needsPw) {
             const lab = el('label', null, 'Password for ' + n.ssid); lab.htmlFor = 'wpw'; lab.style.fontSize = '15px';
-            pw = el('input', 'field'); pw.type = 'password'; pw.id = 'wpw'; pw.autocomplete = 'off'; pw.style.background = '#fff';
+            pw = el('input', 'field'); pw.type = 'password'; pw.id = 'wpw'; pw.autocomplete = 'off'; pw.style.background = 'var(--surface)';
             j.append(lab, pw);
           }
           const go = el('button', 'btn dark', 'Join'); go.style.alignSelf = 'flex-start';
@@ -873,7 +869,7 @@ text-transform: uppercase;}
       const max = s.top.length ? s.top[0].hours : 1;
       s.top.forEach((t) => {
         const r = el('div'); r.style.cssText = 'display:flex;align-items:center;gap:12px';
-        const img = logoImg(t.name, 96); img.style.cssText = 'width:44px;height:44px;object-fit:cover;background:#F2F2F2;flex:0 0 auto;border-radius:6px';
+        const img = logoImg(t.name, 96); img.style.cssText = 'width:44px;height:44px;object-fit:cover;background:#fff;flex:0 0 auto;';
         const c = el('div'); c.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:6px';
         const top = el('div'); top.style.cssText = 'display:flex;justify-content:space-between;gap:8px';
         const nm = el('span', 'title', t.name); nm.style.cssText += ';font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
