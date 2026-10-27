@@ -3400,7 +3400,7 @@ try:
                     'GATE on_everything=%s on_ambient=%s screen_on=%s sleeping=%s freeze=%s '
                     'seeking=%s displaying=%s active=%s info=%s cached=%s '
                     'marquee=%s',
-                    on_everything, screen_on, sleeping, freeze_for_task,
+                    on_everything, on_ambient, screen_on, sleeping, freeze_for_task,
                     seeking, currently_displaying, active_name,
                     info is not None, base_img is not None, marquee_name)
                 _last_gate_log = now
