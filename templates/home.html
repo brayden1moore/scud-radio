@@ -205,10 +205,6 @@ text-transform: uppercase;}
         <div class="name" id="dev-name">Otis</div>
       </div>
     </div>
-    <div class="pill" id="pill" aria-live="polite">
-      <img id="pill-logo" alt="">
-      <span id="pill-name">…</span>
-    </div>
   </header>
 
   <div class="offline-banner" id="offline">Can't reach the radio right now. It may be restarting. This page will reconnect by itself.</div>
@@ -436,8 +432,6 @@ text-transform: uppercase;}
     $('dev-name').textContent = named ? state.device_name : '';
     $('dev-name').hidden = !named;
     // pill
-    $('pill-name').textContent = state.asleep ? 'Off' : onAirplay ? (ap.title || 'AirPlay') : (state.station || '…');
-    $('pill-logo').src = onAirplay ? '/assets/otis_face.png' : (state.station ? logo(state.station, 96) : '');
     // now playing card
     const art = $('now-art');
     if (onAirplay) {
