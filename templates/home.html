@@ -45,7 +45,7 @@ header { display: flex; flex-wrap: wrap; justify-content: space-between; align-i
 
 .layout { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
 nav.menu { flex: 1 1 190px; max-width: 100%; display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; }
-nav.menu button {text-transform: uppercase; flex: 1 1 170px; display: flex; align-items: center; gap: 12px; text-align: left; min-height: 46px; padding: 0 14px; border: 0; border-radius: 6px; background: var(--surface); }
+nav.menu button { border: 2px solid var(--paper); text-transform: uppercase; flex: 1 1 170px; display: flex; align-items: center; gap: 12px; text-align: left; min-height: 46px; padding: 0 14px; border: 0; border-radius: 6px; background: var(--surface); }
 nav.menu button .n { font-size: 12px; color: var(--muted); }
 nav.menu button .l { font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
 nav.menu button[aria-current="page"] { background: var(--ink); color: var(--paper); }
@@ -188,7 +188,7 @@ text-transform: uppercase;}
   .layout { gap: 18px; }
   nav.menu { flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; gap: 6px; margin: 0 -16px; padding: 0 16px 4px; scrollbar-width: none; }
   nav.menu::-webkit-scrollbar { display: none; }
-  nav.menu button { border: 2px solid var(--paper); flex: 0 0 auto; min-height: 42px; padding: 0 12px; gap: 8px; }
+  nav.menu button { flex: 0 0 auto; min-height: 42px; padding: 0 12px; gap: 8px; }
   nav.menu button .n { display: none; }
   .transport { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .transport .surprise span { display: none; }
