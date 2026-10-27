@@ -465,7 +465,7 @@ text-transform: uppercase;}
     const ap = state.airplay && state.airplay.showing;
     const level = ap ? state.airplay_volume : state.volume;
     const limit = state.volume_limit || 15;
-    $('vol-label').textContent = state.muted ? 'Muted' : level + ' of 15' + (limit < 15 ? ' · limit ' + limit : '');
+    if ($('vol-label')) $('vol-label').textContent = state.muted ? 'Muted' : level + ' of 15' + (limit < 15 ? ' · limit ' + limit : '');
     for (let k = 1; k <= 15; k++) {
       const b = el('button'); b.setAttribute('aria-label', 'Volume ' + k);
       const bar = el('span'); bar.style.height = (8 + Math.round(40 * (k - 1) / 14)) + 'px'; b.append(bar);
@@ -529,8 +529,9 @@ text-transform: uppercase;}
     try {
       state = await api('/api/state');
       $('offline').classList.remove('show');
-      renderState();
-    } catch (e) { $('offline').classList.add('show'); }
+    } catch (e) { $('offline').classList.add('show'); return; }
+    // a drawing bug shouldn't look like the radio being offline
+    try { renderState(); } catch (e) { console.error('renderState', e); }
   }
   async function loadStations() {
     try { stations = await api('/api/stations'); renderGrid(); renderStationLists(); } catch (e) {}
@@ -716,7 +717,7 @@ text-transform: uppercase;}
     try {
       const d = await api('/api/device');
       $('sw-v').textContent = d.version ? 'Version ' + d.version + (d.version_date ? ' · ' + d.version_date : '') : 'Version unknown';
-      $('dev-host').textContent = d.hostname + ' · online';
+      if ($('dev-host')) $('dev-host').textContent = d.hostname + ' · online';
       const h = $('health'); h.textContent = '';
       let wifi = '';
       try { const w = await api('/api/wifi'); wifi = w.current ? signalWord(w.current.signal) : 'No Wi-Fi'; } catch (e) {}
@@ -829,7 +830,7 @@ text-transform: uppercase;}
   setInterval(() => { if (document.visibilityState === 'visible') poll(); }, 3000);
   setInterval(() => { if (document.visibilityState === 'visible') loadStations(); }, 60000);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { poll(); loadStations(); } });
-  fetch('/api/device').then((r) => r.json()).then((d) => { if (d.hostname) $('dev-host').textContent = d.hostname + ' · online'; }).catch(() => {});
+  fetch('/api/device').then((r) => r.json()).then((d) => { if (d.hostname && $('dev-host')) $('dev-host').textContent = d.hostname + ' · online'; }).catch(() => {});
 })();
 </script>
 </body>
