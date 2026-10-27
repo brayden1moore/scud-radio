@@ -36,7 +36,7 @@ header { display: flex; flex-wrap: wrap; justify-content: space-between; align-i
 .brand .name { font-family: var(--sans); font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
 .brand .host { font-size: 13px; color: var(--muted); }
 .pill { display: flex; align-items: center; gap: 10px; background: var(--yellow); border-radius: 6px; padding: 6px 14px 6px 6px; min-width: 0; max-width: 100%; }
-.pill img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #ddd; }
+.pill img { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; background: #ddd; }
 .pill span:last-child { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sq { width: 9px; height: 9px; display: inline-block; flex: 0 0 auto; border: 2px solid var(--ink); }
 .sq.live { background: var(--yellow); }
@@ -197,7 +197,6 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
     </div>
     <div class="pill" id="pill" aria-live="polite">
       <img id="pill-logo" alt="">
-      <span class="sq" id="pill-sq"></span>
       <span id="pill-name">…</span>
     </div>
   </header>
@@ -430,7 +429,6 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
     // pill
     $('pill-name').textContent = state.asleep ? 'Off' : onAirplay ? (ap.title || 'AirPlay') : (state.station || '…');
     $('pill-logo').src = onAirplay ? '/assets/otis_face.png' : (state.station ? logo(state.station, 96) : '');
-    $('pill-sq').className = 'sq ' + (onAirplay ? 'live' : sqClass(state.station_status));
     // now playing card
     const art = $('now-art');
     if (onAirplay) {
