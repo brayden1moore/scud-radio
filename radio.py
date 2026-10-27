@@ -2349,7 +2349,8 @@ def stations_payload():
             v = streams[n]
             out.append({'name': n, 'city': v.get('homeLocation') or v.get('location') or '',
                         'status': v.get('status', ''), 'oneLiner': v.get('oneLiner', ''),
-                        'genres': v.get('genres') or [], 'favorite': n in favorites, 'hidden': n in hidden})
+                        'genres': v.get('genres') or [], 'favorite': n in favorites, 'hidden': n in hidden,
+                        'showLogo': v.get('showLogo')})            # current show's image, for the portal's wide tiles
     return {'status': 'ok', 'dial': dial, 'favorites': list(favorites), 'hidden': list(hidden), 'stations': out}
 
 def set_favorites_list(names):
