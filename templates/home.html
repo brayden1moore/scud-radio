@@ -471,7 +471,6 @@ text-transform: uppercase;}
     const ap = state.airplay && state.airplay.showing;
     const level = ap ? state.airplay_volume : state.volume;
     const limit = state.volume_limit || 15;
-    $('vol-title').textContent = ap ? 'AirPlay volume' : 'Volume';
     $('vol-label').textContent = state.muted ? 'Muted' : level + ' of 15' + (limit < 15 ? ' · limit ' + limit : '');
     for (let k = 1; k <= 15; k++) {
       const b = el('button'); b.setAttribute('aria-label', 'Volume ' + k);
