@@ -312,7 +312,7 @@ text-transform: uppercase;}
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="display:flex;justify-content:space-between;align-items:baseline"><label for="bright" class="h2">Brightness</label><span class="hint" id="bright-v"></span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><label for="bright" class="h2">Brightness</label></div>
           <input id="bright" type="range" min="10" max="100" step="5">
         </div>
         <div class="card" id="screen-rows"></div>
@@ -700,7 +700,6 @@ text-transform: uppercase;}
     });
     document.querySelectorAll('#themes button').forEach((b) => b.setAttribute('aria-checked', String(settings.theme === b.dataset.v)));
     if (document.activeElement !== $('bright')) $('bright').value = settings.brightness;
-    $('bright-v').textContent = settings.brightness + '%';
     if (document.activeElement !== $('vlimit')) $('vlimit').value = settings.volume_limit;
     if (document.activeElement !== $('night-from')) $('night-from').value = settings.night_from;
     if (document.activeElement !== $('night-to')) $('night-to').value = settings.night_to;
