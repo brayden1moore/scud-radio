@@ -29,7 +29,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 img { display: block; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-.page { max-width: 1200px; margin: 0 auto; padding: 24px 24px 72px; display: flex; flex-direction: column; gap: 28px; }
+.page { margin: 0 auto; padding: 24px 24px 72px; display: flex; flex-direction: column; gap: 28px; }
 header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px 24px; padding-bottom: 0px;}
 .brand { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .brand img { height: 60px; width: auto; }
@@ -153,8 +153,8 @@ text-transform: uppercase;}
 .tile .nm, .tile .sub { display: block; }
 .tile .logo { position: relative; display: block; width: 100%; aspect-ratio: 1 / 1; background: var(--paper); overflow: hidden; }
 .tile .logo img { width: 100%; height: 100%; object-fit: cover; }
-.tile .star { position: absolute; top: 0; right: 0; width: 26px; height: 26px; background: var(--yellow); display: flex; align-items: center; justify-content: center; }
-.tile .nm { font-family: var(--sans); font-weight: 700; font-size: 15px; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile .star { position: absolute; top: 4px; right: 5px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; z-index: 3; }   /* like one.radio: yellow star, black outline, no box */
+.tile .nm { font-family: var(--sans); font-weight: 700; font-size: 15px; letter-spacing: -0.05em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tile .sub { font-size: 13px; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: -4px; }
 .tile.offline { opacity: 0.4; }
 
@@ -546,7 +546,7 @@ text-transform: uppercase;}
       } else {
         box.append(logoImg(s.name, 216));
       }
-      if (favs.has(s.name)) { const st = el('span', 'star'); st.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#000" aria-hidden="true"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.3L12 17.5 6.4 20.4l1.1-6.3L3 9.7l6.2-.9z"/></svg>'; box.append(st); }
+      if (favs.has(s.name)) { const st = el('span', 'star'); st.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z" fill="#FFFF00" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/></svg>'; box.append(st); }
       const play = el('span', 'play');
       play.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="30,20 30,80 75,50" fill="white" stroke="black" stroke-width="2"/></svg>';
       box.append(play);
