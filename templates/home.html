@@ -146,7 +146,18 @@ align-items: center;}
 .now .status .sq.offline { border-color: #8A8A8A; }
 .now .station { font-family: var(--sans); font-size: 40px; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; overflow-wrap: anywhere; margin-bottom: -2px; margin-left: -1px;}
 .now .ol { font-size: 15px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.now .wake { align-self: flex-start; background: var(--yellow); color: #000; border: 0; min-height: 44px; padding: 0 16px; font-family: var(--mono); text-transform: uppercase; font-size: 14px; }
+.now .wake { align-self: flex-start;
+background: var(--paper);
+color: #000;
+border: 0;
+min-height: 32px;
+padding: 0 10px;
+font-family: var(--mono);
+text-transform: uppercase;
+font-size: 14px;}
+.now .wake:hover {
+    background-color: var(--yellow);
+}
 .transport { display: flex; flex-wrap: wrap; gap: 8px; }
 .transport button:hover {
     background-color: var(--yellow) !important;
