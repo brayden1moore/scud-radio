@@ -331,14 +331,13 @@ text-transform: uppercase;}
         <div style="display:flex;flex-direction:column;gap:10px">
           <div style="display:flex;justify-content:space-between;align-items:baseline"><label for="vlimit" class="h2">Volume limit</label><span class="hint" id="vlimit-v"></span></div>
           <input id="vlimit" type="range" min="1" max="15" step="1">
-          <div class="hint">The knob and the remote stop here. Handy for small rooms and kids.</div>
         </div>
         <div class="card" id="sound-rows"></div>
         <div class="list">
           <div class="h2" style="padding-bottom:6px">AirPlay</div>
           <div class="item"><div class="text"><div class="title">AirPlay</div><div class="hint">Otis shows up on iPhones and Macs on this network.</div></div><button class="switch" role="switch" data-k="airplay" aria-label="AirPlay"></button></div>
           <div class="item"><div class="text"><div class="title">Wake the screen for AirPlay</div><div class="hint">Shows the album art when someone starts playing.</div></div><button class="switch" role="switch" data-k="airplay_wake" aria-label="Wake the screen for AirPlay"></button></div>
-          <div class="item"><div class="text"><div class="title">Back to the radio when AirPlay stops</div><div class="hint">Off: Otis stays quiet until someone touches it.</div></div><button class="switch" role="switch" data-k="airplay_resume" aria-label="Back to the radio when AirPlay stops"></button></div>
+          <div class="item"><div class="text"><div class="title">Back to the radio when AirPlay stops</div><div class="hint">Otherwise Otis stays quiet until someone touches it.</div></div><button class="switch" role="switch" data-k="airplay_resume" aria-label="Back to the radio when AirPlay stops"></button></div>
         </div>
       </section>
 
@@ -377,7 +376,7 @@ text-transform: uppercase;}
         <div class="list">
           <div class="item"><div class="text"><div class="title">Restart Otis</div><div class="hint">Takes about 30 seconds.</div></div><button class="btn" id="d-restart">Restart</button></div>
           <div class="item"><div class="text"><div class="title">Set up Wi-Fi again</div><div class="hint">Forgets every network and brings back "Otis-Setup".</div></div><button class="btn" id="d-setup">Start setup</button></div>
-          <div class="item"><div class="text"><div class="title">Reset everything</div><div class="hint">Favorites, hidden stations, settings and listening history. Wi-Fi stays.</div></div><button class="btn danger" id="d-reset">Reset</button></div>
+          <div class="item"><div class="text"><div class="title">Reset everything</div><div class="hint">Resets favorites, hidden stations, settings, and listening history. Remembers Wi-Fi.</div></div><button class="btn danger" id="d-reset">Reset</button></div>
         </div>
       </section>
 
@@ -703,7 +702,6 @@ text-transform: uppercase;}
     if (document.activeElement !== $('bright')) $('bright').value = settings.brightness;
     $('bright-v').textContent = settings.brightness + '%';
     if (document.activeElement !== $('vlimit')) $('vlimit').value = settings.volume_limit;
-    $('vlimit-v').textContent = settings.volume_limit + ' of 15 notches';
     if (document.activeElement !== $('night-from')) $('night-from').value = settings.night_from;
     if (document.activeElement !== $('night-to')) $('night-to').value = settings.night_to;
     if (document.activeElement !== $('dname')) $('dname').value = settings.device_name || 'Otis';
