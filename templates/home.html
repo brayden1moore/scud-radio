@@ -285,7 +285,6 @@ text-transform: uppercase;}
 
       <!-- STATIONS -->
       <section id="stations" class="narrow" aria-label="Stations" hidden>
-        <div><h1>Stations</h1></div>
         <div class="list">
           <div class="h2" style="padding-bottom:6px" id="fav-title">Favorites</div>
           <div id="fav-list"></div>
@@ -304,7 +303,6 @@ text-transform: uppercase;}
 
       <!-- SCREEN -->
       <section id="screen" class="narrow" aria-label="Screen" hidden>
-        <div><h1>Screen</h1></div>
         <div style="display:flex;flex-direction:column;gap:12px">
           <div class="h2">Theme</div>
           <div class="themes" role="radiogroup" aria-label="Theme" id="themes">
@@ -330,7 +328,6 @@ text-transform: uppercase;}
 
       <!-- SOUND -->
       <section id="sound" class="narrow" aria-label="Sound" hidden>
-        <div><h1>Sound</h1></div>
         <div style="display:flex;flex-direction:column;gap:10px">
           <div style="display:flex;justify-content:space-between;align-items:baseline"><label for="vlimit" class="h2">Volume limit</label><span class="hint" id="vlimit-v"></span></div>
           <input id="vlimit" type="range" min="1" max="15" step="1">
@@ -347,7 +344,6 @@ text-transform: uppercase;}
 
       <!-- WI-FI -->
       <section id="wifi" class="narrow" aria-label="Wi-Fi" hidden>
-        <div><h1>Wi-Fi</h1></div>
         <div class="netcard">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10.5 10.5 0 0 1 14 0"/><path d="M8.5 15.5a5.5 5.5 0 0 1 7 0"/><circle cx="12" cy="19" r="1.2" fill="#FFFF3D"/></svg>
           <div style="flex:1 1 200px;min-width:0;display:flex;flex-direction:column;gap:4px">
@@ -368,7 +364,6 @@ text-transform: uppercase;}
 
       <!-- DEVICE -->
       <section id="device" class="narrow" aria-label="Device" hidden>
-        <div><h1>Device</h1></div>
         <div style="display:flex;flex-direction:column;gap:10px">
           <label for="dname" class="h2">Name</label>
           <input id="dname" class="field" type="text" maxlength="40" autocomplete="off">
@@ -389,7 +384,7 @@ text-transform: uppercase;}
       <!-- LISTENING -->
       <section id="listening" aria-label="Listening" hidden>
         <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between">
-          <div><h1>Listening</h1><p class="lede">Stored on your device and never sent anywhere.</p></div>
+          <div><p class="lede">Stored on your device and never sent anywhere.</p></div>
           <div class="seg" role="radiogroup" aria-label="Period" id="periods">
             <button role="radio" data-p="week" aria-checked="true">Week</button>
             <button role="radio" data-p="month" aria-checked="false">Month</button>
