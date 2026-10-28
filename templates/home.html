@@ -51,6 +51,14 @@ header { display: flex; flex-wrap: wrap; justify-content: space-between; align-i
 nav.menu { flex: 1 1 152px; max-width: 100%; display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
 nav.menu button { border: 0; text-transform: uppercase; flex: 1 1 170px; display: flex; align-items: center; gap: 12px; text-align: left; min-height: 38px; padding: 0 14px; background: var(--paper); }
 nav.menu button:hover {background-color: #ffff00;}
+@media (hover: hover) {
+  .seg button:hover, .chips button:hover, .btn:hover:not(:disabled), .card .row.net:hover { background: var(--yellow) !important; color: var(--ink) !important; }
+  nav.menu button:hover { color: var(--ink); }
+  nav.menu button:hover .n { color: var(--ink); }
+}
+/* "Scanning..." while Wi-Fi / health load */
+.loading .title::after { content: ''; display: inline-block; width: 8px; height: 8px; margin-left: 8px; background: var(--yellow); outline: 1px solid var(--ink); animation: blink 0.9s steps(2, start) infinite; }
+@keyframes blink { to { visibility: hidden; } }
 nav.menu button .n { font-size: 12px; color: var(--muted); }
 nav.menu button .l { font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
 nav.menu button[aria-current="page"] { background: var(--ink); color: var(--paper); }
@@ -797,12 +805,18 @@ text-transform: uppercase;}
   const signalWord = (s) => s >= 70 ? 'Strong' : s >= 45 ? 'Good' : s >= 25 ? 'Fair' : 'Weak';
   let joinPoll = null, openNet = null;
   async function loadWifi(rescan) {
+    const list = $('net-list');
+    if (rescan || !list.children.length) {
+      list.textContent = '';
+      const r = settingsRow('Scanning…', 'Looking for networks nearby.'); r.classList.add('loading'); list.append(r);
+    }
+    if ($('net-name').textContent === '…') { $('net-name').textContent = 'Checking…'; }
     try {
       const w = await api('/api/wifi' + (rescan ? '?rescan=1' : ''));
       $('net-name').textContent = w.current ? w.current.ssid : 'Not connected';
       $('net-meta').textContent = [w.current ? signalWord(w.current.signal) + '' : ''].filter(Boolean).join(' · ');
       $('net-forget').disabled = !w.current;
-      const list = $('net-list'); list.textContent = '';
+      list.textContent = '';
       if (!w.networks.length) list.append(settingsRow('No other networks in range', 'Try Scan again.'));
       w.networks.forEach((n) => {
         const b = el('button', 'net row'); b.setAttribute('aria-expanded', String(openNet === n.ssid));
@@ -854,13 +868,16 @@ text-transform: uppercase;}
 
   /* ---------- device ---------- */
   async function loadDevice() {
+    const hl = $('health');
+    if (!hl.children.length) { const r = settingsRow('Checking…', 'Reading Wi-Fi, uptime and temperature.'); r.classList.add('loading'); hl.append(r); }
     try {
       const d = await api('/api/device');
       $('sw-v').textContent = d.version ? 'Version ' + d.version + (d.version_date ? ' · ' + d.version_date : '') : 'Version unknown';
       if ($('dev-host')) $('dev-host').textContent = d.hostname + ' · online';
-      const h = $('health'); h.textContent = '';
+      const h = $('health');
       let wifi = '';
       try { const w = await api('/api/wifi'); wifi = w.current ? signalWord(w.current.signal) : 'No Wi-Fi'; } catch (e) {}
+      h.textContent = '';
       [['Wi-Fi signal', wifi], ['Up for', d.uptime], ['Temperature', d.temperature], ['On the dial', stations ? String(stations.dial.length) : '']].forEach(([l, v]) => {
         if (!v) return; h.append(settingsRow(l, '', [el('span', 'val', v)]));
       });
