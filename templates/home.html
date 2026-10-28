@@ -81,6 +81,10 @@ h1 { margin: 0; font-family: var(--sans); font-size: 40px; font-weight: 400; let
 .row .text { flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .row .text .hint { color: var(--muted); }
 .group { display: flex; flex-direction: column; gap: 8px; }
+/* hide picker: select and button share one height; hidden stations sit under it with the same dividers */
+.hide-card #hid-list .row { border-top: 1px solid #E0E0E0; }
+.hide-card .field, .hide-card .btn { min-height: 38px; height: 38px; }
+.hide-card .field { width: 240px; padding: 0 10px; }
 .drag { flex: 0 0 auto; width: 32px; min-height: 44px; margin-left: -8px; padding: 0; border: 0; background: transparent; color: #8A8A8A; cursor: grab; touch-action: none; display: flex; align-items: center; justify-content: center; }
 .drag:hover { color: var(--ink); }
 .row.dragging { background: var(--yellow); position: relative; z-index: 2; }
@@ -331,12 +335,12 @@ text-transform: uppercase;}
         </div>
         <div class="group">
           <div class="group-head" id="hid-title">Hidden from the dial</div>
-          <div class="card">
-            <div id="hid-list"></div>
+          <div class="card hide-card">
             <div class="row">
               <div class="text"><label class="title" for="hide-pick">Hide a station</label></div>
-              <div class="ctl"><select id="hide-pick" class="field"></select><button class="btn dark" id="hide-btn">Hide</button></div>
+              <div class="ctl"><select id="hide-pick" class="field"></select><button class="btn" id="hide-btn" disabled>Hide</button></div>
             </div>
+            <div id="hid-list"></div>
           </div>
         </div>
         <div class="group">
@@ -762,10 +766,13 @@ text-transform: uppercase;}
       hl.append(settingsRow(n, by[n].city, [b], img));
     });
     const pick = $('hide-pick'); const keep = pick.value; pick.textContent = '';
-    pick.append(new Option('Pick a station to hide', ''));
-    stations.stations.filter((s) => !s.hidden).forEach((s) => pick.append(new Option(s.name, s.name)));
-    pick.value = keep;
+    pick.append(new Option('Pick a station', ''));
+    const shown = stations.stations.filter((s) => !s.hidden);
+    shown.forEach((s) => pick.append(new Option(s.name, s.name)));
+    pick.value = shown.some((s) => s.name === keep) ? keep : '';     // back to the placeholder once it's hidden
+    $('hide-btn').disabled = !pick.value;
   }
+  $('hide-pick').onchange = () => { $('hide-btn').disabled = !$('hide-pick').value; };
   $('hide-btn').onclick = () => {
     const n = $('hide-pick').value; if (!n) return;
     api('/api/control', { cmd: 'hidden', value: stations.hidden.concat([n]) }).then(loadStations).then(() => toast(n + ' is off the dial.')).catch((e) => toast(e.message));
