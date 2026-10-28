@@ -800,7 +800,7 @@ text-transform: uppercase;}
   segRow($('screen-rows'), 'Ambient after', 'The big logo view, when nobody\u2019s touching it.', 'ambient_after', [[30, '30 s'], [60, '1 min'], [300, '5 min'], [0, 'Never']]);
   segRow($('screen-rows'), 'Screen off after', 'The radio keeps playing.', 'screen_off_after', [[600, '10 min'], [1800, '30 min'], [3600, '1 hr'], [0, 'Never']]);
   segRow($('sound-rows'), 'Volume when Otis wakes', 'After the switch or a restart. Quiet is 3 notches.', 'start_volume', [['last', 'Last used'], ['quiet', 'Quiet'], ['fixed', 'Fixed']]);
-  segRow($('sound-rows'), 'Sleep timer', 'Fades out, then rests. Touch a knob to wake.', '_sleep', [[0, 'Off'], [15, '15 min'], [30, '30 min'], [60, '1 hr']]);
+  segRow($('sound-rows'), 'Sleep timer', 'Fades out and turns off screen. Touch a knob to wake.', '_sleep', [[0, 'Off'], [15, '15 min'], [30, '30 min'], [60, '1 hr']]);
 
   function renderSettings() {
     if (!settings) return;
