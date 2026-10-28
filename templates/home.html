@@ -732,7 +732,6 @@ text-transform: uppercase;}
   document.querySelectorAll('#themes button').forEach((b) => b.onclick = () => save({ theme: b.dataset.v }));
   $('bright').oninput = () => { $('bright-v').textContent = $('bright').value + '%'; };
   $('bright').onchange = () => save({ brightness: +$('bright').value });
-  $('vlimit').oninput = () => { $('vlimit-v').textContent = $('vlimit').value + ' of 15 notches'; };
   $('vlimit').onchange = () => save({ volume_limit: +$('vlimit').value });
   $('night-from').onchange = () => save({ night_from: $('night-from').value });
   $('night-to').onchange = () => save({ night_to: $('night-to').value });
