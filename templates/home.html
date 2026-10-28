@@ -67,11 +67,25 @@ h1 { margin: 0; font-family: var(--sans); font-size: 40px; font-weight: 400; let
 .title { font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
 
 .card { background: var(--paper); }
-.card .seg button, .card input[type="time"] { background: var(--surface); }   /* controls inside a white card */
+.card .seg button, .card input[type="time"], .card .btn:not(.dark):not(.danger) { background: var(--surface); }   /* controls inside a white card */
 .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px 18px; }
 .card .row + .row { border-top: 1px solid #E0E0E0; }
 .row .text { flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .row .text .hint { color: var(--muted); }
+.group { display: flex; flex-direction: column; gap: 8px; }
+.group-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 16px; min-height: 28px; }
+.group-head .btn { min-height: 32px; }
+/* every settings row: Archivo title + Favorit hint on the left, one control on the right */
+.ctl { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex: 0 0 auto; flex-wrap: wrap; }
+.ctl.slide { flex: 0 1 340px; min-width: 220px; flex-wrap: nowrap; }
+.ctl.slide input[type="range"] { flex: 1; min-width: 0; }
+.ctl .val, .row .val { font-size: 14px; color: var(--ink); min-width: 52px; text-align: right; white-space: nowrap; }
+.row .ico { width: 44px; height: 44px; object-fit: cover; flex: 0 0 auto; background: var(--surface); }
+.card .field { background: var(--surface); min-height: 38px; font-size: 15px; width: auto; max-width: 260px; }
+.card #dname { width: 260px; }
+.seg .sw { display: inline-block; width: 14px; height: 14px; margin-right: 8px; vertical-align: -2px; box-shadow: inset 0 0 0 1px #9A9A9A; }
+.card .row.net { min-height: 52px; }
+.card .row.net + .row.net, .card .join { border-top: 1px solid #E0E0E0; }
 .list .item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
 .list .item img, .list .item .ph { width: 44px; height: 44px; object-fit: cover; background: var(--paper); flex: 0 0 auto; }
 .list .item .text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
@@ -174,8 +188,8 @@ text-transform: uppercase;}
 .netcard .small { font-size: 13px; color: #CFCFCF; }
 .netcard .btn { background: transparent; color: var(--ink); border: 1px solid var(--ink); min-height: 44px; font-size: 14px; }
 .net { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 4px; min-height: 52px; border: 0; border-top: 1px solid var(--line); background: var(--paper); text-align: left; }
-.net[aria-expanded="true"] { background: var(--paper); font-weight: 700; }
-.join { padding: 16px; background: var(--paper); border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+.net[aria-expanded="true"] { background: var(--paper); }
+.join { padding: 14px 18px; background: var(--paper); border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
 
 /* stats */
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
@@ -202,6 +216,11 @@ text-transform: uppercase;}
 .offline-banner.show { display: block; }
 
 @media (max-width: 560px) {
+  /* settings rows: big sliders and text fields drop under the title on phones */
+  .ctl.slide { flex: 1 1 100%; min-width: 0; }
+  .card #dname { width: 100%; max-width: none; }
+  .ctl:has(#dname), .ctl:has(#hide-pick) { flex: 1 1 100%; justify-content: flex-start; }
+  .card .field { max-width: none; flex: 1; }
   .page { padding: 16px 16px 72px; gap: 20px; }
   .brand img { height: 44px; }
   .for-or .face { width: 44px; height: 44px; }
@@ -285,98 +304,114 @@ text-transform: uppercase;}
 
       <!-- STATIONS -->
       <section id="stations" class="narrow" aria-label="Stations" hidden>
-        <div class="list">
-          <div class="h2" style="padding-bottom:6px" id="fav-title">Favorites</div>
-          <div id="fav-list"></div>
+        <div class="group">
+          <div class="group-head" id="fav-title">Favorites</div>
+          <div class="card" id="fav-list"></div>
         </div>
-        <div class="list">
-          <div class="h2" style="padding-bottom:6px" id="hid-title">Hidden from the dial</div>
-          <div id="hid-list"></div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--line)">
-            <label class="sr" for="hide-pick">Station to hide</label>
-            <select id="hide-pick" class="field" style="flex:1 1 220px;font-size:16px"></select>
-            <button class="btn dark" id="hide-btn">Hide</button>
+        <div class="group">
+          <div class="group-head" id="hid-title">Hidden from the dial</div>
+          <div class="card">
+            <div id="hid-list"></div>
+            <div class="row">
+              <div class="text"><label class="title" for="hide-pick">Hide a station</label><div class="hint">It stays off the knob and the remote until you show it again.</div></div>
+              <div class="ctl"><select id="hide-pick" class="field"></select><button class="btn dark" id="hide-btn">Hide</button></div>
+            </div>
           </div>
         </div>
-        <div class="card" id="station-toggles"></div>
+        <div class="group">
+          <div class="group-head">Dial</div>
+          <div class="card" id="station-toggles"></div>
+        </div>
       </section>
 
       <!-- SCREEN -->
       <section id="screen" class="narrow" aria-label="Screen" hidden>
-        <div style="display:flex;flex-direction:column;gap:12px">
-          <div class="h2">Theme</div>
-          <div class="themes" role="radiogroup" aria-label="Theme" id="themes">
-            <button role="radio" data-v="dark"><span class="sw" style="background:#0B0B0B"></span><span class="hint">Dark</span></button>
-            <button role="radio" data-v="light"><span class="sw" style="background:#F4F4F4"></span><span class="hint">Light</span></button>
-            <button role="radio" data-v="auto"><span class="sw" style="background:linear-gradient(90deg,#F4F4F4 50%,#0B0B0B 50%)"></span><span class="hint">Light 7am to 7pm</span></button>
+        <div class="card">
+          <div class="row">
+            <div class="text"><div class="title">Theme</div><div class="hint">Auto is light from 7am to 7pm.</div></div>
+            <div class="ctl seg" role="radiogroup" aria-label="Theme" id="themes">
+              <button role="radio" data-v="dark"><span class="sw" style="background:#0B0B0B"></span>Dark</button>
+              <button role="radio" data-v="light"><span class="sw" style="background:#F4F4F4"></span>Light</button>
+              <button role="radio" data-v="auto"><span class="sw" style="background:linear-gradient(90deg,#F4F4F4 50%,#0B0B0B 50%)"></span>Auto</button>
+            </div>
           </div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="display:flex;justify-content:space-between;align-items:baseline"><label for="bright" class="h2">Brightness</label></div>
-          <input id="bright" type="range" min="10" max="100" step="5">
+          <div class="row">
+            <div class="text"><label class="title" for="bright">Brightness</label><div class="hint">The screen's backlight.</div></div>
+            <div class="ctl slide"><input id="bright" type="range" min="10" max="100" step="5"><span class="val" id="bright-v"></span></div>
+          </div>
         </div>
         <div class="card" id="screen-rows"></div>
         <div class="card">
-          <div class="row"><div class="text"><div class="title">Show art on ambient</div><div class="hint">Uses the show image when a station has one.</div></div><button class="switch" role="switch" data-k="show_art" aria-label="Show art on ambient"></button></div>
-          <div class="row"><div class="text"><div class="title">Dim at night</div><div class="hint">Lower brightness between these times.</div></div><button class="switch" role="switch" data-k="night_dim" aria-label="Dim at night"></button></div>
-          <div class="row" style="padding-top:0">
-            <label class="hint" style="display:flex;align-items:center;gap:8px">from <input type="time" id="night-from"></label>
-            <label class="hint" style="display:flex;align-items:center;gap:8px">to <input type="time" id="night-to"></label>
+          <div class="row"><div class="text"><div class="title">Show art on ambient</div><div class="hint">Uses the show image when a station has one.</div></div><div class="ctl"><button class="switch" role="switch" data-k="show_art" aria-label="Show art on ambient"></button></div></div>
+          <div class="row">
+            <div class="text"><div class="title">Dim at night</div><div class="hint">Lower brightness between these times.</div></div>
+            <div class="ctl">
+              <label class="sr" for="night-from">From</label><input type="time" id="night-from">
+              <span class="hint">to</span>
+              <label class="sr" for="night-to">To</label><input type="time" id="night-to">
+              <button class="switch" role="switch" data-k="night_dim" aria-label="Dim at night"></button>
+            </div>
           </div>
         </div>
       </section>
 
       <!-- SOUND -->
       <section id="sound" class="narrow" aria-label="Sound" hidden>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="display:flex;justify-content:space-between;align-items:baseline"><label for="vlimit" class="h2">Volume limit</label><span class="hint" id="vlimit-v"></span></div>
-          <input id="vlimit" type="range" min="1" max="15" step="1">
+        <div class="card">
+          <div class="row">
+            <div class="text"><label class="title" for="vlimit">Volume limit</label><div class="hint">The knob and the remote stop here.</div></div>
+            <div class="ctl slide"><input id="vlimit" type="range" min="1" max="15" step="1"><span class="val" id="vlimit-v"></span></div>
+          </div>
         </div>
         <div class="card" id="sound-rows"></div>
-        <div class="list">
-          <div class="h2" style="padding-bottom:6px">AirPlay</div>
-          <div class="item"><div class="text"><div class="title">AirPlay</div><div class="hint">Otis shows up on iPhones and Macs on this network.</div></div><button class="switch" role="switch" data-k="airplay" aria-label="AirPlay"></button></div>
-          <div class="item"><div class="text"><div class="title">Wake the screen for AirPlay</div><div class="hint">Shows the album art when someone starts playing.</div></div><button class="switch" role="switch" data-k="airplay_wake" aria-label="Wake the screen for AirPlay"></button></div>
-          <div class="item"><div class="text"><div class="title">Back to the radio when AirPlay stops</div><div class="hint">Otherwise Otis stays quiet until someone touches it.</div></div><button class="switch" role="switch" data-k="airplay_resume" aria-label="Back to the radio when AirPlay stops"></button></div>
+        <div class="group">
+          <div class="group-head">AirPlay</div>
+          <div class="card">
+            <div class="row"><div class="text"><div class="title">AirPlay</div><div class="hint">Otis shows up on iPhones and Macs on this network.</div></div><div class="ctl"><button class="switch" role="switch" data-k="airplay" aria-label="AirPlay"></button></div></div>
+            <div class="row"><div class="text"><div class="title">Wake the screen for AirPlay</div><div class="hint">Shows the album art when someone starts playing.</div></div><div class="ctl"><button class="switch" role="switch" data-k="airplay_wake" aria-label="Wake the screen for AirPlay"></button></div></div>
+            <div class="row"><div class="text"><div class="title">Back to the radio when AirPlay stops</div><div class="hint">Otherwise Otis stays quiet until someone touches it.</div></div><div class="ctl"><button class="switch" role="switch" data-k="airplay_resume" aria-label="Back to the radio when AirPlay stops"></button></div></div>
+          </div>
         </div>
       </section>
 
       <!-- WI-FI -->
       <section id="wifi" class="narrow" aria-label="Wi-Fi" hidden>
-        <div class="netcard">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10.5 10.5 0 0 1 14 0"/><path d="M8.5 15.5a5.5 5.5 0 0 1 7 0"/><circle cx="12" cy="19" r="1.2" fill="#FFFF3D"/></svg>
-          <div style="flex:1 1 200px;min-width:0;display:flex;flex-direction:column;gap:4px">
-            <div class="big" id="net-name">…</div>
-            <div class="small" id="net-meta"></div>
+        <div class="group">
+          <div class="group-head">Connected</div>
+          <div class="card">
+            <div class="row">
+              <div class="text"><div class="title" id="net-name">…</div><div class="hint" id="net-meta"></div></div>
+              <div class="ctl"><button class="btn" id="net-forget">Forget</button></div>
+            </div>
           </div>
-          <button class="btn" id="net-forget">Forget</button>
+          <div id="join-status" class="hint" aria-live="polite"></div>
         </div>
-        <div id="join-status" class="hint" aria-live="polite"></div>
-        <div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8px">
-            <div class="title">Other networks</div>
-            <button class="btn" id="net-scan">Scan again</button>
-          </div>
-          <div id="net-list"></div>
+        <div class="group">
+          <div class="group-head"><span>Other networks</span><button class="btn" id="net-scan">Scan again</button></div>
+          <div class="card" id="net-list"></div>
         </div>
       </section>
 
       <!-- DEVICE -->
       <section id="device" class="narrow" aria-label="Device" hidden>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <label for="dname" class="h2">Name</label>
-          <input id="dname" class="field" type="text" maxlength="40" autocomplete="off">
-          <div class="hint">Shown in AirPlay and at the top of this page.</div>
+        <div class="card">
+          <div class="row">
+            <div class="text"><label class="title" for="dname">Name</label><div class="hint">Shown in AirPlay and at the top of this page.</div></div>
+            <div class="ctl"><input id="dname" class="field" type="text" maxlength="40" autocomplete="off"></div>
+          </div>
+          <div class="row">
+            <div class="text"><div class="title">Software</div><div class="hint" id="sw-v">…</div></div>
+            <div class="ctl"><button class="btn dark" id="sw-btn">Check for updates</button></div>
+          </div>
         </div>
-        <div class="row" style="padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
-          <div class="text"><div class="title">Software</div><div class="hint" id="sw-v">…</div></div>
-          <button class="btn dark" id="sw-btn">Check for updates</button>
+        <div class="group">
+          <div class="group-head">Health</div>
+          <div class="card" id="health"></div>
         </div>
-        <div class="kpis" id="health"></div>
-        <div class="list">
-          <div class="item"><div class="text"><div class="title">Restart Otis</div><div class="hint">Takes about 30 seconds.</div></div><button class="btn" id="d-restart">Restart</button></div>
-          <div class="item"><div class="text"><div class="title">Set up Wi-Fi again</div><div class="hint">Forgets every network and brings back "Otis-Setup".</div></div><button class="btn" id="d-setup">Start setup</button></div>
-          <div class="item"><div class="text"><div class="title">Reset everything</div><div class="hint">Resets favorites, hidden stations, settings, and listening history. Remembers Wi-Fi.</div></div><button class="btn danger" id="d-reset">Reset</button></div>
+        <div class="card">
+          <div class="row"><div class="text"><div class="title">Restart Otis</div><div class="hint">Takes about 30 seconds.</div></div><div class="ctl"><button class="btn" id="d-restart">Restart</button></div></div>
+          <div class="row"><div class="text"><div class="title">Set up Wi-Fi again</div><div class="hint">Forgets every network and brings back "Otis-Setup".</div></div><div class="ctl"><button class="btn" id="d-setup">Start setup</button></div></div>
+          <div class="row"><div class="text"><div class="title">Reset everything</div><div class="hint">Resets favorites, hidden stations, settings, and listening history. Remembers Wi-Fi.</div></div><div class="ctl"><button class="btn danger" id="d-reset">Reset</button></div></div>
         </div>
       </section>
 
@@ -627,17 +662,25 @@ text-transform: uppercase;}
   }
 
   /* ---------- stations page ---------- */
+  // one settings row: [icon] title + hint on the left, controls on the right
+  function settingsRow(title, hint, controls, icon) {
+    const row = el('div', 'row');
+    if (icon) { icon.classList.add('ico'); row.append(icon); }
+    const t = el('div', 'text'); t.append(el('div', 'title', title));
+    if (hint) t.append(el('div', 'hint', hint));
+    const c = el('div', 'ctl'); (controls || []).forEach((x) => c.append(x));
+    row.append(t, c);
+    return row;
+  }
   function renderStationLists() {
     if (!stations) return;
     const by = {}; stations.stations.forEach((s) => { by[s.name] = s; });
     const favs = stations.favorites.filter((n) => by[n]);
     $('fav-title').textContent = 'Favorites (' + favs.length + ')';
     const fl = $('fav-list'); fl.textContent = '';
-    if (!favs.length) fl.append(el('div', 'hint', 'Press the volume knob on a station, or the star on the Remote, to add one.'));
+    if (!favs.length) fl.append(settingsRow('No favorites yet', 'Press the volume knob on a station, or the star on the Remote.'));
     favs.forEach((n, i) => {
-      const s = by[n]; const row = el('div', 'item');
-      const img = logoImg(n, 96); img.style.width = '44px'; img.style.height = '44px';
-      const t = el('div', 'text'); t.append(el('div', 'title', n), el('div', 'hint', [s.city, s.status].filter(Boolean).join(' · ')));
+      const s = by[n];
       const up = el('button', 'btn icon-btn', '↑'); up.setAttribute('aria-label', 'Move ' + n + ' up'); up.disabled = i === 0;
       const dn = el('button', 'btn icon-btn', '↓'); dn.setAttribute('aria-label', 'Move ' + n + ' down'); dn.disabled = i === favs.length - 1;
       const rm = el('button', 'btn', 'Remove');
@@ -645,17 +688,16 @@ text-transform: uppercase;}
       up.onclick = () => { const l = favs.slice(); [l[i - 1], l[i]] = [l[i], l[i - 1]]; save(l); };
       dn.onclick = () => { const l = favs.slice(); [l[i + 1], l[i]] = [l[i], l[i + 1]]; save(l); };
       rm.onclick = () => save(favs.filter((x) => x !== n));
-      row.append(img, t, up, dn, rm); fl.append(row);
+      fl.append(settingsRow(n, [s.city, s.status].filter(Boolean).join(' · '), [up, dn, rm], logoImg(n, 96)));
     });
     const hid = stations.hidden.filter((n) => by[n]);
     $('hid-title').textContent = 'Hidden from the dial (' + hid.length + ')';
     const hl = $('hid-list'); hl.textContent = '';
     hid.forEach((n) => {
-      const row = el('div', 'item'); const img = logoImg(n, 96); img.style.width = '44px'; img.style.height = '44px'; img.style.opacity = '0.5';
-      const t = el('div', 'text'); t.append(el('div', 'title', n));
+      const img = logoImg(n, 96); img.style.opacity = '0.5';
       const b = el('button', 'btn', 'Show again');
       b.onclick = () => api('/api/control', { cmd: 'hidden', value: hid.filter((x) => x !== n) }).then(loadStations).catch((e) => toast(e.message));
-      row.append(img, t, b); hl.append(row);
+      hl.append(settingsRow(n, by[n].city, [b], img));
     });
     const pick = $('hide-pick'); const keep = pick.value; pick.textContent = '';
     pick.append(new Option('Pick a station to hide', ''));
@@ -670,8 +712,8 @@ text-transform: uppercase;}
   /* ---------- settings ---------- */
   function segRow(container, label, hint, key, opts) {
     const row = el('div', 'row');
-    const t = el('div', 'text'); t.append(el('div', 'title', label));
-    const seg = el('div', 'seg'); seg.setAttribute('role', 'radiogroup'); seg.setAttribute('aria-label', label);
+    const t = el('div', 'text'); t.append(el('div', 'title', label)); if (hint) t.append(el('div', 'hint', hint));
+    const seg = el('div', 'seg ctl'); seg.setAttribute('role', 'radiogroup'); seg.setAttribute('aria-label', label);
     opts.forEach(([v, l]) => {
       const b = el('button', null, l); b.setAttribute('role', 'radio'); b.dataset.k = key; b.dataset.v = String(v);
       b.onclick = () => save({ [key]: v });
@@ -682,14 +724,15 @@ text-transform: uppercase;}
   function switchRow(container, label, hint, key) {
     const row = el('div', 'row'); const t = el('div', 'text'); t.append(el('div', 'title', label), el('div', 'hint', hint));
     const s = el('button', 'switch'); s.setAttribute('role', 'switch'); s.dataset.k = key; s.setAttribute('aria-label', label);
-    row.append(t, s); container.append(row);
+    const c = el('div', 'ctl'); c.append(s);
+    row.append(t, c); container.append(row);
   }
   switchRow($('station-toggles'), 'Skip offline stations', 'Leaves them off the dial until they are back.', 'skip_offline');
   switchRow($('station-toggles'), 'Surprise me from favorites only', 'The knob press and the remote both use it.', 'surprise_favorites');
-  segRow($('screen-rows'), 'Ambient after', 'The big logo and show art view, when nobody is touching it.', 'ambient_after', [[30, '30 s'], [60, '1 min'], [300, '5 min'], [0, 'Never']]);
+  segRow($('screen-rows'), 'Ambient after', 'The big logo view, when nobody\u2019s touching it.', 'ambient_after', [[30, '30 s'], [60, '1 min'], [300, '5 min'], [0, 'Never']]);
   segRow($('screen-rows'), 'Screen off after', 'The radio keeps playing.', 'screen_off_after', [[600, '10 min'], [1800, '30 min'], [3600, '1 hr'], [0, 'Never']]);
-  segRow($('sound-rows'), 'Volume when Otis wakes', 'After the switch, or a restart. Quiet is 3 notches.', 'start_volume', [['last', 'Last used'], ['quiet', 'Quiet'], ['fixed', 'Fixed']]);
-  segRow($('sound-rows'), 'Sleep timer', 'Fades out and rests the screen. Touch a knob to wake.', '_sleep', [[0, 'Off'], [15, '15 min'], [30, '30 min'], [60, '1 hr']]);
+  segRow($('sound-rows'), 'Volume when Otis wakes', 'After the switch or a restart. Quiet is 3 notches.', 'start_volume', [['last', 'Last used'], ['quiet', 'Quiet'], ['fixed', 'Fixed']]);
+  segRow($('sound-rows'), 'Sleep timer', 'Fades out, then rests. Touch a knob to wake.', '_sleep', [[0, 'Off'], [15, '15 min'], [30, '30 min'], [60, '1 hr']]);
 
   function renderSettings() {
     if (!settings) return;
@@ -700,6 +743,8 @@ text-transform: uppercase;}
     });
     document.querySelectorAll('#themes button').forEach((b) => b.setAttribute('aria-checked', String(settings.theme === b.dataset.v)));
     if (document.activeElement !== $('bright')) $('bright').value = settings.brightness;
+    $('bright-v').textContent = settings.brightness + '%';
+    $('vlimit-v').textContent = settings.volume_limit + ' / 15';
     if (document.activeElement !== $('vlimit')) $('vlimit').value = settings.volume_limit;
     if (document.activeElement !== $('night-from')) $('night-from').value = settings.night_from;
     if (document.activeElement !== $('night-to')) $('night-to').value = settings.night_to;
@@ -730,6 +775,7 @@ text-transform: uppercase;}
   document.querySelectorAll('.switch[data-k]').forEach((s) => s.onclick = () => save({ [s.dataset.k]: !(settings && settings[s.dataset.k]) }));
   document.querySelectorAll('#themes button').forEach((b) => b.onclick = () => save({ theme: b.dataset.v }));
   $('bright').oninput = () => { $('bright-v').textContent = $('bright').value + '%'; };
+  $('vlimit').oninput = () => { $('vlimit-v').textContent = $('vlimit').value + ' / 15'; };
   $('bright').onchange = () => save({ brightness: +$('bright').value });
   $('vlimit').onchange = () => save({ volume_limit: +$('vlimit').value });
   $('night-from').onchange = () => save({ night_from: $('night-from').value });
@@ -748,12 +794,12 @@ text-transform: uppercase;}
       $('net-meta').textContent = [w.current ? signalWord(w.current.signal) + '' : ''].filter(Boolean).join(' · ');
       $('net-forget').disabled = !w.current;
       const list = $('net-list'); list.textContent = '';
-      if (!w.networks.length) list.append(el('div', 'hint', 'No other networks in range.'));
+      if (!w.networks.length) list.append(settingsRow('No other networks in range', 'Try Scan again.'));
       w.networks.forEach((n) => {
-        const b = el('button', 'net'); b.setAttribute('aria-expanded', String(openNet === n.ssid));
-        const nm = el('span', 'title', n.ssid); nm.style.flex = '1'; nm.style.minWidth = '0'; nm.style.overflowWrap = 'anywhere';
-        b.append(nm, el('span', 'hint', signalWord(n.signal) + (w.saved.includes(n.ssid) ? ' · saved' : '')));
-        if (n.locked) { const lock = el('span'); lock.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.2" stroke-linecap="round" role="img" aria-label="Password protected"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>'; b.append(lock); }
+        const b = el('button', 'net row'); b.setAttribute('aria-expanded', String(openNet === n.ssid));
+        const t = el('span', 'text'); t.append(el('span', 'title', n.ssid), el('span', 'hint', signalWord(n.signal) + (w.saved.includes(n.ssid) ? ' · saved' : '')));
+        const c = el('span', 'ctl'); b.append(t, c);
+        if (n.locked) { const lock = el('span'); c.append(lock); lock.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.2" stroke-linecap="round" role="img" aria-label="Password protected"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>'; }
         b.onclick = () => { openNet = openNet === n.ssid ? null : n.ssid; loadWifi(); };
         list.append(b);
         if (openNet === n.ssid) {
@@ -808,7 +854,7 @@ text-transform: uppercase;}
       let wifi = '';
       try { const w = await api('/api/wifi'); wifi = w.current ? signalWord(w.current.signal) : 'No Wi-Fi'; } catch (e) {}
       [['Wi-Fi signal', wifi], ['Up for', d.uptime], ['Temperature', d.temperature], ['On the dial', stations ? String(stations.dial.length) : '']].forEach(([l, v]) => {
-        if (!v) return; const k = el('div', 'kpi'); k.append(el('div', 'hint', l)); const vv = el('div', 'v', v); vv.style.fontSize = '24px'; k.append(vv); h.append(k);
+        if (!v) return; h.append(settingsRow(l, '', [el('span', 'val', v)]));
       });
     } catch (e) { toast(e.message); }
   }
