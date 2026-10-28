@@ -81,6 +81,10 @@ h1 { margin: 0; font-family: var(--sans); font-size: 40px; font-weight: 400; let
 .row .text { flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .row .text .hint { color: var(--muted); }
 .group { display: flex; flex-direction: column; gap: 8px; }
+.drag { flex: 0 0 auto; width: 32px; min-height: 44px; margin-left: -8px; padding: 0; border: 0; background: transparent; color: #8A8A8A; cursor: grab; touch-action: none; display: flex; align-items: center; justify-content: center; }
+.drag:hover { color: var(--ink); }
+.row.dragging { background: var(--yellow); position: relative; z-index: 2; }
+.row.dragging .drag { cursor: grabbing; color: var(--ink); }
 .group-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 16px; min-height: 28px; }
 .group-head .btn { min-height: 32px; }
 /* every settings row: Archivo title + Favorit hint on the left, one control on the right */
@@ -330,7 +334,7 @@ text-transform: uppercase;}
           <div class="card">
             <div id="hid-list"></div>
             <div class="row">
-              <div class="text"><label class="title" for="hide-pick">Hide a station</label><div class="hint">It stays off the knob and the remote until you show it again.</div></div>
+              <div class="text"><label class="title" for="hide-pick">Hide a station</label></div>
               <div class="ctl"><select id="hide-pick" class="field"></select><button class="btn dark" id="hide-btn">Hide</button></div>
             </div>
           </div>
@@ -691,23 +695,64 @@ text-transform: uppercase;}
     row.append(t, c);
     return row;
   }
+  // Drag-and-drop reordering for a card of rows (favorites). Pointer events, so it
+  // works with a mouse and with a finger; arrow keys on the handle do the same.
+  function dragHandle(row, list, save) {
+    const h = el('button', 'drag');
+    h.setAttribute('aria-label', 'Reorder ' + row.dataset.name + ' (drag, or use the arrow keys)');
+    h.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/></svg>';
+    const order = () => [...list.querySelectorAll('.row[data-name]')].map((r) => r.dataset.name);
+    // Moving the row in the DOM drops pointer capture, so follow the pointer on
+    // the window for the length of the drag instead of on the handle.
+    h.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      const before = order().join('\n');
+      row.classList.add('dragging');
+      const move = (ev) => {
+        const others = [...list.querySelectorAll('.row[data-name]')].filter((r) => r !== row);
+        const next = others.find((r) => { const b = r.getBoundingClientRect(); return ev.clientY < b.top + b.height / 2; });
+        if (next) { if (next !== row.nextSibling) list.insertBefore(row, next); }
+        else if (row !== list.lastElementChild) list.append(row);
+      };
+      const drop = () => {
+        window.removeEventListener('pointermove', move);
+        window.removeEventListener('pointerup', drop);
+        window.removeEventListener('pointercancel', drop);
+        row.classList.remove('dragging');
+        if (order().join('\n') !== before) save(order());
+      };
+      window.addEventListener('pointermove', move);
+      window.addEventListener('pointerup', drop);
+      window.addEventListener('pointercancel', drop);
+    });
+    h.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      e.preventDefault();
+      const l = order(), i = l.indexOf(row.dataset.name), j = i + (e.key === 'ArrowUp' ? -1 : 1);
+      if (j < 0 || j >= l.length) return;
+      [l[i], l[j]] = [l[j], l[i]];
+      save(l).then(() => { const again = list.querySelector('.row[data-name="' + CSS.escape(row.dataset.name) + '"] .drag'); if (again) again.focus(); });
+    });
+    return h;
+  }
+
   function renderStationLists() {
     if (!stations) return;
+    if ($('fav-list').querySelector('.dragging')) return;   // don't rebuild under someone's finger
     const by = {}; stations.stations.forEach((s) => { by[s.name] = s; });
     const favs = stations.favorites.filter((n) => by[n]);
     $('fav-title').textContent = 'Favorites (' + favs.length + ')';
     const fl = $('fav-list'); fl.textContent = '';
     if (!favs.length) fl.append(settingsRow('No favorites yet', 'Press the volume knob on a station, or the star on the Remote.'));
-    favs.forEach((n, i) => {
+    const saveFavs = (list) => api('/api/control', { cmd: 'favorites', value: list }).then(loadStations).then(poll).catch((e) => toast(e.message));
+    favs.forEach((n) => {
       const s = by[n];
-      const up = el('button', 'btn icon-btn', '↑'); up.setAttribute('aria-label', 'Move ' + n + ' up'); up.disabled = i === 0;
-      const dn = el('button', 'btn icon-btn', '↓'); dn.setAttribute('aria-label', 'Move ' + n + ' down'); dn.disabled = i === favs.length - 1;
       const rm = el('button', 'btn', 'Remove');
-      const save = (list) => api('/api/control', { cmd: 'favorites', value: list }).then(loadStations).then(poll).catch((e) => toast(e.message));
-      up.onclick = () => { const l = favs.slice(); [l[i - 1], l[i]] = [l[i], l[i - 1]]; save(l); };
-      dn.onclick = () => { const l = favs.slice(); [l[i + 1], l[i]] = [l[i], l[i + 1]]; save(l); };
-      rm.onclick = () => save(favs.filter((x) => x !== n));
-      fl.append(settingsRow(n, [s.city, s.status].filter(Boolean).join(' · '), [up, dn, rm], logoImg(n, 96)));
+      rm.onclick = () => saveFavs(favs.filter((x) => x !== n));
+      const row = settingsRow(n, [s.city, s.status].filter(Boolean).join(' · '), [rm], logoImg(n, 96));
+      row.dataset.name = n;
+      if (favs.length > 1) row.prepend(dragHandle(row, fl, saveFavs));
+      fl.append(row);
     });
     const hid = stations.hidden.filter((n) => by[n]);
     $('hid-title').textContent = 'Hidden from the dial (' + hid.length + ')';
@@ -880,7 +925,11 @@ text-transform: uppercase;}
       let wifi = '';
       try { const w = await api('/api/wifi'); wifi = w.current ? signalWord(w.current.signal) : 'No Wi-Fi'; } catch (e) {}
       h.textContent = '';
-      [['Wi-Fi signal', wifi], ['Up for', d.uptime], ['Temperature', d.temperature], ['On the dial', stations ? String(stations.dial.length) : '']].forEach(([l, v]) => {
+      // CM4 throttles around 80-85°C; these are the bands people care about
+      const deg = parseFloat(d.temperature);
+      const feel = isNaN(deg) ? '' : deg < 60 ? 'normal' : deg < 70 ? 'warm' : deg < 80 ? 'hot' : 'very hot';
+      const temp = d.temperature ? d.temperature + (feel ? ' (' + feel + ')' : '') : '';
+      [['Wi-Fi signal', wifi], ['Up for', d.uptime], ['Temperature', temp], ['On the dial', stations ? String(stations.dial.length) : '']].forEach(([l, v]) => {
         if (!v) return; h.append(settingsRow(l, '', [el('span', 'val', v)]));
       });
     } catch (e) { toast(e.message); }
