@@ -670,7 +670,7 @@ text-transform: uppercase;}
   /* ---------- settings ---------- */
   function segRow(container, label, hint, key, opts) {
     const row = el('div', 'row');
-    const t = el('div', 'text'); t.append(el('div', 'title', label), el('div', 'hint', hint));
+    const t = el('div', 'text'); t.append(el('div', 'title', label));
     const seg = el('div', 'seg'); seg.setAttribute('role', 'radiogroup'); seg.setAttribute('aria-label', label);
     opts.forEach(([v, l]) => {
       const b = el('button', null, l); b.setAttribute('role', 'radio'); b.dataset.k = key; b.dataset.v = String(v);
