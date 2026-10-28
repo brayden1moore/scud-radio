@@ -426,7 +426,7 @@ text-transform: uppercase;}
           <div class="card" id="health"></div>
         </div>
         <div class="card">
-          <div class="row"><div class="text"><div class="title">Restart Otis</div><div class="hint">Takes about 30 seconds.</div></div><div class="ctl"><button class="btn" id="d-restart">Restart</button></div></div>
+          <div class="row"><div class="text"><div class="title">Restart Otis</div><div class="hint">Restarts the radio. Takes about 5 seconds.</div></div><div class="ctl"><button class="btn" id="d-restart">Restart</button></div></div>
           <div class="row"><div class="text"><div class="title">Set up Wi-Fi again</div><div class="hint">Forgets every network and brings back "Otis-Setup".</div></div><div class="ctl"><button class="btn" id="d-setup">Start setup</button></div></div>
           <div class="row"><div class="text"><div class="title">Reset everything</div><div class="hint">Resets favorites, hidden stations, settings, and listening history. Remembers Wi-Fi.</div></div><div class="ctl"><button class="btn danger" id="d-reset">Reset</button></div></div>
         </div>
@@ -903,9 +903,9 @@ text-transform: uppercase;}
     } catch (e) { toast(e.message); b.textContent = 'Check for updates'; updateReady = 0; }
     b.disabled = false;
   };
-  $('d-restart').onclick = async () => { if (!confirm('Restart Otis? The music stops for about 30 seconds.')) return; try { await api('/api/device/restart', {}); toast('Restarting…'); } catch (e) { toast(e.message); } };
+  $('d-restart').onclick = async () => { if (!confirm('Restart Otis? The music stops for a few seconds.')) return; try { await api('/api/device/restart', {}); toast('Restarting…'); } catch (e) { toast(e.message); } };
   $('d-setup').onclick = async () => { if (!confirm('Forget every Wi-Fi network and start setup again? You’ll join "Otis-Setup" from your phone to finish.')) return; try { await api('/api/device/setup', {}); toast('Starting setup. Join "Otis-Setup" on your phone.'); } catch (e) { toast(e.message); } };
-  $('d-reset').onclick = async () => { if (!confirm('Reset favorites, hidden stations, settings and listening history? Wi-Fi stays.')) return; try { await api('/api/device/reset', {}); toast('Reset. Otis is restarting.'); setTimeout(() => location.reload(), 12000); } catch (e) { toast(e.message); } };
+  $('d-reset').onclick = async () => { if (!confirm('Reset favorites, hidden stations, settings and listening history? Wi-Fi stays.')) return; try { await api('/api/device/reset', {}); toast('Reset. Otis is restarting.'); setTimeout(() => location.reload(), 6000); } catch (e) { toast(e.message); } };
 
   /* ---------- listening ---------- */
   document.querySelectorAll('#periods button').forEach((b) => b.onclick = () => {
