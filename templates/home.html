@@ -195,7 +195,7 @@ text-transform: uppercase;}
 .netcard .big { font-family: var(--sans); font-size: 20px; font-weight: 400; letter-spacing: -0.03em; overflow-wrap: anywhere; }
 .netcard .small { font-size: 13px; color: #CFCFCF; }
 .netcard .btn { background: transparent; color: var(--ink); border: 1px solid var(--ink); min-height: 44px; font-size: 14px; }
-.net { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 4px; min-height: 52px; border: 0; border-top: 1px solid var(--line); background: var(--paper); text-align: left; }
+.net { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 18px; min-height: 52px; border: 0; border-top: 1px solid var(--line); background: var(--paper); text-align: left; }
 .net[aria-expanded="true"] { background: var(--paper); }
 .join { padding: 14px 18px; background: var(--paper); border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
 
@@ -821,7 +821,6 @@ text-transform: uppercase;}
           }
           const go = el('button', 'btn dark', 'Join'); go.style.alignSelf = 'flex-start';
           go.onclick = () => join(n.ssid, pw ? pw.value : '');
-          j.append(go, el('div', 'hint', 'Otis tries the new network and goes back to this one if it can’t connect.'));
           list.append(j);
           if (pw) setTimeout(() => pw.focus(), 0);
         }
