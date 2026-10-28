@@ -2379,17 +2379,24 @@ def toggle_mute():
     return muted
 
 def set_volume_notch(n):
-    global current_volume, muted, airplay_volume
+    global current_volume, muted, airplay_volume, airplay_vol_until
     v = max(0, min(VOL_CAP, int(n) * volume_step))
     if currently_displaying == 'airplay':
         airplay_volume = v
         _set_airplay_volume(v)
+        airplay_vol_until = time.monotonic() + 3          # same wedge the knob shows on the AirPlay screen
+        if _show_base is not None:
+            _push_window(_render_ap_vol(v), SHOW_TEXT_X, SHOW_L1_Y)
         return v
     muted = False
     current_volume = v
     send_mpv_command({"command": ["set_property", "volume", current_volume]})
     show_volume_overlay(current_volume)
     set_last_volume(str(current_volume))
+    # draw the wedge like turning the knob does (the overlay expires after 3 s in the main loop)
+    active = readied_stream if readied_stream else stream
+    if screen_on and active in scroll_cache_dict and currently_displaying == 'everything':
+        render_frame(active, 0, volume=v, draw_oneliner=False, must_show=True)
     return v
 
 
