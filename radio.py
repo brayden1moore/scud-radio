@@ -524,7 +524,8 @@ def get_stream_list(stream_dict):
         stream_list = [i for i in favorites if i in stream_list] + [i for i in stream_list if i not in favorites]
     
     if hidden:
-        stream_list = [i for i in stream_list if i not in hidden]
+        # the playing station stays until you tune away, so hiding it never pulls the screen out from under it
+        stream_list = [i for i in stream_list if i not in hidden or i == stream]
 
     if setting('skip_offline'):
         stream_list = [i for i in stream_list if stream_dict[i].get('status') != 'Offline' or i == stream]
