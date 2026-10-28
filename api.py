@@ -491,9 +491,13 @@ def _listener_tz():
 
 @app.route('/api/stats')
 def api_stats():
-    days = {'week': 7, 'month': 30, 'year': 365}.get(request.args.get('period', 'week'), 7)
+    period = request.args.get('period', 'week')
+    days = {'week': 7, 'month': 30, 'year': 365, 'lifetime': None}.get(period, 7)
     now = time.time()
-    t0, prev0 = now - days * 86400, now - 2 * days * 86400
+    if days is None:                       # lifetime: everything, nothing to compare against
+        t0 = prev0 = 0
+    else:
+        t0, prev0 = now - days * 86400, now - 2 * days * 86400
     if not LISTEN_DB.exists():
         return jsonify({'status': 'ok', 'empty': True, 'days': days})
     con = sqlite3.connect(str(LISTEN_DB), timeout=5)
@@ -540,7 +544,11 @@ def api_stats():
         'cities': [{'city': c, 'hours': h(s)} for c, s in sorted(by_city.items(), key=lambda kv: -kv[1])[:8]],
         'genres': [g for g, _ in sorted(by_genre.items(), key=lambda kv: -kv[1])[:8]],
         'city_count': len(by_city),
+        'since': None,
     }
+    if days is None and cur:               # lifetime: when Otis started counting
+        first_ts = min(r[5] for r in cur)
+        out['since'] = (datetime.fromtimestamp(first_ts, tz) if tz else datetime.fromtimestamp(first_ts)).strftime('%B %-d, %Y')
     if longest:
         day = datetime.fromtimestamp(longest[5], tz) if tz else datetime.fromtimestamp(longest[5])
         out['longest'] = {'station': longest[0], 'minutes': round(longest[6] / 60), 'day': day.strftime('%A')}

@@ -434,12 +434,13 @@ text-transform: uppercase;}
 
       <!-- LISTENING -->
       <section id="listening" aria-label="Listening" hidden>
-        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between">
-          <div><p class="lede">Stored on your device and never sent anywhere.</p></div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between">
+          <div><p class="lede">Data is stored on your device and never shared.</p></div>
           <div class="seg" role="radiogroup" aria-label="Period" id="periods">
             <button role="radio" data-p="week" aria-checked="true">Week</button>
             <button role="radio" data-p="month" aria-checked="false">Month</button>
             <button role="radio" data-p="year" aria-checked="false">Year</button>
+            <button role="radio" data-p="lifetime" aria-checked="false">Lifetime</button>
           </div>
         </div>
         <div id="stats"></div>
@@ -919,14 +920,16 @@ text-transform: uppercase;}
     try {
       const s = await api('/api/stats?period=' + period);
       box.textContent = '';
-      if (s.empty) { const e = el('div', 'empty'); e.append(el('div', 'title', 'Nothing yet for this ' + period + '.'), el('div', 'hint', 'Otis counts as you listen. Check back after a few shows.')); box.append(e); return; }
+      if (s.empty) { const e = el('div', 'empty'); e.append(el('div', 'title', period === 'lifetime' ? 'Nothing yet.' : 'Nothing yet for this ' + period + '.'), el('div', 'hint', 'Otis counts as you listen. Check back after a few shows.')); box.append(e); return; }
       const wrap = el('div'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:22px';
       const kp = el('div', 'kpis');
       const kpi = (cls, label, value, sub) => { const k = el('div', 'kpi ' + cls); k.append(el('div', null, label), el('div', 'v', value), el('div', null, sub)); k.firstChild.style.fontSize = '13px'; k.lastChild.style.fontSize = '13px'; kp.append(k); };
-      const change = s.has_previous ? ((s.hours_change >= 0 ? '+' : '') + s.hours_change + ' h on last ' + period) : 'this ' + period;
+      const change = period === 'lifetime' ? (s.since ? 'since ' + s.since : 'all time')
+        : s.has_previous ? ((s.hours_change >= 0 ? '+' : '') + s.hours_change + ' h on last ' + period) : 'this ' + period;
       kpi('dark', 'Listened', fmtH(s.hours), change);
       kpi('', 'Stations', String(s.stations), stations ? 'of ' + stations.dial.length + ' on the dial' : '');
-      kpi('yellow', 'New to you', String(s.new.length), s.new.length ? s.new.slice(0, 2).join(', ') + (s.new.length > 2 ? '…' : '') : 'first listens');
+      if (period === 'lifetime') kpi('yellow', 'Cities', String(s.city_count), 'stations heard from');
+      else kpi('yellow', 'New to you', String(s.new.length), s.new.length ? s.new.slice(0, 2).join(', ') + (s.new.length > 2 ? '…' : '') : 'first listens');
       kpi('', 'Live', s.live_share + '%', 'live, not re-runs');
       wrap.append(kp);
 
