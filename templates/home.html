@@ -15,8 +15,12 @@
 @font-face { font-family: 'Archivo'; src: url('/assets/Archivo/Archivo-VariableFont_wdth,wght.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
 
 :root {
-  --ink: #000; --paper: #fff; --surface: rgb(243,243,243); --line: #E6E6E6; --muted: #595959; --soft: #666;
-  --yellow: #FFFF00; --blue: #3DA9FC; --red: #F0584C; --redsoft: #FBD3CF;
+  /* black-main, to match Otis (no light mode). --ink is text and the "selected" fill,
+     --on-accent is text sitting on yellow / red / blue */
+  color-scheme: dark;
+  --ink: #fff; --paper: #141414; --surface: #000; --line: #262626; --muted: #9A9A9A; --soft: #8C8C8C;
+  --on-accent: #000;
+  --yellow: #FFFF00; --blue: #3DA9FC; --red: #F0584C; --redsoft: #3A1714;
   --mono: 'Favorit Mono', ui-monospace, Menlo, monospace;
   --sans: 'Archivo', system-ui, -apple-system, sans-serif;
 }
@@ -32,15 +36,16 @@ img { display: block; }
 .page { margin: 0 auto; padding: 24px 24px 72px; display: flex; flex-direction: column; gap: 28px; }
 header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px 24px; padding-bottom: 0px;}
 .brand { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
-.brand img { height: 60px; width: auto; }
+.brand img { height: 60px; width: auto; filter: invert(1); }   /* black line art -> white */
 .brand .name { font-family: var(--sans); font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
 .brand .host { font-size: 13px; color: var(--muted); }
 .for-or { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; color: var(--ink); text-decoration: none; }
 .for-or .face { background: var(--yellow); display: flex; align-items: center; justify-content: center; }
 .for-or .face img { width: 46px; height: 46px; object-fit: contain; }
 .for-or .for { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
-.pill { display: flex; align-items: center; gap: 10px; background: var(--yellow); padding: 6px 14px 6px 6px; min-width: 0; max-width: 100%; }
-.pill img { width: 32px; height: 32px; object-fit: cover; background: #ddd; }
+.pill { color: var(--on-accent); display: flex; align-items: center; gap: 10px; background: var(--yellow); padding: 6px 14px 6px 6px; min-width: 0; max-width: 100%; }
+.pill img { width: 32px; height: 32px; object-fit: cover; background: #222; }
+.pill .sq { border-color: var(--on-accent); }
 .pill span:last-child { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sq { width: 9px; height: 9px; display: inline-block; flex: 0 0 auto; border: 2px solid var(--ink); }
 .sq.live { background: var(--yellow); }
@@ -50,11 +55,11 @@ header { display: flex; flex-wrap: wrap; justify-content: space-between; align-i
 .layout { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
 nav.menu { flex: 1 1 152px; max-width: 100%; display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
 nav.menu button { border: 0; text-transform: uppercase; flex: 1 1 170px; display: flex; align-items: center; gap: 12px; text-align: left; min-height: 38px; padding: 0 14px; background: var(--paper); }
-nav.menu button:hover {background-color: #ffff00;}
+nav.menu button:hover { background-color: var(--yellow); color: var(--on-accent); }
 @media (hover: hover) {
-  .seg button:hover, .chips button:hover, .btn:hover:not(:disabled), .card .row.net:hover { background: var(--yellow) !important; color: var(--ink) !important; }
-  nav.menu button:hover { color: var(--ink); }
-  nav.menu button:hover .n { color: var(--ink); }
+  .seg button:hover, .chips button:hover, .btn:hover:not(:disabled), .card .row.net:hover { background: var(--yellow) !important; color: var(--on-accent) !important; }
+  nav.menu button:hover { color: var(--on-accent); }
+  nav.menu button:hover .n { color: var(--on-accent); }
 }
 /* "Scanning..." while Wi-Fi / health load */
 .loading .title::after { content: ''; display: inline-block; width: 8px; height: 8px; margin-left: 8px; background: var(--yellow); outline: 1px solid var(--ink); animation: blink 0.9s steps(2, start) infinite; }
@@ -62,7 +67,7 @@ nav.menu button:hover {background-color: #ffff00;}
 nav.menu button .n { font-size: 12px; color: var(--muted); }
 nav.menu button .l { font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
 nav.menu button[aria-current="page"] { background: var(--ink); color: var(--paper); }
-nav.menu button[aria-current="page"] .n { color: var(--yellow); }
+nav.menu button[aria-current="page"] .n { color: var(--paper); }
 main { flex: 999 1 560px; min-width: 0; }
 section[hidden] { display: none !important; }
 section { display: flex; flex-direction: column; gap: 16px; }
@@ -77,18 +82,19 @@ h1 { margin: 0; font-family: var(--sans); font-size: 40px; font-weight: 400; let
 .card { background: var(--paper); }
 .card .seg button, .card input[type="time"], .card .btn:not(.dark):not(.danger) { background: var(--surface); }   /* controls inside a white card */
 .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px 18px; }
-.card .row + .row { border-top: 1px solid #E0E0E0; }
+.card .row + .row { border-top: 1px solid var(--line); }
 .row .text { flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .row .text .hint { color: var(--muted); }
 .group { display: flex; flex-direction: column; gap: 8px; }
 /* hide picker: select and button share one height; hidden stations sit under it with the same dividers */
-.hide-card #hid-list .row { border-top: 1px solid #E0E0E0; }
+.hide-card #hid-list .row { border-top: 1px solid var(--line); }
 .hide-card .field, .hide-card .btn { min-height: 38px; height: 38px; }
 .hide-card .field { width: 240px; padding: 0 10px; }
 .drag { flex: 0 0 auto; width: 32px; min-height: 44px; margin-left: -8px; padding: 0; border: 0; background: transparent; color: #8A8A8A; cursor: grab; touch-action: none; display: flex; align-items: center; justify-content: center; }
 .drag:hover { color: var(--ink); }
-.row.dragging { background: var(--yellow); position: relative; z-index: 2; }
-.row.dragging .drag { cursor: grabbing; color: var(--ink); }
+.row.dragging { background: var(--yellow); color: var(--on-accent); position: relative; z-index: 2; }
+.row.dragging .drag { cursor: grabbing; color: var(--on-accent); }
+.row.dragging .hint, .row.dragging .text .hint { color: var(--on-accent); }
 .group-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 16px; min-height: 28px; }
 .group-head .btn { min-height: 32px; }
 /* every settings row: Archivo title + Favorit hint on the left, one control on the right */
@@ -101,15 +107,15 @@ h1 { margin: 0; font-family: var(--sans); font-size: 40px; font-weight: 400; let
 .card #dname { width: 260px; }
 .seg .sw { display: inline-block; width: 14px; height: 14px; margin-right: 8px; vertical-align: -2px; box-shadow: inset 0 0 0 1px #9A9A9A; }
 .card .row.net { min-height: 52px; }
-.card .row.net:hover { background-color: var(--yellow);}
-.card .row.net + .row.net, .card .join { border-top: 1px solid #E0E0E0; }
+.card .row.net:hover { background-color: var(--yellow); color: var(--on-accent); }
+.card .row.net + .row.net, .card .join { border-top: 1px solid var(--line); }
 .list .item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
 .list .item img, .list .item .ph { width: 44px; height: 44px; object-fit: cover; background: var(--paper); flex: 0 0 auto; }
 .list .item .text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 
 .btn { min-height: 40px; padding: 0 12px; border: 0; background: var(--paper); font-family: var(--mono); font-size: 13px; text-transform: uppercase; }
 .btn.dark { background: var(--ink); color: var(--paper); min-height: 44px; font-size: 14px; }
-.btn.danger { background: var(--red); }
+.btn.danger { background: var(--red); color: var(--on-accent); }
 .btn:disabled { opacity: 0.45; cursor: default; }
 .icon-btn { width: 40px; min-height: 40px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
 
@@ -120,12 +126,12 @@ h1 { margin: 0; font-family: var(--sans); font-size: 40px; font-weight: 400; let
 .chips button { min-height: 36px; padding: 0 12px; border: 0; background: var(--paper); font-family: var(--mono); font-size: 16px; }
 .chips button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 .chips button.status { background: var(--redsoft); }
-.chips button.status[aria-pressed="true"] { background: var(--red); color: var(--ink); }
+.chips button.status[aria-pressed="true"] { background: var(--red); color: var(--on-accent); }
 
-.switch { flex: 0 0 auto; width: 52px; height: 30px; border: 0; padding: 3px; background: #C4C4C4; display: flex; justify-content: flex-start; }
-.switch::after { content: ''; width: 24px; height: 24px; background: var(--paper); }
-.switch[aria-checked="true"] { background: var(--ink); justify-content: flex-end; }
-.switch[aria-checked="true"]::after { background: var(--yellow); }
+.switch { flex: 0 0 auto; width: 52px; height: 30px; border: 0; padding: 3px; background: #333; display: flex; justify-content: flex-start; }
+.switch::after { content: ''; width: 24px; height: 24px; background: #8A8A8A; }
+.switch[aria-checked="true"] { background: var(--yellow); justify-content: flex-end; }
+.switch[aria-checked="true"]::after { background: #000; }
 
 input[type="range"] { width: 100%; accent-color: var(--ink); }
 .field { min-height: 48px; padding: 0 12px; border: 0; background: var(--paper); font-size: 18px; width: 100%; }
@@ -133,7 +139,7 @@ input[type="time"] { min-height: 40px; padding: 0 8px; border: 0; background: va
 
 /* remote */
 .now { /* background: #0B0B0B; */
-color: #000;
+color: var(--ink);
 /* padding: 12px; */
 display: flex;
 flex-wrap: wrap;
@@ -141,14 +147,14 @@ gap: 22px;
 align-items: center;}
 .now .art { width: 132px; height: 132px; border: 0; object-fit: cover; flex: 0 0 auto; background: #222; display: flex; align-items: center; justify-content: center; }
 .now .meta { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
-.now .status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #000000; }
+.now .status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); }
 .now .status .sq { border-color: var(--ink); }
 .now .status .sq.offline { border-color: #8A8A8A; }
 .now .station { font-family: var(--sans); font-size: 40px; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; overflow-wrap: anywhere; margin-bottom: -2px; margin-left: -1px;}
-.now .ol { font-size: 15px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.now .ol { font-size: 15px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .now .wake { align-self: flex-start;
 background: var(--paper);
-color: #000;
+color: var(--ink);
 border: 0;
 min-height: 32px;
 padding: 0 10px;
@@ -157,10 +163,12 @@ text-transform: uppercase;
 font-size: 14px;}
 .now .wake:hover {
     background-color: var(--yellow);
+    color: var(--on-accent);
 }
 .transport { display: flex; flex-wrap: wrap; gap: 8px; }
 .transport button:hover {
     background-color: var(--yellow) !important;
+    color: var(--on-accent);
 }
 .transport button { flex: 1 1 64px;
 min-height: 56px;
@@ -172,15 +180,15 @@ justify-content: center;
 gap: 8px;
 font-size: 14px;
 text-transform: uppercase;}
-.transport button[aria-pressed="true"].fav { background: var(--yellow); }
-.transport button[aria-pressed="true"].fav svg { fill: #000; }
+.transport button[aria-pressed="true"].fav { background: var(--yellow); color: var(--on-accent); }
+.transport button[aria-pressed="true"].fav svg { fill: currentColor; }
 .transport button[aria-pressed="true"].mute { background: var(--ink); color: var(--paper); }
 .wedge { display: flex; align-items: flex-end; gap: 5px; height: 48px; }
 .wedge button { flex: 1 1 0; min-width: 0; height: 48px; padding: 0; border: 0; background: transparent; display: flex; align-items: flex-end; }
-.wedge button span { display: block; width: 100%; background: #E0E0E0; }
+.wedge button span { display: block; width: 100%; background: #2E2E2E; }
 .wedge button.lit span { background: var(--ink); }
 .wedge button:disabled { cursor: default; }
-.wedge button:disabled span { background: repeating-linear-gradient(135deg, #EDEDED 0 3px, #FFFFFF 3px 6px); }
+.wedge button:disabled span { background: repeating-linear-gradient(135deg, #262626 0 3px, #0A0A0A 3px 6px); }
 .search { display: flex; align-items: center; gap: 10px; background: var(--paper); padding: 0 12px; min-height: 36px; flex: 1 1 220px; max-width: 360px; }
 .search input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font-size: 16px; min-height: 34px; }
 .grid {
@@ -195,8 +203,9 @@ text-transform: uppercase;}
 .tile .badge { position: absolute; left: 8px; bottom: 8px; width: 25%; max-width: calc(var(--u) + var(--g) / 2); aspect-ratio: 1 / 1; overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,0.12); background: var(--paper); }
 .tile .badge img, .tile .badge .ph { width: 100%; height: 100%; object-fit: cover; font-size: 14px; }
 .tile { padding: 0; border: 0; background: transparent; text-align: left; display: flex; flex-direction: column; gap: 6px; min-width: 0; transition: none; }
-.tile[aria-current="true"] { background: var(--yellow); }   /* playing stays yellow */
-@media (hover: hover) { .tile:hover { background: var(--yellow); } .tile:hover .play { display: flex; } }   /* instant, no fade; mouse only, so taps don't leave a stuck highlight on phones */
+.tile[aria-current="true"] { background: var(--yellow); color: var(--on-accent); }   /* playing stays yellow */
+.tile[aria-current="true"] .sub { color: var(--on-accent); }
+@media (hover: hover) { .tile:hover { background: var(--yellow); color: var(--on-accent); } .tile:hover .sub { color: var(--on-accent); } .tile:hover .play { display: flex; } }   /* instant, no fade; mouse only, so taps don't leave a stuck highlight on phones */
 /* play button on hover, same as one.radio's tiles */
 .tile .play { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; z-index: 2; pointer-events: none; }
 .tile .play svg { width: 46%; height: 46%; max-width: 72px; max-height: 72px; }
@@ -219,9 +228,9 @@ text-transform: uppercase;}
 .themes button[aria-checked="true"] .sw { outline: 3px solid var(--ink); outline-offset: 2px; }
 
 /* wifi */
-.netcard { background: #fff; color: #000; padding: 18px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; border:1px solid var(--line);}
+.netcard { background: var(--paper); color: var(--ink); padding: 18px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; border:1px solid var(--line);}
 .netcard .big { font-family: var(--sans); font-size: 20px; font-weight: 400; letter-spacing: -0.03em; overflow-wrap: anywhere; }
-.netcard .small { font-size: 13px; color: #CFCFCF; }
+.netcard .small { font-size: 13px; color: var(--muted); }
 .netcard .btn { background: transparent; color: var(--ink); border: 1px solid var(--ink); min-height: 44px; font-size: 14px; }
 .net { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 18px; min-height: 52px; border: 0; border-top: 1px solid var(--line); background: var(--paper); text-align: left; }
 .net[aria-expanded="true"] { background: var(--paper); }
@@ -232,15 +241,15 @@ text-transform: uppercase;}
 .kpi { padding: 16px; display: flex; flex-direction: column; gap: 6px; background: var(--paper); }
 .kpi .v { font-family: var(--sans); font-size: 42px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
 .kpi.dark { background: var(--ink); color: var(--paper); }
-.kpi.yellow { background: var(--yellow); }
+.kpi.yellow { background: var(--yellow); color: var(--on-accent); }
 .cols { display: flex; flex-wrap: wrap; gap: 28px; }
 .cols > div { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
 .bar { height: 8px; background: var(--paper); }
 .bar div { height: 8px; background: var(--ink); }
 .hours { display: flex; align-items: flex-end; gap: 3px; height: 120px; }
-.hours div { flex: 1 1 0; min-width: 0; background: #C4C4C4; }
+.hours div { flex: 1 1 0; min-width: 0; background: #333; }
 .hours div.peak { background: var(--ink); }
-.tag { padding: 6px 10px; font-size: 16px; }
+.tag { padding: 6px 10px; font-size: 16px; color: var(--on-accent); }
 .tag.city { background: var(--blue); }
 .tag.genre { background: var(--yellow); }
 .tag span { opacity: 0.75; }
@@ -248,7 +257,7 @@ text-transform: uppercase;}
 
 #toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 12px 16px; font-size: 14px; max-width: calc(100% - 32px); display: none; z-index: 10; }
 #toast.show { display: block; }
-.offline-banner { background: var(--red); padding: 12px 16px; font-size: 14px; display: none; }
+.offline-banner { background: var(--red); color: var(--on-accent); padding: 12px 16px; font-size: 14px; display: none; }
 .offline-banner.show { display: block; }
 
 @media (max-width: 560px) {
@@ -278,7 +287,7 @@ text-transform: uppercase;}
   .transport { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .transport .surprise span { display: none; }
 }
-.ph { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; background: #E6E6E6; color: #595959; font-family: var(--sans); font-weight: 800; font-size: 28px; letter-spacing: -0.03em; }
+.ph { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; background: #1E1E1E; color: #8A8A8A; font-family: var(--sans); font-weight: 800; font-size: 28px; letter-spacing: -0.03em; }
 </style>
 </head>
 <body>
@@ -315,10 +324,10 @@ text-transform: uppercase;}
         </div>
 
         <div class="transport">
-          <button id="b-prev" aria-label="Previous station"><svg width="26" height="26" viewBox="0 0 24 24" fill="#000" aria-hidden="true"><path d="M11 6v12L3 12zM20 6v12l-8-6z"/></svg></button>
-          <button id="b-next" aria-label="Next station"><svg width="26" height="26" viewBox="0 0 24 24" fill="#000" aria-hidden="true"><path d="M13 6v12l8-6zM4 6v12l8-6z"/></svg></button>
-          <button id="b-random" class="surprise" aria-label="Surprise me"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg></button>
-          <button id="b-fav" class="fav" aria-label="Favorite this station" aria-pressed="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.3L12 17.5 6.4 20.4l1.1-6.3L3 9.7l6.2-.9z"/></svg></button>
+          <button id="b-prev" aria-label="Previous station"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 6v12L3 12zM20 6v12l-8-6z"/></svg></button>
+          <button id="b-next" aria-label="Next station"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 6v12l8-6zM4 6v12l8-6z"/></svg></button>
+          <button id="b-random" class="surprise" aria-label="Surprise me"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg></button>
+          <button id="b-fav" class="fav" aria-label="Favorite this station" aria-pressed="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.3L12 17.5 6.4 20.4l1.1-6.3L3 9.7l6.2-.9z"/></svg></button>
           <button id="b-mute" class="mute" aria-label="Mute" aria-pressed="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6"/><path d="M21 9l-4 6"/></svg></button>
         </div>
 
@@ -363,14 +372,6 @@ text-transform: uppercase;}
       <!-- SCREEN -->
       <section id="screen" class="narrow" aria-label="Screen" hidden>
         <div class="card">
-          <div class="row">
-            <div class="text"><div class="title">Theme</div><div class="hint">Auto is light from 7am to 7pm.</div></div>
-            <div class="ctl seg" role="radiogroup" aria-label="Theme" id="themes">
-              <button role="radio" data-v="dark"><span class="sw" style="background:#0B0B0B"></span>Dark</button>
-              <button role="radio" data-v="light"><span class="sw" style="background:#FFFFFF"></span>Light</button>
-              <button role="radio" data-v="auto"><span class="sw" style="background:linear-gradient(90deg,#F4F4F4 50%,#0B0B0B 50%)"></span>Auto</button>
-            </div>
-          </div>
           <div class="row">
             <div class="text"><label class="title" for="bright">Brightness</label><div class="hint">The screen's backlight.</div></div>
             <div class="ctl slide"><input id="bright" type="range" min="10" max="100" step="5"><span class="val" id="bright-v"></span></div>
@@ -1020,14 +1021,14 @@ text-transform: uppercase;}
       const lbl = (h) => (h % 12 || 12) + (h < 12 ? 'am' : 'pm');
       hrs.setAttribute('aria-label', 'Listening by hour of day. Most listening around ' + lbl(peak) + '.');
       s.by_hour.forEach((m, i) => { const d = el('div', Math.abs(i - peak) <= 1 && m > hmax * 0.6 ? 'peak' : ''); d.style.height = Math.max(3, Math.round(120 * m / hmax)) + 'px'; hrs.append(d); });
-      const axis = el('div'); axis.style.cssText = 'display:flex;justify-content:space-between;font-size:12px;color:#666';
+      const axis = el('div'); axis.style.cssText = 'display:flex;justify-content:space-between;font-size:12px;color:#8A8A8A';
       ['12a', '6a', '12p', '6p', '11p'].forEach((t) => axis.append(el('span', null, t)));
-      const split = el('div'); split.style.cssText = 'display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px solid #E6E6E6';
+      const split = el('div'); split.style.cssText = 'display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px solid #262626';
       const sb = el('div'); sb.style.cssText = 'display:flex;height:16px';
-      const a = el('div'); a.style.cssText = 'background:#000;width:' + (100 - s.airplay_share) + '%';
+      const a = el('div'); a.style.cssText = 'background:#FFF;width:' + (100 - s.airplay_share) + '%';
       const b = el('div'); b.style.cssText = 'background:#FFFF3D;width:' + s.airplay_share + '%';
       sb.append(a, b);
-      const sl = el('div'); sl.style.cssText = 'display:flex;justify-content:space-between;font-size:13px;color:#595959';
+      const sl = el('div'); sl.style.cssText = 'display:flex;justify-content:space-between;font-size:13px;color:#9A9A9A';
       sl.append(el('span', null, 'Radio ' + (100 - s.airplay_share) + '%'), el('span', null, 'AirPlay ' + s.airplay_share + '%'));
       split.append(el('div', null, 'Radio and AirPlay'), sb, sl);
       right.append(head, hrs, axis, split);

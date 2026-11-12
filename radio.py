@@ -112,11 +112,7 @@ THEMES = {
 }
 
 def _startup_theme():
-    try:
-        with open('/var/lib/scud-radio/config.json') as f:
-            return json.load(f).get('theme', 'dark')
-    except Exception:
-        return 'dark'
+    return 'dark'                         # Otis is dark only (light theme retired 2026-11-12)
 
 THEME = THEMES.get(_startup_theme(), THEMES['dark'])
 BG_COLOR = THEME['bg']
@@ -1089,8 +1085,8 @@ STATUS_DOT = '\u2022' if _has_glyph(SMALL_LIGHT, '\u2022') else '\u00b7'
 
 def render_status_strip(name):
     """Settled bottom row, no icon: 'Live \u2022 Techno \u2022 Electro' with the status word
-    and its dot in the status colour (Live red), genres and their dots yellow.
-    While tuning: 'Tuning in' in yellow with an ellipsis that counts . .. ..."""
+    and its dot in the status colour (Live red, Re-Run yellow), genres and their dots yellow.
+    While tuning: 'Tuning in' in yellow with dots counting up from none to three."""
     d = ImageDraw.Draw(_status_strip)
     d.rectangle([0, 0, SCREEN_WIDTH, _status_strip.height], fill=BG_COLOR)
     info = streams.get(name) or {}
@@ -1100,12 +1096,12 @@ def render_status_strip(name):
     tstate = tuning['state'] if tuning['name'] == name else None
     if tstate:
         if tstate == 'tuning':
-            n = int((time.monotonic() - tuning['since']) * 2.5) % 3 + 1
+            n = int((time.monotonic() - tuning['since']) * 2.5) % 4      # 0, 1, 2, 3 dots
             d.text((x, y), 'Tuning in' + '.' * n, font=SMALL_LIGHT, fill=THEME['genre'])
         else:
             d.text((x, y), "Station isn't answering", font=SMALL_LIGHT, fill=MUTED_COLOR)
         return _status_strip
-    colour = {'Live': THEME['live'], 'Re-Run': SECONDARY_COLOR}.get(status, MUTED_COLOR)
+    colour = {'Live': THEME['live'], 'Re-Run': THEME['genre']}.get(status, MUTED_COLOR)
     sep = f' {STATUS_DOT} '
     parts = [(status, colour)]
     for i, g in enumerate(info.get('genres') or []):
@@ -2136,9 +2132,7 @@ def apply_backlight(force=False):
         _bl_applied = lvl
 
 def _theme_for(name):
-    if name == 'auto':
-        return 'light' if 7 <= local_now().hour < 19 else 'dark'
-    return name if name in THEMES else 'dark'
+    return 'dark'                         # dark only; an old 'light'/'auto' in config.json is ignored
 
 active_theme = _startup_theme() if _startup_theme() in THEMES else 'dark'
 
