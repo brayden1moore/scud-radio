@@ -103,8 +103,12 @@ RED = (255,71,71)
 
 # ---- theme: "dark" (default) or "light"; set "theme" in /var/lib/scud-radio/config.json ----
 THEMES = {
-    'dark':  {'bg': BLACK,      'fg': WHITE, 'muted': (150, 150, 150), 'faint': (90, 90, 90),   'wedge_off': (45, 45, 45)},
-    'light': {'bg': WHITE,      'fg': BLACK, 'muted': (95, 95, 95),    'faint': (175, 175, 175), 'wedge_off': (215, 215, 215)},
+    # live / place / genre: One Radio's red, blue and yellow (portal --red/--blue/--yellow);
+    # light mode uses deeper versions so they read on white
+    'dark':  {'bg': BLACK,      'fg': WHITE, 'muted': (150, 150, 150), 'faint': (90, 90, 90),   'wedge_off': (45, 45, 45),
+              'live': (240, 88, 76), 'place': (61, 169, 252), 'genre': (255, 255, 0)},
+    'light': {'bg': WHITE,      'fg': BLACK, 'muted': (95, 95, 95),    'faint': (175, 175, 175), 'wedge_off': (215, 215, 215),
+              'live': (222, 60, 48), 'place': (20, 128, 214), 'genre': (168, 132, 0)},
 }
 
 def _startup_theme():
@@ -961,7 +965,7 @@ def _draw_clock_row(draw, name, origin_y=0):
     status = info.get('status')
     edge = None if BG_COLOR == BLACK else (60, 60, 60)
     if status == 'Live':
-        draw.rectangle([cx - r, cy - r, cx + r, cy + r], fill=LIVE_COLOR, outline=edge, width=1)
+        draw.rectangle([cx - r, cy - r, cx + r, cy + r], fill=THEME['live'])
     elif status == 'Re-Run':
         if edge:
             draw.rectangle([cx - r, cy - r, cx + r, cy + r], outline=edge, width=1)
@@ -1033,7 +1037,7 @@ def _draw_panel(draw, name, ox=0):
         draw.text((x + width(hm, TIME_FONT) + 5, y0 + baseline), ap, font=SMALL_LIGHT,
                   fill=SECONDARY_COLOR, anchor='ls')
     for i, ln in enumerate(lines):
-        draw.text((x, y0 + city_y + i * line_h), ln.strip(), font=f, fill=SECONDARY_COLOR)
+        draw.text((x, y0 + city_y + i * line_h), ln.strip(), font=f, fill=THEME['place'])
 
 def push_panel(name):
     """Redraw just the time panel (the minute ticked over)."""
@@ -1068,7 +1072,7 @@ def render_status_strip(name):
         d.text((MARQUEE_X + 17, y - 1), label, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
         return _status_strip
     if status == 'Live':
-        d.rectangle([cx - r, cy - r, cx + r, cy + r], fill=LIVE_COLOR, outline=edge, width=1)
+        d.rectangle([cx - r, cy - r, cx + r, cy + r], fill=THEME['live'])
     elif status == 'Re-Run':
         d.rectangle([cx - r, cy - r, cx + r, cy + r], outline=edge or LIVE_COLOR, width=1 if edge else 2)
         if edge:
@@ -1076,11 +1080,11 @@ def render_status_strip(name):
     else:
         d.rectangle([cx - r, cy - r, cx + r, cy + r], fill=STATUS_OFF_COLOR)
     x = MARQUEE_X + 17
-    d.text((x, y - 1), status, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
+    d.text((x, y - 1), status, font=SMALL_LIGHT, fill=THEME['live'] if status == 'Live' else SECONDARY_COLOR)
     genres = ' · '.join(info.get('genres') or [])
     if genres:
         gx = x + width(status, SMALL_LIGHT) + 12
-        d.text((gx, y - 1), genres, font=SMALL_LIGHT, fill=MUTED_COLOR)
+        d.text((gx, y - 1), genres, font=SMALL_LIGHT, fill=THEME['genre'])
         if gx + width(genres, SMALL_LIGHT) > SCREEN_WIDTH:
             _fade_right(_status_strip, 0, _status_strip.height)
     return _status_strip
@@ -3279,6 +3283,9 @@ def handle_remote_command(command_data):
         return {'status': 'error', 'message': traceback.format_exc()}
 
 
+PASSIVE_COMMANDS = {'status', 'list', 'hidden', 'state', 'stations', 'get_settings',
+                    'set_settings', 'set_favorites', 'set_hidden', 'sleep_timer'}
+
 def control_socket_listener():
     global last_input_time
     
@@ -3307,7 +3314,11 @@ def control_socket_listener():
                 command = json.loads(data)
                 response = handle_remote_command(command)
                 conn.sendall((json.dumps(response) + '\n').encode('utf-8'))
-                last_input_time = time.monotonic()
+                # Reads and settings changes from the portal/app aren't someone using
+                # the radio: counting them kept ambient from ever starting while the
+                # portal (polls state every 3 s) or the iOS app was open.
+                if command.get('command') not in PASSIVE_COMMANDS:
+                    last_input_time = time.monotonic()
             conn.close()
             
         except socket.timeout:
