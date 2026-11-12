@@ -433,7 +433,7 @@ def _update_tuning(now, active_name, can_draw):
         tuning['state'] = 'failed'
     changed = tuning['state'] != state
     if can_draw and active_name == name and (changed or tuning['state'] == 'tuning'):
-        push_status_strip(name)                        # 'tuning' redraws each tick to pulse the dot
+        push_status_strip(name)                        # 'tuning' redraws each tick to count the dots
 
 SUMMARY_URL = 'https://one.radio/summary'
 LOGO_SIZES = ['25', '60', '96', '216','320']  
@@ -1085,43 +1085,39 @@ def push_panel(name):
         finally:
             display_lock.release()
 
+STATUS_DOT = '\u2022' if _has_glyph(SMALL_LIGHT, '\u2022') else '\u00b7'
+
 def render_status_strip(name):
-    """Settled bottom row: status square + word, then genres in muted text."""
+    """Settled bottom row, no icon: 'Live \u2022 Techno \u2022 Electro' with the status word
+    and its dot in the status colour (Live red), genres and their dots yellow.
+    While tuning: 'Tuning in' in yellow with an ellipsis that counts . .. ..."""
     d = ImageDraw.Draw(_status_strip)
     d.rectangle([0, 0, SCREEN_WIDTH, _status_strip.height], fill=BG_COLOR)
     info = streams.get(name) or {}
     status = info.get('status') or 'Offline'
-    y = CLOCK_Y - CLOCK_STRIP_TOP - 2
-    cy = y + height('Sg', SMALL_LIGHT) // 2 + 2
-    cx, r = MARQUEE_X + 4, 4          # 9 px square: same visual weight as the old 11 px dot
-    edge = None if BG_COLOR == BLACK else (60, 60, 60)
+    y = CLOCK_Y - CLOCK_STRIP_TOP - 3
+    x = MARQUEE_X
     tstate = tuning['state'] if tuning['name'] == name else None
     if tstate:
         if tstate == 'tuning':
-            lit = int(time.monotonic() * 2.5) % 2 == 0                      # gentle pulse
-            dot = LIVE_COLOR if lit else _mix(LIVE_COLOR, BG_COLOR, 0.7)
-            label = 'Tuning in...'
+            n = int((time.monotonic() - tuning['since']) * 2.5) % 3 + 1
+            d.text((x, y), 'Tuning in' + '.' * n, font=SMALL_LIGHT, fill=THEME['genre'])
         else:
-            dot, label = STATUS_OFF_COLOR, "Station isn't answering"
-        d.rectangle([cx - r, cy - r, cx + r, cy + r], fill=dot, outline=edge, width=1)
-        d.text((MARQUEE_X + 17, y - 1), label, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
+            d.text((x, y), "Station isn't answering", font=SMALL_LIGHT, fill=MUTED_COLOR)
         return _status_strip
-    if status == 'Live':
-        d.rectangle([cx - r, cy - r, cx + r, cy + r], fill=THEME['live'])
-    elif status == 'Re-Run':
-        d.rectangle([cx - r, cy - r, cx + r, cy + r], outline=edge or LIVE_COLOR, width=1 if edge else 2)
-        if edge:
-            d.rectangle([cx - r + 1, cy - r + 1, cx + r - 1, cy + r - 1], outline=LIVE_COLOR, width=2)
-    else:
-        d.rectangle([cx - r, cy - r, cx + r, cy + r], fill=STATUS_OFF_COLOR)
-    x = MARQUEE_X + 17
-    d.text((x, y - 1), status, font=SMALL_LIGHT, fill=THEME['live'] if status == 'Live' else SECONDARY_COLOR)
-    genres = ' · '.join(info.get('genres') or [])
-    if genres:
-        gx = x + width(status, SMALL_LIGHT) + 12
-        d.text((gx, y - 1), genres, font=SMALL_LIGHT, fill=THEME['genre'])
-        if gx + width(genres, SMALL_LIGHT) > SCREEN_WIDTH:
-            _fade_right(_status_strip, 0, _status_strip.height)
+    colour = {'Live': THEME['live'], 'Re-Run': SECONDARY_COLOR}.get(status, MUTED_COLOR)
+    sep = f' {STATUS_DOT} '
+    parts = [(status, colour)]
+    for i, g in enumerate(info.get('genres') or []):
+        parts.append((sep, colour if i == 0 else THEME['genre']))
+        parts.append((g, THEME['genre']))
+    for text, fill in parts:
+        d.text((x, y), text, font=SMALL_LIGHT, fill=fill)
+        x += SMALL_LIGHT.getlength(text)
+        if x > SCREEN_WIDTH:
+            break
+    if x > SCREEN_WIDTH:
+        _fade_right(_status_strip, 0, _status_strip.height)
     return _status_strip
 
 def push_status_strip(name):
