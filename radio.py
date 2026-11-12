@@ -1086,7 +1086,7 @@ STATUS_DOT = '\u2022' if _has_glyph(SMALL_LIGHT, '\u2022') else '\u00b7'
 
 def render_status_strip(name):
     """Settled bottom row, no icon: 'Live \u2022 Techno \u2022 Electro' with the status word
-    in the status colour (Live red, Re-Run yellow), genres yellow, dots white.
+    and its dot in the status colour (Live red, Re-Run yellow), genres and their dots yellow.
     While tuning: 'Tuning in' in yellow with dots counting up from none to three."""
     d = ImageDraw.Draw(_status_strip)
     d.rectangle([0, 0, SCREEN_WIDTH, _status_strip.height], fill=BG_COLOR)
@@ -1106,7 +1106,7 @@ def render_status_strip(name):
     sep = f' {STATUS_DOT} '
     parts = [(status, colour)]
     for i, g in enumerate(info.get('genres') or []):
-        parts.append((sep, SECONDARY_COLOR))                 # dots are plain white
+        parts.append((sep, colour if i == 0 else THEME['genre']))
         parts.append((g, THEME['genre']))
     for text, fill in parts:
         d.text((x, y), text, font=SMALL_LIGHT, fill=fill)
