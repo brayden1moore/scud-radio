@@ -147,9 +147,9 @@ gap: 22px;
 align-items: center;}
 .now .art { width: 132px; height: 132px; border: 0; object-fit: cover; flex: 0 0 auto; background: #222; display: flex; align-items: center; justify-content: center; }
 .now .meta { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
-.now .status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); }
-.now .status .sq { border-color: var(--ink); }
-.now .status .sq.offline { border-color: #8A8A8A; }
+.now .status { font-size: 13px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* coloured text like the Otis screen, no icon: Live red, Re-Run yellow, place blue, genres yellow */
+.c-live { color: var(--red); } .c-rerun, .c-genre { color: var(--yellow); } .c-off { color: var(--muted); } .c-place { color: var(--blue); }
 .now .station { font-family: var(--sans); font-size: 40px; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; overflow-wrap: anywhere; margin-bottom: -2px; margin-left: -1px;}
 .now .ol { font-size: 15px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .now .wake { align-self: flex-start;
@@ -318,7 +318,7 @@ text-transform: uppercase;}
           <div class="meta">
             <div class="station" id="now-station">…</div>
             <div class="ol" id="now-ol"></div>
-            <div class="status"><span class="sq" id="now-sq"></span><span id="now-status"></span><span aria-hidden="true">·</span><span id="now-city"></span></div>
+            <div class="status" id="now-line"></div>
             <button class="wake" id="now-wake" hidden>Wake Otis</button>
           </div>
         </div>
@@ -481,6 +481,16 @@ text-transform: uppercase;}
     return img;
   }
   const sqClass = (status) => status === 'Live' ? 'live' : status === 'Re-Run' ? 'rerun' : 'offline';
+  const statusClass = (status) => status === 'Live' ? 'c-live' : status === 'Re-Run' ? 'c-rerun' : 'c-off';
+  // 'Live • San Francisco • House': each dot takes the colour of the item before it, like the screen
+  function dotLine(parts) {
+    const box = document.createElement('span');
+    parts.filter((p) => p && p[0]).forEach(([text, cls], i) => {
+      if (i) { const d = el('span', box.lastChild.className, ' \u2022 '); d.setAttribute('aria-hidden', 'true'); box.append(d); }
+      box.append(el('span', cls, text));
+    });
+    return box;
+  }
 
   let state = null, stations = null, settings = null, filter = 'all', period = 'week';
   let toastTimer = null;
@@ -535,16 +545,15 @@ text-transform: uppercase;}
       art.src = '/assets/otis_face.png'; art.style.background = '#FFFF3D'; art.style.objectFit = 'contain';
       $('now-station').textContent = ap.title || 'AirPlay';
       $('now-ol').textContent = [ap.artist, ap.album].filter(Boolean).join(' · ') || (ap.sender ? 'from ' + ap.sender : '');
-      $('now-status').textContent = 'AirPlay'; $('now-city').textContent = ap.sender || '';
-      $('now-sq').className = 'sq live';
+      $('now-line').replaceChildren(dotLine([['AirPlay', 'c-rerun'], [ap.sender ? 'from ' + ap.sender : '', 'c-off']]));
     } else {
       art.src = state.station ? logo(state.station, 216) : ''; art.style.background = '#222'; art.style.objectFit = 'cover';
       art.alt = (state.station || '') + ' logo';
       $('now-station').textContent = state.station || '…';
       $('now-ol').textContent = state.now_playing || '';
-      $('now-status').textContent = state.station_status || '';
-      $('now-city').textContent = state.city  + (state.from ? ' · from ' + state.from : '');
-      $('now-sq').className = 'sq ' + sqClass(state.station_status);
+      $('now-line').replaceChildren(dotLine([[state.station_status || '', statusClass(state.station_status)],
+        [(state.city || '') + (state.from ? ', from ' + state.from : ''), 'c-place'],
+        ...(state.genres || []).map((g) => [g, 'c-genre'])]));
     }
     const wake = $('now-wake');
     if (state.asleep) { wake.hidden = false; wake.disabled = true; wake.textContent = 'Switched off'; }
@@ -703,7 +712,7 @@ text-transform: uppercase;}
     const row = el('div', 'row');
     if (icon) { icon.classList.add('ico'); row.append(icon); }
     const t = el('div', 'text'); t.append(el('div', 'title', title));
-    if (hint) t.append(el('div', 'hint', hint));
+    if (hint) { if (hint instanceof Node) { const h = el('div', 'hint'); h.append(hint); t.append(h); } else t.append(el('div', 'hint', hint)); }
     const c = el('div', 'ctl'); (controls || []).forEach((x) => c.append(x));
     row.append(t, c);
     return row;
@@ -762,7 +771,7 @@ text-transform: uppercase;}
       const s = by[n];
       const rm = el('button', 'btn', 'Remove');
       rm.onclick = () => saveFavs(favs.filter((x) => x !== n));
-      const row = settingsRow(n, [s.city, s.status].filter(Boolean).join(' · '), [rm], logoImg(n, 96));
+      const row = settingsRow(n, dotLine([[s.status, statusClass(s.status)], [s.city, 'c-place']]), [rm], logoImg(n, 96));
       row.dataset.name = n;
       if (favs.length > 1) row.prepend(dragHandle(row, fl, saveFavs));
       fl.append(row);
@@ -774,7 +783,7 @@ text-transform: uppercase;}
       const img = logoImg(n, 96); img.style.opacity = '0.5';
       const b = el('button', 'btn', 'Show again');
       b.onclick = () => api('/api/control', { cmd: 'hidden', value: hid.filter((x) => x !== n) }).then(loadStations).catch((e) => toast(e.message));
-      hl.append(settingsRow(n, by[n].city, [b], img));
+      hl.append(settingsRow(n, by[n].city ? dotLine([[by[n].city, 'c-place']]) : '', [b], img));
     });
     const pick = $('hide-pick'); const keep = pick.value; pick.textContent = '';
     pick.append(new Option('Pick a station', ''));

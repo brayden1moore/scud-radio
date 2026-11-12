@@ -169,8 +169,9 @@ for _path, _size in [
         OL_FONTS.append(_f)
 OL_BASELINE = SMALL_LIGHT.getmetrics()[0]     # every run shares Favorit's baseline
 
-# now-playing title on the show-art / AirPlay screens: Archivo SemiBold, same fallbacks
-TITLE_FONT = ImageFont.truetype('assets/Archivo-SemiBold.ttf', 21)
+# now-playing title on the show-art / AirPlay screens: the station name's Archivo (same
+# variable font + weight as EXTRALARGE_LIGHT), smaller; same fallbacks
+TITLE_FONT = load_font('Archivo', 21, weight=800)
 TITLE_FONTS = [TITLE_FONT] + OL_FONTS[1:]
 TITLE_BASELINE = TITLE_FONT.getmetrics()[0]
 
