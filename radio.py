@@ -690,6 +690,41 @@ def draw_angled_text(text, font, angle, image, coords, color):
 def calculate_text_cached(text, font_name, width, lines):
     return calculate_text(text, font_name, width, lines)
 
+def ellipsize(text, font, max_w):
+    """Cut text to fit max_w, ending in an ellipsis only when something was cut."""
+    text = text.strip()
+    if width(text, font) <= max_w:
+        return text
+    dots = '\u2026' if _has_glyph(font, '\u2026') else '...'
+    while text and width(text.rstrip(' ,-') + dots, font) > max_w:
+        text = text[:-1]
+    return text.rstrip(' ,-') + dots
+
+def wrap_text(text, font, max_w, max_lines):
+    """Greedy word wrap that measures words without trailing spaces and only
+    adds an ellipsis when words are actually left over after the last line.
+    Returns (lines, font); falls back to Noto for scripts Favorit lacks."""
+    text = ' '.join(text.split())
+    if text and bytes(font.getmask(text[0])) == bytes(font.getmask('\uffff')):
+        font = replace_font(font)
+    lines, cur = [], ''
+    words = text.split(' ')
+    for i, wd in enumerate(words):
+        trial = f'{cur} {wd}' if cur else wd
+        if width(trial, font) <= max_w:
+            cur = trial
+            continue
+        if cur:
+            lines.append(cur)
+        cur = wd
+        if len(lines) == max_lines - 1:
+            rest = ' '.join(words[i:])
+            lines.append(ellipsize(rest, font, max_w))
+            return lines, font
+    if cur:
+        lines.append(ellipsize(cur, font, max_w) if len(lines) == max_lines - 1 else cur)
+    return lines[:max_lines], font
+
 @lru_cache(maxsize=256)
 def _name_line_cached(name):
     line, font = calculate_text(name, EXTRALARGE_LIGHT, 350, 1)
@@ -1005,7 +1040,7 @@ def _draw_panel(draw, name, ox=0):
     else:
         label = f'in {city}' if city else ''
     max_w = SCREEN_WIDTH - PANEL_X - PAD
-    lines, f = calculate_text(label, SMALL_LIGHT, max_w, 2) if label else ([], SMALL_LIGHT)
+    lines, f = wrap_text(label, SMALL_LIGHT, max_w, 2) if label else ([], SMALL_LIGHT)
     # where tonight's show is coming from, when it isn't the station's home (NTS guests)
     guest = (info.get('location') or '').strip()
     if guest and city and guest.casefold() != city.casefold():
@@ -1564,11 +1599,17 @@ def _render_show_l2(name):
     w = SCREEN_WIDTH - SHOW_TEXT_X
     strip = _show_base.crop((SHOW_TEXT_X, SHOW_L2_Y, SCREEN_WIDTH, SHOW_L2_Y + SHOW_L2_H))
     parts = station_time_parts(name)
-    label = name + (f'  {parts[0]} {parts[1]}' if parts else '')
+    # time flush right, as far from the edge as the logo is from the left;
+    # a long station name gets an ellipsis before it
+    t = f'{parts[0]} {parts[1]}' if parts else ''
+    right = w - SHOW_PAD
+    tw = width(t, CLOCK_FONT) if t else 0
+    label = ellipsize(name, CLOCK_FONT, right - tw - (14 if t else 0))
     mask = Image.new('L', (w, SHOW_L2_H), 0)
-    ImageDraw.Draw(mask).text((0, 1), label, font=CLOCK_FONT, fill=255)
-    if width(label, CLOCK_FONT) > w - SHOW_PAD:
-        mask = _fade_mask_right(mask)
+    d = ImageDraw.Draw(mask)
+    d.text((0, 1), label, font=CLOCK_FONT, fill=255)
+    if t:
+        d.text((right - tw, 1), t, font=CLOCK_FONT, fill=255)
     strip.paste(SHOW_SUB, (0, 0, w, SHOW_L2_H), mask)
     return strip
 
