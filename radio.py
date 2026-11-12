@@ -104,7 +104,7 @@ RED = (255,71,71)
 # ---- theme: "dark" (default) or "light"; set "theme" in /var/lib/scud-radio/config.json ----
 THEMES = {
     'dark':  {'bg': BLACK,      'fg': WHITE, 'muted': (150, 150, 150), 'faint': (90, 90, 90),   'wedge_off': (45, 45, 45)},
-    'light': {'bg': DARK_WHITE, 'fg': BLACK, 'muted': (95, 95, 95),    'faint': (175, 175, 175), 'wedge_off': (215, 215, 215)},
+    'light': {'bg': WHITE,      'fg': BLACK, 'muted': (95, 95, 95),    'faint': (175, 175, 175), 'wedge_off': (215, 215, 215)},
 }
 
 def _startup_theme():
@@ -169,6 +169,11 @@ for _path, _size in [
         OL_FONTS.append(_f)
 OL_BASELINE = SMALL_LIGHT.getmetrics()[0]     # every run shares Favorit's baseline
 
+# now-playing title on the show-art / AirPlay screens: Archivo SemiBold, same fallbacks
+TITLE_FONT = ImageFont.truetype('assets/Archivo-SemiBold.ttf', 21)
+TITLE_FONTS = [TITLE_FONT] + OL_FONTS[1:]
+TITLE_BASELINE = TITLE_FONT.getmetrics()[0]
+
 _tofu_masks = {}
 _glyph_cache = {}
 def _has_glyph(font, ch):
@@ -189,11 +194,13 @@ def _has_glyph(font, ch):
     return hit
 
 @lru_cache(maxsize=512)
-def _runs(text):
-    """Split text into (chunk, font) runs, using the first font that has each glyph."""
+def _runs(text, title=False):
+    """Split text into (chunk, font) runs, using the first font that has each glyph.
+    title=True uses the Archivo title stack instead of Favorit."""
+    fonts = TITLE_FONTS if title else OL_FONTS
     runs = []
     for ch in text:
-        f = next((f for f in OL_FONTS if _has_glyph(f, ch)), OL_FONTS[0])
+        f = next((f for f in fonts if _has_glyph(f, ch)), fonts[0])
         if runs and runs[-1][1] is f:
             runs[-1][0] += ch
         else:
@@ -201,14 +208,14 @@ def _runs(text):
     return tuple((t, f) for t, f in runs)
 
 @lru_cache(maxsize=512)
-def text_width(text):
-    return round(sum(f.getlength(t) for t, f in _runs(text or '')))
+def text_width(text, title=False):
+    return round(sum(f.getlength(t) for t, f in _runs(text or '', title)))
 
-def draw_text_mixed(draw, xy, text, fill):
+def draw_text_mixed(draw, xy, text, fill, title=False):
     """Draw like draw.text(xy, text, font=SMALL_LIGHT) but with per-glyph fallback."""
     x, y = xy
-    by = y + OL_BASELINE
-    for t, f in _runs(text or ''):
+    by = y + (TITLE_BASELINE if title else OL_BASELINE)
+    for t, f in _runs(text or '', title):
         draw.text((x, by), t, font=f, fill=fill, anchor='ls')
         x += f.getlength(t)
 DIAL_FONT = load_font('Favorit', 14)
@@ -685,10 +692,11 @@ def _name_line_cached(name):
     return line[0], font
 
 start_x = 0
+PAD = 8                                      # left and top margin (the new shell shows the whole panel)
 logo_chunk_start = 35
-logo_chunk_start_x = 12 + start_x
+logo_chunk_start_x = PAD + start_x
 TILE = 120                                   # station logo tile size
-og_logo_position = (100, logo_chunk_start - 14 - 20)
+og_logo_position = (100, PAD)
 logo_position = og_logo_position
 #logo_position = (0, -100)
 
@@ -790,7 +798,7 @@ _vol_strip = Image.new('RGB', (SCREEN_WIDTH, VOL_STRIP_BOTTOM - VOL_STRIP_TOP), 
 AMB_BAR_Y        = 214                
 AMB_STRIP_TOP    = AMB_BAR_Y - 1
 AMB_STRIP_BOTTOM = AMB_BAR_Y + 25      
-AMB_TEXT_X       = 9                  
+AMB_TEXT_X       = PAD
 AMB_RULE_H       = 1                   
 _amb_strip = Image.new('RGB', (SCREEN_WIDTH, AMB_STRIP_BOTTOM - AMB_STRIP_TOP),
                        BLACK)
@@ -876,7 +884,7 @@ marquee_name = None
 seek_token = 0
 text_on_screen = None
 
-MARQUEE_X = 12 + start_x                      # name_chunk_start_x
+MARQUEE_X = PAD + start_x                     # name_chunk_start_x
 MARQUEE_GAP = 30                              # blank gap before the text repeats
 
 FADE_W = 28
@@ -913,14 +921,36 @@ CLOCK_STRIP_TOP = VOL_STRIP_TOP
 CLOCK_STRIP_BOTTOM = SCREEN_HEIGHT
 _clock_strip = Image.new('RGB', (SCREEN_WIDTH, CLOCK_STRIP_BOTTOM - CLOCK_STRIP_TOP), BLACK)
 
-def station_time(name):
-    tz = (streams.get(name) or {}).get('timezone')
+WORLD_PLACES = {'world', 'worldwide', 'global', 'everywhere', 'earth', 'online', 'internet'}
+
+def _station_city(info):
+    return (info.get('homeLocation') or info.get('location') or '').strip()
+
+def is_world(info):
+    """Stations that broadcast from 'World' and have no zone of their own run on UTC."""
+    return not info.get('timezone') and _station_city(info).casefold() in WORLD_PLACES
+
+def clock_now(name):
+    """What the station clocks show: the station's local time (default), or the
+    listener's own time when the portal's Clock setting is 'local'."""
+    if setting('clock') == 'local':
+        tz = setting('timezone')
+        try:
+            return datetime.now(pytz.timezone(tz)) if tz else datetime.now(user_tz)
+        except Exception:
+            return datetime.now(user_tz)
+    info = streams.get(name) or {}
+    tz = info.get('timezone') or ('UTC' if is_world(info) else None)
     if not tz:
-        return ''
+        return None
     try:
-        return datetime.now(pytz.timezone(tz)).strftime('%I:%M%p').lstrip('0').lower()
+        return datetime.now(pytz.timezone(tz))
     except Exception:
-        return ''
+        return None
+
+def station_time(name):
+    now = clock_now(name)
+    return now.strftime('%I:%M%p').lstrip('0').lower() if now else ''
 
 def _draw_clock_row(draw, name, origin_y=0):
     """Live = yellow square, Re-Run = yellow outline square, anything else = grey square."""
@@ -943,21 +973,17 @@ def _draw_clock_row(draw, name, origin_y=0):
     draw.text((MARQUEE_X + 17, y), info.get('homeLocation') or info.get('location') or '', font=CLOCK_FONT, fill=SECONDARY_COLOR)
     t = station_time(name)
     if t:
-        draw.text((SCREEN_WIDTH - 10 - width(t, CLOCK_FONT), y), t, font=CLOCK_FONT, fill=MUTED_COLOR)
+        draw.text((SCREEN_WIDTH - PAD - width(t, CLOCK_FONT), y), t, font=CLOCK_FONT, fill=MUTED_COLOR)
 
-SETTLED_LOGO_POS = (12, og_logo_position[1])
+SETTLED_LOGO_POS = (PAD, og_logo_position[1])
 PANEL_X = SETTLED_LOGO_POS[0] + TILE + 16
 PANEL_BOTTOM = og_logo_position[1] + TILE + 4
 _panel = Image.new('RGB', (SCREEN_WIDTH - PANEL_X, PANEL_BOTTOM), BLACK)
 _status_strip = Image.new('RGB', (SCREEN_WIDTH, SCREEN_HEIGHT - CLOCK_STRIP_TOP), BLACK)
 
 def station_time_parts(name):
-    tz = (streams.get(name) or {}).get('timezone')
-    if not tz:
-        return None
-    try:
-        now = datetime.now(pytz.timezone(tz))
-    except Exception:
+    now = clock_now(name)
+    if now is None:
         return None
     return now.strftime('%I:%M').lstrip('0'), now.strftime('%p').lower()
 
@@ -966,11 +992,16 @@ def _draw_panel(draw, name, ox=0):
     when a show comes from somewhere else; the whole block is
     vertically centred against the logo, so one- and two-line cities both sit right."""
     info = streams.get(name) or {}
-    city = (info.get('homeLocation') or info.get('location') or '').strip()
+    city = _station_city(info)
     parts = station_time_parts(name)
-    label = (f'in {city}' if city else '') if parts else city
-    max_w = SCREEN_WIDTH - PANEL_X - 8
-    lines, f = calculate_text(label, CLOCK_FONT, max_w, 2) if label else ([], CLOCK_FONT)
+    if not parts or setting('clock') == 'local':
+        label = city                     # your own time: just say where the station is
+    elif is_world(info):
+        label = 'UTC'
+    else:
+        label = f'in {city}' if city else ''
+    max_w = SCREEN_WIDTH - PANEL_X - PAD
+    lines, f = calculate_text(label, SMALL_LIGHT, max_w, 2) if label else ([], SMALL_LIGHT)
     # where tonight's show is coming from, when it isn't the station's home (NTS guests)
     guest = (info.get('location') or '').strip()
     if guest and city and guest.casefold() != city.casefold():
@@ -999,10 +1030,10 @@ def _draw_panel(draw, name, ox=0):
     x = PANEL_X - ox
     if parts:
         draw.text((x, y0), hm, font=TIME_FONT, fill=SECONDARY_COLOR)
-        draw.text((x + width(hm, TIME_FONT) + 5, y0 + baseline), ap, font=CLOCK_FONT,
+        draw.text((x + width(hm, TIME_FONT) + 5, y0 + baseline), ap, font=SMALL_LIGHT,
                   fill=SECONDARY_COLOR, anchor='ls')
     for i, ln in enumerate(lines):
-        draw.text((x, y0 + city_y + i * line_h), ln.strip(), font=f, fill=MUTED_COLOR)
+        draw.text((x, y0 + city_y + i * line_h), ln.strip(), font=f, fill=SECONDARY_COLOR)
 
 def push_panel(name):
     """Redraw just the time panel (the minute ticked over)."""
@@ -1021,9 +1052,9 @@ def render_status_strip(name):
     d.rectangle([0, 0, SCREEN_WIDTH, _status_strip.height], fill=BG_COLOR)
     info = streams.get(name) or {}
     status = info.get('status') or 'Offline'
-    y = CLOCK_Y - CLOCK_STRIP_TOP
-    cy = y + height('Sg', CLOCK_FONT) // 2 + 2
-    cx, r = MARQUEE_X + 5, 4          # 9 px square: same visual weight as the old 11 px dot
+    y = CLOCK_Y - CLOCK_STRIP_TOP - 2
+    cy = y + height('Sg', SMALL_LIGHT) // 2 + 2
+    cx, r = MARQUEE_X + 4, 4          # 9 px square: same visual weight as the old 11 px dot
     edge = None if BG_COLOR == BLACK else (60, 60, 60)
     tstate = tuning['state'] if tuning['name'] == name else None
     if tstate:
@@ -1034,7 +1065,7 @@ def render_status_strip(name):
         else:
             dot, label = STATUS_OFF_COLOR, "Station isn't answering"
         d.rectangle([cx - r, cy - r, cx + r, cy + r], fill=dot, outline=edge, width=1)
-        d.text((MARQUEE_X + 17, y - 1), label, font=CLOCK_FONT, fill=MUTED_COLOR)
+        d.text((MARQUEE_X + 17, y - 1), label, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
         return _status_strip
     if status == 'Live':
         d.rectangle([cx - r, cy - r, cx + r, cy + r], fill=LIVE_COLOR, outline=edge, width=1)
@@ -1045,12 +1076,12 @@ def render_status_strip(name):
     else:
         d.rectangle([cx - r, cy - r, cx + r, cy + r], fill=STATUS_OFF_COLOR)
     x = MARQUEE_X + 17
-    d.text((x, y - 1), status, font=CLOCK_FONT, fill=SECONDARY_COLOR)
+    d.text((x, y - 1), status, font=SMALL_LIGHT, fill=SECONDARY_COLOR)
     genres = ' · '.join(info.get('genres') or [])
     if genres:
-        gx = x + width(status, CLOCK_FONT) + 10
-        d.text((gx, y - 1), genres, font=CLOCK_FONT, fill=MUTED_COLOR)
-        if gx + width(genres, CLOCK_FONT) > SCREEN_WIDTH:
+        gx = x + width(status, SMALL_LIGHT) + 12
+        d.text((gx, y - 1), genres, font=SMALL_LIGHT, fill=MUTED_COLOR)
+        if gx + width(genres, SMALL_LIGHT) > SCREEN_WIDTH:
             _fade_right(_status_strip, 0, _status_strip.height)
     return _status_strip
 
@@ -1317,7 +1348,7 @@ def display_scroll(name, silent=False):
 
         # draw name and underline
         name_chunk_start = NAME_Y
-        name_chunk_start_x = 12 + start_x
+        name_chunk_start_x = PAD + start_x
         name_font = EXTRALARGE_LIGHT
 
         name_font, name_w = _name_metrics(name)
@@ -1378,12 +1409,12 @@ def _mode_color(img):
 # cover-crop to 320x240 here, and skip images that would look bad.
 SHOW_ART_ON = get_config().get('show_art', True)   # portal setting; kept current by apply_settings
 SHOW_LOGO = 48
-SHOW_PAD = 12
+SHOW_PAD = PAD
 SHOW_TEXT_X = SHOW_PAD + SHOW_LOGO + 12
 SHOW_L1_Y, SHOW_L1_H = SCREEN_HEIGHT - SHOW_PAD - SHOW_LOGO - 3, 26   # now-playing line
 SHOW_L2_Y, SHOW_L2_H = SHOW_L1_Y + SHOW_L1_H, 24                      # station + local time
 SHOW_GRAD_TOP = 100
-SHOW_SUB = (205, 205, 205)
+SHOW_SUB = WHITE
 ART_CACHE_MAX = 12
 
 art_lock = threading.Lock()
@@ -1494,8 +1525,8 @@ def text_mask_tile(text, height):
     key = (text, height)
     tile = _mask_tile_cache.get(key)
     if tile is None:
-        tile = Image.new('L', (max(1, text_width(text) + MARQUEE_GAP), height), 0)
-        draw_text_mixed(ImageDraw.Draw(tile), (0, 0), text, 255)
+        tile = Image.new('L', (max(1, text_width(text, True) + MARQUEE_GAP), height), 0)
+        draw_text_mixed(ImageDraw.Draw(tile), (0, 0), text, 255, title=True)
         if len(_mask_tile_cache) > 32:
             _mask_tile_cache.clear()
         _mask_tile_cache[key] = tile
@@ -1519,7 +1550,7 @@ def _render_show_l1(text, offset=None):
         while x < w:
             mask.paste(tile, (int(x), 0))
             x += tile.width
-    if offset is not None or text_width(text) > w - SHOW_PAD:
+    if offset is not None or text_width(text, True) > w - SHOW_PAD:
         mask = _fade_mask_right(mask)
     strip.paste(WHITE, (0, 0, w, SHOW_L1_H), mask)
     return strip
@@ -1529,7 +1560,7 @@ def _render_show_l2(name):
     w = SCREEN_WIDTH - SHOW_TEXT_X
     strip = _show_base.crop((SHOW_TEXT_X, SHOW_L2_Y, SCREEN_WIDTH, SHOW_L2_Y + SHOW_L2_H))
     parts = station_time_parts(name)
-    label = name + (f' · {parts[0]} {parts[1]}' if parts else '')
+    label = name + (f'  {parts[0]} {parts[1]}' if parts else '')
     mask = Image.new('L', (w, SHOW_L2_H), 0)
     ImageDraw.Draw(mask).text((0, 1), label, font=CLOCK_FONT, fill=255)
     if width(label, CLOCK_FONT) > w - SHOW_PAD:
@@ -1977,7 +2008,7 @@ def airplay_tick(now):
         return 0.05
     if airplay_vol_until:
         return 0.1
-    w = text_width(_airplay_t1)
+    w = text_width(_airplay_t1, True)
     if w > SCREEN_WIDTH - SHOW_TEXT_X - SHOW_PAD:
         _, off = _joint_offsets(0, w + MARQUEE_GAP, False, True, now, airplay_mq)
         _push_window(_render_show_l1(_airplay_t1, off), SHOW_TEXT_X, SHOW_L1_Y)
@@ -2009,6 +2040,7 @@ SETTING_DEFAULTS = {
     'airplay_resume': False,       # back to the radio when AirPlay stops
     'device_name': 'Otis',         # AirPlay name + portal header
     'timezone': None,              # the listener's IANA zone, sent by the portal
+    'clock': 'station',            # station | local: whose time the station clocks show
 }
 _SETTING_TYPES = {k: type(v) for k, v in SETTING_DEFAULTS.items() if v is not None}
 
@@ -2130,6 +2162,13 @@ def apply_settings(old, new):
         apply_backlight(force=True)
     if 'show_art' in changed:
         SHOW_ART_ON = bool(new['show_art'])
+    if changed & {'clock', 'timezone'}:
+        scroll_cache_dict.clear()                # cached screens have the old clock baked in
+        try:
+            if stream and screen_on and not sleeping:
+                display_current()
+        except Exception:
+            logging.error('clock redraw: %s', traceback.format_exc())
     if 'volume_limit' in changed:
         VOL_CAP = max(1, min(15, int(new['volume_limit']))) * volume_step
         if current_volume > VOL_CAP:
@@ -2171,6 +2210,8 @@ def update_settings(patch):
         clean[k] = v
     if 'theme' in clean and clean['theme'] not in ('dark', 'light', 'auto'):
         del clean['theme']
+    if 'clock' in clean and clean['clock'] not in ('station', 'local'):
+        del clean['clock']
     if 'start_volume' in clean and clean['start_volume'] not in ('last', 'quiet', 'fixed'):
         del clean['start_volume']
     if 'timezone' in clean and clean['timezone']:
@@ -3499,7 +3540,7 @@ try:
                     if have != ambient_art_url:
                         display_ambient(ambient_name)
                 amb_text = _ol_text(amb_info) if amb_info else ''
-                amb_w = text_width(amb_text)
+                amb_w = text_width(amb_text, ambient_show)
                 amb_long = amb_w > _amb_avail_w()
                 needs_scroll = amb_long
  

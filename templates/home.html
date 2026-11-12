@@ -367,7 +367,7 @@ text-transform: uppercase;}
             <div class="text"><div class="title">Theme</div><div class="hint">Auto is light from 7am to 7pm.</div></div>
             <div class="ctl seg" role="radiogroup" aria-label="Theme" id="themes">
               <button role="radio" data-v="dark"><span class="sw" style="background:#0B0B0B"></span>Dark</button>
-              <button role="radio" data-v="light"><span class="sw" style="background:#F4F4F4"></span>Light</button>
+              <button role="radio" data-v="light"><span class="sw" style="background:#FFFFFF"></span>Light</button>
               <button role="radio" data-v="auto"><span class="sw" style="background:linear-gradient(90deg,#F4F4F4 50%,#0B0B0B 50%)"></span>Auto</button>
             </div>
           </div>
@@ -810,6 +810,7 @@ text-transform: uppercase;}
   switchRow($('station-toggles'), 'Surprise me from favorites only', 'The knob press and the remote both use it.', 'surprise_favorites');
   segRow($('screen-rows'), 'Ambient after', 'The big logo view, when nobody\u2019s touching it.', 'ambient_after', [[30, '30 s'], [60, '1 min'], [300, '5 min'], [0, 'Never']]);
   segRow($('screen-rows'), 'Screen off after', 'The radio keeps playing.', 'screen_off_after', [[600, '10 min'], [1800, '30 min'], [3600, '1 hr'], [0, 'Never']]);
+  segRow($('screen-rows'), 'Clock', 'Station time shows the hour where the station is. World stations use UTC.', 'clock', [['station', 'Station time'], ['local', 'My time']]);
   segRow($('sound-rows'), 'Volume when Otis wakes', 'After the switch or a restart. Quiet is 3 notches.', 'start_volume', [['last', 'Last used'], ['quiet', 'Quiet'], ['fixed', 'Fixed']]);
   segRow($('sound-rows'), 'Sleep timer', 'Fades out and turns off screen. Touch a knob to wake.', '_sleep', [[0, 'Off'], [15, '15 min'], [30, '30 min'], [60, '1 hr']]);
 
@@ -1012,7 +1013,7 @@ text-transform: uppercase;}
         c.append(top, bar); r.append(img, c); left.append(r);
       });
       const right = el('div');
-      const head = el('div'); head.style.cssText = 'display:flex;justify-content:space-between;align-items:baseline'; head.append(el('div', 'h2', 'When you listen'), el('div', 'hint', 'your local time'));
+      const head = el('div'); head.style.cssText = 'display:flex;justify-content:space-between;align-items:baseline'; head.append(el('div', 'h2', 'Listening time'));
       const hrs = el('div', 'hours'); hrs.setAttribute('role', 'img');
       const hmax = Math.max(1, ...s.by_hour);
       const peak = s.by_hour.indexOf(hmax);
@@ -1033,7 +1034,7 @@ text-transform: uppercase;}
       cols.append(left, right); wrap.append(cols);
 
       const where = el('div'); where.style.cssText = 'display:flex;flex-direction:column;gap:10px';
-      where.append(el('div', 'h2', 'Where it came from'));
+      where.append(el('div', 'h2', 'Top tags'));
       const cities = el('div'); cities.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px';
       s.cities.forEach((c) => { const t = el('span', 'tag city', c.city + ' '); t.append(el('span', null, fmtH(c.hours))); cities.append(t); });
       const genres = el('div'); genres.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px';
