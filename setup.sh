@@ -50,7 +50,7 @@ fi
 if [ -z "$SUFFIX" ]; then
   SUFFIX="$(grep -m1 Serial /proc/cpuinfo | awk '{print $3}' | tail -c 5)"
 fi
-HOSTNAME="radio-${SUFFIX}"
+HOSTNAME="otis" #"radio-${SUFFIX}"
 echo "Preparing unit: hostname will be ${HOSTNAME}.local"
 echo "Audio: ${DAC} (${DAC_OVERLAY})"
 
