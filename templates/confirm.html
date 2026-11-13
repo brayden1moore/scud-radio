@@ -2,7 +2,7 @@
 {% block content %}
   <div>
     <h1>{{ ssid or 'Your network' }}</h1>
-    <p class="hint">{% if encrypted %}Enter the Wi-Fi password.{% else %}This network is open, no password needed.{% endif %}</p>
+    <p class="hint">{% if encrypted %}Password{% else %}Open network{% endif %}</p>
   </div>
   <form action="/connect" method="POST" autocomplete="off">
     <input type="hidden" name="ssid" value="{{ ssid_encoded }}">

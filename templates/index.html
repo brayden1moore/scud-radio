@@ -1,7 +1,7 @@
 {% extends "setup_base.html" %}
 {% block content %}
   <div>
-    <h1>Select your Wi-Fi network</h1>
+    <h1>Select your wifi network</h1>
   </div>
   <div class="list">
     {% for point in points %}
@@ -12,7 +12,7 @@
         {% endif %}
       </a>
     {% else %}
-      <div class="empty">No networks found yet. Pull down or reload to look again.</div>
+      <div class="empty">No networks found yet. Pull down or reload to check again.</div>
     {% endfor %}
   </div>
   <a class="btn quiet" href="/">Scan again</a>
