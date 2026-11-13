@@ -24,7 +24,7 @@ html {
  * Remove the margin in all browsers. Assign font.
  */
 body {
-  background-color: #ffffff;
+  background-color: #000000;
   font-family: 'Archivo Light';
   letter-spacing: -0.05em;
   margin: 0;
@@ -1183,6 +1183,7 @@ button.uk-icon:not(:disabled) {
   /*animation: rotate 6s linear infinite;*/
   height: 100px;
   margin-top: 50px;
+  filter: invert();
 }
 @keyframes rotate{
             0% {
@@ -2058,15 +2059,15 @@ select.uk-form-width-xsmall {
  * Primary
  */
 .uk-button-primary {
-  background-color: #FFFF00;
-  color: #000;
+  background-color: rgb(20,20,20);
+  color: #ffffff;
   border: 1px solid black;
 }
 /* Hover + Focus */
 .uk-button-primary:hover,
 .uk-button-primary:focus {
-  background-color: #000000;
-  color: #fff;
+  background-color: #FFFF00;
+  color: #000;
 }
 /* OnClick + Active */
 .uk-button-primary:active,
