@@ -149,7 +149,7 @@ Wants=NetworkManager.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/home/scud/scud-radio/net-controller.sh boot
+ExecStart=/bin/bash /home/scud/scud-radio/net-controller.sh boot
 SuccessExitStatus=0 1
 
 [Install]

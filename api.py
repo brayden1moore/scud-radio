@@ -10,7 +10,7 @@ ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
 PORTAL_STATIC = os.path.join(BASE_DIR, 'portal-static')   # css/, js/, img/ for the setup portal
 PORTAL_IP = "192.168.4.1"
 AP_CON = "scud-ap"
-CONTROLLER = os.path.join(BASE_DIR, 'net-controller.sh')
+CONTROLLER = os.path.join(BASE_DIR, 'net-controller.sh')   # always run via /bin/bash: works even if git drops the +x bit
 # ---------------------
 
 app = Flask(__name__,
@@ -125,7 +125,7 @@ def connect():
                        capture_output=True, text=True)
 
     # Hand control to the single brain to verify + start radio, or fall back to AP.
-    subprocess.Popen([CONTROLLER, "retry"])
+    subprocess.Popen(['/bin/bash', CONTROLLER, "retry"])
 
     # Show the "attempting to connect" page (it meta-refreshes back to / after 8s).
     return render_template('connect.html', ssid=ssid)
@@ -362,7 +362,7 @@ def _join(ssid, password):
         _run(['nmcli', 'connection', 'delete', 'id', ssid])
     restored = bool(old) and _run(['nmcli', '--wait', '15', 'connection', 'up', 'id', old], timeout=25)[0] == 0
     if not restored:
-        subprocess.Popen([CONTROLLER, 'retry'])
+        subprocess.Popen(['/bin/bash', CONTROLLER, 'retry'])
     _wifi_job.update(state='failed', message='Couldn’t join ' + ssid + '. Check the password and try again.')
 
 
@@ -387,7 +387,7 @@ def api_wifi_forget():
     def go():
         time.sleep(1)                      # let this response reach the phone first
         _run(['nmcli', 'connection', 'delete', 'id', active[0]])
-        subprocess.Popen([CONTROLLER, 'retry'])
+        subprocess.Popen(['/bin/bash', CONTROLLER, 'retry'])
     threading.Thread(target=go, daemon=True).start()
     return jsonify({'status': 'ok'})
 
@@ -464,7 +464,7 @@ def api_device_setup():
         time.sleep(1)
         for name in _wifi_profiles():
             _run(['nmcli', 'connection', 'delete', 'id', name])
-        subprocess.Popen([CONTROLLER, 'portal'])
+        subprocess.Popen(['/bin/bash', CONTROLLER, 'portal'])
     threading.Thread(target=go, daemon=True).start()
     return jsonify({'status': 'ok'})
 
