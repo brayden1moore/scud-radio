@@ -1,32 +1,8 @@
-<!DOCTYPE html>
-<html lang="en" class="uk-height-1-1">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="refresh" content="8;/"/>
-    <title>Otis Setup</title>
-    <link rel="icon" href="/static/img/favicon.ico">
-    <!-- CSS FILES -->
-    <link rel="stylesheet" type="text/css" href="/static/css/uikit.css">
-</head>
-<body class="uk-height-1-1">
-<div class="uk-flex uk-flex-center uk-flex-middle">
-    <div class="uk-position-bottom-center uk-position-small">
-    </div>
-    <div class="uk-width-large uk-padding-small">
-        <div class="uk-width-1-1 uk-text-center">
-            <img id="ears-logo" src="/static/css/logo.png">
-        </div>
-
-        <div class="uk-margin">
-            <div class="uk-width-1-1 uk-text-center">
-                <p>
-                    Attempting to connect to {{ ssid }}.<br>
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- JS FILES -->
-<script src="/static/js/uikit.js"></script>
+{% extends "setup_base.html" %}
+{% block head %}<meta http-equiv="refresh" content="8;/">{% endblock %}
+{% block content %}
+  <div>
+    <h1 class="dots">Connecting to {{ ssid }}</h1>
+    <p class="hint">Otis will show it on its screen once it's online. If the password was wrong, the Otis-Setup network comes back and you can try again.</p>
+  </div>
+{% endblock %}

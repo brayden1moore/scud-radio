@@ -103,7 +103,9 @@ def home():
 @app.route('/confirm', methods=['GET'])
 def confirm():
     ssid_encoded = request.args.get('ssid', '')
-    return render_template('confirm.html', ssid_encoded=ssid_encoded)
+    return render_template('confirm.html', ssid_encoded=ssid_encoded,
+                           ssid=urllib.parse.unquote(ssid_encoded),
+                           encrypted=request.args.get('encrypted', 'encrypted') == 'encrypted')
 
 
 # ---------- portal: page 3, perform connection ----------

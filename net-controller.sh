@@ -59,6 +59,9 @@ ap_up() {
       802-11-wireless.mode ap 802-11-wireless.band bg \
       ipv4.method shared ipv4.addresses "$AP_ADDR"
   fi
+  # Units set up before the rename still have the old profile ("Scud House"),
+  # and the add above only runs when it's missing, so set the name every time.
+  nmcli connection modify "$AP_CON" 802-11-wireless.ssid "$AP_SSID" 2>/dev/null || true
   nmcli connection up "$AP_CON"
   redirect_up
   systemctl start launcher.service    # Welcome screen with join instructions

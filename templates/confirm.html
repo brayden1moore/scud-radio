@@ -1,39 +1,36 @@
-<!DOCTYPE html>
-<html lang="en" class="uk-height-1-1">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Otis Setup</title>
-    <link rel="icon" href="/static/img/favicon.ico">
-    <!-- CSS FILES -->
-    <link rel="stylesheet" type="text/css" href="/static/css/uikit.css">
-    <script src="/static/js/blink.js"></script>
-</head>
-<body class="uk-height-1-1">
-<div class="uk-flex uk-flex-center uk-flex-middle">
-
-    <div class="uk-width-large uk-padding-small">
-        <div class="uk-width-1-1 uk-text-center">
-            <img id="ears-logo" src="/static/css/logo.png">
-        </div>
-
-        <div class="uk-margin">
-            <form action="/connect" method="POST">
-                <div class="uk-grid uk-grid-small">
-                    <div class="uk-width-2-3">
-                        <input type="hidden" name="ssid" value="{{ ssid_encoded }}">
-                        <input class="uk-input" placeholder="Password" type="password" name="password">
-                    </div>
-                    <div class="uk-width-1-3">
-                        <button type="submit" value="Connect" class="uk-button uk-button-primary uk-width-expand ">Connect</button>
-                    </div>
-                </div>
-            </form>
-            <div class="uk-margin"></div>
-        </div>
-	    </div>
+{% extends "setup_base.html" %}
+{% block content %}
+  <div>
+    <h1>{{ ssid or 'Your network' }}</h1>
+    <p class="hint">{% if encrypted %}Enter the Wi-Fi password.{% else %}This network is open, no password needed.{% endif %}</p>
+  </div>
+  <form action="/connect" method="POST" autocomplete="off">
+    <input type="hidden" name="ssid" value="{{ ssid_encoded }}">
+    {% if encrypted %}
+    <div class="field">
+      {# A plain text field drawn as dots: type="password" makes iOS offer a new
+         "strong password", which is never right for joining an existing network. #}
+      <input id="pw" class="masked" type="text" name="password" placeholder="Password"
+             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+             data-lpignore="true" data-1p-ignore aria-label="Wi-Fi password" autofocus>
+      <button class="btn quiet" type="button" id="show" aria-pressed="false">Show</button>
     </div>
-</div>
-
-<!-- JS FILES -->
-<script src="/static/js/uikit.js"></script>
+    {% endif %}
+    <div class="row" style="margin-top:6px">
+      <a class="btn quiet" href="/">Back</a>
+      <button class="btn" type="submit">Connect</button>
+    </div>
+  </form>
+  <script>
+    (function () {
+      var b = document.getElementById('show'), pw = document.getElementById('pw');
+      if (!b || !pw) return;
+      b.onclick = function () {
+        var on = pw.classList.toggle('masked');
+        b.textContent = on ? 'Show' : 'Hide';
+        b.setAttribute('aria-pressed', String(!on));
+        pw.focus();
+      };
+    })();
+  </script>
+{% endblock %}

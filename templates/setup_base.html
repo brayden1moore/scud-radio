@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% block head %}{% endblock %}
+<title>Otis Setup</title>
+<link rel="icon" type="image/png" href="/assets/favicon/favicon-96x96.png" sizes="96x96">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
+<style>
+/* Setup portal: same black-main look as the Otis remote (home.html). Self-contained: no network, no UIkit. */
+@font-face { font-family: 'Favorit Mono'; src: url('/assets/Favorit/ABCFavoritMono-Light.otf') format('opentype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Archivo'; src: url('/assets/Archivo/Archivo-VariableFont_wdth,wght.ttf') format('truetype'); font-weight: 100 900; font-display: swap; }
+:root {
+  color-scheme: dark;
+  --ink: #fff; --paper: #141414; --surface: #000; --line: #262626; --muted: #9A9A9A;
+  --yellow: #FFFF00; --on-accent: #000;
+  --mono: 'Favorit Mono', ui-monospace, Menlo, monospace;
+  --sans: 'Archivo', system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--surface); color: var(--ink); }
+body { font-family: var(--mono); font-size: 16px; letter-spacing: -0.05em; -webkit-text-size-adjust: 100%; }
+button, input { font: inherit; color: inherit; letter-spacing: inherit; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.page { max-width: 480px; margin: 0 auto; padding: 32px 16px 64px; display: flex; flex-direction: column; gap: 24px; }
+.logo { display: block; align-self: flex-start; height: 48px; width: auto; filter: invert(1); }   /* black line art -> white */
+h1 { margin: 0; font-family: var(--sans); font-weight: 800; font-size: 28px; letter-spacing: -0.03em; line-height: 1.1; }
+.hint { margin: 0; font-size: 14px; color: var(--muted); }
+.list { display: flex; flex-direction: column; gap: 6px; }
+.net { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 16px; background: var(--paper); color: var(--ink); text-decoration: none; font-size: 16px; }
+.net .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.net svg { flex: 0 0 auto; color: var(--muted); }
+@media (hover: hover) { .net:hover { background: var(--yellow); color: var(--on-accent); } .net:hover svg { color: var(--on-accent); } }
+.net:active { background: var(--yellow); color: var(--on-accent); }
+.empty { padding: 16px; background: var(--paper); color: var(--muted); font-size: 14px; }
+.btn { min-height: 52px; padding: 0 16px; border: 0; background: var(--yellow); color: var(--on-accent); font-family: var(--mono); font-size: 15px; text-transform: uppercase; cursor: pointer; }
+.btn.quiet { background: var(--paper); color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+.field { display: flex; gap: 6px; }
+.field input { flex: 1; min-width: 0; min-height: 52px; padding: 0 14px; border: 0; background: var(--paper); font-size: 18px; outline-offset: -2px; }
+.field input.masked { -webkit-text-security: disc; }
+.row { display: flex; gap: 6px; }
+.row > * { flex: 1; }
+.dots::after { content: ''; animation: dots 1.6s steps(4, end) infinite; }
+@keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+</style>
+</head>
+<body>
+<main class="page">
+  <img class="logo" src="/assets/otis.png" alt="Otis">
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>
