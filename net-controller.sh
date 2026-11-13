@@ -1,12 +1,12 @@
 #!/bin/bash
-# net-controller.sh — the single owner of all Wi-Fi connection decisions.
+# net-controller.sh — the single owner of all wifi connection decisions.
 #
 # Usage:
 #   net-controller.sh boot    (run once at startup by net-controller.service)
 #   net-controller.sh retry   (run by api.py after a user submits credentials)
 #   net-controller.sh portal  (force setup portal; bench + "re-enter setup")
 #
-# Design: this is the ONLY thing that connects Wi-Fi. NM autoconnect is disabled
+# Design: this is the ONLY thing that connects wifi. NM autoconnect is disabled
 # PER-PROFILE (see disable_autoconnect below) so NM never races us by bringing a
 # saved network up on its own at boot. Because we only ever call `connection up`
 # on networks confirmed present in a completed scan, an out-of-range saved
@@ -93,7 +93,7 @@ scan_visible() {
 
 # ---- connect to the strongest IN-RANGE known network ----
 connect_known() {
-  # Saved Wi-Fi profiles, excluding our own AP.
+  # Saved wifi profiles, excluding our own AP.
   mapfile -t saved < <(nmcli -t -f NAME,TYPE connection show \
     | awk -F: '$2=="802-11-wireless"{print $1}' \
     | grep -vx "$AP_CON")

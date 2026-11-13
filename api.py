@@ -181,7 +181,7 @@ def control(command):
 # =============================================================================
 # Portal API (templates/home.html). JSON in, JSON out.
 # Talks to radio.py over its control socket, reads the listening log, and runs
-# nmcli / git / systemctl for the Wi-Fi and Device pages. api.py runs as root.
+# nmcli / git / systemctl for the Wifi and Device pages. api.py runs as root.
 # =============================================================================
 import json
 import socket
@@ -295,7 +295,7 @@ def api_settings():
     return radio_or_503('set_settings', request.get_json(silent=True) or {})
 
 
-# ---------- Wi-Fi ----------
+# ---------- Wifi ----------
 _wifi_job = {'state': 'idle', 'ssid': None, 'message': ''}
 
 
@@ -471,7 +471,7 @@ def api_device_setup():
 
 @app.route('/api/device/reset', methods=['POST'])
 def api_device_reset():
-    """Favorites, hidden stations, settings and listening history. Wi-Fi stays."""
+    """Favorites, hidden stations, settings, and listening history."""
     for f in ('config.json', 'favorites.txt', 'hidden.txt', 'listening.db', 'listening.db-wal', 'listening.db-shm'):
         try:
             (LIB_PATH / f).unlink()

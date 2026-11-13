@@ -61,7 +61,7 @@ nav.menu button:hover { background-color: var(--yellow); color: var(--on-accent)
   nav.menu button:hover { color: var(--on-accent); }
   nav.menu button:hover .n { color: var(--on-accent); }
 }
-/* "Scanning..." while Wi-Fi / health load */
+/* "Scanning..." while wifi / health load */
 .loading .title::after { content: ''; display: inline-block; width: 8px; height: 8px; margin-left: 8px; background: var(--yellow); outline: 1px solid var(--ink); animation: blink 0.9s steps(2, start) infinite; }
 @keyframes blink { to { visibility: hidden; } }
 nav.menu button .n { font-size: 12px; color: var(--muted); }
@@ -403,8 +403,8 @@ text-transform: uppercase;}
         <div class="card" id="sound-rows"></div>
       </section>
 
-      <!-- WI-FI -->
-      <section id="wifi" class="narrow" aria-label="Wi-Fi" hidden>
+      <!-- Wifi -->
+      <section id="wifi" class="narrow" aria-label="Wifi" hidden>
         <div class="group">
           <div class="card">
             <div class="row">
@@ -443,9 +443,9 @@ text-transform: uppercase;}
           <div class="card" id="health"></div>
         </div>
         <div class="card">
-          <div class="row"><div class="text"><div class="title">Restart Otis</div><div class="hint">Restarts the radio. Takes about 5 seconds.</div></div><div class="ctl"><button class="btn" id="d-restart">Restart</button></div></div>
-          <div class="row"><div class="text"><div class="title">Set up Wi-Fi again</div><div class="hint">Forgets every network and brings back "Otis-Setup".</div></div><div class="ctl"><button class="btn" id="d-setup">Start setup</button></div></div>
-          <div class="row"><div class="text"><div class="title">Reset everything</div><div class="hint">Resets favorites, hidden stations, settings, and listening history. Remembers Wi-Fi.</div></div><div class="ctl"><button class="btn danger" id="d-reset">Reset</button></div></div>
+          <div class="row"><div class="text"><div class="title">Restart Otis</div><div class="hint">Restart the radio. This takes about 5 seconds.</div></div><div class="ctl"><button class="btn" id="d-restart">Restart</button></div></div>
+          <div class="row"><div class="text"><div class="title">Set up wifi again</div><div class="hint">Forget every network and bring back "Otis-Setup".</div></div><div class="ctl"><button class="btn" id="d-setup">Start setup</button></div></div>
+          <div class="row"><div class="text"><div class="title">Reset everything</div><div class="hint">Reset favorites, hidden stations, settings, and listening history.</div></div><div class="ctl"><button class="btn danger" id="d-reset">Reset</button></div></div>
         </div>
       </section>
 
@@ -510,7 +510,7 @@ text-transform: uppercase;}
   const control = (cmd, value) => api('/api/control', value === undefined ? { cmd } : { cmd, value });
 
   /* ---------- menu ---------- */
-  const SECTIONS = [['remote', 'Remote'], ['stations', 'Stations'], ['screen', 'Screen'], ['sound', 'Sound'], ['wifi', 'Wi-Fi'], ['device', 'Device'], ['listening', 'Listening']];
+  const SECTIONS = [['remote', 'Remote'], ['stations', 'Stations'], ['screen', 'Screen'], ['sound', 'Sound'], ['wifi', 'Wifi'], ['device', 'Device'], ['listening', 'Listening']];
   SECTIONS.forEach(([id, label], i) => {
     const b = el('button'); b.dataset.s = id;
     b.textContent = label;
@@ -874,7 +874,7 @@ text-transform: uppercase;}
   $('dname').onchange = saveName;
   $('dname').onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); $('dname').blur(); } };
 
-  /* ---------- wi-fi ---------- */
+  /* ---------- wifi ---------- */
   const signalWord = (s) => s >= 70 ? 'Strong' : s >= 45 ? 'Good' : s >= 25 ? 'Fair' : 'Weak';
   let joinPoll = null, openNet = null;
   async function loadWifi(rescan) {
@@ -942,20 +942,20 @@ text-transform: uppercase;}
   /* ---------- device ---------- */
   async function loadDevice() {
     const hl = $('health');
-    if (!hl.children.length) { const r = settingsRow('Checking…', 'Reading Wi-Fi, uptime and temperature.'); r.classList.add('loading'); hl.append(r); }
+    if (!hl.children.length) { const r = settingsRow('Checking…', 'Reading wifi, uptime and temperature.'); r.classList.add('loading'); hl.append(r); }
     try {
       const d = await api('/api/device');
       $('sw-v').textContent = d.version ? 'Version ' + d.version + (d.version_date ? ' · ' + d.version_date : '') : 'Version unknown';
       if ($('dev-host')) $('dev-host').textContent = d.hostname + ' · online';
       const h = $('health');
       let wifi = '';
-      try { const w = await api('/api/wifi'); wifi = w.current ? signalWord(w.current.signal) : 'No Wi-Fi'; } catch (e) {}
+      try { const w = await api('/api/wifi'); wifi = w.current ? signalWord(w.current.signal) : 'No wifi'; } catch (e) {}
       h.textContent = '';
       // CM4 throttles around 80-85°C; these are the bands people care about
       const deg = parseFloat(d.temperature);
       const feel = isNaN(deg) ? '' : deg < 60 ? 'normal' : deg < 70 ? 'warm' : deg < 80 ? 'hot' : 'very hot';
       const temp = d.temperature ? d.temperature + (feel ? ' (' + feel + ')' : '') : '';
-      [['Wi-Fi signal', wifi], ['Up for', d.uptime], ['Temperature', temp], ['On the dial', stations ? String(stations.dial.length) : '']].forEach(([l, v]) => {
+      [['Wifi signal', wifi], ['Up for', d.uptime], ['Temperature', temp], ['On the dial', stations ? String(stations.dial.length) : '']].forEach(([l, v]) => {
         if (!v) return; h.append(settingsRow(l, '', [el('span', 'val', v)]));
       });
     } catch (e) { toast(e.message); }
@@ -980,9 +980,9 @@ text-transform: uppercase;}
     } catch (e) { toast(e.message); b.textContent = 'Check for updates'; updateReady = 0; }
     b.disabled = false;
   };
-  $('d-restart').onclick = async () => { if (!confirm('Restart Otis? The music stops for a few seconds.')) return; try { await api('/api/device/restart', {}); toast('Restarting…'); } catch (e) { toast(e.message); } };
-  $('d-setup').onclick = async () => { if (!confirm('Forget every Wi-Fi network and start setup again? You’ll join "Otis-Setup" from your phone to finish.')) return; try { await api('/api/device/setup', {}); toast('Starting setup. Join "Otis-Setup" on your phone.'); } catch (e) { toast(e.message); } };
-  $('d-reset').onclick = async () => { if (!confirm('Reset favorites, hidden stations, settings and listening history? Wi-Fi stays.')) return; try { await api('/api/device/reset', {}); toast('Reset. Otis is restarting.'); setTimeout(() => location.reload(), 6000); } catch (e) { toast(e.message); } };
+  $('d-restart').onclick = async () => { if (!confirm('Restart Otis? The music will stop for a few seconds.')) return; try { await api('/api/device/restart', {}); toast('Restarting…'); } catch (e) { toast(e.message); } };
+  $('d-setup').onclick = async () => { if (!confirm('Forget every wifi network and start setup again? Look for the "Otis-Setup" network on your personal device to finish.')) return; try { await api('/api/device/setup', {}); toast('Starting setup. Join "Otis-Setup" on your phone.'); } catch (e) { toast(e.message); } };
+  $('d-reset').onclick = async () => { if (!confirm('Reset favorites, hidden stations, settings, and listening history?')) return; try { await api('/api/device/reset', {}); toast('Reset. Otis is restarting.'); setTimeout(() => location.reload(), 6000); } catch (e) { toast(e.message); } };
 
   /* ---------- listening ---------- */
   document.querySelectorAll('#periods button').forEach((b) => b.onclick = () => {

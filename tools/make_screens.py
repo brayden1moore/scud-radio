@@ -75,7 +75,7 @@ def setup_screen():
     f = face(56, WHITE)
     im.paste(f, (24, 22), f)
     d.text((24, 22 + f.height + 14), "Hi, I'm Otis", font=archivo(34), fill=WHITE)
-    steps = [('1', ['Join the', f'"{SETUP_SSID}" Wi-Fi']),
+    steps = [('1', ['Join the', f'"{SETUP_SSID}" wifi']),
              ('2', ['Follow the steps', 'that pop up'])]
     y = 22 + f.height + 66
     for num, lines in steps:
@@ -103,7 +103,7 @@ SCREENS = {
     'scud_splash_1.png': brand_screen('Waking up'),
     'success.png':       brand_screen('Connecting to One Radio'),
     'hello.png':         setup_screen(),
-    'failure.png':       message_screen("That didn't work", ["Couldn't join that Wi-Fi.", 'Check the password and', 'try again.']),
+    'failure.png':       message_screen("That didn't work", ["Couldn't join that network.", 'Check the password and', 'try again.']),
     'goodbye.png':       message_screen('Goodbye', ['See you soon.'], face_on_top=True),
     'updating.png':      message_screen('Updating', ['Be right back.', "Please don't unplug me."], face_on_top=True),
 }
