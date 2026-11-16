@@ -424,7 +424,7 @@ text-transform: uppercase;}
       <section id="device" class="narrow" aria-label="Device" hidden>
         <div class="card">
           <div class="row">
-            <div class="text"><label class="title" for="dname">Name</label><div class="hint">Shown in AirPlay and at the top of this page.</div></div>
+            <div class="text"><label class="title" for="dname">Name</label><div class="hint">Shown in AirPlay.</div></div>
             <div class="ctl"><input id="dname" class="field" type="text" maxlength="40" autocomplete="off"></div>
           </div>
           <div class="row">
@@ -434,16 +434,16 @@ text-transform: uppercase;}
         </div>
         <div class="group">
           <div class="card">
-            <div class="row"><div class="text"><div class="title">AirPlay</div><div class="hint">Otis shows up on iPhones and Macs on this network.</div></div><div class="ctl"><button class="switch" role="switch" data-k="airplay" aria-label="AirPlay"></button></div></div>
-            <div class="row"><div class="text"><div class="title">Wake the screen for AirPlay</div><div class="hint">Shows the album art when someone starts playing.</div></div><div class="ctl"><button class="switch" role="switch" data-k="airplay_wake" aria-label="Wake the screen for AirPlay"></button></div></div>
-            <div class="row"><div class="text"><div class="title">Back to the radio when AirPlay stops</div><div class="hint">Otherwise Otis stays quiet until someone touches it.</div></div><div class="ctl"><button class="switch" role="switch" data-k="airplay_resume" aria-label="Back to the radio when AirPlay stops"></button></div></div>
+            <div class="row"><div class="text"><div class="title">AirPlay</div></div><div class="ctl"><button class="switch" role="switch" data-k="airplay" aria-label="AirPlay"></button></div></div>
+            <div class="row"><div class="text"><div class="title">Wake the screen for AirPlay</div></div><div class="ctl"><button class="switch" role="switch" data-k="airplay_wake" aria-label="Wake the screen for AirPlay"></button></div></div>
+            <div class="row"><div class="text"><div class="title">Resume the radio when AirPlay stops</div></div><div class="ctl"><button class="switch" role="switch" data-k="airplay_resume" aria-label="Back to the radio when AirPlay stops"></button></div></div>
           </div>
         </div>
         <div class="group">
           <div class="card" id="health"></div>
         </div>
         <div class="card">
-          <div class="row"><div class="text"><div class="title">Restart Otis</div><div class="hint">Restart the radio. This takes about 5 seconds.</div></div><div class="ctl"><button class="btn" id="d-restart">Restart</button></div></div>
+          <div class="row"><div class="text"><div class="title">Restart Otis</div><div class="hint">This takes about 5 seconds.</div></div><div class="ctl"><button class="btn" id="d-restart">Restart</button></div></div>
           <div class="row"><div class="text"><div class="title">Set up wifi again</div><div class="hint">Forget every network and bring back "Otis-Setup".</div></div><div class="ctl"><button class="btn" id="d-setup">Start setup</button></div></div>
           <div class="row"><div class="text"><div class="title">Reset everything</div><div class="hint">Reset favorites, hidden stations, settings, and listening history.</div></div><div class="ctl"><button class="btn danger" id="d-reset">Reset</button></div></div>
         </div>
@@ -459,7 +459,7 @@ text-transform: uppercase;}
             <button role="radio" data-p="year" aria-checked="false">Year</button>
             <button role="radio" data-p="lifetime" aria-checked="false">Lifetime</button>
           </div>
-          <div><p class="hint">Data is stored on your device and never shared.</p></div>
+          <div></div>
         </div>
         <div id="stats"></div>
       </section>
@@ -955,7 +955,7 @@ text-transform: uppercase;}
       const deg = parseFloat(d.temperature);
       const feel = isNaN(deg) ? '' : deg < 60 ? 'normal' : deg < 70 ? 'warm' : deg < 80 ? 'hot' : 'very hot';
       const temp = d.temperature ? d.temperature + (feel ? ' (' + feel + ')' : '') : '';
-      [['Wifi signal', wifi], ['Up for', d.uptime], ['Temperature', temp], ['On the dial', stations ? String(stations.dial.length) : '']].forEach(([l, v]) => {
+      [['Wifi signal', wifi], ['Up for', d.uptime], ['Temperature', temp], ['Stations visible', stations ? String(stations.dial.length) : '']].forEach(([l, v]) => {
         if (!v) return; h.append(settingsRow(l, '', [el('span', 'val', v)]));
       });
     } catch (e) { toast(e.message); }
@@ -1002,11 +1002,11 @@ text-transform: uppercase;}
       const kpi = (cls, label, value, sub) => { const k = el('div', 'kpi ' + cls); k.append(el('div', null, label), el('div', 'v', value), el('div', null, sub)); k.firstChild.style.fontSize = '13px'; k.lastChild.style.fontSize = '13px'; kp.append(k); };
       const change = period === 'lifetime' ? (s.since ? 'since ' + s.since : 'all time')
         : s.has_previous ? ((s.hours_change >= 0 ? '+' : '') + s.hours_change + ' h on last ' + period) : 'this ' + period;
-      kpi('dark', 'Listened', fmtH(s.hours), change);
-      kpi('', 'Stations', String(s.stations), stations ? 'of ' + stations.dial.length + ' on the dial' : '');
-      if (period === 'lifetime') kpi('yellow', 'Cities', String(s.city_count), 'stations heard from');
-      else kpi('yellow', 'New to you', String(s.new.length), s.new.length ? s.new.slice(0, 2).join(', ') + (s.new.length > 2 ? '…' : '') : 'first listens');
-      kpi('', 'Live', s.live_share + '%', 'live, not re-runs');
+      kpi('', 'Listened', fmtH(s.hours), change);
+      kpi('', 'Stations', String(s.stations));
+      if (period === 'lifetime') kpi('yellow', 'Cities', String(s.city_count));
+      else kpi('yellow', 'New to you', String(s.new.length));
+      kpi('', 'Live', s.live_share + '%');
       wrap.append(kp);
 
       const cols = el('div', 'cols');
@@ -1054,7 +1054,7 @@ text-transform: uppercase;}
       if (s.longest && s.longest.minutes >= 20) {
         const m = s.longest.minutes; line += ' Longest stretch: ' + (m >= 60 ? Math.floor(m / 60) + ' h ' + (m % 60) + ' m' : m + ' m') + ' of ' + s.longest.station + ' on ' + s.longest.day + '.';
       }
-      where.append(el('div', 'hint', line));
+      // where.append(el('div', 'hint', line));
       wrap.append(where);
       box.append(wrap);
     } catch (e) { box.textContent = ''; box.append(el('div', 'hint', e.message)); }
