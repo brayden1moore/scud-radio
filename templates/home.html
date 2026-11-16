@@ -148,7 +148,6 @@ align-items: center;}
 .now .art { width: 132px; height: 132px; border: 1px solid white; object-fit: cover; flex: 0 0 auto; background: #222; display: flex; align-items: center; justify-content: center; }
 .now .meta { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
 .now .status { font-size: 13px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-/* coloured text like the Otis screen, no icon: Live red, Re-Run yellow, place blue, genres yellow */
 .c-live { color: var(--red); } .c-rerun, .c-genre { color: var(--yellow); } .c-off { color: var(--muted); } .c-place { color: var(--blue); }
 .now .station { font-family: var(--sans); font-size: 40px; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; overflow-wrap: anywhere; margin-bottom: -2px; margin-left: -1px;}
 .now .ol { font-size: 15px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -482,11 +481,11 @@ text-transform: uppercase;}
   }
   const sqClass = (status) => status === 'Live' ? 'live' : status === 'Re-Run' ? 'rerun' : 'offline';
   const statusClass = (status) => status === 'Live' ? 'c-live' : status === 'Re-Run' ? 'c-rerun' : 'c-off';
-  // 'Live • San Francisco • House': each dot takes the colour of the item before it, like the screen
+
   function dotLine(parts) {
     const box = document.createElement('span');
     parts.filter((p) => p && p[0]).forEach(([text, cls], i) => {
-      if (i) { const d = el('span', box.lastChild.className, ' \u2022 '); d.setAttribute('aria-hidden', 'true'); box.append(d); }
+      if (i) { const d = el('span', box.lastChild.className, ', '); d.setAttribute('aria-hidden', 'true'); box.append(d); }
       box.append(el('span', cls, text));
     });
     return box;
