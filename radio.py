@@ -1082,7 +1082,8 @@ def push_panel(name):
         finally:
             display_lock.release()
 
-STATUS_DOT = '\u2022' if _has_glyph(SMALL_LIGHT, '\u2022') else '\u00b7'
+# STATUS_DOT = '\u2022' if _has_glyph(SMALL_LIGHT, '\u2022') else '\u00b7'
+STATUS_DOT = ', '
 
 def render_status_strip(name):
     """Settled bottom row, no icon: 'Live \u2022 Techno \u2022 Electro' with the status word
