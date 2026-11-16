@@ -354,7 +354,7 @@ text-transform: uppercase;}
           <div class="card" id="fav-list"></div>
         </div>
         <div class="group">
-          <div class="group-head" id="hid-title">Hidden from the dial</div>
+          <div class="group-head" id="hid-title">Hidden</div>
           <div class="card hide-card">
             <div class="row">
               <div class="text"><label class="title" for="hide-pick">Hide a station</label></div>
@@ -379,7 +379,7 @@ text-transform: uppercase;}
         </div>
         <div class="card" id="screen-rows"></div>
         <div class="card">
-          <div class="row"><div class="text"><div class="title">Show art on ambient</div><div class="hint">Uses the show image when a station has one.</div></div><div class="ctl"><button class="switch" role="switch" data-k="show_art" aria-label="Show art on ambient"></button></div></div>
+          <div class="row"><div class="text"><div class="title">Show art on big picture</div><div class="hint">Uses the show's image if there is one. If off, the station's logo will be displayed.</div></div><div class="ctl"><button class="switch" role="switch" data-k="show_art" aria-label="Show art on ambient"></button></div></div>
           <div class="row">
             <div class="text"><div class="title">Dim at night</div><div class="hint">Lower brightness between these times.</div></div>
             <div class="ctl">
@@ -816,9 +816,9 @@ text-transform: uppercase;}
     const c = el('div', 'ctl'); c.append(s);
     row.append(t, c); container.append(row);
   }
-  switchRow($('station-toggles'), 'Skip offline stations', 'Leaves them off the dial until they are back.', 'skip_offline');
-  switchRow($('station-toggles'), 'Surprise me from favorites only', 'The knob press and the remote both use it.', 'surprise_favorites');
-  segRow($('screen-rows'), 'Ambient after', '', 'ambient_after', [[30, '30 s'], [60, '1 min'], [300, '5 min'], [0, 'Never']]);
+  switchRow($('station-toggles'), 'Skip offline stations', '', 'skip_offline');
+  switchRow($('station-toggles'), 'Surprise me from favorites only', '', 'surprise_favorites');
+  segRow($('screen-rows'), 'Big picture after', '', 'ambient_after', [[30, '30 s'], [60, '1 min'], [300, '5 min'], [0, 'Never']]);
   segRow($('screen-rows'), 'Screen off after', '', 'screen_off_after', [[600, '10 min'], [1800, '30 min'], [3600, '1 hr'], [0, 'Never']]);
   segRow($('screen-rows'), 'Clock', '', 'clock', [['station', 'Station time'], ['local', 'My time']]);
   segRow($('sound-rows'), 'Volume when Otis wakes', 'After the switch or a restart. Quiet is 3 notches.', 'start_volume', [['last', 'Last used'], ['quiet', 'Quiet'], ['fixed', 'Fixed']]);
