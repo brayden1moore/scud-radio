@@ -1112,7 +1112,7 @@ def render_status_strip(name):
             d.text((x, y), "Station isn't answering", font=SMALL_LIGHT, fill=MUTED_COLOR)
         return _status_strip
     colour = {'Live': THEME['live'], 'Re-Run': THEME['genre']}.get(status, MUTED_COLOR)
-    sep = f' {STATUS_DOT} '
+    sep = f'{STATUS_DOT}'
     parts = [(status, colour)]
     for i, g in enumerate(info.get('genres') or []):
         parts.append((sep, colour if i == 0 else THEME['genre']))
