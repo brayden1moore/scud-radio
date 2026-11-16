@@ -23,9 +23,13 @@ BL = 9
 bus = 0 
 device = 0 
 current_bl = 100
+# The power switch is read first, so a restart with the switch off stays dark and silent.
+from gpiozero import Button
+switch = Button(23, pull_up=False, bounce_time=0.05)
+START_OFF = not switch.is_pressed
 disp = LCD_2inch.LCD_2inch()
 disp.Init()
-disp.bl_DutyCycle(current_bl)
+disp.bl_DutyCycle(0 if START_OFF else current_bl)
 display_scud()
 
 import pytz
@@ -368,6 +372,9 @@ from gpiozero import Button
 import socket
 
 def send_mpv_command(cmd, max_retries=2, retry_delay=0.05):
+    c = cmd.get('command') if isinstance(cmd, dict) else None
+    if put_to_sleep and c and c[:2] == ['set_property', 'volume'] and c[2] != 0:
+        cmd = {'command': ['set_property', 'volume', 0]}      # switched off: always silent
     for attempt in range(max_retries):
         try:
             with socket.socket(socket.AF_UNIX) as s:
@@ -579,7 +586,8 @@ def play(name, toggled=False):
     else:
         stream_url = streams[name]['streamLink']
         _start_tuning(name)
-        listen_start(name)
+        if not put_to_sleep:
+            listen_start(name)
         ensure_show_art(name)              # ready by the time ambient comes up
         if first_boot:
             send_mpv_command({"command": ["loadfile", stream_url]})
@@ -2701,14 +2709,18 @@ def switch_on():
         backlight_on()
         sleeping = False
         put_to_sleep = False
+        replayed = False
         if switch_off_time:
             if current_time - switch_off_time >= 3600:
                 with state_lock:
                     target = stream if stream in stream_list else (stream_list[0] if stream_list else None)
                 if target:
                     play(target)
+                    replayed = True
         if not muted:
             send_mpv_command({"command": ["set_property", "volume", current_volume]})
+        if not replayed and stream and currently_displaying != 'airplay':
+            listen_start(stream)              # back on the same station: count it again
 
 def proximity_order(sl, center):
     """[center, center-1, center+1, center-2, center+2, ...] wrapping around."""
@@ -3066,6 +3078,13 @@ seeking = False
 
 current_volume = startup_volume(get_last_volume())
 
+# A socket left by the previous mpv makes the wait below pass at once, so the
+# first commands (volume 0 for a switched-off radio) went nowhere. Remove it.
+try:
+    os.remove("/tmp/mpvsocket")
+except FileNotFoundError:
+    pass
+
 mpv_process = Popen([
     "mpv",
     "--audio-buffer=1.0",     
@@ -3073,7 +3092,7 @@ mpv_process = Popen([
     "--idle=yes",
     "--no-video",
     "--quiet",
-    f"--volume={current_volume}",
+    f"--volume={0 if not switch.is_pressed else current_volume}",
     f"--volume-max={MAX_VOL}",
     "--input-ipc-server=/tmp/mpvsocket",
     "--msg-level=all=info", 
@@ -3096,7 +3115,6 @@ star_96 = Image.open('assets/star_96.png').convert('RGBA')
 star_25 = Image.open('assets/star_25.png').convert('RGBA')
 
 # switch
-switch = Button(23, pull_up=False, bounce_time=0.05)
 switch.when_pressed  = switch_on
 switch.when_released = switch_off
 if switch.is_pressed: # sync initial state

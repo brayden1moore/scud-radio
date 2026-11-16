@@ -19,6 +19,10 @@ def log(msg):
 
 log("script start")
 
+
+class SwitchedOff(Exception):
+    pass
+
 try:
     import driver as LCD_2inch
     log("imported driver")
@@ -29,6 +33,19 @@ try:
     disp.Init()
     log("Init() done")
 
+    # power switch off: stay dark (the radio reads it again when it starts)
+    try:
+        from gpiozero import Button
+        sw = Button(23, pull_up=False)
+        switched_off = not sw.is_pressed
+        sw.close()
+    except Exception as e:
+        log(f"switch read failed: {e}")
+        switched_off = False
+    if switched_off:
+        disp.bl_DutyCycle(0)
+        log("switch is off: backlight stays off")
+        raise SwitchedOff
     disp.bl_DutyCycle(100)
     log("backlight on")
 
@@ -51,6 +68,8 @@ try:
     disp.data_bytes(list(buf))
     log("frame written")
 
+except SwitchedOff:
+    pass            # keep the process (and the dark backlight) until the radio takes over
 except Exception:
     import traceback
     with open('/tmp/splash-debug.log', 'a') as f:
