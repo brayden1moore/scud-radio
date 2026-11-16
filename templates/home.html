@@ -373,7 +373,7 @@ text-transform: uppercase;}
       <section id="screen" class="narrow" aria-label="Screen" hidden>
         <div class="card">
           <div class="row">
-            <div class="text"><label class="title" for="bright">Brightness</label><div class="hint">The screen's backlight.</div></div>
+            <div class="text"><label class="title" for="bright">Brightness</label></div>
             <div class="ctl slide"><input id="bright" type="range" min="10" max="100" step="5"><span class="val" id="bright-v"></span></div>
           </div>
         </div>
@@ -818,9 +818,9 @@ text-transform: uppercase;}
   }
   switchRow($('station-toggles'), 'Skip offline stations', 'Leaves them off the dial until they are back.', 'skip_offline');
   switchRow($('station-toggles'), 'Surprise me from favorites only', 'The knob press and the remote both use it.', 'surprise_favorites');
-  segRow($('screen-rows'), 'Ambient after', 'The big logo view, when nobody\u2019s touching it.', 'ambient_after', [[30, '30 s'], [60, '1 min'], [300, '5 min'], [0, 'Never']]);
-  segRow($('screen-rows'), 'Screen off after', 'The radio keeps playing.', 'screen_off_after', [[600, '10 min'], [1800, '30 min'], [3600, '1 hr'], [0, 'Never']]);
-  segRow($('screen-rows'), 'Clock', 'Station time shows the hour where the station is. World stations use UTC.', 'clock', [['station', 'Station time'], ['local', 'My time']]);
+  segRow($('screen-rows'), 'Ambient after', '', 'ambient_after', [[30, '30 s'], [60, '1 min'], [300, '5 min'], [0, 'Never']]);
+  segRow($('screen-rows'), 'Screen off after', '', 'screen_off_after', [[600, '10 min'], [1800, '30 min'], [3600, '1 hr'], [0, 'Never']]);
+  segRow($('screen-rows'), 'Clock', '', 'clock', [['station', 'Station time'], ['local', 'My time']]);
   segRow($('sound-rows'), 'Volume when Otis wakes', 'After the switch or a restart. Quiet is 3 notches.', 'start_volume', [['last', 'Last used'], ['quiet', 'Quiet'], ['fixed', 'Fixed']]);
   segRow($('sound-rows'), 'Sleep timer', 'Fades out and turns off screen. Touch a knob to wake.', '_sleep', [[0, 'Off'], [15, '15 min'], [30, '30 min'], [60, '1 hr']]);
 
