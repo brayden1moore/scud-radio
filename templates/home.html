@@ -777,7 +777,7 @@ text-transform: uppercase;}
       fl.append(row);
     });
     const hid = stations.hidden.filter((n) => by[n]);
-    $('hid-title').textContent = 'Hidden from the dial (' + hid.length + ')';
+    $('hid-title').textContent = 'Hidden (' + hid.length + ')';
     const hl = $('hid-list'); hl.textContent = '';
     hid.forEach((n) => {
       const img = logoImg(n, 96); img.style.opacity = '0.5';
