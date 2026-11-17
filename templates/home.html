@@ -180,7 +180,11 @@ gap: 8px;
 font-size: 14px;
 text-transform: uppercase;}
 .transport button[aria-pressed="true"].fav { background: var(--yellow); color: var(--on-accent); }
-.transport button[aria-pressed="true"].fav svg { fill: currentColor; }
+/* favorite: the same star glyph as the station tiles (outline, filled when on) */
+.transport .fav .star { font-family: var(--sans); font-weight: 300; font-size: 24px; line-height: 1; letter-spacing: 0; }
+.transport .fav .star::before { content: '\2606'; }
+.transport button[aria-pressed="true"].fav .star::before { content: '\2605'; }
+.transport button[aria-pressed="true"].sleep { background: var(--ink); color: var(--paper); }
 .transport button[aria-pressed="true"].mute { background: var(--ink); color: var(--paper); }
 /* transport over volume on phones; one row, a bit smaller, on wider screens */
 .controls { display: flex; flex-direction: column; gap: 16px; }
@@ -297,7 +301,7 @@ text-transform: uppercase;}
   nav.menu::-webkit-scrollbar { display: none; }
   nav.menu button { flex: 0 0 auto; min-height: 42px; padding: 0 12px; gap: 8px; }
   nav.menu button .n { display: none; }
-  .transport { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .transport { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .transport .surprise span { display: none; }
 }
 .ph { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; background: #1E1E1E; color: #8A8A8A; font-family: var(--sans); font-weight: 800; font-size: 28px; letter-spacing: -0.03em; }
@@ -341,8 +345,9 @@ text-transform: uppercase;}
           <button id="b-prev" aria-label="Previous station"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 6v12L3 12zM20 6v12l-8-6z"/></svg></button>
           <button id="b-next" aria-label="Next station"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 6v12l8-6zM4 6v12l8-6z"/></svg></button>
           <button id="b-random" class="surprise" aria-label="Surprise me"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg></button>
-          <button id="b-fav" class="fav" aria-label="Favorite this station" aria-pressed="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.3L12 17.5 6.4 20.4l1.1-6.3L3 9.7l6.2-.9z"/></svg></button>
+          <button id="b-fav" class="fav" aria-label="Favorite this station" aria-pressed="false"><span class="star" aria-hidden="true"></span></button>
           <button id="b-mute" class="mute" aria-label="Mute" aria-pressed="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6"/><path d="M21 9l-4 6"/></svg></button>
+          <button id="b-sleep" class="sleep" aria-label="Sleep: screen off and silent" aria-pressed="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
         </div>
 
         <div class="vol">
@@ -575,6 +580,9 @@ text-transform: uppercase;}
     else if (state.resting || !state.screen_on) { wake.hidden = false; wake.disabled = false; wake.textContent = state.resting ? 'Wake Otis' : 'Wake the screen'; }
     else wake.hidden = true;
     $('b-fav').setAttribute('aria-pressed', String(!!state.favorite));
+    $('b-sleep').setAttribute('aria-pressed', String(!!state.resting));
+    $('b-sleep').setAttribute('aria-label', state.resting ? 'Wake Otis' : 'Sleep: screen off and silent');
+    $('b-sleep').disabled = !!state.asleep;
     $('b-fav').disabled = onAirplay;
     $('b-mute').setAttribute('aria-pressed', String(!!state.muted));
     renderWedge();
@@ -700,6 +708,8 @@ text-transform: uppercase;}
   $('b-next').onclick = () => act(() => control('next'));
   $('b-random').onclick = () => act(() => control('random'));
   $('b-mute').onclick = () => act(() => control('mute'), (s) => { s.muted = !s.muted; });
+  $('b-sleep').onclick = () => { const cmd = state.resting ? 'wake' : 'sleep';      // decide before the optimistic flip
+    act(() => control(cmd), (s) => { s.resting = cmd === 'sleep'; s.screen_on = cmd !== 'sleep'; }); };
   $('b-fav').onclick = () => act(async () => { const r = await control('favorite'); await loadStations(); return r; }, (s) => { s.favorite = !s.favorite; });
   $('now-wake').onclick = () => act(() => control('wake'));
   $('q').addEventListener('input', () => stations && renderGrid());

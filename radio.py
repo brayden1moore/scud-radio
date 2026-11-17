@@ -2314,6 +2314,18 @@ def _sleep_timer_fire():
     timer_slept = True
     backlight_off()
 
+def sleep_now():
+    """The portal's Sleep button: like flipping the switch off (screen off, silent),
+    but any knob or the portal's Wake brings it back, the same as after the sleep timer."""
+    global timer_slept, sleep_timer_until
+    sleep_timer_until = 0.0
+    logging.info('SLEEP NOW')
+    airplay_drop()
+    send_mpv_command({"command": ["stop"]})
+    listen_end()
+    timer_slept = True
+    backlight_off()
+
 def wake_from_timer():
     """Called on the first touch after the sleep timer: bring the station back."""
     global timer_slept
@@ -3036,6 +3048,9 @@ def wake_screen():
 def wrapped_action(func, direction=0, volume=False):
     def inner():
         if not put_to_sleep:
+            if timer_slept:
+                wake_screen()          # asleep from the Sleep button or timer: any knob just wakes it
+                return
             if click_button.is_pressed and current_volume == 0 and direction == -1:
                 func()
             else:
@@ -3317,6 +3332,10 @@ def handle_remote_command(command_data):
 
         elif cmd == 'wake':
             wake_screen()
+            return radio_state()
+
+        elif cmd == 'sleep_now':
+            sleep_now()
             return radio_state()
 
         elif cmd == 'toggle':
