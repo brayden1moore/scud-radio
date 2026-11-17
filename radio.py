@@ -3395,9 +3395,41 @@ rotor = RotaryEncoder(CLK_PIN, DT_PIN, bounce_time=0.05)
 rotor.when_rotated_counter_clockwise = wrapped_action(lambda: handle_rotation(-1), -1)
 rotor.when_rotated_clockwise = wrapped_action(lambda: handle_rotation(1), 1)
 
+class HalfStepEncoder(RotaryEncoder):
+    """For encoders with a click at both rest positions of the quadrature cycle
+    (00 and 11), i.e. two clicks per full cycle. gpiozero's RotaryEncoder only
+    counts a full cycle, so these need two clicks per step; this counts one step
+    per click. Each quarter-step adds +-1; a click is a return to 00 or 11 with
+    two quarter-steps in the same direction. Bounces cancel themselves out."""
+    _DIR = {(0, 2): 1, (2, 3): 1, (3, 1): 1, (1, 0): 1,      # clockwise: 0 2 3 1
+            (2, 0): -1, (3, 2): -1, (1, 3): -1, (0, 1): -1}
+    def __init__(self, *a, **k):
+        self._acc = 0
+        super().__init__(*a, **k)
+        self._edge = (int(self.a.value) << 1) | int(self.b.value)   # start from the real rest position
+
+    def _change_state(self, ticks, edge):
+        prev, self._edge = self._edge, edge
+        self._acc += self._DIR.get((prev, edge), 0)
+        if edge not in (0, 3):
+            return
+        step = 1 if self._acc >= 2 else -1 if self._acc <= -2 else 0
+        self._acc = 0
+        if step > 0:
+            self._rotate_cw_event.set(); self._fire_rotated_cw(); self._rotate_cw_event.clear()
+        elif step < 0:
+            self._rotate_ccw_event.set(); self._fire_rotated_ccw(); self._rotate_ccw_event.clear()
+        if step:
+            self._rotate_event.set(); self._fire_rotated(); self._rotate_event.clear()
+
+# The volume knob on the new boards clicks twice per cycle (one notch took two
+# clicks with the stock decoder). Set False for a knob that clicks once per cycle.
+VOLUME_HALF_STEP = True
+
 CLK_PIN = 16
 DT_PIN = 12  
-volume_rotor = RotaryEncoder(CLK_PIN, DT_PIN, bounce_time=0.05)
+volume_rotor = (HalfStepEncoder(CLK_PIN, DT_PIN, bounce_time=None) if VOLUME_HALF_STEP
+                else RotaryEncoder(CLK_PIN, DT_PIN, bounce_time=0.05))
 volume_rotor.when_rotated_counter_clockwise = wrapped_action(lambda: volume_handle_rotation(-1), -1, True)
 volume_rotor.when_rotated_clockwise = wrapped_action(lambda: volume_handle_rotation(1), 1, True)
 
