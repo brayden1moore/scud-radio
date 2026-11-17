@@ -182,8 +182,18 @@ text-transform: uppercase;}
 .transport button[aria-pressed="true"].fav { background: var(--yellow); color: var(--on-accent); }
 .transport button[aria-pressed="true"].fav svg { fill: currentColor; }
 .transport button[aria-pressed="true"].mute { background: var(--ink); color: var(--paper); }
-.wedge { display: flex; align-items: flex-end; gap: 5px; height: 48px; }
-.wedge button { flex: 1 1 0; min-width: 0; height: 48px; padding: 0; border: 0; background: transparent; display: flex; align-items: flex-end; }
+/* transport over volume on phones; one row, a bit smaller, on wider screens */
+.controls { display: flex; flex-direction: column; gap: 16px; }
+@media (min-width: 900px) {
+  .controls { flex-direction: row; align-items: flex-end; gap: 20px; }
+  .controls .transport { flex: 0 0 auto; flex-wrap: nowrap; gap: 6px; }
+  .controls .transport button { flex: 0 0 60px; min-height: 44px; }
+  .controls .transport svg { transform: scale(0.85); }
+  .controls .vol { flex: 1 1 auto; min-width: 0; }
+  .controls .wedge { --wedge-h: 44px; gap: 4px; }
+}
+.wedge { --wedge-h: 48px; display: flex; align-items: flex-end; gap: 5px; height: var(--wedge-h); }
+.wedge button { flex: 1 1 0; min-width: 0; height: var(--wedge-h); padding: 0; border: 0; background: transparent; display: flex; align-items: flex-end; }
 .wedge button span { display: block; width: 100%; background: #2E2E2E; }
 .wedge button.lit span { background: var(--ink); }
 .wedge button:disabled { cursor: default; }
@@ -322,6 +332,7 @@ text-transform: uppercase;}
           </div>
         </div>
 
+        <div class="controls">
         <div class="transport">
           <button id="b-prev" aria-label="Previous station"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 6v12L3 12zM20 6v12l-8-6z"/></svg></button>
           <button id="b-next" aria-label="Next station"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 6v12l8-6zM4 6v12l8-6z"/></svg></button>
@@ -330,8 +341,9 @@ text-transform: uppercase;}
           <button id="b-mute" class="mute" aria-label="Mute" aria-pressed="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6"/><path d="M21 9l-4 6"/></svg></button>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="vol">
           <div class="wedge" role="group" aria-label="Volume" id="wedge"></div>
+        </div>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:14px">
@@ -573,7 +585,7 @@ text-transform: uppercase;}
     if ($('vol-label')) $('vol-label').textContent = state.muted ? 'Muted' : level + ' of 15' + (limit < 15 ? ' · limit ' + limit : '');
     for (let k = 1; k <= 15; k++) {
       const b = el('button'); b.setAttribute('aria-label', 'Volume ' + k);
-      const bar = el('span'); bar.style.height = (8 + Math.round(40 * (k - 1) / 14)) + 'px'; b.append(bar);
+      const bar = el('span'); bar.style.height = Math.round(100 * (8 + 40 * (k - 1) / 14) / 48) + '%'; b.append(bar);
       if (!state.muted && k <= level) b.classList.add('lit');
       if (k > limit) b.disabled = true;
       b.onclick = () => act(() => control('volume', k), (s) => { s.volume = k; s.muted = false; });
