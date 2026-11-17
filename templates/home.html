@@ -187,11 +187,14 @@ text-transform: uppercase;}
 .vol { display: flex; align-items: center; gap: 12px; min-height: 44px; }
 .vol input[type="range"] { flex: 1; min-width: 0; }
 @media (min-width: 900px) {
-  .controls { flex-direction: row; align-items: center; gap: 24px; }
-  .controls .transport { flex: 0 0 auto; flex-wrap: nowrap; gap: 6px; }
-  .controls .transport button { flex: 0 0 60px; min-height: 44px; }
+  /* a grid, not flex: the buttons' column is exactly as wide as the buttons, so
+     the slider can never slide under them (Safari sized the flex row wrong) */
+  .controls { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: center; gap: 24px; }
+  .controls .transport { display: flex; flex-wrap: nowrap; gap: 6px; }
+  .controls .transport button { flex: none; width: 60px; min-height: 44px; }
   .controls .transport svg { transform: scale(0.85); }
-  .controls .vol { flex: 1 1 auto; min-width: 180px; }
+  .controls .vol { min-width: 0; }
+  .controls .vol input[type="range"] { width: 100%; }
 }
 .search { display: flex; align-items: center; gap: 10px; background: var(--paper); padding: 0 12px; min-height: 36px; flex: 1 1 220px; max-width: 360px; }
 .search input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font-size: 16px; min-height: 34px; }
