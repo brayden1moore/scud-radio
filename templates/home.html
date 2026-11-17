@@ -184,8 +184,15 @@ text-transform: uppercase;}
 .transport button[aria-pressed="true"].mute { background: var(--ink); color: var(--paper); }
 /* transport over volume on phones; one row, a bit smaller, on wider screens */
 .controls { display: flex; flex-direction: column; gap: 16px; }
-.vol { display: flex; align-items: center; gap: 12px; min-height: 44px; }
-.vol input[type="range"] { flex: 1; min-width: 0; }
+.vol { min-width: 0; }
+/* volume: the device's wedge, one bar per notch, taller toward the top */
+.wedge { --wedge-h: 48px; display: flex; align-items: flex-end; gap: 5px; height: var(--wedge-h); }
+.wedge button { flex: 1 1 0; min-width: 0; height: var(--wedge-h); padding: 0; border: 0; background: transparent; display: flex; align-items: flex-end; cursor: pointer; }
+.wedge button span { display: block; width: 100%; background: #2E2E2E; }
+.wedge button.lit span { background: var(--ink); }
+@media (hover: hover) { .wedge button:hover:not(:disabled) span { background: var(--yellow); } }
+.wedge button:disabled { cursor: default; }
+.wedge button:disabled span { background: repeating-linear-gradient(135deg, #262626 0 3px, #0A0A0A 3px 6px); }
 @media (min-width: 900px) {
   /* a grid, not flex: the buttons' column is exactly as wide as the buttons, so
      the slider can never slide under them (Safari sized the flex row wrong) */
@@ -193,8 +200,7 @@ text-transform: uppercase;}
   .controls .transport { display: flex; flex-wrap: nowrap; gap: 6px; }
   .controls .transport button { flex: none; width: 60px; min-height: 44px; }
   .controls .transport svg { transform: scale(0.85); }
-  .controls .vol { min-width: 0; }
-  .controls .vol input[type="range"] { width: 100%; }
+  .controls .wedge { --wedge-h: 44px; gap: 4px; }
 }
 .search { display: flex; align-items: center; gap: 10px; background: var(--paper); padding: 0 12px; min-height: 36px; flex: 1 1 220px; max-width: 360px; }
 .search input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font-size: 16px; min-height: 34px; }
@@ -340,7 +346,7 @@ text-transform: uppercase;}
         </div>
 
         <div class="vol">
-          <input id="vol" type="range" min="0" max="15" step="1" aria-label="Volume">
+          <div class="wedge" role="group" aria-label="Volume" id="wedge"></div>
         </div>
         </div>
 
@@ -575,26 +581,21 @@ text-transform: uppercase;}
     if (stations) renderGrid();
   }
 
-  // volume is a slider like Brightness: 0-15 notches, can't go past the portal's volume limit
-  let volDragging = false;
   function renderWedge() {
-    const v = $('vol'); if (!v) return;
+    const w = $('wedge'); if (!w) return;
+    w.textContent = '';
     const ap = state.airplay && state.airplay.showing;
     const level = ap ? state.airplay_volume : state.volume;
     const limit = state.volume_limit || 15;
-    v.max = limit;
-    if (!volDragging) v.value = state.muted ? 0 : level;
+    for (let k = 1; k <= 15; k++) {
+      const b = el('button'); b.setAttribute('aria-label', 'Volume ' + k);
+      const bar = el('span'); bar.style.height = Math.round(100 * (8 + 40 * (k - 1) / 14) / 48) + '%'; b.append(bar);
+      if (!state.muted && k <= level) b.classList.add('lit');
+      if (k > limit) b.disabled = true;
+      b.onclick = () => act(() => control('volume', k), (s) => { s.volume = k; s.muted = false; });
+      w.append(b);
+    }
   }
-  (function () {
-    const v = $('vol');
-    v.addEventListener('pointerdown', () => { volDragging = true; });
-    v.addEventListener('input', () => { volDragging = true; });
-    v.addEventListener('change', () => {
-      const k = +v.value;
-      volDragging = false;
-      act(() => control('volume', k), (s) => { s.volume = k; s.muted = false; });
-    });
-  })();
 
   function dialStations() {
     if (!stations) return [];
