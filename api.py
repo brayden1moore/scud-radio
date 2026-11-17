@@ -255,7 +255,7 @@ def api_control():
     cmd = body.get('cmd')
     value = body.get('value')
     simple = {'next': 'next', 'prev': 'prev', 'random': 'play_random', 'favorite': 'favorite',
-              'mute': 'mute_toggle', 'wake': 'wake'}
+              'mute': 'mute_toggle', 'wake': 'wake', 'sleep': 'sleep_now'}
     if cmd in simple:
         return radio_or_503(simple[cmd])
     if cmd == 'play' and isinstance(value, str):
